@@ -35,10 +35,10 @@ const SESSION_STORAGE_KEY = 'ig_admin_session_auth';
 export const getStoredSession = (): AdminUser | null => {
   if (typeof window === 'undefined') return null;
   try {
-    const raw = sessionStorage.getItem(SESSION_STORAGE_KEY);
+    const raw = sessionStorage.getItem(SESSION_STORAGE_KEY) || localStorage.getItem(SESSION_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    if (parsed && parsed.email?.toLowerCase() === ALLOWED_ADMIN_EMAIL.toLowerCase()) {
+    if (parsed && parsed.email?.toLowerCase().trim() === ALLOWED_ADMIN_EMAIL.toLowerCase().trim()) {
       return parsed;
     }
   } catch (e) {
@@ -51,7 +51,9 @@ export const getStoredSession = (): AdminUser | null => {
 export const saveSession = (user: AdminUser) => {
   if (typeof window === 'undefined') return;
   try {
-    sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(user));
+    const serialized = JSON.stringify(user);
+    sessionStorage.setItem(SESSION_STORAGE_KEY, serialized);
+    localStorage.setItem(SESSION_STORAGE_KEY, serialized);
   } catch (e) {
     /* ignore */
   }
@@ -62,16 +64,39 @@ export const clearSession = () => {
   if (typeof window === 'undefined') return;
   try {
     sessionStorage.removeItem(SESSION_STORAGE_KEY);
+    localStorage.removeItem(SESSION_STORAGE_KEY);
   } catch (e) {
     /* ignore */
   }
 };
 
+// Helper to ensure Google Identity Services SDK script is ready
+export const ensureGsiLoaded = (): Promise<void> => {
+  if (typeof window === 'undefined') return Promise.resolve();
+  if ((window as any).google?.accounts?.oauth2) return Promise.resolve();
+  return new Promise((resolve) => {
+    const existing = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
+    if (!existing) {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => resolve();
+      script.onerror = () => resolve();
+      document.head.appendChild(script);
+    } else {
+      existing.addEventListener('load', () => resolve());
+      setTimeout(resolve, 1500);
+    }
+  });
+};
+
 // Google Identity Services (GIS) Token Request
-export const signInWithGoogleIdentityServices = (): Promise<{
+export const signInWithGoogleIdentityServices = async (): Promise<{
   user: AdminUser;
   isAuthorized: boolean;
 }> => {
+  await ensureGsiLoaded();
   return new Promise((resolve, reject) => {
     if (typeof window === 'undefined') {
       return reject(new Error('Window is not defined'));

@@ -22,12 +22,14 @@ import {
 interface EditorAuthGateProps {
   onClose: () => void;
   language?: 'es' | 'en';
+  onSessionChange?: (user: AdminUser | null) => void;
   children: (props: { user: AdminUser; onLogout: () => void }) => React.ReactNode;
 }
 
 export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
   onClose,
   language = 'es',
+  onSessionChange,
   children,
 }) => {
   const isEn = language === 'en';
@@ -46,6 +48,7 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
     if (existing) {
       setCurrentUser(existing);
       setIsAuthorized(true);
+      onSessionChange?.(existing);
     }
     setIsLoadingAuth(false);
   }, []);
@@ -58,7 +61,9 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
       const { user, isAuthorized: authorized } = await signInWithGoogleUnified();
       setCurrentUser(user);
       setIsAuthorized(authorized);
-      if (!authorized) {
+      if (authorized) {
+        onSessionChange?.(user);
+      } else {
         setAuthError(
           isEn
             ? `Access Denied: The account ${user.email} is not authorized. Access is restricted exclusively to ${ALLOWED_ADMIN_EMAIL}.`
@@ -96,6 +101,9 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
       const { user, isAuthorized: authorized } = signInWithAdminPasscode(passcodeInput);
       setCurrentUser(user);
       setIsAuthorized(authorized);
+      if (authorized) {
+        onSessionChange?.(user);
+      }
     } catch (err: any) {
       setPasscodeError(err.message || 'Clave incorrecta.');
     }
@@ -107,6 +115,7 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
     setIsAuthorized(false);
     setAuthError(null);
     setPasscodeInput('');
+    onSessionChange?.(null);
   };
 
   // 1. Initial Session Verification

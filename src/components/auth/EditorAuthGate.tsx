@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   AdminUser,
   ALLOWED_ADMIN_EMAIL,
+  ALLOWED_ADMIN_EMAILS,
   getStoredSession,
   signInWithGoogleUnified,
   signInWithAdminPasscode,
@@ -64,10 +65,11 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
       if (authorized) {
         onSessionChange?.(user);
       } else {
+        const allowedList = ALLOWED_ADMIN_EMAILS.join(', ');
         setAuthError(
           isEn
-            ? `Access Denied: The account ${user.email} is not authorized. Access is restricted exclusively to ${ALLOWED_ADMIN_EMAIL}.`
-            : `Acceso Denegado: La cuenta ${user.email} no está autorizada. El acceso está restringido exclusivamente a ${ALLOWED_ADMIN_EMAIL}.`
+            ? `Access Denied: The account ${user.email} is not authorized. Access is restricted to: ${allowedList}.`
+            : `Acceso Denegado: La cuenta ${user.email} no está autorizada. El acceso está restringido a: ${allowedList}.`
         );
       }
     } catch (err: any) {
@@ -150,13 +152,18 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
             </h2>
             <p className="text-xs text-slate-600 leading-relaxed">
               {isEn
-                ? 'This administration panel is restricted exclusively to Isaac Gómez Estrada. Sign in with your authorized Google account to continue.'
-                : 'Este panel de edición y personalización de CV está restringido exclusivamente a Isaac Gómez Estrada. Inicia sesión con tu cuenta de Google autorizada.'}
+                ? 'This administration panel is restricted to authorized accounts. Sign in with your authorized Google account to continue.'
+                : 'Este panel de edición y personalización de CV está restringido a cuentas autorizadas. Inicia sesión con tu cuenta de Google para continuar.'}
             </p>
-            <div className="pt-1">
-              <span className="inline-block text-[11px] font-mono text-sky-700 bg-sky-50 px-2.5 py-1 rounded-md border border-sky-200 font-semibold">
-                {ALLOWED_ADMIN_EMAIL}
-              </span>
+            <div className="pt-1 flex flex-wrap items-center justify-center gap-1.5">
+              {ALLOWED_ADMIN_EMAILS.map((email) => (
+                <span
+                  key={email}
+                  className="inline-block text-[11px] font-mono text-sky-700 bg-sky-50 px-2.5 py-1 rounded-md border border-sky-200 font-semibold"
+                >
+                  {email}
+                </span>
+              ))}
             </div>
           </div>
 
@@ -286,14 +293,14 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
             <p className="text-xs text-slate-600 leading-relaxed">
               {isEn ? (
                 <>
-                  You signed in as <strong>{currentUser.email}</strong>, but this editor is strictly reserved for{' '}
-                  <span className="font-mono text-rose-700 font-bold">{ALLOWED_ADMIN_EMAIL}</span>.
+                  You signed in as <strong>{currentUser.email}</strong>, but this editor is strictly reserved for authorized accounts:{' '}
+                  <span className="font-mono text-rose-700 font-bold">{ALLOWED_ADMIN_EMAILS.join(' / ')}</span>.
                 </>
               ) : (
                 <>
                   Has iniciado sesión como <strong>{currentUser.email}</strong>, pero este editor está reservado
-                  exclusivamente para{' '}
-                  <span className="font-mono text-rose-700 font-bold">{ALLOWED_ADMIN_EMAIL}</span>.
+                  exclusivamente para las cuentas autorizadas:{' '}
+                  <span className="font-mono text-rose-700 font-bold">{ALLOWED_ADMIN_EMAILS.join(' / ')}</span>.
                 </>
               )}
             </p>

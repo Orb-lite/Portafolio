@@ -19,7 +19,18 @@ provider.setCustomParameters({
   prompt: 'select_account',
 });
 
-export const ALLOWED_ADMIN_EMAIL = 'isaacgestrada94@gmail.com';
+export const ALLOWED_ADMIN_EMAILS: string[] = [
+  'isaacgestrada94@gmail.com',
+  'ventas@orb-lite.com',
+];
+
+export const isEmailAuthorized = (email?: string | null): boolean => {
+  if (!email) return false;
+  const clean = email.toLowerCase().trim();
+  return ALLOWED_ADMIN_EMAILS.some((allowed) => allowed.toLowerCase().trim() === clean);
+};
+
+export const ALLOWED_ADMIN_EMAIL = ALLOWED_ADMIN_EMAILS[0];
 export const MASTER_ADMIN_PASSCODES = ['isaac2026', 'orblite2026', '3318359421', 'Isaac2026!'];
 
 export interface AdminUser {
@@ -38,7 +49,7 @@ export const getStoredSession = (): AdminUser | null => {
     const raw = sessionStorage.getItem(SESSION_STORAGE_KEY) || localStorage.getItem(SESSION_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    if (parsed && parsed.email?.toLowerCase().trim() === ALLOWED_ADMIN_EMAIL.toLowerCase().trim()) {
+    if (parsed && isEmailAuthorized(parsed.email)) {
       return parsed;
     }
   } catch (e) {
@@ -137,8 +148,8 @@ export const signInWithGoogleIdentityServices = async (): Promise<{
             }
 
             const profile = await res.json();
-            const email = (profile.email || '').toLowerCase();
-            const isAuthorized = email === ALLOWED_ADMIN_EMAIL.toLowerCase();
+            const email = (profile.email || '').toLowerCase().trim();
+            const isAuthorized = isEmailAuthorized(email);
 
             const adminUser: AdminUser = {
               email: profile.email || '',
@@ -171,8 +182,8 @@ export const signInWithFirebaseAuth = async (): Promise<{
   isAuthorized: boolean;
 }> => {
   const result = await signInWithPopup(auth, provider);
-  const email = (result.user.email || '').toLowerCase();
-  const isAuthorized = email === ALLOWED_ADMIN_EMAIL.toLowerCase();
+  const email = (result.user.email || '').toLowerCase().trim();
+  const isAuthorized = isEmailAuthorized(email);
 
   const adminUser: AdminUser = {
     email: result.user.email || '',

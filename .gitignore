@@ -1,0 +1,11 @@
+node_modules/
+dist/
+build/
+coverage/
+*.log
+*.zip
+public/assets/
+.env
+.env.*
+!.env.example
+.DS_Store

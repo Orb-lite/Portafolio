@@ -31,7 +31,13 @@ export const isEmailAuthorized = (email?: string | null): boolean => {
 };
 
 export const ALLOWED_ADMIN_EMAIL = ALLOWED_ADMIN_EMAILS[0];
-export const MASTER_ADMIN_PASSCODES = ['isaac2026', 'orblite2026', '3318359421', 'Isaac2026!'];
+export const MASTER_ADMIN_PASSCODES = [
+  'isaac2026',
+  'orblite2026',
+  'ventas2026',
+  '3318359421',
+  'Isaac2026!',
+];
 
 export interface AdminUser {
   email: string;
@@ -223,8 +229,11 @@ export const signInWithGoogleUnified = async (): Promise<{
   }
 };
 
-// Emergency Admin Passcode (allows Isaac to unlock if browser blocks popups in iframe)
-export const signInWithAdminPasscode = (passcode: string): {
+// Emergency Admin Passcode (allows Isaac or Ventas to unlock if browser blocks popups in iframe or origin_mismatch)
+export const signInWithAdminPasscode = (
+  passcode: string,
+  selectedEmail?: string
+): {
   user: AdminUser;
   isAuthorized: boolean;
 } => {
@@ -232,9 +241,15 @@ export const signInWithAdminPasscode = (passcode: string): {
   const isValid = MASTER_ADMIN_PASSCODES.includes(clean);
 
   if (isValid) {
+    const targetEmail =
+      selectedEmail && isEmailAuthorized(selectedEmail)
+        ? selectedEmail
+        : ALLOWED_ADMIN_EMAILS[0];
+
+    const isVentas = targetEmail.toLowerCase().includes('ventas');
     const adminUser: AdminUser = {
-      email: ALLOWED_ADMIN_EMAIL,
-      displayName: 'Isaac Gómez Estrada (Master Key)',
+      email: targetEmail,
+      displayName: isVentas ? 'Orb-lite Ventas (Admin)' : 'Isaac Gómez Estrada (Admin)',
       authMethod: 'admin_passcode',
     };
     saveSession(adminUser);

@@ -11,6 +11,7 @@ import { LinkedInImportModal } from './components/modals/LinkedInImportModal';
 import { exportElementToPdf, printResumeDocument } from './utils/pdfExport';
 import { PortfolioView } from './components/portfolio/PortfolioView';
 import { AboutMeView } from './components/about/AboutMeView';
+import { EditorAuthGate } from './components/auth/EditorAuthGate';
 import {
   Download,
   Printer,
@@ -32,7 +33,6 @@ import {
   Lock,
   X,
   SlidersHorizontal,
-  Languages,
 } from 'lucide-react';
 
 export default function App() {
@@ -41,7 +41,7 @@ export default function App() {
   const [resumeData, setResumeData] = useState<ResumeData>(resumeDataEs);
   const [styleConfig, setStyleConfig] = useState<StyleConfig>(defaultStyleConfig);
   const [activeTab, setActiveTab] = useState<'job_match' | 'personal' | 'experience' | 'skills' | 'design'>('job_match');
-  const [showHiddenEditor, setShowHiddenEditor] = useState<boolean>(false);
+  const [isEditorRequestedViaUrl, setIsEditorRequestedViaUrl] = useState<boolean>(false);
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [notification, setNotification] = useState<string | null>(null);
   const [isLinkedInModalOpen, setIsLinkedInModalOpen] = useState<boolean>(false);
@@ -50,20 +50,49 @@ export default function App() {
   const documentRef = useRef<HTMLDivElement>(null);
   const isEn = language === 'en';
 
-  // Check URL parameters on mount to allow direct access to hidden editor (?editor=true or #editor)
+  // Check URL parameters on mount to allow access ONLY via specific private URL (?editor=true, ?admin=true, #editor, /editor)
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('editor') === 'true' || window.location.hash === '#editor') {
-        setShowHiddenEditor(true);
-        setMainTab('cv');
-      }
-      if (params.get('lang') === 'en') {
-        setLanguage('en');
-        setResumeData(resumeDataEn);
-      }
+      const checkUrlForEditor = () => {
+        const params = new URLSearchParams(window.location.search);
+        const hasEditorParam = params.get('editor') === 'true' || params.get('admin') === 'true';
+        const hasEditorHash = window.location.hash === '#editor' || window.location.hash === '#admin';
+        const hasEditorPath = window.location.pathname.startsWith('/editor') || window.location.pathname.startsWith('/admin');
+
+        if (hasEditorParam || hasEditorHash || hasEditorPath) {
+          setIsEditorRequestedViaUrl(true);
+        } else {
+          setIsEditorRequestedViaUrl(false);
+        }
+
+        if (params.get('lang') === 'en') {
+          setLanguage('en');
+          setResumeData(resumeDataEn);
+        }
+      };
+
+      checkUrlForEditor();
+      window.addEventListener('popstate', checkUrlForEditor);
+      window.addEventListener('hashchange', checkUrlForEditor);
+      return () => {
+        window.removeEventListener('popstate', checkUrlForEditor);
+        window.removeEventListener('hashchange', checkUrlForEditor);
+      };
     }
   }, []);
+
+  const closeEditorAndCleanUrl = () => {
+    setIsEditorRequestedViaUrl(false);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('editor');
+      url.searchParams.delete('admin');
+      if (url.hash === '#editor' || url.hash === '#admin') {
+        url.hash = '';
+      }
+      window.history.replaceState({}, '', url.pathname + (url.search ? url.search : ''));
+    }
+  };
 
   const showNotification = (msg: string) => {
     setNotification(msg);
@@ -166,7 +195,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-100 text-slate-800">
-      {/* 1. Global Navigation Bar (Hidden during print) */}
+      {/* 1. Global Navigation Bar (Hidden during print) - Completely clean for public users */}
       <header className="no-print bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-md">
         {/* Top Info & Brand Bar */}
         <div className="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80">
@@ -302,7 +331,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Primary Page Navigation Tabs */}
+        {/* Primary Page Navigation Tabs (Without any editor triggers) */}
         <div className="max-w-7xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-3 bg-slate-950/70">
           <div className="flex items-center gap-2">
             {/* Tab 1: Portfolio */}
@@ -347,25 +376,6 @@ export default function App() {
               <span>{isEn ? '📄 CV & Resume (2-Page PDF)' : '📄 Currículum Vitae (PDF 2 Páginas)'}</span>
             </button>
           </div>
-
-          {/* Quick info or quick toggle on the right */}
-          <div className="flex items-center gap-2">
-            {mainTab === 'cv' && (
-              <button
-                type="button"
-                onClick={() => setShowHiddenEditor(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-amber-300 bg-amber-950/60 hover:bg-amber-900/80 border border-amber-700/60 transition-all"
-                title={
-                  isEn
-                    ? 'Open the hidden editor to tailor CV for specific job posts and export customized versions'
-                    : 'Abrir el editor oculto para adaptar el CV a propuestas y exportar versiones a medida'
-                }
-              >
-                <Lock className="w-3.5 h-3.5 text-amber-400" />
-                <span>{language === 'es' ? 'Editor Oculto' : 'Hidden Editor'}</span>
-              </button>
-            )}
-          </div>
         </div>
       </header>
 
@@ -399,7 +409,7 @@ export default function App() {
         </main>
       )}
 
-      {/* VIEW 3: Clean CV & Resume Presentation */}
+      {/* VIEW 3: Clean CV & Resume Presentation (Completely public and clean) */}
       {mainTab === 'cv' && (
         <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex flex-col items-center">
           {/* Executive Document Presentation Toolbar */}
@@ -473,7 +483,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right: Print, Download & Hidden Editor access */}
+            {/* Right: Print & Download only (No editor button) */}
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -494,21 +504,6 @@ export default function App() {
               >
                 <Printer className="w-3.5 h-3.5 text-slate-600" />
                 <span className="hidden md:inline">{language === 'es' ? 'Imprimir' : 'Print'}</span>
-              </button>
-
-              {/* Discreet Button to open Hidden Editor */}
-              <button
-                type="button"
-                onClick={() => setShowHiddenEditor(true)}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl text-amber-900 hover:text-amber-950 bg-amber-100 hover:bg-amber-200 border border-amber-300 transition-all shadow-xs"
-                title={
-                  language === 'es'
-                    ? 'Abrir el editor oculto para adaptar según vacantes y exportar versiones'
-                    : 'Open the hidden customizer to match job offers and export customized versions'
-                }
-              >
-                <Lock className="w-3.5 h-3.5 text-amber-700" />
-                <span>{language === 'es' ? 'Editor Oculto' : 'Hidden Editor'}</span>
               </button>
             </div>
           </div>
@@ -532,270 +527,264 @@ export default function App() {
               />
             </div>
           </div>
-
-          {/* Floating Discreet Button at Bottom-Right */}
-          <div className="no-print fixed bottom-6 right-6 z-30">
-            <button
-              type="button"
-              onClick={() => setShowHiddenEditor(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/95 hover:bg-slate-900 text-amber-400 hover:text-amber-300 shadow-xl border border-slate-700 text-xs font-bold transition-all hover:scale-105"
-              title={isEn ? 'Access hidden resume customizer & job tailoring' : 'Acceder al editor y adaptador de CV'}
-            >
-              <Lock className="w-3.5 h-3.5 text-amber-400" />
-              <span>{language === 'es' ? 'Editor Oculto & Exportador' : 'Hidden Editor & Exporter'}</span>
-            </button>
-          </div>
         </main>
       )}
 
-      {/* HIDDEN RESUME EDITOR DRAWER / MODAL */}
-      {showHiddenEditor && (
-        <div className="no-print fixed inset-0 z-50 overflow-hidden bg-slate-950/75 backdrop-blur-xs flex justify-end animate-fade-in">
-          {/* Backdrop click to close */}
-          <div
-            className="flex-1 cursor-pointer"
-            onClick={() => setShowHiddenEditor(false)}
-            aria-hidden="true"
-          />
+      {/* PRIVATE RESUME EDITOR GATE: ONLY ACCESSIBLE VIA URL WITH GOOGLE OAUTH */}
+      {isEditorRequestedViaUrl && (
+        <EditorAuthGate
+          language={language}
+          onClose={closeEditorAndCleanUrl}
+        >
+          {({ user, onLogout }) => (
+            <div className="no-print fixed inset-0 z-50 overflow-hidden bg-slate-950/75 backdrop-blur-xs flex justify-end animate-fade-in">
+              {/* Backdrop click to close */}
+              <div
+                className="flex-1 cursor-pointer"
+                onClick={closeEditorAndCleanUrl}
+                aria-hidden="true"
+              />
 
-          {/* Drawer Panel */}
-          <div className="w-full max-w-2xl bg-slate-50 h-full flex flex-col shadow-2xl border-l border-slate-300">
-            {/* Drawer Header */}
-            <div className="bg-slate-900 text-white p-4 border-b border-slate-800 flex items-center justify-between gap-3 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40">
-                  <Lock className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-sm font-bold text-white tracking-tight">
-                      {language === 'es' ? 'Editor Oculto & Adaptador de CV' : 'Hidden Editor & Resume Customizer'}
-                    </h2>
-                    <span className="text-[10px] bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
-                      Tailor
-                    </span>
+              {/* Drawer Panel */}
+              <div className="w-full max-w-2xl bg-slate-50 h-full flex flex-col shadow-2xl border-l border-slate-300">
+                {/* Drawer Header */}
+                <div className="bg-slate-900 text-white p-4 border-b border-slate-800 flex items-center justify-between gap-3 shrink-0">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40">
+                      <Lock className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-sm font-bold text-white tracking-tight">
+                          {language === 'es' ? 'Editor Privado & Adaptador de CV' : 'Private Resume Customizer'}
+                        </h2>
+                        <span className="text-[10px] bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                          Admin
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-400">
+                        {language === 'es'
+                          ? `Sesión activa con ${user.email}. Personaliza o ajusta el CV según la vacante y exporta en PDF.`
+                          : `Active session for ${user.email}. Tailor resume to openings and export customized versions.`}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-[11px] text-slate-400">
-                    {language === 'es'
-                      ? 'Edita cualquier sección o ajusta según una vacante. Luego exporta la versión personalizada en PDF.'
-                      : 'Tailor any section or match against a job description, then export your customized PDF version.'}
-                  </p>
+
+                  {/* Primary Header Action: Export Customized PDF & Close */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={isExporting}
+                      onClick={() => handleDownloadPdf(language, true)}
+                      className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-500 shadow-md shadow-sky-950/50 transition-all disabled:opacity-50"
+                      title={isEn ? 'Export tailored version directly to PDF' : 'Exportar versión ajustada en PDF'}
+                    >
+                      {isExporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                      <span>{language === 'es' ? 'Exportar Personalizado' : 'Export Customized PDF'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={closeEditorAndCleanUrl}
+                      className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                      title={isEn ? 'Close Editor' : 'Cerrar Editor'}
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Drawer Editor Navigation Tabs */}
+                <div className="bg-white px-4 py-2 border-b border-slate-200 flex items-center justify-between text-xs font-semibold gap-1 overflow-x-auto shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('job_match')}
+                    className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
+                      activeTab === 'job_match'
+                        ? 'bg-amber-400 text-slate-950 font-bold shadow-xs'
+                        : 'text-amber-900 bg-amber-50 hover:bg-amber-100'
+                    }`}
+                    title={
+                      isEn
+                        ? 'Tailor to job offer and draft tailored Cover Letter'
+                        : 'Ajustar a propuesta de trabajo y redactar Cover Letter'
+                    }
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-700" />
+                    <span>{language === 'es' ? '🎯 Oferta & Carta' : '🎯 Job Match & Letter'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('personal')}
+                    className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
+                      activeTab === 'personal'
+                        ? 'bg-sky-600 text-white font-bold shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    <span>{language === 'es' ? 'Contacto' : 'Personal'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('experience')}
+                    className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
+                      activeTab === 'experience'
+                        ? 'bg-sky-600 text-white font-bold shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Briefcase className="w-3.5 h-3.5" />
+                    <span>{language === 'es' ? 'Experiencia' : 'Experience'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('skills')}
+                    className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
+                      activeTab === 'skills'
+                        ? 'bg-sky-600 text-white font-bold shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <GraduationCap className="w-3.5 h-3.5" />
+                    <span>{language === 'es' ? 'Habilidades' : 'Skills & Edu'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('design')}
+                    className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
+                      activeTab === 'design'
+                        ? 'bg-sky-600 text-white font-bold shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <SlidersHorizontal className="w-3.5 h-3.5" />
+                    <span>{language === 'es' ? 'Diseño' : 'Design'}</span>
+                  </button>
+                </div>
+
+                {/* Active Tab Content Area */}
+                <div className="flex-1 overflow-y-auto p-4 sm:p-5">
+                  {activeTab === 'job_match' && (
+                    <JobOfferMatcher
+                      currentResume={resumeData}
+                      styleConfig={styleConfig}
+                      appLanguage={language}
+                      onApplyOptimization={(updatedResume, targetLang) => {
+                        setResumeData(updatedResume);
+                        if (targetLang !== language) {
+                          setLanguage(targetLang);
+                        }
+                      }}
+                      onDownloadResumePdf={(targetLang) => handleDownloadPdf(targetLang, true)}
+                      onShowNotification={showNotification}
+                    />
+                  )}
+
+                  {activeTab === 'personal' && (
+                    <PersonalInfoEditor
+                      personalInfo={resumeData.personalInfo}
+                      onChange={(updated) =>
+                        setResumeData({ ...resumeData, personalInfo: updated })
+                      }
+                      language={language}
+                      onLanguageChange={handleLanguageSwitch}
+                    />
+                  )}
+
+                  {activeTab === 'experience' && (
+                    <ExperienceEditor
+                      experiences={resumeData.experiences}
+                      onChange={(updated) =>
+                        setResumeData({ ...resumeData, experiences: updated })
+                      }
+                    />
+                  )}
+
+                  {activeTab === 'skills' && (
+                    <SkillsEducationEditor
+                      skillCategories={resumeData.skillCategories}
+                      education={resumeData.education}
+                      certifications={resumeData.certifications}
+                      languages={resumeData.languages}
+                      achievements={resumeData.achievements}
+                      onSkillsChange={(cats) =>
+                        setResumeData({ ...resumeData, skillCategories: cats })
+                      }
+                      onEducationChange={(edus) =>
+                        setResumeData({ ...resumeData, education: edus })
+                      }
+                      onCertificationsChange={(certs) =>
+                        setResumeData({ ...resumeData, certifications: certs })
+                      }
+                      onLanguagesChange={(langs) =>
+                        setResumeData({ ...resumeData, languages: langs })
+                      }
+                      onAchievementsChange={(achs) =>
+                        setResumeData({ ...resumeData, achievements: achs })
+                      }
+                    />
+                  )}
+
+                  {activeTab === 'design' && (
+                    <DesignSettingsEditor
+                      styleConfig={styleConfig}
+                      onChange={(updated) => setStyleConfig(updated)}
+                      onAutoFitOnePage={handleAutoFitOnePage}
+                    />
+                  )}
+                </div>
+
+                {/* Drawer Footer Actions */}
+                <div className="bg-white p-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 shadow-lg shrink-0">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleResetData}
+                      className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>{language === 'es' ? 'Restaurar Predeterminado' : 'Reset Defaults'}</span>
+                    </button>
+                    <span className="text-slate-300">·</span>
+                    <button
+                      type="button"
+                      onClick={() => setIsLinkedInModalOpen(true)}
+                      className="flex items-center gap-1 text-xs text-sky-600 hover:text-sky-800 font-semibold"
+                    >
+                      <Sparkles className="w-3 h-3" />
+                      <span>{language === 'es' ? 'Perfiles Sugeridos' : 'Role Presets'}</span>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={closeEditorAndCleanUrl}
+                      className="px-3.5 py-2 text-xs font-semibold rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition-colors"
+                    >
+                      {language === 'es' ? 'Cerrar' : 'Close'}
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={isExporting}
+                      onClick={() => handleDownloadPdf(language, true)}
+                      className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-500 shadow-md transition-all disabled:opacity-50"
+                    >
+                      {isExporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                      <span>{language === 'es' ? 'Exportar Versión Personalizada' : 'Export Customized PDF'}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
-
-              {/* Primary Header Action: Export Customized PDF & Close */}
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  disabled={isExporting}
-                  onClick={() => handleDownloadPdf(language, true)}
-                  className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-500 shadow-md shadow-sky-950/50 transition-all disabled:opacity-50"
-                  title={isEn ? 'Export tailored version directly to PDF' : 'Exportar versión ajustada en PDF'}
-                >
-                  {isExporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-                  <span>{language === 'es' ? 'Exportar Personalizado' : 'Export Customized PDF'}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setShowHiddenEditor(false)}
-                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                  title={isEn ? 'Close Hidden Editor' : 'Cerrar Editor Oculto'}
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
             </div>
-
-            {/* Drawer Editor Navigation Tabs */}
-            <div className="bg-white px-4 py-2 border-b border-slate-200 flex items-center justify-between text-xs font-semibold gap-1 overflow-x-auto shrink-0">
-              <button
-                type="button"
-                onClick={() => setActiveTab('job_match')}
-                className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
-                  activeTab === 'job_match'
-                    ? 'bg-amber-400 text-slate-950 font-bold shadow-xs'
-                    : 'text-amber-900 bg-amber-50 hover:bg-amber-100'
-                }`}
-                title={
-                  isEn
-                    ? 'Tailor to job offer and draft tailored Cover Letter'
-                    : 'Ajustar a propuesta de trabajo y redactar Cover Letter'
-                }
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-700" />
-                <span>{language === 'es' ? '🎯 Oferta & Carta' : '🎯 Job Match & Letter'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTab('personal')}
-                className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
-                  activeTab === 'personal'
-                    ? 'bg-sky-600 text-white font-bold shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                }`}
-              >
-                <User className="w-3.5 h-3.5" />
-                <span>{language === 'es' ? 'Contacto' : 'Personal'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTab('experience')}
-                className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
-                  activeTab === 'experience'
-                    ? 'bg-sky-600 text-white font-bold shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                }`}
-              >
-                <Briefcase className="w-3.5 h-3.5" />
-                <span>{language === 'es' ? 'Experiencia' : 'Experience'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTab('skills')}
-                className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
-                  activeTab === 'skills'
-                    ? 'bg-sky-600 text-white font-bold shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                }`}
-              >
-                <GraduationCap className="w-3.5 h-3.5" />
-                <span>{language === 'es' ? 'Habilidades' : 'Skills & Edu'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTab('design')}
-                className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
-                  activeTab === 'design'
-                    ? 'bg-sky-600 text-white font-bold shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                }`}
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-                <span>{language === 'es' ? 'Diseño' : 'Design'}</span>
-              </button>
-            </div>
-
-            {/* Active Tab Content Area */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5">
-              {activeTab === 'job_match' && (
-                <JobOfferMatcher
-                  currentResume={resumeData}
-                  styleConfig={styleConfig}
-                  appLanguage={language}
-                  onApplyOptimization={(updatedResume, targetLang) => {
-                    setResumeData(updatedResume);
-                    if (targetLang !== language) {
-                      setLanguage(targetLang);
-                    }
-                  }}
-                  onDownloadResumePdf={(targetLang) => handleDownloadPdf(targetLang, true)}
-                  onShowNotification={showNotification}
-                />
-              )}
-
-              {activeTab === 'personal' && (
-                <PersonalInfoEditor
-                  personalInfo={resumeData.personalInfo}
-                  onChange={(updated) =>
-                    setResumeData({ ...resumeData, personalInfo: updated })
-                  }
-                  language={language}
-                  onLanguageChange={handleLanguageSwitch}
-                />
-              )}
-
-              {activeTab === 'experience' && (
-                <ExperienceEditor
-                  experiences={resumeData.experiences}
-                  onChange={(updated) =>
-                    setResumeData({ ...resumeData, experiences: updated })
-                  }
-                />
-              )}
-
-              {activeTab === 'skills' && (
-                <SkillsEducationEditor
-                  skillCategories={resumeData.skillCategories}
-                  education={resumeData.education}
-                  certifications={resumeData.certifications}
-                  languages={resumeData.languages}
-                  achievements={resumeData.achievements}
-                  onSkillsChange={(cats) =>
-                    setResumeData({ ...resumeData, skillCategories: cats })
-                  }
-                  onEducationChange={(edus) =>
-                    setResumeData({ ...resumeData, education: edus })
-                  }
-                  onCertificationsChange={(certs) =>
-                    setResumeData({ ...resumeData, certifications: certs })
-                  }
-                  onLanguagesChange={(langs) =>
-                    setResumeData({ ...resumeData, languages: langs })
-                  }
-                  onAchievementsChange={(achs) =>
-                    setResumeData({ ...resumeData, achievements: achs })
-                  }
-                />
-              )}
-
-              {activeTab === 'design' && (
-                <DesignSettingsEditor
-                  styleConfig={styleConfig}
-                  onChange={(updated) => setStyleConfig(updated)}
-                  onAutoFitOnePage={handleAutoFitOnePage}
-                />
-              )}
-            </div>
-
-            {/* Drawer Footer Actions */}
-            <div className="bg-white p-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 shadow-lg shrink-0">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleResetData}
-                  className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>{language === 'es' ? 'Restaurar Predeterminado' : 'Reset Defaults'}</span>
-                </button>
-                <span className="text-slate-300">·</span>
-                <button
-                  type="button"
-                  onClick={() => setIsLinkedInModalOpen(true)}
-                  className="flex items-center gap-1 text-xs text-sky-600 hover:text-sky-800 font-semibold"
-                >
-                  <Sparkles className="w-3 h-3" />
-                  <span>{language === 'es' ? 'Perfiles Sugeridos' : 'Role Presets'}</span>
-                </button>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowHiddenEditor(false)}
-                  className="px-3.5 py-2 text-xs font-semibold rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition-colors"
-                >
-                  {language === 'es' ? 'Cerrar' : 'Close'}
-                </button>
-
-                <button
-                  type="button"
-                  disabled={isExporting}
-                  onClick={() => handleDownloadPdf(language, true)}
-                  className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-500 shadow-md transition-all disabled:opacity-50"
-                >
-                  {isExporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-                  <span>{language === 'es' ? 'Exportar Versión Personalizada' : 'Export Customized PDF'}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+          )}
+        </EditorAuthGate>
       )}
 
       {/* LinkedIn Import / Presets Modal */}

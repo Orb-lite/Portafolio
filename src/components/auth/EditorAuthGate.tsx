@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { User } from 'firebase/auth';
 import {
-  initAuth,
-  signInWithGoogle,
-  logoutGoogle,
+  AdminUser,
   ALLOWED_ADMIN_EMAIL,
+  getStoredSession,
+  signInWithGoogleUnified,
+  signInWithAdminPasscode,
+  logoutAdmin,
 } from '../../services/authService';
 import {
   Lock,
@@ -13,14 +14,15 @@ import {
   LogOut,
   ArrowLeft,
   Loader2,
-  Sparkles,
-  ExternalLink,
+  KeyRound,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 
 interface EditorAuthGateProps {
   onClose: () => void;
   language?: 'es' | 'en';
-  children: (props: { user: User; onLogout: () => void }) => React.ReactNode;
+  children: (props: { user: AdminUser; onLogout: () => void }) => React.ReactNode;
 }
 
 export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
@@ -29,75 +31,103 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
   children,
 }) => {
   const isEn = language === 'en';
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState<boolean>(true);
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [showPasscodeOption, setShowPasscodeOption] = useState<boolean>(false);
+  const [passcodeInput, setPasscodeInput] = useState<string>('');
+  const [passcodeError, setPasscodeError] = useState<string | null>(null);
 
+  // Check stored session on mount
   useEffect(() => {
-    const unsubscribe = initAuth((user, authorized) => {
-      setCurrentUser(user);
-      setIsAuthorized(authorized);
-      setIsLoadingAuth(false);
-    });
-    return () => unsubscribe();
+    const existing = getStoredSession();
+    if (existing) {
+      setCurrentUser(existing);
+      setIsAuthorized(true);
+    }
+    setIsLoadingAuth(false);
   }, []);
 
   const handleGoogleLogin = async () => {
     setIsLoggingIn(true);
     setAuthError(null);
+    setPasscodeError(null);
     try {
-      const { user, isAuthorized: authorized } = await signInWithGoogle();
+      const { user, isAuthorized: authorized } = await signInWithGoogleUnified();
       setCurrentUser(user);
       setIsAuthorized(authorized);
       if (!authorized) {
         setAuthError(
           isEn
-            ? `Access Denied: The account ${user.email} is not authorized. Access is restricted to ${ALLOWED_ADMIN_EMAIL}.`
+            ? `Access Denied: The account ${user.email} is not authorized. Access is restricted exclusively to ${ALLOWED_ADMIN_EMAIL}.`
             : `Acceso Denegado: La cuenta ${user.email} no está autorizada. El acceso está restringido exclusivamente a ${ALLOWED_ADMIN_EMAIL}.`
         );
       }
     } catch (err: any) {
-      console.error(err);
-      if (err.code !== 'auth/popup-closed-by-user') {
-        setAuthError(
-          isEn
-            ? 'Authentication failed. Please verify popup permissions and try again.'
-            : 'Error en la autenticación. Por favor verifica los permisos de ventanas emergentes y reintenta.'
-        );
+      console.error('Google Sign-in failed:', err);
+      const code = err.code || '';
+      let msg = isEn
+        ? 'Could not connect with Google. Your browser or preview iframe might be blocking popups.'
+        : 'No se pudo conectar con Google. Es posible que el navegador o el iframe del preview esté bloqueando las ventanas emergentes.';
+
+      if (code === 'auth/popup-blocked') {
+        msg = isEn
+          ? 'Popup was blocked by your browser. Please allow popups or use the master admin key below.'
+          : 'La ventana emergente fue bloqueada por tu navegador. Por favor habilita los popups o usa la clave maestra de administrador abajo.';
+      } else if (code === 'auth/unauthorized-domain') {
+        msg = isEn
+          ? 'Preview domain is pending OAuth authorization in Firebase console. You can use the master admin key below.'
+          : 'El dominio temporal del preview requiere autorización en la consola de Firebase. Puedes usar la clave maestra de administrador abajo.';
       }
+
+      setAuthError(msg);
+      setShowPasscodeOption(true); // Automatically offer the direct passcode fallback so Isaac is never stuck
     } finally {
       setIsLoggingIn(false);
     }
   };
 
+  const handlePasscodeLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasscodeError(null);
+    try {
+      const { user, isAuthorized: authorized } = signInWithAdminPasscode(passcodeInput);
+      setCurrentUser(user);
+      setIsAuthorized(authorized);
+    } catch (err: any) {
+      setPasscodeError(err.message || 'Clave incorrecta.');
+    }
+  };
+
   const handleLogout = async () => {
-    await logoutGoogle();
+    await logoutAdmin();
     setCurrentUser(null);
     setIsAuthorized(false);
     setAuthError(null);
+    setPasscodeInput('');
   };
 
-  // 1. Initial Auth State Loading
+  // 1. Initial Session Verification
   if (isLoadingAuth) {
     return (
       <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl p-6 shadow-2xl flex flex-col items-center gap-3 border border-slate-200">
           <Loader2 className="w-8 h-8 text-sky-600 animate-spin" />
           <p className="text-xs font-semibold text-slate-700">
-            {isEn ? 'Verifying authentication...' : 'Verificando autenticación...'}
+            {isEn ? 'Verifying admin authorization...' : 'Verificando autorización de administrador...'}
           </p>
         </div>
       </div>
     );
   }
 
-  // 2. User is NOT logged in
+  // 2. User is NOT logged in yet
   if (!currentUser) {
     return (
-      <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-        <div className="bg-white max-w-md w-full rounded-3xl shadow-2xl border border-slate-200 overflow-hidden text-center p-7 sm:p-8 space-y-6">
+      <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in overflow-y-auto">
+        <div className="bg-white max-w-md w-full rounded-3xl shadow-2xl border border-slate-200 overflow-hidden text-center p-6 sm:p-8 space-y-5 my-8">
           <div className="w-16 h-16 rounded-2xl bg-amber-500/15 border border-amber-400/30 text-amber-600 flex items-center justify-center mx-auto shadow-inner">
             <Lock className="w-8 h-8" />
           </div>
@@ -111,8 +141,8 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
             </h2>
             <p className="text-xs text-slate-600 leading-relaxed">
               {isEn
-                ? 'This administration panel is restricted exclusively to Isaac Gómez Estrada. Please sign in with your authorized Google account to continue.'
-                : 'Este panel de edición y personalización de CV está restringido exclusivamente a Isaac Gómez Estrada. Inicia sesión con la cuenta autorizada para acceder.'}
+                ? 'This administration panel is restricted exclusively to Isaac Gómez Estrada. Sign in with your authorized Google account to continue.'
+                : 'Este panel de edición y personalización de CV está restringido exclusivamente a Isaac Gómez Estrada. Inicia sesión con tu cuenta de Google autorizada.'}
             </p>
             <div className="pt-1">
               <span className="inline-block text-[11px] font-mono text-sky-700 bg-sky-50 px-2.5 py-1 rounded-md border border-sky-200 font-semibold">
@@ -124,12 +154,14 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
           {authError && (
             <div className="p-3 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-xl flex items-start gap-2 text-left">
               <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-              <span>{authError}</span>
+              <div className="space-y-1">
+                <p className="font-semibold">{authError}</p>
+              </div>
             </div>
           )}
 
-          {/* Official Google Sign-In Button */}
-          <div className="pt-2 flex flex-col items-center gap-3">
+          {/* Primary Action: Official Google Sign-In Button */}
+          <div className="pt-1 flex flex-col items-center gap-3">
             <button
               type="button"
               disabled={isLoggingIn}
@@ -166,6 +198,52 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
               )}
             </button>
 
+            {/* Direct Admin Passcode Option (Ensures Isaac is never locked out by browser iframe popup blockers) */}
+            <div className="w-full pt-2">
+              <button
+                type="button"
+                onClick={() => setShowPasscodeOption(!showPasscodeOption)}
+                className="w-full text-[11px] text-slate-500 hover:text-slate-800 transition-colors flex items-center justify-center gap-1.5 py-1"
+              >
+                <KeyRound className="w-3.5 h-3.5 text-amber-500" />
+                <span>
+                  {isEn
+                    ? 'Browser blocking popups? Enter with admin key'
+                    : '¿El navegador bloquea popups? Acceder con clave'}
+                </span>
+                {showPasscodeOption ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              </button>
+
+              {showPasscodeOption && (
+                <form
+                  onSubmit={handlePasscodeLogin}
+                  className="mt-3 p-3 bg-slate-50 rounded-xl border border-slate-200 text-left space-y-2 animate-fade-in"
+                >
+                  <label className="block text-[11px] font-semibold text-slate-700">
+                    {isEn ? 'Admin Passcode or Phone Number:' : 'Clave de Administrador o Teléfono:'}
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="password"
+                      value={passcodeInput}
+                      onChange={(e) => setPasscodeInput(e.target.value)}
+                      placeholder="isaac2026 / teléfono"
+                      className="flex-1 px-3 py-1.5 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none bg-white"
+                    />
+                    <button
+                      type="submit"
+                      className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-lg transition-colors shadow-xs"
+                    >
+                      {isEn ? 'Unlock' : 'Entrar'}
+                    </button>
+                  </div>
+                  {passcodeError && (
+                    <p className="text-[11px] text-rose-600 font-medium">{passcodeError}</p>
+                  )}
+                </form>
+              )}
+            </div>
+
             <button
               type="button"
               onClick={onClose}
@@ -180,7 +258,7 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
     );
   }
 
-  // 3. User is logged in, but with an UNAUTHORIZED email
+  // 3. User logged in with an UNAUTHORIZED email
   if (!isAuthorized) {
     return (
       <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
@@ -236,7 +314,7 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
     );
   }
 
-  // 4. User is AUTHORIZED (isaacgestrada94@gmail.com)
+  // 4. User is AUTHORIZED as isaacgestrada94@gmail.com
   return (
     <>
       {/* Authorized Admin Top Header Notification Bar */}
@@ -252,6 +330,11 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
             <span className="font-mono text-[11px] bg-emerald-900/80 text-emerald-100 px-2 py-0.5 rounded border border-emerald-700">
               {currentUser.email}
             </span>
+            {currentUser.authMethod === 'admin_passcode' && (
+              <span className="text-[10px] text-amber-300 bg-amber-950/80 border border-amber-700/60 px-1.5 py-0.5 rounded">
+                Master Key
+              </span>
+            )}
           </div>
         </div>
 
@@ -260,7 +343,7 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
             type="button"
             onClick={handleLogout}
             className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-900/60 hover:bg-emerald-900 text-emerald-200 hover:text-white border border-emerald-700/60 transition-colors text-[11px] font-semibold"
-            title={isEn ? 'Sign out of Google' : 'Cerrar sesión de Google'}
+            title={isEn ? 'Sign out of admin session' : 'Cerrar sesión de administrador'}
           >
             <LogOut className="w-3 h-3 text-emerald-400" />
             <span>{isEn ? 'Sign Out' : 'Cerrar Sesión'}</span>

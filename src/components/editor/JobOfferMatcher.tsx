@@ -35,6 +35,7 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
   onDownloadResumePdf,
   onShowNotification,
 }) => {
+  const isEn = appLanguage === 'en';
   const [jobText, setJobText] = useState<string>('');
   const [selectedLanguage, setSelectedLanguage] = useState<'es' | 'en' | 'auto'>('auto');
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
@@ -48,13 +49,21 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
     if (found) {
       setJobText(found.text);
       setSelectedLanguage(found.lang);
-      onShowNotification(`Propuesta cargada: ${found.title.slice(0, 40)}...`);
+      onShowNotification(
+        isEn
+          ? `Sample offer loaded: ${found.title.slice(0, 40)}...`
+          : `Propuesta cargada: ${found.title.slice(0, 40)}...`
+      );
     }
   };
 
   const handleRunAnalysis = async () => {
     if (!jobText.trim() || jobText.trim().length < 20) {
-      onShowNotification('Por favor pega el texto de la propuesta de trabajo para analizar.');
+      onShowNotification(
+        isEn
+          ? 'Please paste the job offer description to analyze.'
+          : 'Por favor pega el texto de la propuesta de trabajo para analizar.'
+      );
       return;
     }
 
@@ -74,7 +83,11 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
       );
     } catch (err) {
       console.error(err);
-      onShowNotification('Ocurrió un error al procesar la propuesta. Intenta nuevamente.');
+      onShowNotification(
+        isEn
+          ? 'An error occurred while analyzing the offer. Please try again.'
+          : 'Ocurrió un error al procesar la propuesta. Intenta nuevamente.'
+      );
     } finally {
       setIsAnalyzing(false);
     }
@@ -88,11 +101,17 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
     updated.personalInfo.fullName = currentResume.personalInfo.fullName;
     updated.personalInfo.email = currentResume.personalInfo.email || 'isaacgestrada94@gmail.com';
     updated.personalInfo.phone = currentResume.personalInfo.phone || '+52 33 1835 9421';
-    updated.personalInfo.location = currentResume.personalInfo.location || (matchResult.detectedLanguage === 'en' ? 'Zapopan / Guadalajara, Jalisco, Mexico (On-site, Hybrid, or Remote)' : 'Zapopan / Guadalajara, Jalisco, México (Presencial, Híbrido o Remoto)');
+    updated.personalInfo.location =
+      currentResume.personalInfo.location ||
+      (matchResult.detectedLanguage === 'en'
+        ? 'Zapopan / Guadalajara, Jalisco, Mexico (On-site, Hybrid, or Remote)'
+        : 'Zapopan / Guadalajara, Jalisco, México (Presencial, Híbrido o Remoto)');
     updated.personalInfo.linkedinUrl = currentResume.personalInfo.linkedinUrl;
     updated.personalInfo.websiteUrl = currentResume.personalInfo.websiteUrl || 'https://orb-lite.com';
-    updated.personalInfo.githubUrl = currentResume.personalInfo.githubUrl || 'https://github.com/Orb-lite/Orb-Lite';
-    updated.personalInfo.portfolioUrl = currentResume.personalInfo.portfolioUrl || 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing';
+    updated.personalInfo.githubUrl = currentResume.personalInfo.githubUrl || 'https://github.com/Orb-lite/Portafolio.git';
+    updated.personalInfo.portfolioUrl =
+      currentResume.personalInfo.portfolioUrl ||
+      'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing';
     updated.personalInfo.title = matchResult.suggestedTitle;
     updated.personalInfo.summary = matchResult.suggestedSummary;
 
@@ -110,7 +129,7 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
       ...matchResult,
       coverLetter: updatedLetter,
     });
-    onShowNotification('Carta de presentación actualizada.');
+    onShowNotification(isEn ? 'Cover letter updated.' : 'Carta de presentación actualizada.');
   };
 
   return (
@@ -120,13 +139,15 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
         <div className="flex items-center gap-2 mb-1">
           <Sparkles className="w-5 h-5 text-amber-400" />
           <h2 className="text-base font-bold tracking-tight">
-            Ajustar a Propuesta de Trabajo & Cover Letter
+            {isEn
+              ? 'Tailor to Job Offer & Generate Cover Letter'
+              : 'Ajustar a Propuesta de Trabajo & Cover Letter'}
           </h2>
         </div>
         <p className="text-xs text-slate-300 leading-relaxed">
-          Pega el texto de la vacante u oferta de empleo. El sistema detecta el idioma,
-          analiza los requisitos y redacta automáticamente una **Carta de Presentación (Cover Letter)**
-          personalizada a quien corresponda, además de **optimizar tu CV** para maximizar la compatibilidad.
+          {isEn
+            ? 'Paste any job posting or requirement description. The system detects the language, aligns relevant competencies, drafts a tailored Cover Letter, and optimizes your resume summary and title.'
+            : 'Pega el texto de la vacante u oferta de empleo. El sistema detecta el idioma, analiza los requisitos y redacta automáticamente una Carta de Presentación (Cover Letter) personalizada, además de optimizar tu CV para maximizar la compatibilidad.'}
         </p>
       </div>
 
@@ -135,7 +156,7 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
             <FileText className="w-4 h-4 text-sky-600" />
-            <span>Texto de la Propuesta / Oferta de Trabajo</span>
+            <span>{isEn ? 'Job Posting / Requirements Text' : 'Texto de la Propuesta / Oferta de Trabajo'}</span>
           </label>
 
           {/* Language Selector */}
@@ -149,7 +170,7 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
                   ? 'bg-white font-bold text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
-              title="Detectar automáticamente según el texto"
+              title={isEn ? 'Auto-detect from text' : 'Detectar automáticamente según el texto'}
             >
               Auto ({detectedLang.toUpperCase()})
             </button>
@@ -181,7 +202,7 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
         {/* Quick Sample Presets */}
         <div className="space-y-1">
           <div className="text-[11px] font-medium text-slate-500">
-            O prueba con una propuesta de ejemplo:
+            {isEn ? 'Or try with a sample job offer:' : 'O prueba con una propuesta de ejemplo:'}
           </div>
           <div className="flex flex-wrap gap-1.5">
             {SAMPLE_JOB_OFFERS.map((s) => (
@@ -204,18 +225,24 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
             rows={7}
             value={jobText}
             onChange={(e) => setJobText(e.target.value)}
-            placeholder="Pega aquí la descripción completa de la vacante, responsabilidades, requisitos, tecnologías deseadas o perfil de la empresa (en español o en inglés)..."
+            placeholder={
+              isEn
+                ? 'Paste complete job description, required skills, responsibilities, or company profile here (in English or Spanish)...'
+                : 'Pega aquí la descripción completa de la vacante, responsabilidades, requisitos, tecnologías deseadas o perfil de la empresa (en español o en inglés)...'
+            }
             className="w-full p-3 border border-slate-300 rounded-lg text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-slate-50/50"
           />
           {jobText && (
             <div className="flex items-center justify-between text-[11px] text-slate-400 mt-1">
-              <span>{jobText.trim().split(/\s+/).filter(Boolean).length} palabras</span>
+              <span>
+                {jobText.trim().split(/\s+/).filter(Boolean).length} {isEn ? 'words' : 'palabras'}
+              </span>
               <button
                 type="button"
                 onClick={() => setJobText('')}
                 className="text-slate-400 hover:text-slate-600 transition-colors"
               >
-                Limpiar texto
+                {isEn ? 'Clear text' : 'Limpiar texto'}
               </button>
             </div>
           )}
@@ -231,13 +258,19 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
           {isAnalyzing ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Analizando propuesta y redactando Cover Letter...</span>
+              <span>
+                {isEn
+                  ? 'Analyzing offer & generating Cover Letter...'
+                  : 'Analizando propuesta y redactando Cover Letter...'}
+              </span>
             </>
           ) : (
             <>
               <Sparkles className="w-4 h-4 text-amber-300" />
               <span>
-                Redactar Cover Letter en {detectedLang === 'es' ? 'Español' : 'Inglés'} + Optimizar CV
+                {isEn
+                  ? `Draft Cover Letter in ${detectedLang === 'es' ? 'Spanish' : 'English'} + Tailor Resume`
+                  : `Redactar Cover Letter en ${detectedLang === 'es' ? 'Español' : 'Inglés'} + Optimizar CV`}
               </span>
             </>
           )}
@@ -260,7 +293,7 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
             >
               <FileText className="w-3.5 h-3.5" />
               <span>
-                Carta de Presentación ({matchResult.detectedLanguage.toUpperCase()})
+                {isEn ? 'Cover Letter' : 'Carta de Presentación'} ({matchResult.detectedLanguage.toUpperCase()})
               </span>
             </button>
 
@@ -275,7 +308,7 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
             >
               <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
               <span>
-                CV Optimizado ({matchResult.matchScore}% Match)
+                {isEn ? 'Tailored Resume' : 'CV Optimizado'} ({matchResult.matchScore}% Match)
               </span>
             </button>
           </div>
@@ -291,8 +324,11 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
                 candidateLocation={currentResume.personalInfo.location}
                 candidateLinkedin={currentResume.personalInfo.linkedinUrl}
                 candidateWebsite={currentResume.personalInfo.websiteUrl || 'https://orb-lite.com'}
-                candidateGithub={currentResume.personalInfo.githubUrl || 'https://github.com/Orb-lite/Orb-Lite'}
-                candidatePortfolio={currentResume.personalInfo.portfolioUrl || 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing'}
+                candidateGithub={currentResume.personalInfo.githubUrl || 'https://github.com/Orb-lite/Portafolio.git'}
+                candidatePortfolio={
+                  currentResume.personalInfo.portfolioUrl ||
+                  'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing'
+                }
                 onUpdateCoverLetter={handleUpdateCoverLetter}
               />
             </div>
@@ -305,12 +341,12 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
               <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
                 <div>
                   <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                    Compatibilidad con la vacante
+                    {isEn ? 'Match Score with Job Posting' : 'Compatibilidad con la vacante'}
                   </div>
                   <div className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
                     <span className="text-emerald-600">{matchResult.matchScore}%</span>
                     <span className="text-xs font-medium text-slate-500">
-                      (Nivel de afinidad técnica muy alto)
+                      {isEn ? '(High technical affinity)' : '(Nivel de afinidad técnica muy alto)'}
                     </span>
                   </div>
                 </div>
@@ -322,7 +358,7 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
                     className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
                   >
                     <CheckCircle className="w-3.5 h-3.5" />
-                    <span>Aplicar esta Optimización al CV</span>
+                    <span>{isEn ? 'Apply This Optimization to Resume' : 'Aplicar esta Optimización al CV'}</span>
                   </button>
                 </div>
               </div>
@@ -330,7 +366,7 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
               {/* Matched Keywords */}
               <div>
                 <h4 className="text-xs font-bold text-slate-700 mb-1.5">
-                  Palabras Clave Identificadas y Alineadas:
+                  {isEn ? 'Identified & Aligned Keywords:' : 'Palabras Clave Identificadas y Alineadas:'}
                 </h4>
                 <div className="flex flex-wrap gap-1.5">
                   {matchResult.matchedKeywords.map((kw, idx) => (
@@ -347,7 +383,7 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
               {/* Suggested Title */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Título Profesional Sugerido para la Vacante:
+                  {isEn ? 'Suggested Professional Title for Opening:' : 'Título Profesional Sugerido para la Vacante:'}
                 </label>
                 <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200 text-xs font-semibold text-slate-900">
                   {matchResult.suggestedTitle}
@@ -357,7 +393,7 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
               {/* Suggested Summary */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Resumen Ejecutivo Optimizado (Palabras Clave Integradas):
+                  {isEn ? 'Optimized Summary (Integrated Keywords):' : 'Resumen Ejecutivo Optimizado (Palabras Clave Integradas):'}
                 </label>
                 <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-700 leading-relaxed text-justify">
                   {matchResult.suggestedSummary}
@@ -372,7 +408,7 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
                   className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded-lg shadow-xs transition-colors flex items-center gap-2"
                 >
                   <ArrowRight className="w-3.5 h-3.5" />
-                  <span>Ver en Visualizador y Descargar PDF</span>
+                  <span>{isEn ? 'View in Preview & Download PDF' : 'Ver en Visualizador y Descargar PDF'}</span>
                 </button>
 
                 <button
@@ -381,7 +417,9 @@ export const JobOfferMatcher: React.FC<JobOfferMatcherProps> = ({
                   className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold text-xs rounded-lg transition-colors flex items-center gap-1.5"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Descargar CV Directo ({matchResult.detectedLanguage.toUpperCase()})</span>
+                  <span>
+                    {isEn ? 'Download PDF Direct' : 'Descargar CV Directo'} ({matchResult.detectedLanguage.toUpperCase()})
+                  </span>
                 </button>
               </div>
             </div>

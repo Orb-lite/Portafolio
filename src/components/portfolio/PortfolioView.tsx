@@ -22,22 +22,32 @@ import {
   Boxes,
 } from 'lucide-react';
 
+export interface LocalizedString {
+  en: string;
+  es: string;
+}
+
+export interface LocalizedArray {
+  en: string[];
+  es: string[];
+}
+
 export interface ProjectItem {
   id: string;
-  title: string;
-  subtitle: string;
+  title: LocalizedString;
+  subtitle: LocalizedString;
   category: 'all' | 'virtual-env' | 'aaa-games' | 'simulation' | 'art';
-  categoryLabel: string;
+  categoryLabel: LocalizedString;
   year: string;
   engine: string;
   mediaType: 'video' | 'image' | 'external';
   mediaSrc?: string;
   thumbnailSrc?: string;
-  description: string;
-  highlights: string[];
+  description: LocalizedString;
+  highlights: LocalizedArray;
   techStack: string[];
   externalUrl?: string;
-  externalLabel?: string;
+  externalLabel?: LocalizedString;
   mobyGamesUrl?: string;
   featured?: boolean;
 }
@@ -45,253 +55,509 @@ export interface ProjectItem {
 export const PORTFOLIO_PROJECTS: ProjectItem[] = [
   {
     id: 'shipped-aaa-titles',
-    title: 'EA Sports College Football 25',
-    subtitle: 'Shipped AAA Sports Title (MobyGames Verified Credit)',
+    title: {
+      en: 'EA Sports College Football 25',
+      es: 'EA Sports College Football 25',
+    },
+    subtitle: {
+      en: 'Shipped AAA Sports Title (MobyGames Verified Credit)',
+      es: 'Título Deportivo AAA Lanzado (Crédito Verificado en MobyGames)',
+    },
     category: 'aaa-games',
-    categoryLabel: 'AAA Games & Co-Dev',
+    categoryLabel: {
+      en: 'AAA Games & Co-Dev',
+      es: 'Videojuegos AAA & Co-Desarrollo',
+    },
     year: '2024',
     engine: 'Frostbite Engine',
     mediaType: 'external',
-    description:
-      'Verified public credit on MobyGames for flagship sports release EA Sports College Football 25. Co-developed at DEVBOT for premier global publisher Electronic Arts (EA Sports). Provided critical Technical Art and QA support across UI/UX systems, Frostbite engine pipelines, initial playable build performance, and console certification for PlayStation 5 and Xbox Series X/S.',
-    highlights: [
-      'Publicly verified credits on MobyGames database for Isaac Gómez',
-      'Engineered & validated initial playable build ensuring steady 60+ FPS performance',
-      'Interactive UI/UX implementation in proprietary Frostbite Engine',
-      'Large-scale source control with Perforce (Helix Core) and automated Jenkins CI/CD',
-    ],
+    description: {
+      en: 'Verified public credit on MobyGames for flagship sports release EA Sports College Football 25. Co-developed at DEVBOT for premier global publisher Electronic Arts (EA Sports). Provided critical Technical Art and QA support across UI/UX systems, Frostbite engine pipelines, initial playable build performance, and console certification for PlayStation 5 and Xbox Series X/S.',
+      es: 'Crédito público verificado en MobyGames para el lanzamiento deportivo insignia EA Sports College Football 25. Co-desarrollado en DEVBOT para el publisher líder global Electronic Arts (EA Sports). Soporte crítico como Artista Técnico y QA en sistemas de UI/UX, pipelines en Frostbite Engine, rendimiento en builds jugables iniciales y certificación de consola para PlayStation 5 y Xbox Series X/S.',
+    },
+    highlights: {
+      en: [
+        'Publicly verified credits on MobyGames database for Isaac Gómez',
+        'Engineered & validated initial playable build ensuring steady 60+ FPS performance',
+        'Interactive UI/UX implementation in proprietary Frostbite Engine',
+        'Large-scale source control with Perforce (Helix Core) and automated Jenkins CI/CD',
+      ],
+      es: [
+        'Crédito verificado públicamente en la base de datos de MobyGames para Isaac Gómez',
+        'Ingeniería y validación del primer build jugable asegurando rendimiento sostenido a 60+ FPS',
+        'Implementación de sistemas de UI/UX interactiva en el motor propietario Frostbite',
+        'Control de versiones a gran escala con Perforce (Helix Core) y automatización CI/CD con Jenkins',
+      ],
+    },
     techStack: ['Frostbite Engine', 'Perforce Helix Core', 'Jenkins CI', 'C++', 'UI/UX', 'PS5', 'Xbox Series X/S'],
     externalUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
-    externalLabel: 'View Verified MobyGames Credits',
+    externalLabel: {
+      en: 'View Verified MobyGames Credits',
+      es: 'Ver Créditos Verificados en MobyGames',
+    },
     mobyGamesUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
     featured: true,
   },
   {
     id: 'watercolor-sim',
-    title: 'Acuarela - Stylized Interactive Virtual Environment',
-    subtitle: 'Real-Time Non-Photorealistic Rendering (NPR) & Exploration in Unreal Engine',
+    title: {
+      en: 'Acuarela - Stylized Interactive Virtual Environment',
+      es: 'Acuarela - Entorno Virtual Interactivo Estilizado',
+    },
+    subtitle: {
+      en: 'Real-Time Non-Photorealistic Rendering (NPR) & Exploration in Unreal Engine',
+      es: 'Renderizado No Fotorrealista (NPR) en Tiempo Real y Exploración en Unreal Engine',
+    },
     category: 'virtual-env',
-    categoryLabel: 'Interactive Virtual Environments',
+    categoryLabel: {
+      en: 'Interactive Virtual Environments',
+      es: 'Entornos Virtuales Interactivos',
+    },
     year: '2022',
     engine: 'Unreal Engine (PCD3D_SM5)',
     mediaType: 'video',
     mediaSrc: '/portfolio_assets/watercolor-interactive-environment.mp4',
-    description:
-      'An expressive interactive 3D virtual environment built in Unreal Engine featuring custom stylized post-processing shaders mimicking traditional watercolor paintings. Players navigate an atmospheric architectural setting with real-time dynamic lighting, ambient audio, and responsive player movement.',
-    highlights: [
-      'Custom HLSL post-process material edge detection & watercolor pigment bleeding',
-      'Smooth 60+ FPS navigation in 64-bit Standalone Windows preview',
-      'Dynamic lighting, particle dust motes, and atmospheric depth cues',
-    ],
+    description: {
+      en: 'An expressive interactive 3D virtual environment built in Unreal Engine featuring custom stylized post-processing shaders mimicking traditional watercolor paintings. Players navigate an atmospheric architectural setting with real-time dynamic lighting, ambient audio, and responsive player movement.',
+      es: 'Entorno virtual 3D interactivo y expresivo desarrollado en Unreal Engine con shaders de post-procesamiento estilizados personalizados que emulan pinturas en acuarela tradicionales. Permite navegar por un escenario arquitectónico atmosférico con iluminación dinámica en tiempo real, audio ambiental y locomoción reactiva.',
+    },
+    highlights: {
+      en: [
+        'Custom HLSL post-process material edge detection & watercolor pigment bleeding',
+        'Smooth 60+ FPS navigation in 64-bit Standalone Windows preview',
+        'Dynamic lighting, particle dust motes, and atmospheric depth cues',
+      ],
+      es: [
+        'Material de post-proceso en HLSL con detección de bordes y dispersión de pigmentos de acuarela',
+        'Navegación fluida a 60+ FPS en preview ejecutable Standalone para Windows de 64 bits',
+        'Iluminación dinámica, partículas de polvo en suspensión y efectos atmosféricos de profundidad',
+      ],
+    },
     techStack: ['Unreal Engine', 'HLSL / Shaders', 'Post-Process Materials', 'DirectX SM5', 'C++ / Blueprints'],
     featured: true,
   },
   {
     id: 'scores-sports-sim',
-    title: 'Sports Broadcast & Real-Time Scoreboard Simulation',
-    subtitle: 'Dynamic In-Game Score Tracking, Clock & Broadcast Graphics System',
+    title: {
+      en: 'Sports Broadcast & Real-Time Scoreboard Simulation',
+      es: 'Simulación de Transmisión Deportiva y Marcador en Tiempo Real',
+    },
+    subtitle: {
+      en: 'Dynamic In-Game Score Tracking, Clock & Broadcast Graphics System',
+      es: 'Sistema Dinámico de Marcador en Juego, Reloj y Gráficos de Transmisión',
+    },
     category: 'aaa-games',
-    categoryLabel: 'AAA Games & Co-Dev',
+    categoryLabel: {
+      en: 'AAA Games & Co-Dev',
+      es: 'Videojuegos AAA & Co-Desarrollo',
+    },
     year: '2022 - 2023',
     engine: 'Unreal Engine / Real-Time UI',
     mediaType: 'video',
     mediaSrc: '/portfolio_assets/sports-scoreboard-simulation.mp4',
-    description:
-      'Real-time sports game display and scoring simulation designed to mimic televised sports broadcast feeds and high-stakes match gameplay. Features sub-frame responsive scoreboard updates, game clock synchronizations, and event-triggered visual transitions.',
-    highlights: [
-      'Event-driven score state machine handling points, quarters/halves, and timer logic',
-      'Broadcast-grade typography, responsive screen scaling, and team color theming',
-      'Bridges the gap between athletic game passion and technical real-time programming',
-    ],
+    description: {
+      en: 'Real-time sports game display and scoring simulation designed to mimic televised sports broadcast feeds and high-stakes match gameplay. Features sub-frame responsive scoreboard updates, game clock synchronizations, and event-triggered visual transitions.',
+      es: 'Simulación de pantalla de juego y marcador deportivo en tiempo real diseñada para emular transmisiones televisivas deportivas y partidas de alta exigencia. Cuenta con actualización instantánea cuadro a cuadro, sincronización de reloj de partido y transiciones visuales disparadas por eventos.',
+    },
+    highlights: {
+      en: [
+        'Event-driven score state machine handling points, quarters/halves, and timer logic',
+        'Broadcast-grade typography, responsive screen scaling, and team color theming',
+        'Bridges the gap between athletic game passion and technical real-time programming',
+      ],
+      es: [
+        'Máquina de estados de puntuación basada en eventos que maneja puntos, cuartos/tiempos y cronómetro',
+        'Tipografía con estándares de transmisión televisiva, escalado responsivo y paletas por equipo',
+        'Conexión directa entre la pasión por los deportes y la programación técnica en tiempo real',
+      ],
+    },
     techStack: ['Unreal Engine', 'UMG UI / Slate', 'Sports Mechanics', 'C++', 'Event Driven State'],
     featured: true,
   },
   {
     id: 'vdb-volumetric-sim',
-    title: 'OpenVDB Volumetric Smoke & Cloud Simulation',
-    subtitle: 'GPU-Accelerated Heterogeneous Volume Rendering',
+    title: {
+      en: 'OpenVDB Volumetric Smoke & Cloud Simulation',
+      es: 'Simulación Volumétrica de Humo y Nubes con OpenVDB',
+    },
+    subtitle: {
+      en: 'GPU-Accelerated Heterogeneous Volume Rendering',
+      es: 'Renderizado de Volúmenes Heterogéneos Acelerado por GPU',
+    },
     category: 'simulation',
-    categoryLabel: '3D Simulation & VFX',
+    categoryLabel: {
+      en: '3D Simulation & VFX',
+      es: 'Simulación 3D & Efectos Visuales',
+    },
     year: '2024',
     engine: 'Unreal Engine 5 (Niagara & OpenVDB)',
     mediaType: 'video',
     mediaSrc: '/portfolio_assets/vdb-volumetric-simulation.mp4',
-    description:
-      'Cutting-edge volumetric simulation inside Unreal Engine 5 taking advantage of OpenVDB spatial data structures. Computes high-density smoke plumes, atmospheric scattering, and light absorption in real time.',
-    highlights: [
-      'GPU-accelerated raymarching of 3D density grids without baking artifacts',
-      'Physically accurate phase function scattering and shadow penetration',
-      'Interactive viewport parameter adjustments for density, absorption, and velocity',
-    ],
+    description: {
+      en: 'Cutting-edge volumetric simulation inside Unreal Engine 5 taking advantage of OpenVDB spatial data structures. Computes high-density smoke plumes, atmospheric scattering, and light absorption in real time.',
+      es: 'Simulación volumétrica de vanguardia en Unreal Engine 5 utilizando estructuras de datos espaciales OpenVDB. Calcula plumas de humo de alta densidad, dispersión atmosférica y absorción lumínica en tiempo real.',
+    },
+    highlights: {
+      en: [
+        'GPU-accelerated raymarching of 3D density grids without baking artifacts',
+        'Physically accurate phase function scattering and shadow penetration',
+        'Interactive viewport parameter adjustments for density, absorption, and velocity',
+      ],
+      es: [
+        'Raymarching acelerado por GPU de mallas volumétricas 3D sin artefactos de horneado',
+        'Dispersión física precisa mediante funciones de fase y penetración de sombras',
+        'Ajustes interactivos de densidad, absorción y velocidad en tiempo real desde el viewport',
+      ],
+    },
     techStack: ['Unreal Engine 5', 'OpenVDB', 'Niagara VFX', 'Heterogeneous Volumes', 'GPU Shaders'],
     featured: true,
   },
   {
     id: 'class-sim',
-    title: 'ClassSim - Interactive Classroom Virtual Simulation',
-    subtitle: 'Spatial Presence & Interactive Education Environment',
+    title: {
+      en: 'ClassSim - Interactive Classroom Virtual Simulation',
+      es: 'ClassSim - Simulación Virtual Interactiva de Aulas',
+    },
+    subtitle: {
+      en: 'Spatial Presence & Interactive Education Environment',
+      es: 'Presencia Espacial y Entorno Interactivo de Educación',
+    },
     category: 'virtual-env',
-    categoryLabel: 'Interactive Virtual Environments',
+    categoryLabel: {
+      en: 'Interactive Virtual Environments',
+      es: 'Entornos Virtuales Interactivos',
+    },
     year: '2020',
     engine: 'Unreal Engine (Standalone NetMode)',
     mediaType: 'video',
     mediaSrc: '/portfolio_assets/interactive-classroom-simulation.mp4',
-    description:
-      'Interactive 3D simulation of an academic auditorium and classroom setting designed for training, multi-perspective spatial awareness, and interactive virtual navigation.',
-    highlights: [
-      'Interactive first-person controller with collision geometry and sightline testing',
-      'Realistic architectural scaling, natural light bounce, and seating arrangements',
-      'Optimized standalone Windows build for lightweight distribution',
-    ],
+    description: {
+      en: 'Interactive 3D simulation of an academic auditorium and classroom setting designed for training, multi-perspective spatial awareness, and interactive virtual navigation.',
+      es: 'Simulación 3D interactiva de un auditorio y aula académica diseñada para capacitación, conciencia espacial multiperspectiva y navegación virtual interactiva.',
+    },
+    highlights: {
+      en: [
+        'Interactive first-person controller with collision geometry and sightline testing',
+        'Realistic architectural scaling, natural light bounce, and seating arrangements',
+        'Optimized standalone Windows build for lightweight distribution',
+      ],
+      es: [
+        'Controlador interactivo en primera persona con geometría de colisión y análisis visual',
+        'Escala arquitectónica realista, rebote de luz natural y distribución ergonómica',
+        'Build ejecutable Standalone para Windows altamente optimizado para distribución ligera',
+      ],
+    },
     techStack: ['Unreal Engine', 'Architectural Visualization', 'Standalone Build', 'C++ / Blueprints'],
   },
   {
     id: 'procedural-world-gen',
-    title: 'RWGen - Procedural World & Environment Generation',
-    subtitle: 'Algorithmic Terrain Biomes & Runtime Spatial Streaming',
+    title: {
+      en: 'RWGen - Procedural World & Environment Generation',
+      es: 'RWGen - Generación Procedimental de Mundos y Terrenos',
+    },
+    subtitle: {
+      en: 'Algorithmic Terrain Biomes & Runtime Spatial Streaming',
+      es: 'Biomas Algorítmicos de Terreno y Streaming Espacial en Tiempo de Ejecución',
+    },
     category: 'virtual-env',
-    categoryLabel: 'Interactive Virtual Environments',
+    categoryLabel: {
+      en: 'Interactive Virtual Environments',
+      es: 'Entornos Virtuales Interactivos',
+    },
     year: '2022',
     engine: 'Unreal Engine Procedural Systems',
     mediaType: 'video',
     mediaSrc: '/portfolio_assets/procedural-world-generation.mp4',
-    description:
-      'Algorithmic terrain generation and procedural landscape populating. Demonstrates runtime biome generation, rule-based vegetation scattering, and scalable level-of-detail (LOD) streaming.',
-    highlights: [
-      'Noise-based heightmap elevation blending and biome transition zones',
-      'Foliage instance clustering optimized for high framerates on standard GPUs',
-      'Procedural generation rules eliminating repetitive manual level placement',
-    ],
+    description: {
+      en: 'Algorithmic terrain generation and procedural landscape populating. Demonstrates runtime biome generation, rule-based vegetation scattering, and scalable level-of-detail (LOD) streaming.',
+      es: 'Generación algorítmica de terrenos y poblamiento procedimental de paisajes. Demuestra generación de biomas en tiempo de ejecución, distribución de vegetación basada en reglas y streaming escalable por nivel de detalle (LOD).',
+    },
+    highlights: {
+      en: [
+        'Noise-based heightmap elevation blending and biome transition zones',
+        'Foliage instance clustering optimized for high framerates on standard GPUs',
+        'Procedural generation rules eliminating repetitive manual level placement',
+      ],
+      es: [
+        'Fusión de elevaciones por mapa de alturas con ruido y zonas de transición entre biomas',
+        'Agrupamiento de instancias de vegetación optimizado para altos framerates en GPUs comunes',
+        'Reglas procedimentales que eliminan la colocación manual repetitiva en niveles masivos',
+      ],
+    },
     techStack: ['Unreal Engine', 'Procedural Algorithms', 'Landscape Tools', 'HLSL', 'LOD Streaming'],
   },
   {
     id: 'unreal-editor-multiplayer',
-    title: 'Unreal Engine Multiplayer & Server Architecture Preview',
-    subtitle: 'Client-Server Replication, RPCs & Network Synchronization',
+    title: {
+      en: 'Unreal Engine Multiplayer & Server Architecture Preview',
+      es: 'Arquitectura Multijugador y Servidor Dedicado en Unreal Engine',
+    },
+    subtitle: {
+      en: 'Client-Server Replication, RPCs & Network Synchronization',
+      es: 'Replicación Cliente-Servidor, RPCs y Sincronización en Red',
+    },
     category: 'virtual-env',
-    categoryLabel: 'Interactive Virtual Environments',
+    categoryLabel: {
+      en: 'Interactive Virtual Environments',
+      es: 'Entornos Virtuales Interactivos',
+    },
     year: '2020',
     engine: 'Unreal Engine (Server 64-bit PCD3D_SM5)',
     mediaType: 'video',
     mediaSrc: '/portfolio_assets/unreal-multiplayer-server-preview.mp4',
-    description:
-      'Dedicated server multiplayer simulation testing real-time client-to-server replication, authoritative state verification, position interpolation, and network debug tools in Unreal Engine.',
-    highlights: [
-      'Server-authoritative physics and network replication setup',
-      'Multi-client window debugging with synchronized game state in real time',
-      'Deep workflow familiarity with Unreal Editor internal build pipelines',
-    ],
+    description: {
+      en: 'Dedicated server multiplayer simulation testing real-time client-to-server replication, authoritative state verification, position interpolation, and network debug tools in Unreal Engine.',
+      es: 'Simulación multijugador con servidor dedicado probando replicación de cliente a servidor en tiempo real, verificación de estado autoritativo, interpolación de posiciones y herramientas de depuración de red en Unreal Engine.',
+    },
+    highlights: {
+      en: [
+        'Server-authoritative physics and network replication setup',
+        'Multi-client window debugging with synchronized game state in real time',
+        'Deep workflow familiarity with Unreal Editor internal build pipelines',
+      ],
+      es: [
+        'Físicas con servidor autoritativo y configuración de replicación en red',
+        'Depuración en múltiples ventanas con clientes simultáneos y estado sincronizado',
+        'Dominio profundo de pipelines de compilación interna de Unreal Editor',
+      ],
+    },
     techStack: ['Unreal Engine', 'Multiplayer Networking', 'Replication / RPCs', 'Server Architecture'],
   },
   {
     id: 'industrial-digital-twins',
-    title: 'Industrial Manufacturing Digital Twins (Flex)',
-    subtitle: 'Assembly Line Simulation & VR Training for Fortune 500 Enterprises',
+    title: {
+      en: 'Industrial Manufacturing Digital Twins (Flex)',
+      es: 'Gemelos Digitales de Manufactura Industrial (Flex)',
+    },
+    subtitle: {
+      en: 'Assembly Line Simulation & VR Training for Fortune 500 Enterprises',
+      es: 'Simulación de Líneas de Ensamble y Capacitación VR para Clientes Fortune 500',
+    },
     category: 'simulation',
-    categoryLabel: '3D Simulation & VFX',
+    categoryLabel: {
+      en: '3D Simulation & VFX',
+      es: 'Simulación 3D & Gemelos Digitales',
+    },
     year: '2024 - 2026',
     engine: 'Unreal Engine 5 & FlexSim',
     mediaType: 'external',
-    description:
-      'High-precision real-time 3D Digital Twins of industrial manufacturing floors for global Fortune 500 enterprises across automotive, advanced technology, and pharmaceutical sectors (under strict NDAs). Modeled assembly line throughput, automated failure detection, and thermal spacing.',
-    highlights: [
-      'Pre-empted physical machine assembly bottlenecks using predictive 3D simulations',
-      'Calculated optimal machinery spacing to avoid thermal overheating on floor',
-      'Created immersive VR training modules for safe operational onboarding on heavy robotics',
-    ],
+    description: {
+      en: 'High-precision real-time 3D Digital Twins of industrial manufacturing floors for global Fortune 500 enterprises across automotive, advanced technology, and pharmaceutical sectors (under strict NDAs). Modeled assembly line throughput, automated failure detection, and thermal spacing.',
+      es: 'Gemelos Digitales 3D en tiempo real de alta precisión para plantas industriales de empresas Fortune 500 globales en sectores automotriz, tecnología avanzada y farmacéutica (bajo estricta confidencialidad). Modelado de capacidad de ensamble, detección automática de fallas y espaciado térmico.',
+    },
+    highlights: {
+      en: [
+        'Pre-empted physical machine assembly bottlenecks using predictive 3D simulations',
+        'Calculated optimal machinery spacing to avoid thermal overheating on floor',
+        'Created immersive VR training modules for safe operational onboarding on heavy robotics',
+      ],
+      es: [
+        'Detección anticipada de cuellos de botella en ensamble mediante simulaciones predictivas 3D',
+        'Cálculo de separación óptima de maquinaria para prevenir sobrecalentamiento en planta',
+        'Módulos inmersivos de capacitación en Realidad Virtual para inducción segura en robótica pesada',
+      ],
+    },
     techStack: ['Unreal Engine 5', 'FlexSim', 'Industrial IoT', 'VR (Virtual Reality)', 'Python', 'Digital Twins'],
     externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
-    externalLabel: 'View Portfolio Drive Folder',
+    externalLabel: {
+      en: 'View Portfolio Drive Folder',
+      es: 'Ver Carpeta de Portafolio en Drive',
+    },
   },
   {
     id: 'orblite-platform',
-    title: 'Orblite - SaaS Telematics & Vehicle Management Platform',
-    subtitle: 'Full-Stack Fleet Monitoring, Sensor Telemetry & Internal ERP/CRM',
+    title: {
+      en: 'Orblite - SaaS Telematics & Vehicle Management Platform',
+      es: 'Orblite - Plataforma SaaS de Telemática y Gestión Vehicular',
+    },
+    subtitle: {
+      en: 'Full-Stack Fleet Monitoring, Sensor Telemetry & Internal ERP/CRM',
+      es: 'Monitoreo de Flotas Full-Stack, Telemetría de Sensores y ERP/CRM Interno',
+    },
     category: 'simulation',
-    categoryLabel: '3D Simulation & VFX',
+    categoryLabel: {
+      en: '3D Simulation & VFX',
+      es: 'Arquitectura de Software & Telemática',
+    },
     year: '2026 - Present',
     engine: 'React / TypeScript / Supabase',
     mediaType: 'external',
-    description:
-      'Commercial telematics SaaS platform engineered from the ground up for GPS tracking, telemetry analytics, and vehicle operations. Includes proprietary internal CRM and ERP systems, AI-powered prospecting tools, and high-performance cloud deployment.',
-    highlights: [
-      'End-to-end full-stack web architecture serving live fleets and enterprise clients',
-      'Real-time telemetry map tracking, automated alerts, and financial reporting',
-      'Source code publicly visible on GitHub organization repositories',
-    ],
+    description: {
+      en: 'Commercial telematics SaaS platform engineered from the ground up for GPS tracking, telemetry analytics, and vehicle operations. Includes proprietary internal CRM and ERP systems, AI-powered prospecting tools, and high-performance cloud deployment.',
+      es: 'Plataforma SaaS comercial de telemática desarrollada desde cero para rastreo GPS, analítica telemática y operaciones vehiculares. Incluye sistemas CRM y ERP propietarios, automatización de prospección con IA y despliegue cloud de alto rendimiento.',
+    },
+    highlights: {
+      en: [
+        'End-to-end full-stack web architecture serving live fleets and enterprise clients',
+        'Real-time telemetry map tracking, automated alerts, and financial reporting',
+        'Source code publicly visible on GitHub organization repositories',
+      ],
+      es: [
+        'Arquitectura web full-stack de extremo a extremo para flotas activas y clientes corporativos',
+        'Rastreo telemático en mapa en tiempo real, alertas automatizadas y reportes financieros',
+        'Repositorios de código estructurados y visibles en la organización de GitHub',
+      ],
+    },
     techStack: ['TypeScript', 'React', 'Tailwind CSS', 'Supabase', 'Vercel', 'Cloudflare', 'REST APIs'],
     externalUrl: 'https://orb-lite.com',
-    externalLabel: 'Visit orb-lite.com',
+    externalLabel: {
+      en: 'Visit orb-lite.com',
+      es: 'Visitar orb-lite.com',
+    },
   },
   {
     id: 'unreal-standalone-gameplay',
-    title: 'Unreal Engine Standalone Game Simulation',
-    subtitle: 'Real-Time Physics, Character Controller & Environmental Interaction',
+    title: {
+      en: 'Unreal Engine Standalone Game Simulation',
+      es: 'Simulación de Videojuego Ejecutable en Unreal Engine',
+    },
+    subtitle: {
+      en: 'Real-Time Physics, Character Controller & Environmental Interaction',
+      es: 'Físicas en Tiempo Real, Controlador de Personaje e Interacción Ambiental',
+    },
     category: 'virtual-env',
-    categoryLabel: 'Interactive Virtual Environments',
+    categoryLabel: {
+      en: 'Interactive Virtual Environments',
+      es: 'Entornos Virtuales Interactivos',
+    },
     year: '2020',
     engine: 'Unreal Engine (Standalone 64-bit PCD3D_SM5)',
     mediaType: 'video',
     mediaSrc: '/portfolio_assets/unreal-standalone-gameplay.mp4',
-    description:
-      'Direct gameplay recording from standalone client build featuring real-time collision detection, responsive third-person camera mechanics, and dynamic physics objects.',
-    highlights: [
-      '60 FPS gameplay validation in standalone Windows runtime',
-      'Third-person character locomotion with acceleration and braking curves',
-      'Engineered interactive mechanics using Blueprints and C++',
-    ],
+    description: {
+      en: 'Direct gameplay recording from standalone client build featuring real-time collision detection, responsive third-person camera mechanics, and dynamic physics objects.',
+      es: 'Captura directa de jugabilidad en build ejecutable con detección de colisiones en tiempo real, cámara reactiva en tercera persona y objetos con dinámicas de física.',
+    },
+    highlights: {
+      en: [
+        '60 FPS gameplay validation in standalone Windows runtime',
+        'Third-person character locomotion with acceleration and braking curves',
+        'Engineered interactive mechanics using Blueprints and C++',
+      ],
+      es: [
+        'Validación de jugabilidad a 60 FPS en entorno ejecutable para Windows',
+        'Locomoción de personaje en tercera persona con curvas de aceleración y frenado',
+        'Mecánicas interactivas programadas mediante Blueprints y C++',
+      ],
+    },
     techStack: ['Unreal Engine', 'Character Locomotion', 'Physics Simulation', 'C++ / Blueprints'],
   },
   {
     id: 'unreal-editor-project4',
-    title: 'Unreal Engine Scene Assembly & Level Construction',
-    subtitle: 'Lighting Setup, Material Instances & Viewport Profiling',
+    title: {
+      en: 'Unreal Engine Scene Assembly & Level Construction',
+      es: 'Montaje de Escenarios y Construcción de Niveles en Unreal Engine',
+    },
+    subtitle: {
+      en: 'Lighting Setup, Material Instances & Viewport Profiling',
+      es: 'Iluminación, Instancias de Materiales y Perfilado en Viewport',
+    },
     category: 'virtual-env',
-    categoryLabel: 'Interactive Virtual Environments',
+    categoryLabel: {
+      en: 'Interactive Virtual Environments',
+      es: 'Entornos Virtuales Interactivos',
+    },
     year: '2020',
     engine: 'Unreal Editor',
     mediaType: 'video',
     mediaSrc: '/portfolio_assets/unreal-project4-editor.mp4',
-    description:
-      'In-editor level construction session demonstrating asset placement, volumetric fog tuning, static and dynamic light building, and performance profiling across rendering passes.',
-    highlights: [
-      'Material instance parameters tuning for physically based rendering (PBR)',
-      'Draw call and polygon budget optimization for target platforms',
-      'Real-time editor viewport profiling and debugging',
-    ],
+    description: {
+      en: 'In-editor level construction session demonstrating asset placement, volumetric fog tuning, static and dynamic light building, and performance profiling across rendering passes.',
+      es: 'Sesión de construcción de nivel en editor demostrando colocación de assets, niebla volumétrica, cálculo de iluminación estática y dinámica, y perfilado de rendimiento en passes de render.',
+    },
+    highlights: {
+      en: [
+        'Material instance parameters tuning for physically based rendering (PBR)',
+        'Draw call and polygon budget optimization for target platforms',
+        'Real-time editor viewport profiling and debugging',
+      ],
+      es: [
+        'Ajuste fino de instancias de materiales para renderizado basado en física (PBR)',
+        'Optimización de presupuesto de polígonos y draw calls para plataformas de destino',
+        'Depuración y perfilado de rendimiento en tiempo real en viewport del editor',
+      ],
+    },
     techStack: ['Unreal Engine', 'Level Design', 'PBR Materials', 'Profiling & Optimization'],
   },
   {
     id: 'concept-artworks',
-    title: 'Digital Concept Art & Environment Visual Development',
-    subtitle: 'Atmospheric Mood Studies & Creative Illustration',
+    title: {
+      en: 'Digital Concept Art & Environment Visual Development',
+      es: 'Arte Conceptual Digital y Desarrollo Visual de Entornos',
+    },
+    subtitle: {
+      en: 'Atmospheric Mood Studies & Creative Illustration',
+      es: 'Estudios Atmosféricos de Iluminación e Ilustración Creativa',
+    },
     category: 'art',
-    categoryLabel: 'Concept Art & Visual Development',
+    categoryLabel: {
+      en: 'Concept Art & Visual Dev',
+      es: 'Arte Conceptual & Desarrollo Visual',
+    },
     year: '2018 - 2022',
     engine: 'Photoshop / Digital Painting',
     mediaType: 'image',
     mediaSrc: '/portfolio_assets/concept-artwork-1.png',
     thumbnailSrc: '/portfolio_assets/concept-artwork-1.png',
-    description:
-      'Digital illustration and visual development exploratory artworks capturing mood, lighting, perspective, and stylized environment design for interactive virtual experiences.',
-    highlights: [
-      'Exploration of color palettes, architectural silhouette, and lighting contrast',
-      'Serves as visual target benchmarks before 3D environment grayboxing and shader authoring',
-      'Original creative artworks from personal portfolio archive',
-    ],
+    description: {
+      en: 'Digital illustration and visual development exploratory artworks capturing mood, lighting, perspective, and stylized environment design for interactive virtual experiences.',
+      es: 'Ilustraciones digitales y desarrollo visual exploratorio capturando atmósfera, iluminación, perspectiva y diseño estilizado de entornos para experiencias virtuales interactivas.',
+    },
+    highlights: {
+      en: [
+        'Exploration of color palettes, architectural silhouette, and lighting contrast',
+        'Serves as visual target benchmarks before 3D environment grayboxing and shader authoring',
+        'Original creative artworks from personal portfolio archive',
+      ],
+      es: [
+        'Exploración de paletas de color, siluetas arquitectónicas y contraste lumínico',
+        'Funciona como estándar visual previo al modelado 3D (grayboxing) y shaders',
+        'Obras creativas originales del archivo de portafolio personal',
+      ],
+    },
     techStack: ['Digital Painting', 'Concept Art', 'Lighting Theory', 'Color Scripts'],
   },
 ];
 
 interface PortfolioViewProps {
+  language?: 'es' | 'en';
   onSwitchToCv: () => void;
   onSwitchToAbout: () => void;
 }
 
-export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewProps) {
+export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }: PortfolioViewProps) {
+  const isEn = language === 'en';
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeModalProject, setActiveModalProject] = useState<ProjectItem | null>(null);
   const [selectedArtIndex, setSelectedArtIndex] = useState<number>(0);
+
+  const categories = [
+    {
+      id: 'all',
+      label: isEn ? 'All Projects' : 'Todos los Proyectos',
+      icon: Layers,
+    },
+    {
+      id: 'virtual-env',
+      label: isEn ? 'Interactive Virtual Environments' : 'Entornos Virtuales Interactivos',
+      icon: Monitor,
+    },
+    {
+      id: 'aaa-games',
+      label: isEn ? 'AAA Games & Co-Dev' : 'Juegos AAA & Co-Desarrollo',
+      icon: Gamepad2,
+    },
+    {
+      id: 'simulation',
+      label: isEn ? '3D Simulation & Digital Twins' : 'Simulación 3D & Gemelos Digitales',
+      icon: Boxes,
+    },
+    {
+      id: 'art',
+      label: isEn ? 'Concept Art & Visual Dev' : 'Arte Conceptual & Desarrollo Visual',
+      icon: Film,
+    },
+  ];
 
   const filteredProjects = PORTFOLIO_PROJECTS.filter((p) => {
     if (selectedCategory === 'all') return true;
@@ -308,7 +574,11 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
         <div className="relative z-10 max-w-4xl space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 border border-sky-400/30 text-sky-300 text-xs font-semibold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5 text-sky-400" />
-            <span>Interactive Virtual Environments & AAA Real-Time 3D</span>
+            <span>
+              {isEn
+                ? 'Interactive Virtual Environments & AAA Real-Time 3D'
+                : 'Entornos Virtuales Interactivos & 3D en Tiempo Real'}
+            </span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
@@ -316,10 +586,21 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
           </h1>
 
           <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal">
-            <span className="text-amber-400 font-semibold">32-year-old engineer</span> dedicated since{' '}
-            <span className="text-sky-300 font-semibold">2018</span> to creating interactive virtual environments,
-            Unreal Engine simulations, and high-performance 3D graphics. Credited on shipped AAA sports titles verified
-            on MobyGames.
+            {isEn ? (
+              <>
+                <span className="text-amber-400 font-semibold">32-year-old engineer</span> dedicated since{' '}
+                <span className="text-sky-300 font-semibold">2018</span> to creating interactive virtual environments,
+                Unreal Engine simulations, and high-performance 3D graphics. Credited on shipped AAA sports titles verified
+                on MobyGames.
+              </>
+            ) : (
+              <>
+                <span className="text-amber-400 font-semibold">Ingeniero de 32 años</span> dedicado desde{' '}
+                <span className="text-sky-300 font-semibold">2018</span> a la creación de entornos virtuales interactivos,
+                simulaciones en Unreal Engine y gráficos 3D de alto rendimiento. Acreditado en títulos deportivos AAA lanzados
+                al mercado y verificados en MobyGames.
+              </>
+            )}
           </p>
 
           {/* Quick Hub Links */}
@@ -331,7 +612,7 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
               className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-white font-medium border border-slate-600/70 shadow-xs transition-all hover:scale-[1.02]"
             >
               <Github className="w-4 h-4 text-slate-200" />
-              <span>GitHub: Portafolio.git</span>
+              <span>GitHub: Portafolio</span>
               <ExternalLink className="w-3 h-3 text-slate-400" />
             </a>
 
@@ -342,7 +623,7 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
               className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-semibold border border-amber-500/40 shadow-xs transition-all hover:scale-[1.02]"
             >
               <Trophy className="w-4 h-4 text-amber-400" />
-              <span>MobyGames (Shipped Credits)</span>
+              <span>MobyGames ({isEn ? 'Shipped Credits' : 'Créditos AAA'})</span>
               <ExternalLink className="w-3 h-3 text-amber-400" />
             </a>
 
@@ -353,7 +634,7 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
               className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-white font-medium border border-slate-600/70 shadow-xs transition-all hover:scale-[1.02]"
             >
               <FolderOpen className="w-4 h-4 text-amber-400" />
-              <span>Drive Portfolio Folder</span>
+              <span>{isEn ? 'Drive Portfolio Folder' : 'Carpeta de Portafolio en Drive'}</span>
               <ExternalLink className="w-3 h-3 text-slate-400" />
             </a>
 
@@ -374,7 +655,7 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600/70 hover:bg-indigo-600 text-white font-semibold transition-all hover:scale-[1.02]"
             >
               <Flame className="w-4 h-4 text-amber-300" />
-              <span>My Passions & Bio</span>
+              <span>{isEn ? 'My Passions & Bio' : 'Mis Pasiones & Historia'}</span>
               <ChevronRight className="w-3 h-3" />
             </button>
           </div>
@@ -390,15 +671,24 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-base sm:text-lg font-bold text-slate-900">
-                Shipped AAA Titles in Public Credits
+                {isEn ? 'Shipped AAA Titles in Public Credits' : 'Títulos AAA Lanzados con Crédito Público'}
               </h2>
               <span className="text-xs bg-amber-100 text-amber-900 font-semibold px-2 py-0.5 rounded-full border border-amber-300">
-                Verified on MobyGames
+                {isEn ? 'Verified on MobyGames' : 'Verificado en MobyGames'}
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
-              Isaac Gómez Estrada is officially credited on <strong>EA Sports College Football 25</strong> (PS5, Xbox
-              Series X/S, 2024) developed in Frostbite Engine via co-development studio DEVBOT.
+              {isEn ? (
+                <>
+                  Isaac Gómez Estrada is officially credited on <strong>EA Sports College Football 25</strong> (PS5, Xbox
+                  Series X/S, 2024) developed in Frostbite Engine via co-development studio DEVBOT.
+                </>
+              ) : (
+                <>
+                  Isaac Gómez Estrada cuenta con crédito oficial en <strong>EA Sports College Football 25</strong> (PS5, Xbox
+                  Series X/S, 2024) desarrollado con el motor Frostbite a través del estudio de co-desarrollo DEVBOT.
+                </>
+              )}
             </p>
           </div>
         </div>
@@ -409,7 +699,7 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
           rel="noreferrer"
           className="shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md transition-all hover:scale-105"
         >
-          <span>Open MobyGames Profile</span>
+          <span>{isEn ? 'Open MobyGames Profile' : 'Ver Perfil en MobyGames'}</span>
           <ExternalLink className="w-4 h-4" />
         </a>
       </section>
@@ -417,13 +707,7 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
       {/* Category Filter Controls */}
       <div className="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-3">
         <div className="flex items-center gap-1.5 overflow-x-auto py-1 text-xs">
-          {[
-            { id: 'all', label: 'All Projects', icon: Layers },
-            { id: 'virtual-env', label: 'Interactive Virtual Environments', icon: Monitor },
-            { id: 'aaa-games', label: 'AAA Games & Co-Dev', icon: Gamepad2 },
-            { id: 'simulation', label: '3D Simulation & Digital Twins', icon: Boxes },
-            { id: 'art', label: 'Concept Art & Visual Dev', icon: Film },
-          ].map((cat) => {
+          {categories.map((cat) => {
             const Icon = cat.icon;
             const active = selectedCategory === cat.id;
             return (
@@ -445,168 +729,182 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
         </div>
 
         <span className="text-xs text-slate-500 font-medium">
-          Showing <strong>{filteredProjects.length}</strong> project showcases
+          {isEn ? (
+            <>Showing <strong>{filteredProjects.length}</strong> project showcases</>
+          ) : (
+            <>Mostrando <strong>{filteredProjects.length}</strong> proyectos</>
+          )}
         </span>
       </div>
 
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredProjects.map((project) => (
-          <div
-            key={project.id}
-            className="group bg-white rounded-2xl border border-slate-200/90 hover:border-sky-500 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden"
-          >
-            {/* Project Media Preview Area */}
-            <div className="relative aspect-video bg-slate-950 flex items-center justify-center overflow-hidden">
-              {project.mediaType === 'video' && project.mediaSrc ? (
-                <div
-                  className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500"
-                  onClick={() => setActiveModalProject(project)}
-                >
-                  <video
-                    src={project.mediaSrc}
-                    muted
-                    playsInline
-                    loop
-                    className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
-                    onMouseEnter={(e) => {
-                      try {
-                        e.currentTarget.play();
-                      } catch {
-                        /* ignore */
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.pause();
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-sky-600/90 text-white flex items-center justify-center shadow-lg group-hover:bg-sky-500 group-hover:scale-110 transition-all">
-                      <Play className="w-5 h-5 ml-0.5" />
-                    </div>
-                  </div>
-                  <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1">
-                    <Film className="w-3 h-3 text-sky-400" />
-                    <span>Watch Simulation Video</span>
-                  </span>
-                </div>
-              ) : project.mediaType === 'image' && project.mediaSrc ? (
-                <div
-                  className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500"
-                  onClick={() => setActiveModalProject(project)}
-                >
-                  <img
-                    src={project.mediaSrc}
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
-                  <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs">
-                    View Full Art Canvas
-                  </span>
-                </div>
-              ) : (
-                <div
-                  className="w-full h-full relative flex flex-col items-center justify-center p-6 text-center cursor-pointer bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900"
-                  onClick={() => setActiveModalProject(project)}
-                >
-                  {project.id === 'shipped-aaa-titles' ? (
-                    <Trophy className="w-12 h-12 text-amber-400 mb-2 animate-bounce" />
-                  ) : (
-                    <Globe className="w-12 h-12 text-sky-400 mb-2" />
-                  )}
-                  <h3 className="text-white font-bold text-sm">{project.title}</h3>
-                  <p className="text-xs text-slate-300 mt-1">{project.engine}</p>
-                  <span className="mt-3 text-[11px] font-semibold text-sky-300 underline decoration-sky-400">
-                    Explore Details & Verification
-                  </span>
-                </div>
-              )}
+        {filteredProjects.map((project) => {
+          const title = project.title[language] || project.title.en;
+          const subtitle = project.subtitle[language] || project.subtitle.en;
+          const categoryLabel = project.categoryLabel[language] || project.categoryLabel.en;
+          const description = project.description[language] || project.description.en;
 
-              {/* Engine Badge on top-right */}
-              <div className="absolute top-2.5 right-2.5 z-10">
-                <span className="text-[10px] font-bold text-white bg-slate-900/90 backdrop-blur-xs px-2 py-1 rounded-md border border-slate-700/80">
-                  {project.engine}
-                </span>
-              </div>
-            </div>
-
-            {/* Project Content */}
-            <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-[11px] text-slate-500">
-                  <span className="font-semibold text-sky-700">{project.categoryLabel}</span>
-                  <span>{project.year}</span>
-                </div>
-
-                <h3
-                  onClick={() => setActiveModalProject(project)}
-                  className="text-base font-bold text-slate-900 group-hover:text-sky-600 transition-colors cursor-pointer leading-snug"
-                >
-                  {project.title}
-                </h3>
-
-                <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
-                  {project.description}
-                </p>
-              </div>
-
-              {/* Tech Stack Pills */}
-              <div className="space-y-3 pt-2 border-t border-slate-100">
-                <div className="flex flex-wrap gap-1.5">
-                  {project.techStack.slice(0, 4).map((tech, idx) => (
-                    <span
-                      key={idx}
-                      className="text-[10px] bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded-md"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                  {project.techStack.length > 4 && (
-                    <span className="text-[10px] text-slate-400 font-medium px-1">
-                      +{project.techStack.length - 4} more
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center justify-between gap-2 pt-1">
-                  <button
-                    type="button"
+          return (
+            <div
+              key={project.id}
+              className="group bg-white rounded-2xl border border-slate-200/90 hover:border-sky-500 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden"
+            >
+              {/* Project Media Preview Area */}
+              <div className="relative aspect-video bg-slate-950 flex items-center justify-center overflow-hidden">
+                {project.mediaType === 'video' && project.mediaSrc ? (
+                  <div
+                    className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500"
                     onClick={() => setActiveModalProject(project)}
-                    className="text-xs font-bold text-sky-600 hover:text-sky-800 flex items-center gap-1 transition-colors"
                   >
-                    <span>View Showcase</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
+                    <video
+                      src={project.mediaSrc}
+                      muted
+                      playsInline
+                      loop
+                      className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
+                      onMouseEnter={(e) => {
+                        try {
+                          e.currentTarget.play();
+                        } catch {
+                          /* ignore */
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.pause();
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-sky-600/90 text-white flex items-center justify-center shadow-lg group-hover:bg-sky-500 group-hover:scale-110 transition-all">
+                        <Play className="w-5 h-5 ml-0.5" />
+                      </div>
+                    </div>
+                    <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1">
+                      <Film className="w-3 h-3 text-sky-400" />
+                      <span>{isEn ? 'Watch Simulation Video' : 'Ver Video de Simulación'}</span>
+                    </span>
+                  </div>
+                ) : project.mediaType === 'image' && project.mediaSrc ? (
+                  <div
+                    className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500"
+                    onClick={() => setActiveModalProject(project)}
+                  >
+                    <img
+                      src={project.mediaSrc}
+                      alt={title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+                    <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs">
+                      {isEn ? 'View Full Art Canvas' : 'Ver Galería de Arte'}
+                    </span>
+                  </div>
+                ) : (
+                  <div
+                    className="w-full h-full relative flex flex-col items-center justify-center p-6 text-center cursor-pointer bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900"
+                    onClick={() => setActiveModalProject(project)}
+                  >
+                    {project.id === 'shipped-aaa-titles' ? (
+                      <Trophy className="w-12 h-12 text-amber-400 mb-2 animate-bounce" />
+                    ) : (
+                      <Globe className="w-12 h-12 text-sky-400 mb-2" />
+                    )}
+                    <h3 className="text-white font-bold text-sm">{title}</h3>
+                    <p className="text-xs text-slate-300 mt-1">{project.engine}</p>
+                    <span className="mt-3 text-[11px] font-semibold text-sky-300 underline decoration-sky-400">
+                      {isEn ? 'Explore Details & Verification' : 'Explorar Detalles y Créditos'}
+                    </span>
+                  </div>
+                )}
 
-                  {project.externalUrl && (
-                    <a
-                      href={project.externalUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-1 transition-colors"
+                {/* Engine Badge on top-right */}
+                <div className="absolute top-2.5 right-2.5 z-10">
+                  <span className="text-[10px] font-bold text-white bg-slate-900/90 backdrop-blur-xs px-2 py-1 rounded-md border border-slate-700/80">
+                    {project.engine}
+                  </span>
+                </div>
+              </div>
+
+              {/* Project Content */}
+              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-[11px] text-slate-500">
+                    <span className="font-semibold text-sky-700">{categoryLabel}</span>
+                    <span>{project.year}</span>
+                  </div>
+
+                  <h3
+                    onClick={() => setActiveModalProject(project)}
+                    className="text-base font-bold text-slate-900 group-hover:text-sky-600 transition-colors cursor-pointer leading-snug"
+                  >
+                    {title}
+                  </h3>
+
+                  <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
+                    {description}
+                  </p>
+                </div>
+
+                {/* Tech Stack Pills */}
+                <div className="space-y-3 pt-2 border-t border-slate-100">
+                  <div className="flex flex-wrap gap-1.5">
+                    {project.techStack.slice(0, 4).map((tech, idx) => (
+                      <span
+                        key={idx}
+                        className="text-[10px] bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded-md"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                    {project.techStack.length > 4 && (
+                      <span className="text-[10px] text-slate-400 font-medium px-1">
+                        +{project.techStack.length - 4} {isEn ? 'more' : 'más'}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setActiveModalProject(project)}
+                      className="text-xs font-bold text-sky-600 hover:text-sky-800 flex items-center gap-1 transition-colors"
                     >
-                      <span>External</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  )}
+                      <span>{isEn ? 'View Showcase' : 'Ver Detalles'}</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+
+                    {project.externalUrl && (
+                      <a
+                        href={project.externalUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-1 transition-colors"
+                      >
+                        <span>{isEn ? 'External' : 'Enlace'}</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Callout to CV and About Me */}
       <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
         <div className="space-y-1 text-center md:text-left">
           <h2 className="text-lg sm:text-xl font-bold text-slate-900">
-            Need the comprehensive Curriculum Vitae or Personal Bio?
+            {isEn
+              ? 'Need the comprehensive Curriculum Vitae or Personal Bio?'
+              : '¿Deseas ver el Currículum Vitae completo o la historia personal?'}
           </h2>
           <p className="text-xs sm:text-sm text-slate-600">
-            Explore Isaac's detailed experience timeline, education, 2-page print-ready PDF export, or read his story and
-            passions in the About Me section.
+            {isEn
+              ? "Explore Isaac's detailed experience timeline, education, 2-page print-ready PDF export, or read his story and passions in the About Me section."
+              : 'Explora la trayectoria profesional detallada, educación, exportación a PDF de 2 páginas o conoce sus motivaciones y pasiones en la sección Sobre Mí.'}
           </p>
         </div>
 
@@ -616,14 +914,14 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
             onClick={onSwitchToCv}
             className="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs shadow-md transition-all hover:scale-105"
           >
-            Go to CV / Resume
+            {isEn ? 'Go to CV / Resume' : 'Ver Currículum Vitae'}
           </button>
           <button
             type="button"
             onClick={onSwitchToAbout}
             className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition-all hover:scale-105"
           >
-            Read About Me
+            {isEn ? 'Read About Me' : 'Leer Sobre Mí'}
           </button>
         </div>
       </section>
@@ -639,7 +937,7 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
                   {activeModalProject.engine}
                 </span>
                 <h3 className="font-bold text-sm sm:text-base text-white truncate max-w-md">
-                  {activeModalProject.title}
+                  {activeModalProject.title[language] || activeModalProject.title.en}
                 </h3>
               </div>
               <button
@@ -668,7 +966,7 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
                 <div className="w-full bg-slate-950 rounded-xl overflow-hidden flex flex-col items-center justify-center p-3 sm:p-5 space-y-4">
                   <img
                     src={`/portfolio_assets/concept-artwork-${selectedArtIndex + 1}.png`}
-                    alt={`${activeModalProject.title} ${selectedArtIndex + 1}`}
+                    alt={`${activeModalProject.title[language] || activeModalProject.title.en} ${selectedArtIndex + 1}`}
                     className="max-h-[520px] w-auto max-w-full object-contain rounded-lg shadow-xl"
                   />
                   <div className="flex items-center gap-2 pt-2">
@@ -684,7 +982,7 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
                         }`}
                       >
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span>Artwork #{idx + 1}</span>
+                        <span>{isEn ? `Artwork #${idx + 1}` : `Ilustración #${idx + 1}`}</span>
                       </button>
                     ))}
                   </div>
@@ -694,17 +992,21 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
               {/* Description & Specs */}
               <div className="space-y-4">
                 <div>
-                  <h4 className="text-xs uppercase tracking-wider font-bold text-slate-400">Project Overview</h4>
+                  <h4 className="text-xs uppercase tracking-wider font-bold text-slate-400">
+                    {isEn ? 'Project Overview' : 'Descripción del Proyecto'}
+                  </h4>
                   <p className="text-sm text-slate-700 leading-relaxed mt-1">
-                    {activeModalProject.description}
+                    {activeModalProject.description[language] || activeModalProject.description.en}
                   </p>
                 </div>
 
                 {/* Highlights */}
                 <div>
-                  <h4 className="text-xs uppercase tracking-wider font-bold text-slate-400">Technical Highlights</h4>
+                  <h4 className="text-xs uppercase tracking-wider font-bold text-slate-400">
+                    {isEn ? 'Technical Highlights' : 'Puntos Técnicos Destacados'}
+                  </h4>
                   <ul className="mt-2 space-y-1.5 text-xs text-slate-700">
-                    {activeModalProject.highlights.map((h, i) => (
+                    {(activeModalProject.highlights[language] || activeModalProject.highlights.en).map((h, i) => (
                       <li key={i} className="flex items-start gap-2">
                         <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                         <span>{h}</span>
@@ -715,7 +1017,9 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
 
                 {/* Tech Stack */}
                 <div>
-                  <h4 className="text-xs uppercase tracking-wider font-bold text-slate-400">Tech Stack & Tools</h4>
+                  <h4 className="text-xs uppercase tracking-wider font-bold text-slate-400">
+                    {isEn ? 'Tech Stack & Tools' : 'Stack Tecnológico y Herramientas'}
+                  </h4>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {activeModalProject.techStack.map((t, i) => (
                       <span
@@ -738,7 +1042,13 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
                         rel="noreferrer"
                         className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs shadow-sm transition-all"
                       >
-                        <span>{activeModalProject.externalLabel || 'Open Link'}</span>
+                        <span>
+                          {activeModalProject.externalLabel
+                            ? activeModalProject.externalLabel[language] || activeModalProject.externalLabel.en
+                            : isEn
+                            ? 'Open Link'
+                            : 'Abrir Enlace'}
+                        </span>
                         <ExternalLink className="w-3.5 h-3.5" />
                       </a>
                     )}
@@ -749,7 +1059,7 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
                       className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs border border-slate-300 transition-all"
                     >
                       <Github className="w-3.5 h-3.5" />
-                      <span>Portfolio Repo</span>
+                      <span>{isEn ? 'Portfolio Repo' : 'Repositorio Portafolio'}</span>
                     </a>
                   </div>
 
@@ -758,7 +1068,7 @@ export function PortfolioView({ onSwitchToCv, onSwitchToAbout }: PortfolioViewPr
                     onClick={() => setActiveModalProject(null)}
                     className="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800"
                   >
-                    Close
+                    {isEn ? 'Close' : 'Cerrar'}
                   </button>
                 </div>
               </div>

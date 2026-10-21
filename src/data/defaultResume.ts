@@ -115,27 +115,26 @@ export const resumeDataEs: ResumeData = {
   skillCategories: [
     {
       id: 'skill-cat-1',
-      name: 'Gestión Comercial & Dirección de Ventas',
+      name: 'Automatización con IA & Desarrollo de Plataformas',
       skills: [
-        'Dirección y Estrategia Comercial',
-        'Ventas B2B Corporativas',
-        'Prospección con Inteligencia Artificial (IA)',
-        'Sistemas CRM y ERP Propios',
-        'Administración y Gestión Vehicular',
-        'Negociación y Cierre de Cuentas',
+        'Automatización de Flujos con IA (LLMs)',
+        'Telemática Vehicular & Simulación de Sensores',
+        'Sistemas ERP y CRM Propietarios',
+        'Arquitectura Full-Stack de Aplicaciones Web',
+        'Integración de APIs REST & Supabase (SQL)',
+        'Cloudflare, Vercel & Despliegue Cloud',
       ],
     },
     {
       id: 'skill-cat-2',
-      name: 'Desarrollo de Software & Plataformas Web',
+      name: 'Desarrollo de Software & Stack Web',
       skills: [
-        'TypeScript & JavaScript',
+        'TypeScript & JavaScript Moderno',
         'React',
         'Tailwind CSS & CSS Avanzado',
-        'Supabase & SQL',
-        'Integración de APIs REST',
-        'Vercel & Cloudflare',
-        'Resend (Automatización de Correo)',
+        'Bases de Datos Relacionales (SQL)',
+        'Arquitectura de APIs RESTful',
+        'Automatización de Comunicaciones (Resend)',
       ],
     },
     {
@@ -191,8 +190,8 @@ export const resumeDataEs: ResumeData = {
     {
       id: 'ach-3',
       title: 'Plataforma Orblite',
-      metric: 'CRM / ERP / SaaS',
-      description: 'Plataforma integral de administración vehicular y prospección con IA.',
+      metric: 'SaaS / ERP / Telemática',
+      description: 'Plataforma integral de telemática vehicular, analítica de sensores y automatización.',
     },
   ],
 };
@@ -312,27 +311,26 @@ export const resumeDataEn: ResumeData = {
   skillCategories: [
     {
       id: 'skill-cat-1',
-      name: 'Commercial Leadership & Sales Strategy',
+      name: 'AI Automation & Platform Engineering',
       skills: [
-        'Commercial Strategy & Leadership',
-        'B2B Enterprise Sales',
-        'AI-Powered Prospecting & Automation',
-        'Proprietary CRM & ERP Platforms',
-        'Fleet Telematics & Vehicle Tracking',
-        'Strategic Closing & Account Growth',
+        'AI Workflow Automation (LLMs)',
+        'Vehicle Telematics & Sensor Stream Simulation',
+        'Proprietary ERP & CRM Architecture',
+        'Full-Stack Web Platforms',
+        'RESTful API Architecture & Supabase (SQL)',
+        'Cloudflare, Vercel & Cloud Deployments',
       ],
     },
     {
       id: 'skill-cat-2',
       name: 'Software Engineering & Web Platforms',
       skills: [
-        'TypeScript & JavaScript',
+        'TypeScript & Modern JavaScript',
         'React',
         'Tailwind CSS & Modern CSS',
-        'Supabase & SQL Databases',
+        'Relational Databases (SQL)',
         'RESTful API Architecture',
-        'Vercel & Cloudflare Deployment',
-        'Resend (Email Automation)',
+        'Email Automation (Resend)',
       ],
     },
     {
@@ -388,8 +386,8 @@ export const resumeDataEn: ResumeData = {
     {
       id: 'ach-3',
       title: 'Orblite Platform',
-      metric: 'CRM / ERP / SaaS',
-      description: 'End-to-end vehicle telematics platform and AI prospecting tools.',
+      metric: 'SaaS / ERP / Telematics',
+      description: 'End-to-end vehicle telematics, sensor streaming, and automation platform.',
     },
   ],
 };

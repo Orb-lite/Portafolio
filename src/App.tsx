@@ -18,10 +18,8 @@ import {
   User,
   Briefcase,
   GraduationCap,
-  Sliders,
   RotateCcw,
   Eye,
-  FileCheck,
   Loader2,
   CheckCircle,
   Globe,
@@ -34,12 +32,13 @@ import {
   Lock,
   X,
   SlidersHorizontal,
+  Languages,
 } from 'lucide-react';
 
 export default function App() {
   const [mainTab, setMainTab] = useState<'portfolio' | 'about' | 'cv'>('portfolio');
-  const [language, setLanguage] = useState<'es' | 'en'>('en'); // Default to English
-  const [resumeData, setResumeData] = useState<ResumeData>(resumeDataEn);
+  const [language, setLanguage] = useState<'es' | 'en'>('es'); // Default to Spanish (bilingual switch available)
+  const [resumeData, setResumeData] = useState<ResumeData>(resumeDataEs);
   const [styleConfig, setStyleConfig] = useState<StyleConfig>(defaultStyleConfig);
   const [activeTab, setActiveTab] = useState<'job_match' | 'personal' | 'experience' | 'skills' | 'design'>('job_match');
   const [showHiddenEditor, setShowHiddenEditor] = useState<boolean>(false);
@@ -49,6 +48,7 @@ export default function App() {
   const [previewScale, setPreviewScale] = useState<number>(0.92);
 
   const documentRef = useRef<HTMLDivElement>(null);
+  const isEn = language === 'en';
 
   // Check URL parameters on mount to allow direct access to hidden editor (?editor=true or #editor)
   useEffect(() => {
@@ -57,6 +57,10 @@ export default function App() {
       if (params.get('editor') === 'true' || window.location.hash === '#editor') {
         setShowHiddenEditor(true);
         setMainTab('cv');
+      }
+      if (params.get('lang') === 'en') {
+        setLanguage('en');
+        setResumeData(resumeDataEn);
       }
     }
   }, []);
@@ -72,10 +76,10 @@ export default function App() {
     setLanguage(lang);
     if (lang === 'en') {
       setResumeData(resumeDataEn);
-      showNotification('English version activated (Discreet / NDA-compliant profile).');
+      showNotification('English version activated (Full site & PDF translated).');
     } else {
       setResumeData(resumeDataEs);
-      showNotification('Versión en Español activada (Perfil discreto y confidencial).');
+      showNotification('Versión en Español activada (Sitio completo y PDF traducidos).');
     }
   };
 
@@ -145,7 +149,7 @@ export default function App() {
       spacing: 'compact',
       fontSize: 'sm',
     }));
-    showNotification('Ajustado a densidad compacta.');
+    showNotification(isEn ? 'Adjusted to compact layout.' : 'Ajustado a densidad compacta.');
   };
 
   const handleResetData = () => {
@@ -178,17 +182,17 @@ export default function App() {
                 </h1>
                 <span className="text-[10px] text-amber-300 font-bold bg-amber-950/70 border border-amber-700/60 px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Trophy className="w-3 h-3 text-amber-400" />
-                  <span>Shipped AAA Credits</span>
+                  <span>{isEn ? 'Shipped AAA Credits' : 'Créditos Títulos AAA'}</span>
                 </span>
                 <span className="text-[10px] text-emerald-300 font-medium bg-emerald-950/60 border border-emerald-800/60 px-1.5 py-0.5 rounded">
-                  32 yo · Virtual Environments (Since 2018)
+                  {isEn ? '32 yo · Virtual Environments (Since 2018)' : '32 años · Entornos Virtuales (Desde 2018)'}
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5">
                 <span>{resumeData.personalInfo.email}</span>
                 <span aria-hidden="true">·</span>
                 <span className="text-emerald-400 font-medium">
-                  Zapopan & Guadalajara (On-site / Hybrid / Remote)
+                  {isEn ? 'Zapopan & Guadalajara (On-site / Hybrid / Remote)' : 'Zapopan y Guadalajara (Presencial / Híbrido / Remoto)'}
                 </span>
                 <span aria-hidden="true">·</span>
                 <a
@@ -218,7 +222,7 @@ export default function App() {
                   className="text-amber-300 hover:underline flex items-center gap-1"
                 >
                   <FolderOpen className="w-2.5 h-2.5" />
-                  <span>Drive Folder</span>
+                  <span>{isEn ? 'Drive Folder' : 'Carpeta Drive'}</span>
                 </a>
                 <span aria-hidden="true">·</span>
                 <a
@@ -234,8 +238,53 @@ export default function App() {
             </div>
           </div>
 
-          {/* Quick PDF Export Buttons Always Accessible */}
-          <div className="flex items-center gap-2">
+          {/* Global Language Toggle & Quick PDF Export Buttons */}
+          <div className="flex items-center gap-2.5">
+            {/* Global Language Switcher */}
+            <div className="flex items-center bg-slate-800/90 p-0.5 rounded-lg border border-slate-700 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => handleLanguageSwitch('es')}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition-all ${
+                  language === 'es'
+                    ? 'bg-sky-600 text-white font-bold shadow-xs'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title="Cambiar todo el sitio a Español"
+              >
+                <span>🇲🇽</span>
+                <span>ES</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleLanguageSwitch('en')}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition-all ${
+                  language === 'en'
+                    ? 'bg-sky-600 text-white font-bold shadow-xs'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title="Switch whole application to English"
+              >
+                <span>🇺🇸</span>
+                <span>EN</span>
+              </button>
+            </div>
+
+            <button
+              type="button"
+              disabled={isExporting}
+              onClick={() => handleDownloadPdf('es')}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 shadow-sm transition-all disabled:opacity-50"
+              title="Descargar PDF en Español (2 Páginas)"
+            >
+              {isExporting && language === 'es' ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Download className="w-3.5 h-3.5 text-slate-300" />
+              )}
+              <span>PDF Español</span>
+            </button>
+
             <button
               type="button"
               disabled={isExporting}
@@ -249,20 +298,6 @@ export default function App() {
                 <Download className="w-3.5 h-3.5" />
               )}
               <span>PDF English</span>
-            </button>
-            <button
-              type="button"
-              disabled={isExporting}
-              onClick={() => handleDownloadPdf('es')}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all disabled:opacity-50"
-              title="Descargar PDF en Español (2 Páginas)"
-            >
-              {isExporting && language === 'es' ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Download className="w-3.5 h-3.5 text-slate-400" />
-              )}
-              <span>PDF Español</span>
             </button>
           </div>
         </div>
@@ -281,7 +316,7 @@ export default function App() {
               }`}
             >
               <Layers className="w-4 h-4 text-sky-400" />
-              <span>📁 Portfolio Showcases</span>
+              <span>{isEn ? '📁 Portfolio Showcases' : '📁 Portafolio de Proyectos'}</span>
             </button>
 
             {/* Tab 2: About Me & Passions */}
@@ -295,7 +330,7 @@ export default function App() {
               }`}
             >
               <Heart className="w-4 h-4 text-rose-400 fill-rose-400/40" />
-              <span>🌟 About Me & Passions (English)</span>
+              <span>{isEn ? '🌟 About Me & Passions' : '🌟 Sobre Mí & Pasiones'}</span>
             </button>
 
             {/* Tab 3: CV & Resume */}
@@ -309,7 +344,7 @@ export default function App() {
               }`}
             >
               <FileText className="w-4 h-4 text-emerald-400" />
-              <span>📄 CV & Resume (2-Page PDF)</span>
+              <span>{isEn ? '📄 CV & Resume (2-Page PDF)' : '📄 Currículum Vitae (PDF 2 Páginas)'}</span>
             </button>
           </div>
 
@@ -320,7 +355,11 @@ export default function App() {
                 type="button"
                 onClick={() => setShowHiddenEditor(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-amber-300 bg-amber-950/60 hover:bg-amber-900/80 border border-amber-700/60 transition-all"
-                title="Open the hidden editor to tailor CV for specific job posts and export customized versions"
+                title={
+                  isEn
+                    ? 'Open the hidden editor to tailor CV for specific job posts and export customized versions'
+                    : 'Abrir el editor oculto para adaptar el CV a propuestas y exportar versiones a medida'
+                }
               >
                 <Lock className="w-3.5 h-3.5 text-amber-400" />
                 <span>{language === 'es' ? 'Editor Oculto' : 'Hidden Editor'}</span>
@@ -342,23 +381,25 @@ export default function App() {
       {mainTab === 'portfolio' && (
         <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6">
           <PortfolioView
+            language={language}
             onSwitchToCv={() => setMainTab('cv')}
             onSwitchToAbout={() => setMainTab('about')}
           />
         </main>
       )}
 
-      {/* VIEW 2: About Me View (Entirely in English) */}
+      {/* VIEW 2: About Me View */}
       {mainTab === 'about' && (
         <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6">
           <AboutMeView
+            language={language}
             onSwitchToPortfolio={() => setMainTab('portfolio')}
             onSwitchToCv={() => setMainTab('cv')}
           />
         </main>
       )}
 
-      {/* VIEW 3: Clean CV & Resume Presentation (Without In-Page Editor) */}
+      {/* VIEW 3: Clean CV & Resume Presentation */}
       {mainTab === 'cv' && (
         <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex flex-col items-center">
           {/* Executive Document Presentation Toolbar */}
@@ -382,18 +423,6 @@ export default function App() {
               <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs font-semibold">
                 <button
                   type="button"
-                  onClick={() => handleLanguageSwitch('en')}
-                  className={`px-3 py-1 rounded-md transition-all ${
-                    language === 'en'
-                      ? 'bg-sky-600 text-white shadow-xs font-bold'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                  title="Switch CV to English"
-                >
-                  <span>🇺🇸 English</span>
-                </button>
-                <button
-                  type="button"
                   onClick={() => handleLanguageSwitch('es')}
                   className={`px-3 py-1 rounded-md transition-all ${
                     language === 'es'
@@ -403,6 +432,18 @@ export default function App() {
                   title="Cambiar CV a Español"
                 >
                   <span>🇲🇽 Español</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLanguageSwitch('en')}
+                  className={`px-3 py-1 rounded-md transition-all ${
+                    language === 'en'
+                      ? 'bg-sky-600 text-white shadow-xs font-bold'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                  title="Switch CV to English"
+                >
+                  <span>🇺🇸 English</span>
                 </button>
               </div>
 
@@ -439,7 +480,7 @@ export default function App() {
                 disabled={isExporting}
                 onClick={() => handleDownloadPdf()}
                 className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm transition-all disabled:opacity-50"
-                title="Download official PDF resume (2 pages)"
+                title={isEn ? 'Download official PDF resume (2 pages)' : 'Descargar CV oficial en PDF (2 páginas)'}
               >
                 {isExporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
                 <span>{language === 'es' ? 'Descargar PDF' : 'Download PDF'}</span>
@@ -449,7 +490,7 @@ export default function App() {
                 type="button"
                 onClick={handleNativePrint}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl border border-slate-200 transition-colors"
-                title="Imprimir o Guardar como PDF"
+                title={language === 'es' ? 'Imprimir o Guardar como PDF' : 'Print or Save as PDF'}
               >
                 <Printer className="w-3.5 h-3.5 text-slate-600" />
                 <span className="hidden md:inline">{language === 'es' ? 'Imprimir' : 'Print'}</span>
@@ -460,7 +501,11 @@ export default function App() {
                 type="button"
                 onClick={() => setShowHiddenEditor(true)}
                 className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl text-amber-900 hover:text-amber-950 bg-amber-100 hover:bg-amber-200 border border-amber-300 transition-all shadow-xs"
-                title="Open the hidden customizer to match job offers and export customized versions"
+                title={
+                  language === 'es'
+                    ? 'Abrir el editor oculto para adaptar según vacantes y exportar versiones'
+                    : 'Open the hidden customizer to match job offers and export customized versions'
+                }
               >
                 <Lock className="w-3.5 h-3.5 text-amber-700" />
                 <span>{language === 'es' ? 'Editor Oculto' : 'Hidden Editor'}</span>
@@ -494,7 +539,7 @@ export default function App() {
               type="button"
               onClick={() => setShowHiddenEditor(true)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/95 hover:bg-slate-900 text-amber-400 hover:text-amber-300 shadow-xl border border-slate-700 text-xs font-bold transition-all hover:scale-105"
-              title="Access hidden resume customizer & job tailoring"
+              title={isEn ? 'Access hidden resume customizer & job tailoring' : 'Acceder al editor y adaptador de CV'}
             >
               <Lock className="w-3.5 h-3.5 text-amber-400" />
               <span>{language === 'es' ? 'Editor Oculto & Exportador' : 'Hidden Editor & Exporter'}</span>
@@ -545,7 +590,7 @@ export default function App() {
                   disabled={isExporting}
                   onClick={() => handleDownloadPdf(language, true)}
                   className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-500 shadow-md shadow-sky-950/50 transition-all disabled:opacity-50"
-                  title="Export tailored version directly to PDF"
+                  title={isEn ? 'Export tailored version directly to PDF' : 'Exportar versión ajustada en PDF'}
                 >
                   {isExporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
                   <span>{language === 'es' ? 'Exportar Personalizado' : 'Export Customized PDF'}</span>
@@ -555,7 +600,7 @@ export default function App() {
                   type="button"
                   onClick={() => setShowHiddenEditor(false)}
                   className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                  title="Cerrar Editor Oculto"
+                  title={isEn ? 'Close Hidden Editor' : 'Cerrar Editor Oculto'}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -572,7 +617,11 @@ export default function App() {
                     ? 'bg-amber-400 text-slate-950 font-bold shadow-xs'
                     : 'text-amber-900 bg-amber-50 hover:bg-amber-100'
                 }`}
-                title="Ajustar a propuesta de trabajo y redactar Cover Letter"
+                title={
+                  isEn
+                    ? 'Tailor to job offer and draft tailored Cover Letter'
+                    : 'Ajustar a propuesta de trabajo y redactar Cover Letter'
+                }
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-700" />
                 <span>{language === 'es' ? '🎯 Oferta & Carta' : '🎯 Job Match & Letter'}</span>

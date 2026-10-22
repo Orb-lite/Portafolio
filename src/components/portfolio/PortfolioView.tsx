@@ -116,7 +116,7 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     year: '2022',
     engine: 'Unreal Engine (PCD3D_SM5)',
     mediaType: 'video',
-    mediaSrc: '/portfolio_assets/watercolor-interactive-environment.mp4',
+    mediaSrc: '/portfolio_assets/watercolor-development-viewport.mp4',
     description: {
       en: 'An expressive interactive 3D virtual environment built in Unreal Engine featuring custom stylized post-processing shaders mimicking traditional watercolor paintings. Players navigate an atmospheric architectural setting with real-time dynamic lighting, ambient audio, and responsive player movement.',
       es: 'Entorno virtual 3D interactivo y expresivo desarrollado en Unreal Engine con shaders de post-procesamiento estilizados personalizados que emulan pinturas en acuarela tradicionales. Permite navegar por un escenario arquitectónico atmosférico con iluminación dinámica en tiempo real, audio ambiental y locomoción reactiva.',
@@ -139,39 +139,46 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
   {
     id: 'scores-sports-sim',
     title: {
-      en: 'Sports Broadcast & Real-Time Scoreboard Simulation',
-      es: 'Simulación de Transmisión Deportiva y Marcador en Tiempo Real',
+      en: 'Sports Broadcast & Real-Time Scoreboard HUD System',
+      es: 'Simulación de Transmisión Deportiva y Marcador HUD en Tiempo Real',
     },
     subtitle: {
-      en: 'Dynamic In-Game Score Tracking, Clock & Broadcast Graphics System',
-      es: 'Sistema Dinámico de Marcador en Juego, Reloj y Gráficos de Transmisión',
+      en: 'ActionScript, C++ & Frostbite Engine Broadcast Scorebug Pipeline',
+      es: 'Pipeline de Scorebug y Gráficos de Transmisión en ActionScript, C++ y Frostbite',
     },
     category: 'aaa-games',
     categoryLabel: {
       en: 'AAA Games & Co-Dev',
       es: 'Videojuegos AAA & Co-Desarrollo',
     },
-    year: '2022 - 2023',
-    engine: 'Unreal Engine / Real-Time UI',
-    mediaType: 'video',
-    mediaSrc: '/portfolio_assets/sports-scoreboard-simulation.mp4',
+    year: '2022 - 2024',
+    engine: 'Frostbite Engine',
+    mediaType: 'external',
     description: {
-      en: 'Real-time sports game display and scoring simulation designed to mimic televised sports broadcast feeds and high-stakes match gameplay. Features sub-frame responsive scoreboard updates, game clock synchronizations, and event-triggered visual transitions.',
-      es: 'Simulación de pantalla de juego y marcador deportivo en tiempo real diseñada para emular transmisiones televisivas deportivas y partidas de alta exigencia. Cuenta con actualización instantánea cuadro a cuadro, sincronización de reloj de partido y transiciones visuales disparadas por eventos.',
+      en: 'Real-time sports game broadcast scoreboard and HUD system engineered using ActionScript integrated with high-performance C++ runtime on Frostbite Engine architecture for EA Sports title pipelines. Features sub-frame responsive scoreboard state machines, live clock synchronization, and broadcast-grade visual transitions.',
+      es: 'Sistema de marcador y HUD de transmisión deportiva en tiempo real desarrollado con ActionScript integrado con tiempo de ejecución de alto rendimiento en C++ sobre la arquitectura de Frostbite Engine para pipelines de EA Sports. Incluye máquinas de estados de marcador con actualización instantánea cuadro a cuadro, sincronización de reloj en vivo y transiciones visuales con estándares televisivos.',
     },
     highlights: {
       en: [
-        'Event-driven score state machine handling points, quarters/halves, and timer logic',
-        'Broadcast-grade typography, responsive screen scaling, and team color theming',
-        'Bridges the gap between athletic game passion and technical real-time programming',
+        'Engineered in ActionScript integrated with C++ runtime on Frostbite Engine architecture',
+        'Sub-frame responsive scorebug state machine handling quarters/halves, points, and game timers',
+        'Broadcast-grade typography, dynamic score tracking, and team branding color theming',
+        'Engineered for EA Sports AAA game presentation pipelines and console certification',
       ],
       es: [
-        'Máquina de estados de puntuación basada en eventos que maneja puntos, cuartos/tiempos y cronómetro',
-        'Tipografía con estándares de transmisión televisiva, escalado responsivo y paletas por equipo',
-        'Conexión directa entre la pasión por los deportes y la programación técnica en tiempo real',
+        'Desarrollado en ActionScript integrado con tiempo de ejecución en C++ sobre Frostbite Engine',
+        'Máquina de estados de scorebug con respuesta instantánea manejando cuartos/tiempos, puntos y cronómetros',
+        'Tipografía con estándares de transmisión televisiva, control dinámico de marcador y paletas de equipo',
+        'Diseñado para pipelines de presentación AAA de EA Sports y certificación en consolas',
       ],
     },
-    techStack: ['Unreal Engine', 'UMG UI / Slate', 'Sports Mechanics', 'C++', 'Event Driven State'],
+    techStack: ['ActionScript', 'C++', 'Frostbite Engine', 'EA Sports UI/HUD', 'Perforce Helix Core', 'Broadcast Graphics'],
+    externalUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
+    externalLabel: {
+      en: 'View Verified MobyGames Credits',
+      es: 'Ver Créditos Verificados en MobyGames',
+    },
+    mobyGamesUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
     featured: true,
   },
   {
@@ -191,8 +198,12 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     },
     year: '2024',
     engine: 'Unreal Engine 5 (Niagara & OpenVDB)',
-    mediaType: 'video',
-    mediaSrc: '/portfolio_assets/vdb-volumetric-simulation.mp4',
+    mediaType: 'external',
+    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
+    externalLabel: {
+      en: 'View Project in Drive Archive',
+      es: 'Ver Proyecto en Carpeta Drive',
+    },
     description: {
       en: 'Cutting-edge volumetric simulation inside Unreal Engine 5 taking advantage of OpenVDB spatial data structures. Computes high-density smoke plumes, atmospheric scattering, and light absorption in real time.',
       es: 'Simulación volumétrica de vanguardia en Unreal Engine 5 utilizando estructuras de datos espaciales OpenVDB. Calcula plumas de humo de alta densidad, dispersión atmosférica y absorción lumínica en tiempo real.',
@@ -229,8 +240,12 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     },
     year: '2020',
     engine: 'Unreal Engine (Standalone NetMode)',
-    mediaType: 'video',
-    mediaSrc: '/portfolio_assets/interactive-classroom-simulation.mp4',
+    mediaType: 'external',
+    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
+    externalLabel: {
+      en: 'View Project in Drive Archive',
+      es: 'Ver Proyecto en Carpeta Drive',
+    },
     description: {
       en: 'Interactive 3D simulation of an academic auditorium and classroom setting designed for training, multi-perspective spatial awareness, and interactive virtual navigation.',
       es: 'Simulación 3D interactiva de un auditorio y aula académica diseñada para capacitación, conciencia espacial multiperspectiva y navegación virtual interactiva.',
@@ -266,8 +281,12 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     },
     year: '2022',
     engine: 'Unreal Engine Procedural Systems',
-    mediaType: 'video',
-    mediaSrc: '/portfolio_assets/procedural-world-generation.mp4',
+    mediaType: 'external',
+    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
+    externalLabel: {
+      en: 'View Project in Drive Archive',
+      es: 'Ver Proyecto en Carpeta Drive',
+    },
     description: {
       en: 'Algorithmic terrain generation and procedural landscape populating. Demonstrates runtime biome generation, rule-based vegetation scattering, and scalable level-of-detail (LOD) streaming.',
       es: 'Generación algorítmica de terrenos y poblamiento procedimental de paisajes. Demuestra generación de biomas en tiempo de ejecución, distribución de vegetación basada en reglas y streaming escalable por nivel de detalle (LOD).',
@@ -423,7 +442,7 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     year: '2020',
     engine: 'Unreal Engine (Standalone 64-bit PCD3D_SM5)',
     mediaType: 'video',
-    mediaSrc: '/portfolio_assets/unreal-standalone-gameplay.mp4',
+    mediaSrc: '/portfolio_assets/unreal-multiplayer-server-preview.mp4',
     description: {
       en: 'Direct gameplay recording from standalone client build featuring real-time collision detection, responsive third-person camera mechanics, and dynamic physics objects.',
       es: 'Captura directa de jugabilidad en build ejecutable con detección de colisiones en tiempo real, cámara reactiva en tercera persona y objetos con dinámicas de física.',
@@ -460,7 +479,7 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     year: '2020',
     engine: 'Unreal Editor',
     mediaType: 'video',
-    mediaSrc: '/portfolio_assets/unreal-project4-editor.mp4',
+    mediaSrc: '/portfolio_assets/unreal-editor-workflow.mp4',
     description: {
       en: 'In-editor level construction session demonstrating asset placement, volumetric fog tuning, static and dynamic light building, and performance profiling across rendering passes.',
       es: 'Sesión de construcción de nivel en editor demostrando colocación de assets, niebla volumétrica, cálculo de iluminación estática y dinámica, y perfilado de rendimiento en passes de render.',
@@ -759,28 +778,20 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                   >
                     <video
                       src={project.mediaSrc}
+                      autoPlay
                       muted
                       playsInline
                       loop
+                      preload="metadata"
                       className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
-                      onMouseEnter={(e) => {
-                        try {
-                          e.currentTarget.play();
-                        } catch {
-                          /* ignore */
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.pause();
-                      }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                       <div className="w-12 h-12 rounded-full bg-sky-600/90 text-white flex items-center justify-center shadow-lg group-hover:bg-sky-500 group-hover:scale-110 transition-all">
                         <Play className="w-5 h-5 ml-0.5" />
                       </div>
                     </div>
-                    <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1">
+                    <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1 pointer-events-none">
                       <Film className="w-3 h-3 text-sky-400" />
                       <span>{isEn ? 'Watch Simulation Video' : 'Ver Video de Simulación'}</span>
                     </span>
@@ -953,14 +964,42 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
             <div className="overflow-y-auto p-5 sm:p-6 space-y-6">
               {/* Media Player / Viewer */}
               {activeModalProject.mediaType === 'video' && activeModalProject.mediaSrc ? (
-                <div className="w-full bg-slate-950 rounded-xl overflow-hidden shadow-inner aspect-video">
-                  <video
-                    src={activeModalProject.mediaSrc}
-                    controls
-                    autoPlay
-                    playsInline
-                    className="w-full h-full object-contain"
-                  />
+                <div className="space-y-2">
+                  <div className="w-full bg-slate-950 rounded-xl overflow-hidden shadow-inner aspect-video relative group flex items-center justify-center">
+                    <video
+                      key={activeModalProject.mediaSrc}
+                      controls
+                      autoPlay
+                      muted
+                      playsInline
+                      preload="auto"
+                      className="w-full h-full object-contain"
+                    >
+                      <source src={activeModalProject.mediaSrc} type="video/mp4" />
+                      {isEn
+                        ? 'Your browser does not support HTML5 video streaming.'
+                        : 'Tu navegador no soporta reproducción de video HTML5.'}
+                    </video>
+                  </div>
+                  <div className="flex items-center justify-between flex-wrap gap-2 text-xs text-slate-500 px-1">
+                    <span className="flex items-center gap-1.5">
+                      <Film className="w-3.5 h-3.5 text-sky-500" />
+                      <span>
+                        {isEn
+                          ? 'HD MP4 simulation recording. Toggle unmute in playback bar for audio.'
+                          : 'Grabación de simulación en HD (MP4). Activa el sonido en la barra de control.'}
+                      </span>
+                    </span>
+                    <a
+                      href={activeModalProject.mediaSrc}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sky-600 hover:text-sky-700 font-medium inline-flex items-center gap-1 underline underline-offset-2"
+                    >
+                      <span>{isEn ? 'Open video directly' : 'Abrir video directamente'}</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
                 </div>
               ) : activeModalProject.mediaType === 'image' ? (
                 <div className="w-full bg-slate-950 rounded-xl overflow-hidden flex flex-col items-center justify-center p-3 sm:p-5 space-y-4">

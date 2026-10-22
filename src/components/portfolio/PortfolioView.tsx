@@ -42,6 +42,7 @@ export interface ProjectItem {
   engine: string;
   mediaType: 'video' | 'image' | 'external';
   mediaSrc?: string;
+  youtubeId?: string;
   thumbnailSrc?: string;
   description: LocalizedString;
   highlights: LocalizedArray;
@@ -70,7 +71,9 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     },
     year: '2024',
     engine: 'Frostbite Engine',
-    mediaType: 'external',
+    mediaType: 'video',
+    youtubeId: 'ubRvxZC4jGI',
+    thumbnailSrc: 'https://img.youtube.com/vi/ubRvxZC4jGI/maxresdefault.jpg',
     description: {
       en: 'Verified public credit on MobyGames for flagship sports release EA Sports College Football 25. Co-developed at DEVBOT for premier global publisher Electronic Arts (EA Sports). Provided critical Technical Art and QA support across UI/UX systems, Frostbite engine pipelines, initial playable build performance, and console certification for PlayStation 5 and Xbox Series X/S.',
       es: 'Crédito público verificado en MobyGames para el lanzamiento deportivo insignia EA Sports College Football 25. Co-desarrollado en DEVBOT para el publisher líder global Electronic Arts (EA Sports). Soporte crítico como Artista Técnico y QA en sistemas de UI/UX, pipelines en Frostbite Engine, rendimiento en builds jugables iniciales y certificación de consola para PlayStation 5 y Xbox Series X/S.',
@@ -153,10 +156,12 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     },
     year: '2022 - 2024',
     engine: 'Frostbite Engine',
-    mediaType: 'external',
+    mediaType: 'video',
+    youtubeId: '3Rkj6FlMcLU',
+    thumbnailSrc: 'https://img.youtube.com/vi/3Rkj6FlMcLU/maxresdefault.jpg',
     description: {
-      en: 'Real-time sports game broadcast scoreboard and HUD system engineered using ActionScript integrated with high-performance C++ runtime on Frostbite Engine architecture for EA Sports title pipelines. Features sub-frame responsive scoreboard state machines, live clock synchronization, and broadcast-grade visual transitions.',
-      es: 'Sistema de marcador y HUD de transmisión deportiva en tiempo real desarrollado con ActionScript integrado con tiempo de ejecución de alto rendimiento en C++ sobre la arquitectura de Frostbite Engine para pipelines de EA Sports. Incluye máquinas de estados de marcador con actualización instantánea cuadro a cuadro, sincronización de reloj en vivo y transiciones visuales con estándares televisivos.',
+      en: 'Real-time sports game broadcast scoreboard and HUD system engineered using ActionScript integrated with high-performance C++ runtime on Frostbite Engine architecture for EA Sports College Football 25 title pipelines. Features sub-frame responsive scoreboard state machines, live clock synchronization, and broadcast-grade visual transitions.',
+      es: 'Sistema de marcador y HUD de transmisión deportiva en tiempo real desarrollado con ActionScript integrado con tiempo de ejecución de alto rendimiento en C++ sobre la arquitectura de Frostbite Engine para pipelines de EA Sports College Football 25. Incluye máquinas de estados de marcador con actualización instantánea cuadro a cuadro, sincronización de reloj en vivo y transiciones visuales con estándares televisivos.',
     },
     highlights: {
       en: [
@@ -771,20 +776,40 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
             >
               {/* Project Media Preview Area */}
               <div className="relative aspect-video bg-slate-950 flex items-center justify-center overflow-hidden">
-                {project.mediaType === 'video' && project.mediaSrc ? (
+                {project.mediaType === 'video' && (project.mediaSrc || project.youtubeId) ? (
                   <div
-                    className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500 bg-slate-950"
                     onClick={() => setActiveModalProject(project)}
                   >
-                    <video
-                      src={project.mediaSrc}
-                      autoPlay
-                      muted
-                      playsInline
-                      loop
-                      preload="metadata"
-                      className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
-                    />
+                    {project.mediaSrc ? (
+                      <video
+                        src={project.mediaSrc}
+                        autoPlay
+                        muted
+                        playsInline
+                        loop
+                        preload="metadata"
+                        className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
+                      />
+                    ) : project.youtubeId ? (
+                      <div className="w-full h-full relative overflow-hidden">
+                        <img
+                          src={project.thumbnailSrc || `https://img.youtube.com/vi/${project.youtubeId}/hqdefault.jpg`}
+                          alt={title}
+                          className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
+                          onError={(e) => {
+                            if (project.youtubeId && !e.currentTarget.src.includes('hqdefault')) {
+                              e.currentTarget.src = `https://img.youtube.com/vi/${project.youtubeId}/hqdefault.jpg`;
+                            }
+                          }}
+                        />
+                        <div className="absolute top-2.5 left-3 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded bg-amber-500 text-slate-950 text-[10px] font-black uppercase tracking-wider shadow">
+                          <Film className="w-3 h-3" />
+                          <span>CFB 25 Gameplay</span>
+                        </div>
+                      </div>
+                    ) : null}
+
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                       <div className="w-12 h-12 rounded-full bg-sky-600/90 text-white flex items-center justify-center shadow-lg group-hover:bg-sky-500 group-hover:scale-110 transition-all">
@@ -793,7 +818,7 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                     </div>
                     <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1 pointer-events-none">
                       <Film className="w-3 h-3 text-sky-400" />
-                      <span>{isEn ? 'Watch Simulation Video' : 'Ver Video de Simulación'}</span>
+                      <span>{isEn ? 'Watch Video Showcase' : 'Ver Video del Proyecto'}</span>
                     </span>
                   </div>
                 ) : project.mediaType === 'image' && project.mediaSrc ? (
@@ -963,42 +988,68 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
             {/* Modal Body */}
             <div className="overflow-y-auto p-5 sm:p-6 space-y-6">
               {/* Media Player / Viewer */}
-              {activeModalProject.mediaType === 'video' && activeModalProject.mediaSrc ? (
+              {activeModalProject.mediaType === 'video' && (activeModalProject.mediaSrc || activeModalProject.youtubeId) ? (
                 <div className="space-y-2">
                   <div className="w-full bg-slate-950 rounded-xl overflow-hidden shadow-inner aspect-video relative group flex items-center justify-center">
-                    <video
-                      key={activeModalProject.mediaSrc}
-                      controls
-                      autoPlay
-                      muted
-                      playsInline
-                      preload="auto"
-                      className="w-full h-full object-contain"
-                    >
-                      <source src={activeModalProject.mediaSrc} type="video/mp4" />
-                      {isEn
-                        ? 'Your browser does not support HTML5 video streaming.'
-                        : 'Tu navegador no soporta reproducción de video HTML5.'}
-                    </video>
+                    {activeModalProject.youtubeId ? (
+                      <iframe
+                        src={`https://www.youtube-nocookie.com/embed/${activeModalProject.youtubeId}?autoplay=1&rel=0`}
+                        title={activeModalProject.title[language] || activeModalProject.title.en}
+                        className="w-full h-full border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : activeModalProject.mediaSrc ? (
+                      <video
+                        key={activeModalProject.mediaSrc}
+                        controls
+                        autoPlay
+                        muted
+                        playsInline
+                        preload="auto"
+                        className="w-full h-full object-contain"
+                      >
+                        <source src={activeModalProject.mediaSrc} type="video/mp4" />
+                        {isEn
+                          ? 'Your browser does not support HTML5 video streaming.'
+                          : 'Tu navegador no soporta reproducción de video HTML5.'}
+                      </video>
+                    ) : null}
                   </div>
                   <div className="flex items-center justify-between flex-wrap gap-2 text-xs text-slate-500 px-1">
                     <span className="flex items-center gap-1.5">
                       <Film className="w-3.5 h-3.5 text-sky-500" />
                       <span>
-                        {isEn
+                        {activeModalProject.youtubeId
+                          ? isEn
+                            ? 'Official EA Sports College Football 25 broadcast presentation & gameplay stream.'
+                            : 'Transmisión oficial de jugabilidad y presentación de gráficos de EA Sports College Football 25.'
+                          : isEn
                           ? 'HD MP4 simulation recording. Toggle unmute in playback bar for audio.'
                           : 'Grabación de simulación en HD (MP4). Activa el sonido en la barra de control.'}
                       </span>
                     </span>
-                    <a
-                      href={activeModalProject.mediaSrc}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-sky-600 hover:text-sky-700 font-medium inline-flex items-center gap-1 underline underline-offset-2"
-                    >
-                      <span>{isEn ? 'Open video directly' : 'Abrir video directamente'}</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
+                    {activeModalProject.youtubeId ? (
+                      <a
+                        href={`https://www.youtube.com/watch?v=${activeModalProject.youtubeId}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-red-600 hover:text-red-700 font-bold inline-flex items-center gap-1 underline underline-offset-2"
+                      >
+                        <span>{isEn ? 'Watch on YouTube' : 'Ver en YouTube'}</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ) : activeModalProject.mediaSrc ? (
+                      <a
+                        href={activeModalProject.mediaSrc}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sky-600 hover:text-sky-700 font-medium inline-flex items-center gap-1 underline underline-offset-2"
+                      >
+                        <span>{isEn ? 'Open video directly' : 'Abrir video directamente'}</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ) : null}
                   </div>
                 </div>
               ) : activeModalProject.mediaType === 'image' ? (

@@ -42,7 +42,6 @@ export interface ProjectItem {
   engine: string;
   mediaType: 'video' | 'image' | 'external';
   mediaSrc?: string;
-  youtubeId?: string;
   thumbnailSrc?: string;
   description: LocalizedString;
   highlights: LocalizedArray;
@@ -71,9 +70,7 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     },
     year: '2024',
     engine: 'Frostbite Engine',
-    mediaType: 'video',
-    youtubeId: 'ubRvxZC4jGI',
-    thumbnailSrc: 'https://img.youtube.com/vi/ubRvxZC4jGI/maxresdefault.jpg',
+    mediaType: 'external',
     description: {
       en: 'Verified public credit on MobyGames for flagship sports release EA Sports College Football 25. Co-developed at DEVBOT for premier global publisher Electronic Arts (EA Sports). Provided critical Technical Art and QA support across UI/UX systems, Frostbite engine pipelines, initial playable build performance, and console certification for PlayStation 5 and Xbox Series X/S.',
       es: 'Crédito público verificado en MobyGames para el lanzamiento deportivo insignia EA Sports College Football 25. Co-desarrollado en DEVBOT para el publisher líder global Electronic Arts (EA Sports). Soporte crítico como Artista Técnico y QA en sistemas de UI/UX, pipelines en Frostbite Engine, rendimiento en builds jugables iniciales y certificación de consola para PlayStation 5 y Xbox Series X/S.',
@@ -140,103 +137,14 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     featured: true,
   },
   {
-    id: 'scores-sports-sim',
+    id: 'unreal-standalone-gameplay',
     title: {
-      en: 'Sports Broadcast & Real-Time Scoreboard HUD System',
-      es: 'Simulación de Transmisión Deportiva y Marcador HUD en Tiempo Real',
+      en: 'Unreal Engine Standalone Gameplay Simulation',
+      es: 'Simulación de Videojuego Ejecutable en Unreal Engine',
     },
     subtitle: {
-      en: 'ActionScript, C++ & Frostbite Engine Broadcast Scorebug Pipeline',
-      es: 'Pipeline de Scorebug y Gráficos de Transmisión en ActionScript, C++ y Frostbite',
-    },
-    category: 'aaa-games',
-    categoryLabel: {
-      en: 'AAA Games & Co-Dev',
-      es: 'Videojuegos AAA & Co-Desarrollo',
-    },
-    year: '2022 - 2024',
-    engine: 'Frostbite Engine',
-    mediaType: 'video',
-    youtubeId: '3Rkj6FlMcLU',
-    thumbnailSrc: 'https://img.youtube.com/vi/3Rkj6FlMcLU/maxresdefault.jpg',
-    description: {
-      en: 'Real-time sports game broadcast scoreboard and HUD system engineered using ActionScript integrated with high-performance C++ runtime on Frostbite Engine architecture for EA Sports College Football 25 title pipelines. Features sub-frame responsive scoreboard state machines, live clock synchronization, and broadcast-grade visual transitions.',
-      es: 'Sistema de marcador y HUD de transmisión deportiva en tiempo real desarrollado con ActionScript integrado con tiempo de ejecución de alto rendimiento en C++ sobre la arquitectura de Frostbite Engine para pipelines de EA Sports College Football 25. Incluye máquinas de estados de marcador con actualización instantánea cuadro a cuadro, sincronización de reloj en vivo y transiciones visuales con estándares televisivos.',
-    },
-    highlights: {
-      en: [
-        'Engineered in ActionScript integrated with C++ runtime on Frostbite Engine architecture',
-        'Sub-frame responsive scorebug state machine handling quarters/halves, points, and game timers',
-        'Broadcast-grade typography, dynamic score tracking, and team branding color theming',
-        'Engineered for EA Sports AAA game presentation pipelines and console certification',
-      ],
-      es: [
-        'Desarrollado en ActionScript integrado con tiempo de ejecución en C++ sobre Frostbite Engine',
-        'Máquina de estados de scorebug con respuesta instantánea manejando cuartos/tiempos, puntos y cronómetros',
-        'Tipografía con estándares de transmisión televisiva, control dinámico de marcador y paletas de equipo',
-        'Diseñado para pipelines de presentación AAA de EA Sports y certificación en consolas',
-      ],
-    },
-    techStack: ['ActionScript', 'C++', 'Frostbite Engine', 'EA Sports UI/HUD', 'Perforce Helix Core', 'Broadcast Graphics'],
-    externalUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
-    externalLabel: {
-      en: 'View Verified MobyGames Credits',
-      es: 'Ver Créditos Verificados en MobyGames',
-    },
-    mobyGamesUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
-    featured: true,
-  },
-  {
-    id: 'vdb-volumetric-sim',
-    title: {
-      en: 'OpenVDB Volumetric Smoke & Cloud Simulation',
-      es: 'Simulación Volumétrica de Humo y Nubes con OpenVDB',
-    },
-    subtitle: {
-      en: 'GPU-Accelerated Heterogeneous Volume Rendering',
-      es: 'Renderizado de Volúmenes Heterogéneos Acelerado por GPU',
-    },
-    category: 'simulation',
-    categoryLabel: {
-      en: '3D Simulation & VFX',
-      es: 'Simulación 3D & Efectos Visuales',
-    },
-    year: '2024',
-    engine: 'Unreal Engine 5 (Niagara & OpenVDB)',
-    mediaType: 'external',
-    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
-    externalLabel: {
-      en: 'View Project in Drive Archive',
-      es: 'Ver Proyecto en Carpeta Drive',
-    },
-    description: {
-      en: 'Cutting-edge volumetric simulation inside Unreal Engine 5 taking advantage of OpenVDB spatial data structures. Computes high-density smoke plumes, atmospheric scattering, and light absorption in real time.',
-      es: 'Simulación volumétrica de vanguardia en Unreal Engine 5 utilizando estructuras de datos espaciales OpenVDB. Calcula plumas de humo de alta densidad, dispersión atmosférica y absorción lumínica en tiempo real.',
-    },
-    highlights: {
-      en: [
-        'GPU-accelerated raymarching of 3D density grids without baking artifacts',
-        'Physically accurate phase function scattering and shadow penetration',
-        'Interactive viewport parameter adjustments for density, absorption, and velocity',
-      ],
-      es: [
-        'Raymarching acelerado por GPU de mallas volumétricas 3D sin artefactos de horneado',
-        'Dispersión física precisa mediante funciones de fase y penetración de sombras',
-        'Ajustes interactivos de densidad, absorción y velocidad en tiempo real desde el viewport',
-      ],
-    },
-    techStack: ['Unreal Engine 5', 'OpenVDB', 'Niagara VFX', 'Heterogeneous Volumes', 'GPU Shaders'],
-    featured: true,
-  },
-  {
-    id: 'class-sim',
-    title: {
-      en: 'ClassSim - Interactive Classroom Virtual Simulation',
-      es: 'ClassSim - Simulación Virtual Interactiva de Aulas',
-    },
-    subtitle: {
-      en: 'Spatial Presence & Interactive Education Environment',
-      es: 'Presencia Espacial y Entorno Interactivo de Educación',
+      en: 'Real-Time Physics, Character Controller & Environmental Interaction',
+      es: 'Físicas en Tiempo Real, Controlador de Personaje e Interacción Ambiental',
     },
     category: 'virtual-env',
     categoryLabel: {
@@ -244,71 +152,27 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       es: 'Entornos Virtuales Interactivos',
     },
     year: '2020',
-    engine: 'Unreal Engine (Standalone NetMode)',
-    mediaType: 'external',
-    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
-    externalLabel: {
-      en: 'View Project in Drive Archive',
-      es: 'Ver Proyecto en Carpeta Drive',
-    },
+    engine: 'Unreal Engine (Standalone 64-bit PCD3D_SM5)',
+    mediaType: 'video',
+    mediaSrc: '/portfolio_assets/gameplay-showcase.mp4',
     description: {
-      en: 'Interactive 3D simulation of an academic auditorium and classroom setting designed for training, multi-perspective spatial awareness, and interactive virtual navigation.',
-      es: 'Simulación 3D interactiva de un auditorio y aula académica diseñada para capacitación, conciencia espacial multiperspectiva y navegación virtual interactiva.',
+      en: 'Direct gameplay recording from standalone client build featuring real-time collision detection, responsive third-person camera mechanics, and dynamic physics objects.',
+      es: 'Captura directa de jugabilidad en build ejecutable con detección de colisiones en tiempo real, cámara reactiva en tercera persona y objetos con dinámicas de física.',
     },
     highlights: {
       en: [
-        'Interactive first-person controller with collision geometry and sightline testing',
-        'Realistic architectural scaling, natural light bounce, and seating arrangements',
-        'Optimized standalone Windows build for lightweight distribution',
+        '60 FPS gameplay validation in standalone Windows runtime',
+        'Third-person character locomotion with acceleration and braking curves',
+        'Engineered interactive mechanics using Blueprints and C++',
       ],
       es: [
-        'Controlador interactivo en primera persona con geometría de colisión y análisis visual',
-        'Escala arquitectónica realista, rebote de luz natural y distribución ergonómica',
-        'Build ejecutable Standalone para Windows altamente optimizado para distribución ligera',
+        'Validación de jugabilidad a 60 FPS en entorno ejecutable para Windows',
+        'Locomoción de personaje en tercera persona con curvas de aceleración y frenado',
+        'Mecánicas interactivas programadas mediante Blueprints y C++',
       ],
     },
-    techStack: ['Unreal Engine', 'Architectural Visualization', 'Standalone Build', 'C++ / Blueprints'],
-  },
-  {
-    id: 'procedural-world-gen',
-    title: {
-      en: 'RWGen - Procedural World & Environment Generation',
-      es: 'RWGen - Generación Procedimental de Mundos y Terrenos',
-    },
-    subtitle: {
-      en: 'Algorithmic Terrain Biomes & Runtime Spatial Streaming',
-      es: 'Biomas Algorítmicos de Terreno y Streaming Espacial en Tiempo de Ejecución',
-    },
-    category: 'virtual-env',
-    categoryLabel: {
-      en: 'Interactive Virtual Environments',
-      es: 'Entornos Virtuales Interactivos',
-    },
-    year: '2022',
-    engine: 'Unreal Engine Procedural Systems',
-    mediaType: 'external',
-    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
-    externalLabel: {
-      en: 'View Project in Drive Archive',
-      es: 'Ver Proyecto en Carpeta Drive',
-    },
-    description: {
-      en: 'Algorithmic terrain generation and procedural landscape populating. Demonstrates runtime biome generation, rule-based vegetation scattering, and scalable level-of-detail (LOD) streaming.',
-      es: 'Generación algorítmica de terrenos y poblamiento procedimental de paisajes. Demuestra generación de biomas en tiempo de ejecución, distribución de vegetación basada en reglas y streaming escalable por nivel de detalle (LOD).',
-    },
-    highlights: {
-      en: [
-        'Noise-based heightmap elevation blending and biome transition zones',
-        'Foliage instance clustering optimized for high framerates on standard GPUs',
-        'Procedural generation rules eliminating repetitive manual level placement',
-      ],
-      es: [
-        'Fusión de elevaciones por mapa de alturas con ruido y zonas de transición entre biomas',
-        'Agrupamiento de instancias de vegetación optimizado para altos framerates en GPUs comunes',
-        'Reglas procedimentales que eliminan la colocación manual repetitiva en niveles masivos',
-      ],
-    },
-    techStack: ['Unreal Engine', 'Procedural Algorithms', 'Landscape Tools', 'HLSL', 'LOD Streaming'],
+    techStack: ['Unreal Engine', 'Character Locomotion', 'Physics Simulation', 'C++ / Blueprints'],
+    featured: true,
   },
   {
     id: 'unreal-editor-multiplayer',
@@ -346,6 +210,45 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       ],
     },
     techStack: ['Unreal Engine', 'Multiplayer Networking', 'Replication / RPCs', 'Server Architecture'],
+    featured: true,
+  },
+  {
+    id: 'unreal-editor-project4',
+    title: {
+      en: 'Unreal Engine Scene Assembly & Level Construction',
+      es: 'Montaje de Escenarios y Construcción de Niveles en Unreal Engine',
+    },
+    subtitle: {
+      en: 'Lighting Setup, Material Instances & Viewport Profiling',
+      es: 'Iluminación, Instancias de Materiales y Perfilado en Viewport',
+    },
+    category: 'virtual-env',
+    categoryLabel: {
+      en: 'Interactive Virtual Environments',
+      es: 'Entornos Virtuales Interactivos',
+    },
+    year: '2020',
+    engine: 'Unreal Editor',
+    mediaType: 'video',
+    mediaSrc: '/portfolio_assets/unreal-editor-workflow.mp4',
+    description: {
+      en: 'In-editor level construction session demonstrating asset placement, volumetric fog tuning, static and dynamic light building, and performance profiling across rendering passes.',
+      es: 'Sesión de construcción de nivel en editor demostrando colocación de assets, niebla volumétrica, cálculo de iluminación estática y dinámica, y perfilado de rendimiento en passes de render.',
+    },
+    highlights: {
+      en: [
+        'Material instance parameters tuning for physically based rendering (PBR)',
+        'Draw call and polygon budget optimization for target platforms',
+        'Real-time editor viewport profiling and debugging',
+      ],
+      es: [
+        'Ajuste fino de instancias de materiales para renderizado basado en física (PBR)',
+        'Optimización de presupuesto de polígonos y draw calls para plataformas de destino',
+        'Depuración y perfilado de rendimiento en tiempo real en viewport del editor',
+      ],
+    },
+    techStack: ['Unreal Engine', 'Level Design', 'PBR Materials', 'Profiling & Optimization'],
+    featured: true,
   },
   {
     id: 'industrial-digital-twins',
@@ -387,6 +290,7 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       en: 'View Portfolio Drive Folder',
       es: 'Ver Carpeta de Portafolio en Drive',
     },
+    featured: true,
   },
   {
     id: 'orblite-platform',
@@ -430,78 +334,86 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     },
   },
   {
-    id: 'unreal-standalone-gameplay',
+    id: 'scores-sports-sim',
     title: {
-      en: 'Unreal Engine Standalone Game Simulation',
-      es: 'Simulación de Videojuego Ejecutable en Unreal Engine',
+      en: 'Sports Broadcast & Real-Time Scoreboard Simulation',
+      es: 'Simulación de Transmisión Deportiva y Marcador en Tiempo Real',
     },
     subtitle: {
-      en: 'Real-Time Physics, Character Controller & Environmental Interaction',
-      es: 'Físicas en Tiempo Real, Controlador de Personaje e Interacción Ambiental',
+      en: 'Dynamic In-Game Score Tracking, Clock & Broadcast Graphics System',
+      es: 'Sistema Dinámico de Marcador en Juego, Reloj y Gráficos de Transmisión',
     },
-    category: 'virtual-env',
+    category: 'aaa-games',
     categoryLabel: {
-      en: 'Interactive Virtual Environments',
-      es: 'Entornos Virtuales Interactivos',
+      en: 'AAA Games & Co-Dev',
+      es: 'Videojuegos AAA & Co-Desarrollo',
     },
-    year: '2020',
-    engine: 'Unreal Engine (Standalone 64-bit PCD3D_SM5)',
-    mediaType: 'video',
-    mediaSrc: '/portfolio_assets/unreal-multiplayer-server-preview.mp4',
+    year: '2022 - 2023',
+    engine: 'Unreal Engine / Real-Time UI',
+    mediaType: 'external',
     description: {
-      en: 'Direct gameplay recording from standalone client build featuring real-time collision detection, responsive third-person camera mechanics, and dynamic physics objects.',
-      es: 'Captura directa de jugabilidad en build ejecutable con detección de colisiones en tiempo real, cámara reactiva en tercera persona y objetos con dinámicas de física.',
+      en: 'Real-time sports game display and scoring simulation designed to mimic televised sports broadcast feeds and high-stakes match gameplay. Features sub-frame responsive scoreboard updates, game clock synchronizations, and event-triggered visual transitions.',
+      es: 'Simulación de pantalla de juego y marcador deportivo en tiempo real diseñada para emular transmisiones televisivas deportivas y partidas de alta exigencia. Cuenta con actualización instantánea cuadro a cuadro, sincronización de reloj de partido y transiciones visuales disparadas por eventos.',
     },
     highlights: {
       en: [
-        '60 FPS gameplay validation in standalone Windows runtime',
-        'Third-person character locomotion with acceleration and braking curves',
-        'Engineered interactive mechanics using Blueprints and C++',
+        'Event-driven score state machine handling points, quarters/halves, and timer logic',
+        'Broadcast-grade typography, responsive screen scaling, and team color theming',
+        'Bridges the gap between athletic game passion and technical real-time programming',
       ],
       es: [
-        'Validación de jugabilidad a 60 FPS en entorno ejecutable para Windows',
-        'Locomoción de personaje en tercera persona con curvas de aceleración y frenado',
-        'Mecánicas interactivas programadas mediante Blueprints y C++',
+        'Máquina de estados de puntuación basada en eventos que maneja puntos, cuartos/tiempos y cronómetro',
+        'Tipografía con estándares de transmisión televisiva, escalado responsivo y paletas por equipo',
+        'Conexión directa entre la pasión por los deportes y la programación técnica en tiempo real',
       ],
     },
-    techStack: ['Unreal Engine', 'Character Locomotion', 'Physics Simulation', 'C++ / Blueprints'],
+    techStack: ['Unreal Engine', 'UMG UI / Slate', 'Sports Mechanics', 'C++', 'Event Driven State'],
+    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
+    externalLabel: {
+      en: 'View in Drive Portfolio',
+      es: 'Ver en Portafolio Drive',
+    },
   },
   {
-    id: 'unreal-editor-project4',
+    id: 'vdb-volumetric-sim',
     title: {
-      en: 'Unreal Engine Scene Assembly & Level Construction',
-      es: 'Montaje de Escenarios y Construcción de Niveles en Unreal Engine',
+      en: 'OpenVDB Volumetric Smoke & Cloud Simulation',
+      es: 'Simulación Volumétrica de Humo y Nubes con OpenVDB',
     },
     subtitle: {
-      en: 'Lighting Setup, Material Instances & Viewport Profiling',
-      es: 'Iluminación, Instancias de Materiales y Perfilado en Viewport',
+      en: 'GPU-Accelerated Heterogeneous Volume Rendering',
+      es: 'Renderizado de Volúmenes Heterogéneos Acelerado por GPU',
     },
-    category: 'virtual-env',
+    category: 'simulation',
     categoryLabel: {
-      en: 'Interactive Virtual Environments',
-      es: 'Entornos Virtuales Interactivos',
+      en: '3D Simulation & VFX',
+      es: 'Simulación 3D & Efectos Visuales',
     },
-    year: '2020',
-    engine: 'Unreal Editor',
-    mediaType: 'video',
-    mediaSrc: '/portfolio_assets/unreal-editor-workflow.mp4',
+    year: '2024',
+    engine: 'Unreal Engine 5 (Niagara & OpenVDB)',
+    mediaType: 'external',
     description: {
-      en: 'In-editor level construction session demonstrating asset placement, volumetric fog tuning, static and dynamic light building, and performance profiling across rendering passes.',
-      es: 'Sesión de construcción de nivel en editor demostrando colocación de assets, niebla volumétrica, cálculo de iluminación estática y dinámica, y perfilado de rendimiento en passes de render.',
+      en: 'Cutting-edge volumetric simulation inside Unreal Engine 5 taking advantage of OpenVDB spatial data structures. Computes high-density smoke plumes, atmospheric scattering, and light absorption in real time.',
+      es: 'Simulación volumétrica de vanguardia en Unreal Engine 5 utilizando estructuras de datos espaciales OpenVDB. Calcula plumas de humo de alta densidad, dispersión atmosférica y absorción lumínica en tiempo real.',
     },
     highlights: {
       en: [
-        'Material instance parameters tuning for physically based rendering (PBR)',
-        'Draw call and polygon budget optimization for target platforms',
-        'Real-time editor viewport profiling and debugging',
+        'GPU-accelerated raymarching of 3D density grids without baking artifacts',
+        'Physically accurate phase function scattering and shadow penetration',
+        'Interactive viewport parameter adjustments for density, absorption, and velocity',
       ],
       es: [
-        'Ajuste fino de instancias de materiales para renderizado basado en física (PBR)',
-        'Optimización de presupuesto de polígonos y draw calls para plataformas de destino',
-        'Depuración y perfilado de rendimiento en tiempo real en viewport del editor',
+        'Raymarching acelerado por GPU de mallas volumétricas 3D sin artefactos de horneado',
+        'Dispersión física precisa mediante funciones de fase y penetración de sombras',
+        'Ajustes interactivos de densidad, absorción y velocidad en tiempo real desde el viewport',
       ],
     },
-    techStack: ['Unreal Engine', 'Level Design', 'PBR Materials', 'Profiling & Optimization'],
+    techStack: ['Unreal Engine 5', 'OpenVDB', 'Niagara VFX', 'Heterogeneous Volumes', 'GPU Shaders'],
+    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
+    externalLabel: {
+      en: 'View in Drive Portfolio',
+      es: 'Ver en Portafolio Drive',
+    },
   },
   {
     id: 'concept-artworks',
@@ -776,49 +688,43 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
             >
               {/* Project Media Preview Area */}
               <div className="relative aspect-video bg-slate-950 flex items-center justify-center overflow-hidden">
-                {project.mediaType === 'video' && (project.mediaSrc || project.youtubeId) ? (
+                {project.mediaType === 'video' && project.mediaSrc ? (
                   <div
-                    className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500 bg-slate-950"
+                    className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500"
                     onClick={() => setActiveModalProject(project)}
                   >
-                    {project.mediaSrc ? (
-                      <video
-                        src={project.mediaSrc}
-                        autoPlay
-                        muted
-                        playsInline
-                        loop
-                        preload="metadata"
-                        className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
-                      />
-                    ) : project.youtubeId ? (
-                      <div className="w-full h-full relative overflow-hidden">
-                        <img
-                          src={project.thumbnailSrc || `https://img.youtube.com/vi/${project.youtubeId}/hqdefault.jpg`}
-                          alt={title}
-                          className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
-                          onError={(e) => {
-                            if (project.youtubeId && !e.currentTarget.src.includes('hqdefault')) {
-                              e.currentTarget.src = `https://img.youtube.com/vi/${project.youtubeId}/hqdefault.jpg`;
-                            }
-                          }}
-                        />
-                        <div className="absolute top-2.5 left-3 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded bg-amber-500 text-slate-950 text-[10px] font-black uppercase tracking-wider shadow">
-                          <Film className="w-3 h-3" />
-                          <span>CFB 25 Gameplay</span>
-                        </div>
-                      </div>
-                    ) : null}
-
+                    <video
+                      src={project.mediaSrc}
+                      muted
+                      playsInline
+                      loop
+                      preload="metadata"
+                      className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                      onMouseEnter={(e) => {
+                        try {
+                          const p = e.currentTarget.play();
+                          if (p !== undefined) p.catch(() => {});
+                        } catch {
+                          /* ignore */
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        try {
+                          e.currentTarget.pause();
+                        } catch {
+                          /* ignore */
+                        }
+                      }}
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                       <div className="w-12 h-12 rounded-full bg-sky-600/90 text-white flex items-center justify-center shadow-lg group-hover:bg-sky-500 group-hover:scale-110 transition-all">
-                        <Play className="w-5 h-5 ml-0.5" />
+                        <Play className="w-5 h-5 ml-0.5 fill-white" />
                       </div>
                     </div>
                     <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1 pointer-events-none">
                       <Film className="w-3 h-3 text-sky-400" />
-                      <span>{isEn ? 'Watch Video Showcase' : 'Ver Video del Proyecto'}</span>
+                      <span>{isEn ? 'Click to Play Video' : 'Clic para Reproducir'}</span>
                     </span>
                   </div>
                 ) : project.mediaType === 'image' && project.mediaSrc ? (
@@ -906,7 +812,7 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                       onClick={() => setActiveModalProject(project)}
                       className="text-xs font-bold text-sky-600 hover:text-sky-800 flex items-center gap-1 transition-colors"
                     >
-                      <span>{isEn ? 'View Showcase' : 'Ver Detalles'}</span>
+                      <span>{project.mediaType === 'video' ? (isEn ? 'Watch Video' : 'Reproducir Video') : (isEn ? 'View Showcase' : 'Ver Detalles')}</span>
                       <ChevronRight className="w-3.5 h-3.5" />
                     </button>
 
@@ -988,68 +894,35 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
             {/* Modal Body */}
             <div className="overflow-y-auto p-5 sm:p-6 space-y-6">
               {/* Media Player / Viewer */}
-              {activeModalProject.mediaType === 'video' && (activeModalProject.mediaSrc || activeModalProject.youtubeId) ? (
+              {activeModalProject.mediaType === 'video' && activeModalProject.mediaSrc ? (
                 <div className="space-y-2">
-                  <div className="w-full bg-slate-950 rounded-xl overflow-hidden shadow-inner aspect-video relative group flex items-center justify-center">
-                    {activeModalProject.youtubeId ? (
-                      <iframe
-                        src={`https://www.youtube-nocookie.com/embed/${activeModalProject.youtubeId}?autoplay=1&rel=0`}
-                        title={activeModalProject.title[language] || activeModalProject.title.en}
-                        className="w-full h-full border-0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    ) : activeModalProject.mediaSrc ? (
-                      <video
-                        key={activeModalProject.mediaSrc}
-                        controls
-                        autoPlay
-                        muted
-                        playsInline
-                        preload="auto"
-                        className="w-full h-full object-contain"
-                      >
-                        <source src={activeModalProject.mediaSrc} type="video/mp4" />
-                        {isEn
-                          ? 'Your browser does not support HTML5 video streaming.'
-                          : 'Tu navegador no soporta reproducción de video HTML5.'}
-                      </video>
-                    ) : null}
+                  <div className="w-full bg-slate-950 rounded-xl overflow-hidden shadow-inner aspect-video flex items-center justify-center">
+                    <video
+                      key={activeModalProject.mediaSrc}
+                      controls
+                      autoPlay
+                      muted
+                      playsInline
+                      preload="auto"
+                      className="w-full h-full object-contain"
+                    >
+                      <source src={activeModalProject.mediaSrc} type="video/mp4" />
+                      Your browser does not support HTML5 video playback.
+                    </video>
                   </div>
-                  <div className="flex items-center justify-between flex-wrap gap-2 text-xs text-slate-500 px-1">
-                    <span className="flex items-center gap-1.5">
-                      <Film className="w-3.5 h-3.5 text-sky-500" />
-                      <span>
-                        {activeModalProject.youtubeId
-                          ? isEn
-                            ? 'Official EA Sports College Football 25 broadcast presentation & gameplay stream.'
-                            : 'Transmisión oficial de jugabilidad y presentación de gráficos de EA Sports College Football 25.'
-                          : isEn
-                          ? 'HD MP4 simulation recording. Toggle unmute in playback bar for audio.'
-                          : 'Grabación de simulación en HD (MP4). Activa el sonido en la barra de control.'}
-                      </span>
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 px-1">
+                    <span>
+                      {isEn ? 'Tip: You can unmute audio or expand to fullscreen using video controls.' : 'Tip: Puedes activar audio o pantalla completa en los controles del video.'}
                     </span>
-                    {activeModalProject.youtubeId ? (
-                      <a
-                        href={`https://www.youtube.com/watch?v=${activeModalProject.youtubeId}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-red-600 hover:text-red-700 font-bold inline-flex items-center gap-1 underline underline-offset-2"
-                      >
-                        <span>{isEn ? 'Watch on YouTube' : 'Ver en YouTube'}</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    ) : activeModalProject.mediaSrc ? (
-                      <a
-                        href={activeModalProject.mediaSrc}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-sky-600 hover:text-sky-700 font-medium inline-flex items-center gap-1 underline underline-offset-2"
-                      >
-                        <span>{isEn ? 'Open video directly' : 'Abrir video directamente'}</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    ) : null}
+                    <a
+                      href={activeModalProject.mediaSrc}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sky-600 hover:underline flex items-center gap-1 font-semibold"
+                    >
+                      <span>{isEn ? 'Open video in new tab' : 'Abrir video en pestaña nueva'}</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
                   </div>
                 </div>
               ) : activeModalProject.mediaType === 'image' ? (

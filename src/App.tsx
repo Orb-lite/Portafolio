@@ -12,7 +12,6 @@ import { exportElementToPdf, printResumeDocument } from './utils/pdfExport';
 import { PortfolioView } from './components/portfolio/PortfolioView';
 import { AboutMeView } from './components/about/AboutMeView';
 import { EditorAuthGate } from './components/auth/EditorAuthGate';
-import { getStoredSession, AdminUser } from './services/authService';
 import {
   Download,
   Printer,
@@ -43,7 +42,6 @@ export default function App() {
   const [styleConfig, setStyleConfig] = useState<StyleConfig>(defaultStyleConfig);
   const [activeTab, setActiveTab] = useState<'job_match' | 'personal' | 'experience' | 'skills' | 'design'>('job_match');
   const [isEditorRequestedViaUrl, setIsEditorRequestedViaUrl] = useState<boolean>(false);
-  const [adminSession, setAdminSession] = useState<AdminUser | null>(() => getStoredSession());
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [notification, setNotification] = useState<string | null>(null);
   const [isLinkedInModalOpen, setIsLinkedInModalOpen] = useState<boolean>(false);
@@ -57,13 +55,9 @@ export default function App() {
     if (typeof window !== 'undefined') {
       const checkUrlForEditor = () => {
         const params = new URLSearchParams(window.location.search);
-        const hasEditorParam = params.has('editor') || params.has('admin');
-        const hasEditorHash =
-          window.location.hash.toLowerCase().includes('editor') ||
-          window.location.hash.toLowerCase().includes('admin');
-        const hasEditorPath =
-          window.location.pathname.toLowerCase().includes('/editor') ||
-          window.location.pathname.toLowerCase().includes('/admin');
+        const hasEditorParam = params.get('editor') === 'true' || params.get('admin') === 'true';
+        const hasEditorHash = window.location.hash === '#editor' || window.location.hash === '#admin';
+        const hasEditorPath = window.location.pathname.startsWith('/editor') || window.location.pathname.startsWith('/admin');
 
         if (hasEditorParam || hasEditorHash || hasEditorPath) {
           setIsEditorRequestedViaUrl(true);
@@ -337,7 +331,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Primary Page Navigation Tabs & OAuth Protected Editor Trigger */}
+        {/* Primary Page Navigation Tabs (Without any editor triggers) */}
         <div className="max-w-7xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-3 bg-slate-950/70">
           <div className="flex items-center gap-2">
             {/* Tab 1: Portfolio */}
@@ -489,7 +483,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right: Print & Download only (Editor accessible strictly via URL) */}
+            {/* Right: Print & Download only (No editor button) */}
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -536,12 +530,11 @@ export default function App() {
         </main>
       )}
 
-      {/* PRIVATE RESUME EDITOR GATE: ONLY ACCESSIBLE VIA GOOGLE OAUTH FOR isaacgestrada94@gmail.com */}
+      {/* PRIVATE RESUME EDITOR GATE: ONLY ACCESSIBLE VIA URL WITH GOOGLE OAUTH */}
       {isEditorRequestedViaUrl && (
         <EditorAuthGate
           language={language}
           onClose={closeEditorAndCleanUrl}
-          onSessionChange={setAdminSession}
         >
           {({ user, onLogout }) => (
             <div className="no-print fixed inset-0 z-50 overflow-hidden bg-slate-950/75 backdrop-blur-xs flex justify-end animate-fade-in">

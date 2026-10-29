@@ -1,12 +1,9 @@
 node_modules/
-dist/
 build/
+dist/
 coverage/
-*.log
-*.zip
-public/assets/
-.env
-.env.*
-!.env.example
 .DS_Store
+*.log
+.env*
+!.env.example
 .aistudio/

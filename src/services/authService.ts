@@ -19,8 +19,25 @@ provider.setCustomParameters({
   prompt: 'select_account',
 });
 
-export const ALLOWED_ADMIN_EMAIL = 'isaacgestrada94@gmail.com';
-export const MASTER_ADMIN_PASSCODES = ['isaac2026', 'orblite2026', '3318359421', 'Isaac2026!'];
+export const ALLOWED_ADMIN_EMAILS: string[] = [
+  'isaacgestrada94@gmail.com',
+  'ventas@orb-lite.com',
+];
+
+export const isEmailAuthorized = (email?: string | null): boolean => {
+  if (!email) return false;
+  const clean = email.toLowerCase().trim();
+  return ALLOWED_ADMIN_EMAILS.some((allowed) => allowed.toLowerCase().trim() === clean);
+};
+
+export const ALLOWED_ADMIN_EMAIL = ALLOWED_ADMIN_EMAILS[0];
+export const MASTER_ADMIN_PASSCODES = [
+  'isaac2026',
+  'orblite2026',
+  'ventas2026',
+  '3318359421',
+  'Isaac2026!',
+];
 
 export interface AdminUser {
   email: string;
@@ -35,10 +52,10 @@ const SESSION_STORAGE_KEY = 'ig_admin_session_auth';
 export const getStoredSession = (): AdminUser | null => {
   if (typeof window === 'undefined') return null;
   try {
-    const raw = sessionStorage.getItem(SESSION_STORAGE_KEY);
+    const raw = sessionStorage.getItem(SESSION_STORAGE_KEY) || localStorage.getItem(SESSION_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    if (parsed && parsed.email?.toLowerCase() === ALLOWED_ADMIN_EMAIL.toLowerCase()) {
+    if (parsed && isEmailAuthorized(parsed.email)) {
       return parsed;
     }
   } catch (e) {
@@ -51,7 +68,9 @@ export const getStoredSession = (): AdminUser | null => {
 export const saveSession = (user: AdminUser) => {
   if (typeof window === 'undefined') return;
   try {
-    sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(user));
+    const serialized = JSON.stringify(user);
+    sessionStorage.setItem(SESSION_STORAGE_KEY, serialized);
+    localStorage.setItem(SESSION_STORAGE_KEY, serialized);
   } catch (e) {
     /* ignore */
   }
@@ -62,16 +81,39 @@ export const clearSession = () => {
   if (typeof window === 'undefined') return;
   try {
     sessionStorage.removeItem(SESSION_STORAGE_KEY);
+    localStorage.removeItem(SESSION_STORAGE_KEY);
   } catch (e) {
     /* ignore */
   }
 };
 
+// Helper to ensure Google Identity Services SDK script is ready
+export const ensureGsiLoaded = (): Promise<void> => {
+  if (typeof window === 'undefined') return Promise.resolve();
+  if ((window as any).google?.accounts?.oauth2) return Promise.resolve();
+  return new Promise((resolve) => {
+    const existing = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
+    if (!existing) {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => resolve();
+      script.onerror = () => resolve();
+      document.head.appendChild(script);
+    } else {
+      existing.addEventListener('load', () => resolve());
+      setTimeout(resolve, 1500);
+    }
+  });
+};
+
 // Google Identity Services (GIS) Token Request
-export const signInWithGoogleIdentityServices = (): Promise<{
+export const signInWithGoogleIdentityServices = async (): Promise<{
   user: AdminUser;
   isAuthorized: boolean;
 }> => {
+  await ensureGsiLoaded();
   return new Promise((resolve, reject) => {
     if (typeof window === 'undefined') {
       return reject(new Error('Window is not defined'));
@@ -112,8 +154,8 @@ export const signInWithGoogleIdentityServices = (): Promise<{
             }
 
             const profile = await res.json();
-            const email = (profile.email || '').toLowerCase();
-            const isAuthorized = email === ALLOWED_ADMIN_EMAIL.toLowerCase();
+            const email = (profile.email || '').toLowerCase().trim();
+            const isAuthorized = isEmailAuthorized(email);
 
             const adminUser: AdminUser = {
               email: profile.email || '',
@@ -146,8 +188,8 @@ export const signInWithFirebaseAuth = async (): Promise<{
   isAuthorized: boolean;
 }> => {
   const result = await signInWithPopup(auth, provider);
-  const email = (result.user.email || '').toLowerCase();
-  const isAuthorized = email === ALLOWED_ADMIN_EMAIL.toLowerCase();
+  const email = (result.user.email || '').toLowerCase().trim();
+  const isAuthorized = isEmailAuthorized(email);
 
   const adminUser: AdminUser = {
     email: result.user.email || '',
@@ -187,8 +229,11 @@ export const signInWithGoogleUnified = async (): Promise<{
   }
 };
 
-// Emergency Admin Passcode (allows Isaac to unlock if browser blocks popups in iframe)
-export const signInWithAdminPasscode = (passcode: string): {
+// Emergency Admin Passcode (allows Isaac or Ventas to unlock if browser blocks popups in iframe or origin_mismatch)
+export const signInWithAdminPasscode = (
+  passcode: string,
+  selectedEmail?: string
+): {
   user: AdminUser;
   isAuthorized: boolean;
 } => {
@@ -196,9 +241,15 @@ export const signInWithAdminPasscode = (passcode: string): {
   const isValid = MASTER_ADMIN_PASSCODES.includes(clean);
 
   if (isValid) {
+    const targetEmail =
+      selectedEmail && isEmailAuthorized(selectedEmail)
+        ? selectedEmail
+        : ALLOWED_ADMIN_EMAILS[0];
+
+    const isVentas = targetEmail.toLowerCase().includes('ventas');
     const adminUser: AdminUser = {
-      email: ALLOWED_ADMIN_EMAIL,
-      displayName: 'Isaac Gómez Estrada (Master Key)',
+      email: targetEmail,
+      displayName: isVentas ? 'Orb-lite Ventas (Admin)' : 'Isaac Gómez Estrada (Admin)',
       authMethod: 'admin_passcode',
     };
     saveSession(adminUser);

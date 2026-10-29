@@ -3,7 +3,7 @@ import { ResumeData, StyleConfig } from '../types/resume';
 export const resumeDataEs: ResumeData = {
   personalInfo: {
     fullName: 'Isaac Gómez Estrada',
-    title: 'Lead Automation Engineer & Platform Developer | Orblite',
+    title: 'Artista Técnico (Technical Artist)',
     email: 'isaacgestrada94@gmail.com',
     phone: '+52 33 1835 9421',
     location: 'Zapopan / Guadalajara, Jalisco, México (Presencial, Híbrido o Remoto)',
@@ -14,40 +14,10 @@ export const resumeDataEs: ResumeData = {
     mobygamesUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
     age: 32,
     summary:
-      'Ingeniero de 32 años dedicado desde 2018 al desarrollo de entornos virtuales interactivos, simulación 3D en tiempo real y arquitectura de software. Lead Automation Engineer y Desarrollador de Plataformas con sólida experiencia en integración de APIs de Inteligencia Artificial (LLMs), sistemas telemáticos en tiempo real y aplicaciones web de alto rendimiento. Actualmente Lead Automation Engineer & Platform Developer en Orblite, liderando automatizaciones de flujos con IA, infraestructura telemática vehicular y desarrollo de sistemas ERP/CRM propietarios (TypeScript, React, APIs REST, SQL Supabase, Cloudflare). Experiencia previa destacada en simulación industrial y gemelos digitales para corporativos globales Fortune 500 (sectores automotriz, tecnología y farmacéutico bajo estricta confidencialidad) y como Artista Técnico en estudio de co-desarrollo para título deportivo AAA de clase mundial con crédito verificado en MobyGames (EA Sports College Football 25).',
+      'Artista Técnico e Ingeniero de Simulación 3D en Tiempo Real de 32 años con más de 8 años de trayectoria conectando arte, código y arquitectura de pipelines en desarrollo de videojuegos AAA, gemelos digitales industriales y entornos virtuales interactivos. Artista Técnico con crédito público verificado en MobyGames para el título deportivo AAA de clase mundial EA Sports College Football 25 con un publisher global líder, especializado en UI/UX interactiva en el motor Frostbite, optimización rigurosa a 60+ FPS, control de versiones con Perforce (P4 Helix Core) e integración continua automatizada con Jenkins. Extensa experiencia en Unreal Engine 5 (UE5) y Arch FlexSim desarrollando Gemelos Digitales (Digital Twins) de manufactura para corporativos globales Fortune 500 (sectores automotriz, tecnología y farmacéutico bajo estricta confidencialidad). Sólida capacidad de desarrollo de herramientas de pipeline y automatización (Python, TypeScript, C++, Blueprints, Shaders) y despliegue multiplataforma (PC, Consolas, VR, Móvil y WebGL).',
     photoUrl: '',
   },
   experiences: [
-    {
-      id: 'exp-orblite',
-      role: 'Lead Automation Engineer & Platform Developer',
-      company: 'Orblite',
-      location: 'México',
-      startDate: 'Jun 2026',
-      endDate: 'Presente',
-      isCurrent: true,
-      highlights: [
-        'AI Workflow Automation: Diseñó y desplegó conjuntos de herramientas de producción a medida integrando APIs modernas de IA y Modelos de Lenguaje Grande (LLMs) para automatizar análisis de datos complejos y flujos de trabajo en pipeline.',
-        'Telematics & Data Simulation: Diseñó la arquitectura de infraestructura full-stack de extremo a extremo para telemetría vehicular en tiempo real, procesando y simulando flujos de sensores de alta frecuencia y datos telemétricos.',
-        'Internal Tooling: Desarrolló aplicaciones internas propietarias de ERP/CRM desde cero con TypeScript y React para optimizar el rastreo de activos, flujos de equipo y monitoreo de sistemas.',
-        'Tech Stack: TypeScript, React, RESTful APIs, SQL (Supabase), AI/LLM API Integration, Cloudflare.',
-      ],
-    },
-    {
-      id: 'exp-flex',
-      role: 'Desarrollador de Aplicaciones & Unreal Engine Specialist',
-      company: 'Multinacional de Soluciones de Manufactura y Tecnología (Flex)',
-      location: 'Zapopan, Jalisco, México (Híbrido)',
-      startDate: 'Jun 2024',
-      endDate: 'Abr 2026',
-      isCurrent: false,
-      highlights: [
-        'Desarrollo de Gemelos Digitales (Digital Twins) de piso de producción industrial para corporativos globales Fortune 500 (sectores automotriz, tecnología avanzada y farmacéutica bajo acuerdos de confidencialidad y privacidad).',
-        'Simulación en tiempo real de líneas de producción automatizadas con Unreal Engine 5 y FlexSim, detectando fallas de máquinas antes de su traspaso a estaciones de ensamble subsiguientes.',
-        'Simulación de espacios óptimos considerando separación de líneas y maquinaria para prevención de sobrecalentamiento.',
-        'Creación de simuladores inmersivos en Realidad Virtual (VR) para capacitación segura y efectiva de nuevos operarios en maquinaria especializada.',
-      ],
-    },
     {
       id: 'exp-devbot',
       role: 'Artista Técnico (Technical Artist)',
@@ -57,23 +27,53 @@ export const resumeDataEs: ResumeData = {
       endDate: 'Ago 2023',
       isCurrent: false,
       highlights: [
-        'Desempeño como Artista Técnico asignado a producción deportiva AAA de clase mundial (EA Sports College Football 25) para publisher internacional líder, especializándome en UI/UX interactiva y motor Frostbite (respetando acuerdos de confidencialidad y mejores prácticas de co-desarrollo; crédito público y verificable en MobyGames).',
-        'Desarrollo, integración y validación técnica del primer build funcional y jugable para producciones deportivas AAA de lanzamiento global, asegurando fluidez a 60+ FPS y estricta fidelidad visual.',
-        'Gestión integral del control de versiones y branching con Perforce (P4 Helix Core) en pipelines masivos de producción multicentro.',
-        'Ejecución y mantenimiento de pruebas automatizadas de integración continua (CI) mediante Jenkins para validación de builds y aceleración de entregas.',
+        'Desempeño como Artista Técnico asignado a la producción deportiva AAA de clase mundial EA Sports College Football 25 para publisher internacional líder, especializándome en UI/UX interactiva y motor Frostbite (crédito público y verificable en MobyGames).',
+        'Desarrollo, integración técnica y validación del primer build funcional y jugable para producciones deportivas AAA de lanzamiento global, asegurando estabilidad a 60+ FPS y estricta fidelidad visual.',
+        'Gestión integral del control de versiones y branching con Perforce (P4 Helix Core) en pipelines masivos de co-desarrollo multicentro.',
+        'Mantenimiento y ejecución de pruebas automatizadas de integración continua (CI) mediante Jenkins para validación de builds y aceleración de entregas.',
+      ],
+    },
+    {
+      id: 'exp-flex',
+      role: 'Artista Técnico & Especialista en Unreal Engine 5 (Digital Twins)',
+      company: 'Multinacional de Soluciones de Manufactura y Tecnología (Flex)',
+      location: 'Zapopan, Jalisco, México (Híbrido)',
+      startDate: 'Jun 2024',
+      endDate: 'Abr 2026',
+      isCurrent: false,
+      highlights: [
+        'Desarrollo de Gemelos Digitales (Digital Twins) de piso de producción industrial para corporativos globales Fortune 500 (sectores automotriz, tecnología avanzada y farmacéutica bajo acuerdos de confidencialidad).',
+        'Simulación en tiempo real de líneas de producción automatizadas con Unreal Engine 5 y Arch FlexSim, detectando fallas de maquinaria y cuellos de botella antes del traspaso a estaciones de ensamble subsiguientes.',
+        'Simulación de espacios óptimos considerando separación de líneas y maquinaria para prevención de sobrecalentamiento y maximización de flujo de piezas.',
+        'Creación de simuladores inmersivos en Realidad Virtual (VR) para capacitación segura y efectiva de nuevos operarios en maquinaria especializada.',
+      ],
+    },
+    {
+      id: 'exp-orblite',
+      role: 'Lead Automation Engineer & Platform Developer',
+      company: 'Orblite',
+      location: 'México',
+      startDate: 'Jun 2026',
+      endDate: 'Presente',
+      isCurrent: true,
+      highlights: [
+        'Tooling & Automatización: Diseñó y desplegó herramientas internas y pipelines integrando APIs modernas de IA y Modelos de Lenguaje Grande (LLMs) para automatizar análisis de datos y flujos de trabajo.',
+        'Simulación de Sensores & Telemática: Diseñó la arquitectura de extremo a extremo para telemetría vehicular en tiempo real, procesando y simulando flujos de sensores de alta frecuencia.',
+        'Plataformas Propietarias: Desarrolló aplicaciones internas de ERP/CRM desde cero con TypeScript, React y Supabase SQL para monitoreo y rastreo de activos en tiempo real.',
+        'Tech Stack: TypeScript, React, APIs REST, SQL (Supabase), Python, Cloudflare.',
       ],
     },
     {
       id: 'exp-navi',
-      role: 'Artista Técnico & Desarrollador 3D',
+      role: 'Artista Técnico & Desarrollador 3D Interactivo',
       company: 'Navi 3D - Realidad Virtual y Maquetas Virtuales',
       location: 'Guadalajara, Jalisco, México (Remoto)',
       startDate: 'Abr 2021',
       endDate: 'Ago 2021',
       isCurrent: false,
       highlights: [
-        'Desarrollo de sistema interactivo 3D en Unreal Engine 4 para showrooms inmobiliarios con visualización de fichas técnicas y disponibilidad en tiempo real.',
-        'Integración con SQL y APIs para cálculo de comisiones de vendedores e informes en tiempo real para gerencia de ventas.',
+        'Desarrollo de sistema interactivo 3D en tiempo real en Unreal Engine 4 para showrooms inmobiliarios con visualización de fichas técnicas y disponibilidad.',
+        'Integración con bases de datos SQL y APIs para cálculo de comisiones e informes en tiempo real.',
       ],
     },
     {
@@ -85,7 +85,7 @@ export const resumeDataEs: ResumeData = {
       endDate: 'Ago 2020',
       isCurrent: false,
       highlights: [
-        'Desarrollo de simulación interactiva 3D en Unreal Engine 4 para campaña de concientización y sustentabilidad del uso de agua para entidad gubernamental estatal.',
+        'Desarrollo de simulación interactiva 3D en Unreal Engine 4 para campaña de concientización y sustentabilidad del uso de agua para entidad gubernamental.',
       ],
     },
     {
@@ -97,8 +97,8 @@ export const resumeDataEs: ResumeData = {
       endDate: 'Nov 2019',
       isCurrent: false,
       highlights: [
-        'Desarrollo de aplicaciones y videojuegos multiplataforma: Windows, móviles (iOS y Android), WebGL, HTML5 y VR (Meta Quest, HTC, Oculus Rift).',
-        'Implementación de sistemas de IA para juegos en línea y proyectos interactivos para prestigiosa institución universitaria técnica y pymes regionales.',
+        'Desarrollo de videojuegos y experiencias interactivas multiplataforma: PC Windows, móviles (iOS y Android), WebGL y cascos VR (Meta Quest, HTC Vive, Oculus Rift).',
+        'Implementación de sistemas de IA, shaders, optimización de draw calls y animaciones técnicas para proyectos de universidades y empresas.',
       ],
     },
   ],
@@ -115,38 +115,50 @@ export const resumeDataEs: ResumeData = {
   skillCategories: [
     {
       id: 'skill-cat-1',
-      name: 'Automatización con IA & Desarrollo de Plataformas',
+      name: 'Motores 3D, Tiempo Real & Videojuegos AAA',
       skills: [
-        'Automatización de Flujos con IA (LLMs)',
-        'Telemática Vehicular & Simulación de Sensores',
-        'Sistemas ERP y CRM Propietarios',
-        'Arquitectura Full-Stack de Aplicaciones Web',
-        'Integración de APIs REST & Supabase (SQL)',
-        'Cloudflare, Vercel & Despliegue Cloud',
+        'Unreal Engine 5 & UE4',
+        'Frostbite Engine (Títulos Deportivos AAA)',
+        'Blueprints & Shaders / HLSL',
+        'Optimización de Rendimiento (60+ FPS)',
+        'Perfiles de Memoria & Draw Calls',
+        'UI/UX Interactiva en Motor',
       ],
     },
     {
       id: 'skill-cat-2',
-      name: 'Desarrollo de Software & Stack Web',
+      name: 'Pipelines, Control de Versiones & CI/CD',
       skills: [
-        'TypeScript & JavaScript Moderno',
-        'React',
-        'Tailwind CSS & CSS Avanzado',
-        'Bases de Datos Relacionales (SQL)',
-        'Arquitectura de APIs RESTful',
-        'Automatización de Comunicaciones (Resend)',
+        'Perforce (P4 Helix Core)',
+        'Jenkins (CI/CD Automático)',
+        'Pipelines de Assets 3D',
+        'Git & GitHub',
+        'Automatización con Python',
+        'Herramientas Internas de Producción',
       ],
     },
     {
       id: 'skill-cat-3',
-      name: 'Motores 3D, Realidad Virtual & Simulación',
+      name: 'Simulación Industrial, Gemelos Digitales & VR',
       skills: [
-        'Unreal Engine 5 & UE4',
         'Digital Twins (Gemelos Digitales)',
         'Arch FlexSim (Simulación de Fábricas)',
         'Realidad Virtual (VR - Quest / HTC)',
-        'Frostbite Engine (Títulos Deportivos AAA)',
-        'Perforce (P4) & Jenkins (CI/CD)',
+        'Simulación de Sensores & Telemática',
+        'Optimización Térmica y de Espacios',
+        'Entornos Inmersivos de Capacitación',
+      ],
+    },
+    {
+      id: 'skill-cat-4',
+      name: 'Programación & Stack Tecnológico',
+      skills: [
+        'C++',
+        'Python',
+        'TypeScript & JavaScript Moderno',
+        'React & Tailwind CSS',
+        'APIs RESTful & Supabase (SQL)',
+        'Cloudflare & Despliegues Cloud',
       ],
     },
   ],
@@ -157,27 +169,27 @@ export const resumeDataEs: ResumeData = {
   certifications: [
     {
       id: 'cert-1',
-      name: 'Desarrollo de Plataformas SaaS & Automatización con Inteligencia Artificial',
-      issuer: 'Tecnología y Negocios Digitales',
-      year: '2026',
-    },
-    {
-      id: 'cert-2',
       name: 'Especialización en Unreal Engine 5: Gemelos Digitales & Blueprints',
       issuer: 'Epic Games / Simulación Industrial',
       year: '2024',
     },
     {
-      id: 'cert-3',
+      id: 'cert-2',
       name: 'Gestión de Pipelines CI/CD y Control de Versiones (Perforce & Jenkins)',
       issuer: 'DevOps & Game Development Hub',
       year: '2022',
+    },
+    {
+      id: 'cert-3',
+      name: 'Desarrollo de Plataformas SaaS & Automatización con Inteligencia Artificial',
+      issuer: 'Tecnología y Negocios Digitales',
+      year: '2026',
     },
   ],
   achievements: [
     {
       id: 'ach-1',
-      title: 'Franquicia AAA Shipped',
+      title: 'Título AAA Shipped',
       metric: 'EA Sports CFB 25',
       description: 'Artista técnico en UI/UX y motor Frostbite (Crédito público verificado en MobyGames).',
     },
@@ -189,9 +201,9 @@ export const resumeDataEs: ResumeData = {
     },
     {
       id: 'ach-3',
-      title: 'Plataforma Orblite',
-      metric: 'SaaS / ERP / Telemática',
-      description: 'Plataforma integral de telemática vehicular, analítica de sensores y automatización.',
+      title: 'Herramientas & Simulación',
+      metric: 'Pipelines & Telemática',
+      description: 'Plataforma integral de sensores, simulación y herramientas internas para producción.',
     },
   ],
 };
@@ -199,7 +211,7 @@ export const resumeDataEs: ResumeData = {
 export const resumeDataEn: ResumeData = {
   personalInfo: {
     fullName: 'Isaac Gómez Estrada',
-    title: 'Lead Automation Engineer & Platform Developer | Orblite',
+    title: 'Technical Artist',
     email: 'isaacgestrada94@gmail.com',
     phone: '+52 33 1835 9421',
     location: 'Zapopan / Guadalajara, Jalisco, Mexico (On-site, Hybrid, or Remote)',
@@ -210,40 +222,10 @@ export const resumeDataEn: ResumeData = {
     mobygamesUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
     age: 32,
     summary:
-      '32-year-old interactive virtual environment and real-time 3D simulation engineer dedicated since 2018 to building immersive virtual worlds, game development, and high-performance software architecture. Lead Automation Engineer and Platform Developer combining full-stack web and sensor telemetry with modern AI API integrations and 3D simulation engineering. Currently Lead Automation Engineer & Platform Developer at Orblite, engineering AI workflow automations, vehicle telematics infrastructure, and custom internal ERP/CRM applications (TypeScript, React, RESTful APIs, SQL Supabase, AI/LLM APIs, Cloudflare). Extensive background developing industrial Digital Twins for global Fortune 500 enterprise clients (automotive, tech, and pharmaceutical sectors under strict NDAs) and Technical Art for premier AAA sports franchise at an elite co-development studio (verified shipped credit on MobyGames for EA Sports College Football 25, interactive UI/UX in Frostbite, Perforce P4, and Jenkins CI).',
+      'Senior Technical Artist and Real-Time 3D Simulation Engineer with 8+ years of experience bridging art, interactive systems, and production pipelines across AAA game development, industrial digital twins, and virtual environments. Shipped Technical Artist on premier world-class sports franchise EA Sports College Football 25 for a leading global publisher (verified public credit on MobyGames), specializing in interactive UI/UX architecture, Frostbite engine pipelines, 60+ FPS performance optimization, Perforce P4 Helix Core branching, and Jenkins automated CI/CD validation. Extensive background building manufacturing Digital Twins and real-time assembly line simulations for Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with Unreal Engine 5 (UE5) and Arch FlexSim. Strong technical background in custom pipeline tooling (Python, TypeScript, C++, Blueprints, HLSL/Shaders) and cross-platform deployment (PC, Console, VR, Mobile, WebGL).',
     photoUrl: '',
   },
   experiences: [
-    {
-      id: 'exp-orblite',
-      role: 'Lead Automation Engineer & Platform Developer',
-      company: 'Orblite',
-      location: 'Mexico',
-      startDate: 'Jun 2026',
-      endDate: 'Present',
-      isCurrent: true,
-      highlights: [
-        'AI Workflow Automation: Engineered and deployed custom production toolsets integrating modern AI APIs and Large Language Models (LLMs) to automate complex data analysis and pipeline workflows.',
-        'Telematics & Data Simulation: Architected the end-to-end full-stack infrastructure for real-time vehicle telematics, processing and simulating high-frequency sensor streams and vehicle telemetry data.',
-        'Internal Tooling: Developed custom internal ERP/CRM applications from scratch using TypeScript and React to optimize asset tracking, team workflows, and system monitoring.',
-        'Tech Stack: TypeScript, React, RESTful APIs, SQL (Supabase), AI/LLM API Integration, Cloudflare.',
-      ],
-    },
-    {
-      id: 'exp-flex',
-      role: 'Applications Developer & Unreal Engine Specialist',
-      company: 'Multinational Manufacturing & Technology (Flex - Industrial Simulation)',
-      location: 'Zapopan, Jalisco, Mexico (Hybrid)',
-      startDate: 'Jun 2024',
-      endDate: 'Apr 2026',
-      isCurrent: false,
-      highlights: [
-        'Engineered manufacturing Digital Twins for global Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) using Unreal Engine 5 (UE5) and FlexSim.',
-        'Simulated automated assembly line workflows in real time, detecting machine failures and bottlenecks before parts proceeded to subsequent workstations.',
-        'Modeled optimal spatial floor layouts and thermal spacing between production lines and machinery to prevent overheating and maximize throughput.',
-        'Created immersive Virtual Reality (VR) simulators for onboarding and safety training of plant operators handling specialized equipment.',
-      ],
-    },
     {
       id: 'exp-devbot',
       role: 'Technical Artist',
@@ -253,10 +235,40 @@ export const resumeDataEn: ResumeData = {
       endDate: 'Aug 2023',
       isCurrent: false,
       highlights: [
-        'Served as Technical Artist assigned to world-class AAA sports franchise EA Sports College Football 25 for a leading global publisher, specializing in interactive UI/UX and Frostbite engine pipelines (strict NDA compliance; verified public credit on MobyGames).',
-        'Engineered and validated initial playable game builds for world-class AAA sports titles, ensuring solid 60+ FPS performance and high visual fidelity.',
+        'Served as Technical Artist assigned to premier AAA sports franchise EA Sports College Football 25 for a leading global publisher, specializing in interactive UI/UX architecture and Frostbite engine pipelines (verified public credit on MobyGames).',
+        'Engineered and validated initial playable game builds for world-class AAA sports titles, ensuring solid 60+ FPS performance, memory budget adherence, and high visual fidelity.',
         'Managed large-scale source control, asset branching, and merge conflict resolution using Perforce (P4 Helix Core) in multi-site co-development pipelines.',
         'Maintained automated continuous integration (CI) test suites using Jenkins to streamline studio-wide deployments and milestone delivery.',
+      ],
+    },
+    {
+      id: 'exp-flex',
+      role: 'Technical Artist & Unreal Engine Specialist (Digital Twins)',
+      company: 'Multinational Manufacturing & Technology (Flex - Industrial Simulation)',
+      location: 'Zapopan, Jalisco, Mexico (Hybrid)',
+      startDate: 'Jun 2024',
+      endDate: 'Apr 2026',
+      isCurrent: false,
+      highlights: [
+        'Engineered manufacturing Digital Twins for global Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) using Unreal Engine 5 (UE5) and Arch FlexSim.',
+        'Simulated automated assembly line workflows in real time, detecting machine failures and bottlenecks before parts proceeded to subsequent workstations.',
+        'Modeled optimal spatial floor layouts and thermal spacing between production lines and machinery to prevent overheating and maximize throughput.',
+        'Created immersive Virtual Reality (VR) simulators for onboarding and safety training of plant operators handling specialized machinery.',
+      ],
+    },
+    {
+      id: 'exp-orblite',
+      role: 'Lead Automation Engineer & Platform Developer',
+      company: 'Orblite',
+      location: 'Mexico',
+      startDate: 'Jun 2026',
+      endDate: 'Present',
+      isCurrent: true,
+      highlights: [
+        'Tooling & Automation Pipelines: Engineered custom internal tools and automated workflows integrating modern AI APIs and LLMs to accelerate data analysis and pipeline efficiency.',
+        'Real-Time Telemetry & Sensor Simulation: Architected end-to-end full-stack infrastructure for real-time vehicle telematics, simulating high-frequency sensor streams and vehicle telemetry.',
+        'Systems & Internal Platforms: Developed internal ERP/CRM tooling and asset tracking platforms using TypeScript, React, RESTful APIs, and Supabase SQL.',
+        'Tech Stack: TypeScript, React, RESTful APIs, SQL (Supabase), Python, Cloudflare.',
       ],
     },
     {
@@ -281,7 +293,7 @@ export const resumeDataEn: ResumeData = {
       endDate: 'Ago 2020',
       isCurrent: false,
       highlights: [
-        'Developed an interactive 3D simulation in Unreal Engine 4 for a public water conservation and sustainability initiative with a state government entity.',
+        'Developed an interactive real-time 3D simulation in Unreal Engine 4 for a public water conservation and sustainability initiative with a state government entity.',
       ],
     },
     {
@@ -311,38 +323,50 @@ export const resumeDataEn: ResumeData = {
   skillCategories: [
     {
       id: 'skill-cat-1',
-      name: 'AI Automation & Platform Engineering',
+      name: '3D Engines & Real-Time Tech',
       skills: [
-        'AI Workflow Automation (LLMs)',
-        'Vehicle Telematics & Sensor Stream Simulation',
-        'Proprietary ERP & CRM Architecture',
-        'Full-Stack Web Platforms',
-        'RESTful API Architecture & Supabase (SQL)',
-        'Cloudflare, Vercel & Cloud Deployments',
+        'Unreal Engine 5 & UE4',
+        'Frostbite Engine (AAA Sports Titles)',
+        'Blueprints & Shaders / HLSL',
+        'Performance Profiling & 60+ FPS Optimization',
+        'Memory Budgets & Draw Call Reduction',
+        'Interactive In-Engine UI/UX',
       ],
     },
     {
       id: 'skill-cat-2',
-      name: 'Software Engineering & Web Platforms',
+      name: 'Pipeline, Version Control & CI/CD',
       skills: [
-        'TypeScript & Modern JavaScript',
-        'React',
-        'Tailwind CSS & Modern CSS',
-        'Relational Databases (SQL)',
-        'RESTful API Architecture',
-        'Email Automation (Resend)',
+        'Perforce (P4 Helix Core)',
+        'Jenkins (Automated CI/CD)',
+        '3D Asset Pipelines & Importers',
+        'Git & GitHub',
+        'Python Pipeline Automation',
+        'Custom Production Tooling',
       ],
     },
     {
       id: 'skill-cat-3',
-      name: '3D Engines, Virtual Reality & Simulation',
+      name: 'Industrial Simulation, Digital Twins & VR',
       skills: [
-        'Unreal Engine 5 & UE4',
-        'Digital Twins (Industrial Modeling)',
+        'Industrial Digital Twins',
         'Arch FlexSim (Factory Floor Simulation)',
-        'Virtual Reality (VR - Quest / HTC)',
-        'Frostbite Engine (AAA Sports Titles)',
-        'Perforce (P4) & Jenkins (CI/CD)',
+        'Virtual Reality (VR - Quest / HTC Vive)',
+        'Sensor Telemetry & Physics Simulation',
+        'Thermal & Spatial Layout Optimization',
+        'Immersive Operator Training Environments',
+      ],
+    },
+    {
+      id: 'skill-cat-4',
+      name: 'Programming & Platform Tech',
+      skills: [
+        'C++',
+        'Python',
+        'TypeScript & Modern JavaScript',
+        'React & Tailwind CSS',
+        'RESTful APIs & Supabase (SQL)',
+        'Cloudflare & Cloud Deployments',
       ],
     },
   ],
@@ -353,21 +377,21 @@ export const resumeDataEn: ResumeData = {
   certifications: [
     {
       id: 'cert-1',
-      name: 'SaaS Platform Development & AI Automation',
-      issuer: 'Digital Business & Technology Institute',
-      year: '2026',
-    },
-    {
-      id: 'cert-2',
       name: 'Unreal Engine 5 Specialization: Industrial Digital Twins & Blueprints',
       issuer: 'Epic Games / Industrial Simulation',
       year: '2024',
     },
     {
-      id: 'cert-3',
+      id: 'cert-2',
       name: 'Enterprise CI/CD Pipelines & Source Control (Perforce & Jenkins)',
       issuer: 'DevOps & Game Dev Hub',
       year: '2022',
+    },
+    {
+      id: 'cert-3',
+      name: 'SaaS Platform Development & AI Automation',
+      issuer: 'Digital Business & Technology Institute',
+      year: '2026',
     },
   ],
   achievements: [
@@ -385,15 +409,15 @@ export const resumeDataEn: ResumeData = {
     },
     {
       id: 'ach-3',
-      title: 'Orblite Platform',
-      metric: 'SaaS / ERP / Telematics',
-      description: 'End-to-end vehicle telematics, sensor streaming, and automation platform.',
+      title: 'Simulation & Tooling',
+      metric: 'Pipelines & Telematics',
+      description: 'End-to-end telemetry, sensor simulation, and automated production tooling.',
     },
   ],
 };
 
-// Default export is Spanish
-export const initialResumeData: ResumeData = resumeDataEs;
+// Base profile is Technical Artist in English as requested by user
+export const initialResumeData: ResumeData = resumeDataEn;
 
 export const defaultStyleConfig: StyleConfig = {
   template: 'executive',
@@ -401,7 +425,7 @@ export const defaultStyleConfig: StyleConfig = {
   fontFamily: 'sans',
   spacing: 'compact',
   showPhoto: false,
-  paperSize: 'a4',
+  paperSize: 'letter',
   fontSize: 'sm',
 };
 

@@ -86,14 +86,14 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
     if (!personalInfo.title) return '';
     if (language === 'en') {
       const tLower = personalInfo.title.toLowerCase();
-      if (tLower.includes('gerente comercial') || tLower.includes('commercial manager') || tLower.includes('lead automation')) {
-        return 'Lead Automation Engineer & Platform Developer | Orblite';
+      if (tLower.includes('artista técnico') || tLower.includes('technical artist')) {
+        return 'Technical Artist';
       }
-      if (tLower.includes('artista técnico') && tLower.includes('digital twins')) {
-        return 'Senior Technical Artist & Unreal Engine 5 Developer | Digital Twins & VR';
+      if (tLower.includes('gerente comercial') || tLower.includes('commercial manager')) {
+        return 'Technical Artist';
       }
       if (tLower.includes('líder en realidad virtual')) {
-        return 'Virtual Reality (VR) & Manufacturing Simulation Lead';
+        return 'Virtual Reality (VR) & Simulation Lead';
       }
       if (tLower.includes('desarrollador de aplicaciones')) {
         return 'Applications Developer & Unreal Engine Specialist';
@@ -109,25 +109,19 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
       const sLower = s.toLowerCase();
       // If it contains Spanish words or matches Spanish presets:
       const hasSpanishWords =
+        sLower.includes('artista técnico') ||
+        sLower.includes('ingeniero de 32 años') ||
         sLower.includes('líder comercial') ||
         sLower.includes('desarrollador') ||
-        sLower.includes('artista técnico') ||
         sLower.includes('especialista en') ||
         sLower.includes('gemelos digitales') ||
         sLower.includes('mi trabajo se enfocó') ||
         sLower.includes('experiencia previa') ||
         sLower.includes('con un perfil integral') ||
-        sLower.includes('actualmente gerente');
+        sLower.includes('actualmente');
 
       if (hasSpanishWords) {
-        if (sLower.includes('flex') || sLower.includes('simulaci') || sLower.includes('gemelos digitales')) {
-          return "Industrial 3D Simulation & Digital Twins Specialist with Unreal Engine 5 and Arch FlexSim. Extensive background developing manufacturing simulation environments for global Fortune 500 leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with real-time bottleneck detection, thermal layout optimization, and immersive VR operator training simulators.";
-        }
-        if (sLower.includes('ea') || sLower.includes('college football') || sLower.includes('frostbite') || sLower.includes('videojuegos') || sLower.includes('co-desarrollo')) {
-          return "Senior Technical Artist with proven AAA production track record on premier world-class sports franchise EA Sports College Football 25 for a leading international publisher (verified shipped credits). Specialized in interactive UI/UX architecture, Frostbite engine optimization, solid 60+ FPS compliance, enterprise Perforce (P4) branching, and automated Jenkins CI testing suites.";
-        }
-        // Default Orblite Lead Automation Engineer summary
-        return "Lead Automation Engineer and Platform Developer combining full-stack web and sensor telemetry with modern AI API integrations and 3D simulation engineering. Currently Lead Automation Engineer & Platform Developer at Orblite, engineering AI workflow automations, vehicle telematics infrastructure, and custom internal ERP/CRM applications (TypeScript, React, RESTful APIs, SQL Supabase, AI/LLM APIs, Cloudflare). Extensive background developing industrial Digital Twins for global Fortune 500 enterprise clients (automotive, tech, and pharmaceutical sectors under strict NDAs) and Technical Art for premier AAA sports franchise at an elite co-development studio (verified shipped credit on MobyGames for EA Sports College Football 25, interactive UI/UX in Frostbite, Perforce P4, and Jenkins CI).";
+        return "Senior Technical Artist and Real-Time 3D Simulation Engineer with 8+ years of experience bridging art, interactive systems, and production pipelines across AAA game development, industrial digital twins, and virtual environments. Shipped Technical Artist on premier world-class sports franchise EA Sports College Football 25 for a leading global publisher (verified public credit on MobyGames), specializing in interactive UI/UX architecture, Frostbite engine pipelines, 60+ FPS performance optimization, Perforce P4 Helix Core branching, and Jenkins automated CI/CD validation. Extensive background building manufacturing Digital Twins and real-time assembly line simulations for Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with Unreal Engine 5 (UE5) and Arch FlexSim. Strong technical background in custom pipeline tooling (Python, TypeScript, C++, Blueprints, HLSL/Shaders) and cross-platform deployment (PC, Console, VR, Mobile, WebGL).";
       }
     }
     return personalInfo.summary;

@@ -26,11 +26,18 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
   const isEn = language === 'en';
 
   const handleApplyPreset = (
-    type: 'orblite_leader' | 'ue5_digital_twins' | 'aaa_ea_sports' | 'vr_simulation_lead'
+    type: 'technical_artist_base' | 'orblite_leader' | 'ue5_digital_twins' | 'aaa_ea_sports' | 'vr_simulation_lead'
   ) => {
     let updated: ResumeData = JSON.parse(JSON.stringify(currentData));
 
-    if (type === 'orblite_leader') {
+    if (type === 'technical_artist_base') {
+      updated.personalInfo.title = isEn
+        ? 'Technical Artist'
+        : 'Artista Técnico (Technical Artist)';
+      updated.personalInfo.summary = isEn
+        ? 'Senior Technical Artist and Real-Time 3D Simulation Engineer with 8+ years of experience bridging art, interactive systems, and production pipelines across AAA game development, industrial digital twins, and virtual environments. Shipped Technical Artist on premier world-class sports franchise EA Sports College Football 25 for a leading global publisher (verified public credit on MobyGames), specializing in interactive UI/UX architecture, Frostbite engine pipelines, 60+ FPS performance optimization, Perforce P4 Helix Core branching, and Jenkins automated CI/CD validation. Extensive background building manufacturing Digital Twins and real-time assembly line simulations for Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with Unreal Engine 5 (UE5) and Arch FlexSim. Strong technical background in custom pipeline tooling (Python, TypeScript, C++, Blueprints, HLSL/Shaders) and cross-platform deployment (PC, Console, VR, Mobile, WebGL).'
+        : 'Artista Técnico e Ingeniero de Simulación 3D en Tiempo Real de 32 años con más de 8 años de trayectoria conectando arte, código y arquitectura de pipelines en desarrollo de videojuegos AAA, gemelos digitales industriales y entornos virtuales interactivos. Artista Técnico con crédito público verificado en MobyGames para el título deportivo AAA de clase mundial EA Sports College Football 25 con un publisher global líder, especializado en UI/UX interactiva en el motor Frostbite, optimización rigurosa a 60+ FPS, control de versiones con Perforce (P4 Helix Core) e integración continua automatizada con Jenkins. Extensa experiencia en Unreal Engine 5 (UE5) y Arch FlexSim desarrollando Gemelos Digitales de manufactura para corporativos globales Fortune 500.';
+    } else if (type === 'orblite_leader') {
       updated.personalInfo.title = isEn
         ? 'Lead Automation Engineer & Platform Developer | Orblite'
         : 'Lead Automation Engineer & Platform Developer | Orblite';
@@ -170,6 +177,25 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
               <p className="text-xs text-slate-600">
                 Selecciona la orientación estratégica que deseas proyectar en tu CV para postulaciones específicas:
               </p>
+
+              <div
+                onClick={() => handleApplyPreset('technical_artist_base')}
+                className="p-3 rounded-lg border-2 border-emerald-500 bg-emerald-50/40 hover:bg-emerald-50 cursor-pointer transition-all space-y-1 group shadow-2xs"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-700">
+                    {isEn ? 'Technical Artist (AAA Shipped, Frostbite & UE5)' : 'Artista Técnico (Perfil Base Oficial)'}
+                  </span>
+                  <span className="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">
+                    {isEn ? 'Base Profile' : 'Perfil Principal'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-700">
+                  {isEn
+                    ? 'EA Sports College Football 25 (Frostbite, 60+ FPS, Perforce, Jenkins) + Industrial Digital Twins in Unreal Engine 5 & FlexSim.'
+                    : 'Créditos AAA en EA Sports College Football 25 (Frostbite, 60+ FPS, Perforce, Jenkins) y Gemelos Digitales industriales en UE5 y FlexSim.'}
+                </p>
+              </div>
 
               <div
                 onClick={() => handleApplyPreset('orblite_leader')}

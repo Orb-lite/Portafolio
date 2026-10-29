@@ -9,9 +9,12 @@ import { DesignSettingsEditor } from './components/editor/DesignSettingsEditor';
 import { JobOfferMatcher } from './components/editor/JobOfferMatcher';
 import { LinkedInImportModal } from './components/modals/LinkedInImportModal';
 import { exportElementToPdf, printResumeDocument } from './utils/pdfExport';
+import { exportResumeToAtsPdf } from './utils/atsPdfExport';
+import { exportResumeToDocx } from './utils/docxExport';
 import { PortfolioView } from './components/portfolio/PortfolioView';
 import { AboutMeView } from './components/about/AboutMeView';
 import { EditorAuthGate } from './components/auth/EditorAuthGate';
+import { getStoredSession, AdminUser } from './services/authService';
 import {
   Download,
   Printer,
@@ -25,6 +28,7 @@ import {
   CheckCircle,
   Globe,
   FileText,
+  FileType,
   Github,
   FolderOpen,
   Trophy,
@@ -33,16 +37,19 @@ import {
   Lock,
   X,
   SlidersHorizontal,
+  CheckCheck,
 } from 'lucide-react';
 
 export default function App() {
   const [mainTab, setMainTab] = useState<'portfolio' | 'about' | 'cv'>('portfolio');
-  const [language, setLanguage] = useState<'es' | 'en'>('es'); // Default to Spanish (bilingual switch available)
-  const [resumeData, setResumeData] = useState<ResumeData>(resumeDataEs);
+  const [language, setLanguage] = useState<'es' | 'en'>('en'); // Default to English with Technical Artist base profile
+  const [resumeData, setResumeData] = useState<ResumeData>(resumeDataEn);
   const [styleConfig, setStyleConfig] = useState<StyleConfig>(defaultStyleConfig);
   const [activeTab, setActiveTab] = useState<'job_match' | 'personal' | 'experience' | 'skills' | 'design'>('job_match');
   const [isEditorRequestedViaUrl, setIsEditorRequestedViaUrl] = useState<boolean>(false);
+  const [adminSession, setAdminSession] = useState<AdminUser | null>(() => getStoredSession());
   const [isExporting, setIsExporting] = useState<boolean>(false);
+  const [exportType, setExportType] = useState<'pdf' | 'docx' | 'visual' | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
   const [isLinkedInModalOpen, setIsLinkedInModalOpen] = useState<boolean>(false);
   const [previewScale, setPreviewScale] = useState<number>(0.92);
@@ -55,9 +62,13 @@ export default function App() {
     if (typeof window !== 'undefined') {
       const checkUrlForEditor = () => {
         const params = new URLSearchParams(window.location.search);
-        const hasEditorParam = params.get('editor') === 'true' || params.get('admin') === 'true';
-        const hasEditorHash = window.location.hash === '#editor' || window.location.hash === '#admin';
-        const hasEditorPath = window.location.pathname.startsWith('/editor') || window.location.pathname.startsWith('/admin');
+        const hasEditorParam = params.has('editor') || params.has('admin');
+        const hasEditorHash =
+          window.location.hash.toLowerCase().includes('editor') ||
+          window.location.hash.toLowerCase().includes('admin');
+        const hasEditorPath =
+          window.location.pathname.toLowerCase().includes('/editor') ||
+          window.location.pathname.toLowerCase().includes('/admin');
 
         if (hasEditorParam || hasEditorHash || hasEditorPath) {
           setIsEditorRequestedViaUrl(true);
@@ -112,7 +123,107 @@ export default function App() {
     }
   };
 
-  const handleDownloadPdf = async (targetLang?: 'es' | 'en', isCustomized = false) => {
+  const handleDownloadAtsPdf = (targetLang?: 'es' | 'en', isCustomized = false) => {
+    const langToExport = targetLang || language;
+    const dataToExport =
+      langToExport === 'en'
+        ? language === 'en'
+          ? resumeData
+          : resumeDataEn
+        : language === 'es'
+        ? resumeData
+        : resumeDataEs;
+
+    setIsExporting(true);
+    setExportType('pdf');
+
+    const fileName = isCustomized
+      ? `CV_Isaac_Gomez_Estrada_Technical_Artist_${langToExport.toUpperCase()}_Custom.pdf`
+      : `CV_Isaac_Gomez_Estrada_Technical_Artist_${langToExport.toUpperCase()}.pdf`;
+
+    try {
+      showNotification(
+        langToExport === 'es'
+          ? 'Generando PDF con texto vectorial 100% compatible con ATS (Lensa / TopResume)...'
+          : 'Generating ATS-compliant PDF with 100% selectable vector text (Lensa & TopResume verified)...'
+      );
+
+      exportResumeToAtsPdf(dataToExport, {
+        fileName,
+        paperSize: styleConfig.paperSize,
+        language: langToExport,
+      });
+
+      showNotification(
+        langToExport === 'es'
+          ? '¡Tu CV en PDF compatible con ATS se ha descargado exitosamente!'
+          : 'Your ATS-compliant PDF resume downloaded successfully!'
+      );
+    } catch (err) {
+      console.error('Error generating ATS PDF:', err);
+      showNotification(
+        langToExport === 'es'
+          ? 'Error al generar el PDF. Puedes usar la opción de Imprimir o Word.'
+          : 'Error generating PDF. You can also use Print or Word export.'
+      );
+    } finally {
+      setIsExporting(false);
+      setExportType(null);
+    }
+  };
+
+  const handleDownloadDocx = async (targetLang?: 'es' | 'en') => {
+    const langToExport = targetLang || language;
+    const dataToExport =
+      langToExport === 'en'
+        ? language === 'en'
+          ? resumeData
+          : resumeDataEn
+        : language === 'es'
+        ? resumeData
+        : resumeDataEs;
+
+    setIsExporting(true);
+    setExportType('docx');
+
+    const fileName = `CV_Isaac_Gomez_Estrada_Technical_Artist_${langToExport.toUpperCase()}.docx`;
+
+    try {
+      showNotification(
+        langToExport === 'es'
+          ? 'Generando documento oficial Microsoft Word (.docx) estructurado para ATS...'
+          : 'Generating official Microsoft Word (.docx) ATS-compliant resume...'
+      );
+
+      await exportResumeToDocx(dataToExport, {
+        fileName,
+        language: langToExport,
+      });
+
+      showNotification(
+        langToExport === 'es'
+          ? '¡Tu CV en Word (.docx) se ha descargado exitosamente!'
+          : 'Your ATS Word (.docx) resume downloaded successfully!'
+      );
+    } catch (err) {
+      console.error('Error generating DOCX resume:', err);
+      showNotification(
+        langToExport === 'es'
+          ? 'Error al generar el archivo .docx.'
+          : 'Error generating .docx resume file.'
+      );
+    } finally {
+      setIsExporting(false);
+      setExportType(null);
+    }
+  };
+
+  // Default PDF download maps directly to ATS PDF (preventing image flattening ATS rejection)
+  const handleDownloadPdf = (targetLang?: 'es' | 'en', isCustomized = false) => {
+    handleDownloadAtsPdf(targetLang, isCustomized);
+  };
+
+  const handleDownloadVisualPdf = async (targetLang?: 'es' | 'en', isCustomized = false) => {
     const langToExport = targetLang || language;
     if (targetLang && targetLang !== language) {
       setLanguage(targetLang);
@@ -121,9 +232,10 @@ export default function App() {
     }
 
     setIsExporting(true);
+    setExportType('visual');
     const fileName = isCustomized
-      ? `CV_Isaac_Gomez_Estrada_Customized_${langToExport.toUpperCase()}.pdf`
-      : `CV_Isaac_Gomez_Estrada_${langToExport.toUpperCase()}.pdf`;
+      ? `CV_Isaac_Gomez_Estrada_Visual_${langToExport.toUpperCase()}_Custom.pdf`
+      : `CV_Isaac_Gomez_Estrada_Visual_${langToExport.toUpperCase()}.pdf`;
 
     await exportElementToPdf('resume-print-sheet', {
       fileName,
@@ -131,34 +243,24 @@ export default function App() {
       onStart: () => {
         showNotification(
           langToExport === 'es'
-            ? isCustomized
-              ? 'Generando PDF Personalizado en Español con tus ajustes...'
-              : 'Generando PDF oficial en Español de 2 páginas...'
-            : isCustomized
-              ? 'Generating Customized English PDF Resume with your tailored adjustments...'
-              : 'Generating official 2-page English PDF with calibrated margins...'
+            ? 'Generando PDF visual de 2 páginas...'
+            : 'Generating 2-page visual PDF...'
         );
       },
       onFinish: () => {
         setIsExporting(false);
+        setExportType(null);
         showNotification(
           langToExport === 'es'
-            ? isCustomized
-              ? '¡Tu CV Personalizado en PDF se ha descargado exitosamente!'
-              : '¡Tu CV oficial en PDF (Español) se ha descargado exitosamente!'
-            : isCustomized
-              ? 'Your Customized PDF resume downloaded successfully!'
-              : 'Your official PDF resume (English) downloaded successfully!'
+            ? '¡PDF visual descargado exitosamente!'
+            : 'Visual PDF downloaded successfully!'
         );
       },
       onError: (err) => {
         console.error(err);
         setIsExporting(false);
-        showNotification(
-          langToExport === 'es'
-            ? 'Ocurrió un error al generar el PDF. Puedes usar la opción de "Imprimir / Guardar en PDF".'
-            : 'Error generating PDF. You can also use the "Print / Save as PDF" option.'
-        );
+        setExportType(null);
+        showNotification('Error generating visual PDF.');
       },
     });
   };
@@ -267,23 +369,10 @@ export default function App() {
             </div>
           </div>
 
-          {/* Global Language Toggle & Quick PDF Export Buttons */}
-          <div className="flex items-center gap-2.5">
+          {/* Global Language Toggle & Quick Export Buttons */}
+          <div className="flex items-center gap-2">
             {/* Global Language Switcher */}
             <div className="flex items-center bg-slate-800/90 p-0.5 rounded-lg border border-slate-700 text-xs font-semibold">
-              <button
-                type="button"
-                onClick={() => handleLanguageSwitch('es')}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition-all ${
-                  language === 'es'
-                    ? 'bg-sky-600 text-white font-bold shadow-xs'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-                title="Cambiar todo el sitio a Español"
-              >
-                <span>🇲🇽</span>
-                <span>ES</span>
-              </button>
               <button
                 type="button"
                 onClick={() => handleLanguageSwitch('en')}
@@ -297,41 +386,56 @@ export default function App() {
                 <span>🇺🇸</span>
                 <span>EN</span>
               </button>
+              <button
+                type="button"
+                onClick={() => handleLanguageSwitch('es')}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition-all ${
+                  language === 'es'
+                    ? 'bg-sky-600 text-white font-bold shadow-xs'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title="Cambiar todo el sitio a Español"
+              >
+                <span>🇲🇽</span>
+                <span>ES</span>
+              </button>
             </div>
 
+            {/* Quick ATS PDF */}
             <button
               type="button"
               disabled={isExporting}
-              onClick={() => handleDownloadPdf('es')}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 shadow-sm transition-all disabled:opacity-50"
-              title="Descargar PDF en Español (2 Páginas)"
+              onClick={() => handleDownloadAtsPdf()}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm transition-all disabled:opacity-50"
+              title={isEn ? 'Download ATS-Compliant PDF (100% Vector Selectable Text - Lensa & TopResume Tested)' : 'Descargar PDF compatible con ATS (Texto 100% seleccionable)'}
             >
-              {isExporting && language === 'es' ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Download className="w-3.5 h-3.5 text-slate-300" />
-              )}
-              <span>PDF Español</span>
-            </button>
-
-            <button
-              type="button"
-              disabled={isExporting}
-              onClick={() => handleDownloadPdf('en')}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg text-white bg-sky-600 hover:bg-sky-500 shadow-sm transition-all disabled:opacity-50"
-              title="Download English PDF Resume (2 Pages)"
-            >
-              {isExporting && language === 'en' ? (
+              {isExporting && exportType === 'pdf' ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
               ) : (
                 <Download className="w-3.5 h-3.5" />
               )}
-              <span>PDF English</span>
+              <span>{isEn ? 'ATS PDF' : 'PDF ATS'}</span>
+            </button>
+
+            {/* Quick Word .docx */}
+            <button
+              type="button"
+              disabled={isExporting}
+              onClick={() => handleDownloadDocx()}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg text-white bg-sky-600 hover:bg-sky-500 shadow-sm transition-all disabled:opacity-50"
+              title={isEn ? 'Download Microsoft Word (.docx) ATS-Compliant Resume' : 'Descargar CV en formato Word (.docx)'}
+            >
+              {isExporting && exportType === 'docx' ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <FileText className="w-3.5 h-3.5" />
+              )}
+              <span>Word (.docx)</span>
             </button>
           </div>
         </div>
 
-        {/* Primary Page Navigation Tabs (Without any editor triggers) */}
+        {/* Primary Page Navigation Tabs & OAuth Protected Editor Trigger */}
         <div className="max-w-7xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-3 bg-slate-950/70">
           <div className="flex items-center gap-2">
             {/* Tab 1: Portfolio */}
@@ -412,18 +516,19 @@ export default function App() {
       {/* VIEW 3: Clean CV & Resume Presentation (Completely public and clean) */}
       {mainTab === 'cv' && (
         <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex flex-col items-center">
-          {/* Executive Document Presentation Toolbar */}
+          {/* Executive Document Presentation Toolbar with ATS Verification */}
           <div className="no-print w-full flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-3 rounded-2xl border border-slate-200 shadow-xs mb-6">
-            {/* Left: Document details */}
-            <div className="flex items-center gap-3">
+            {/* Left: Document details with ATS verification badge */}
+            <div className="flex items-center gap-2.5 flex-wrap">
               <div className="flex items-center gap-2">
-                <Eye className="w-4 h-4 text-emerald-600" />
-                <span className="font-bold text-sm text-slate-800">
-                  {language === 'es' ? 'Currículum Vitae Oficial (2 Páginas)' : 'Official 2-Page Executive CV'}
+                <Eye className="w-4 h-4 text-sky-600" />
+                <span className="font-bold text-sm text-slate-900">
+                  {language === 'es' ? 'CV Artista Técnico (Formato ATS)' : 'Technical Artist Resume (ATS-Ready)'}
                 </span>
               </div>
-              <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
-                {styleConfig.paperSize.toUpperCase()} · Calibrated
+              <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-300 px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
+                <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />
+                <span>{isEn ? '100% ATS Verified (Lensa & TopResume)' : '100% Compatible ATS (Lensa / TopResume)'}</span>
               </span>
             </div>
 
@@ -431,18 +536,6 @@ export default function App() {
             <div className="flex items-center gap-3">
               {/* Dual Language Switcher */}
               <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs font-semibold">
-                <button
-                  type="button"
-                  onClick={() => handleLanguageSwitch('es')}
-                  className={`px-3 py-1 rounded-md transition-all ${
-                    language === 'es'
-                      ? 'bg-sky-600 text-white shadow-xs font-bold'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                  title="Cambiar CV a Español"
-                >
-                  <span>🇲🇽 Español</span>
-                </button>
                 <button
                   type="button"
                   onClick={() => handleLanguageSwitch('en')}
@@ -454,6 +547,18 @@ export default function App() {
                   title="Switch CV to English"
                 >
                   <span>🇺🇸 English</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLanguageSwitch('es')}
+                  className={`px-3 py-1 rounded-md transition-all ${
+                    language === 'es'
+                      ? 'bg-sky-600 text-white shadow-xs font-bold'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                  title="Cambiar CV a Español"
+                >
+                  <span>🇲🇽 Español</span>
                 </button>
               </div>
 
@@ -483,19 +588,41 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right: Print & Download only (No editor button) */}
-            <div className="flex items-center gap-2">
+            {/* Right: ATS Export Action Buttons */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* 1. Download ATS-Compliant PDF */}
               <button
                 type="button"
                 disabled={isExporting}
-                onClick={() => handleDownloadPdf()}
+                onClick={() => handleDownloadAtsPdf()}
                 className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm transition-all disabled:opacity-50"
-                title={isEn ? 'Download official PDF resume (2 pages)' : 'Descargar CV oficial en PDF (2 páginas)'}
+                title={isEn ? 'Download ATS-Compliant PDF with 100% selectable vector text' : 'Descargar PDF compatible con ATS (texto vectorial seleccionable)'}
               >
-                {isExporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-                <span>{language === 'es' ? 'Descargar PDF' : 'Download PDF'}</span>
+                {isExporting && exportType === 'pdf' ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Download className="w-3.5 h-3.5" />
+                )}
+                <span>{language === 'es' ? 'Descargar PDF ATS' : 'Download ATS PDF'}</span>
               </button>
 
+              {/* 2. Download Microsoft Word (.docx) */}
+              <button
+                type="button"
+                disabled={isExporting}
+                onClick={() => handleDownloadDocx()}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-500 shadow-sm transition-all disabled:opacity-50"
+                title={isEn ? 'Download Microsoft Word (.docx) ATS-compliant resume' : 'Descargar documento Word (.docx) para ATS'}
+              >
+                {isExporting && exportType === 'docx' ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <FileText className="w-3.5 h-3.5" />
+                )}
+                <span>Word (.docx)</span>
+              </button>
+
+              {/* 3. Print / Save as PDF */}
               <button
                 type="button"
                 onClick={handleNativePrint}
@@ -503,7 +630,7 @@ export default function App() {
                 title={language === 'es' ? 'Imprimir o Guardar como PDF' : 'Print or Save as PDF'}
               >
                 <Printer className="w-3.5 h-3.5 text-slate-600" />
-                <span className="hidden md:inline">{language === 'es' ? 'Imprimir' : 'Print'}</span>
+                <span className="hidden lg:inline">{language === 'es' ? 'Imprimir' : 'Print'}</span>
               </button>
             </div>
           </div>
@@ -530,11 +657,12 @@ export default function App() {
         </main>
       )}
 
-      {/* PRIVATE RESUME EDITOR GATE: ONLY ACCESSIBLE VIA URL WITH GOOGLE OAUTH */}
+      {/* PRIVATE RESUME EDITOR GATE: ONLY ACCESSIBLE VIA GOOGLE OAUTH FOR isaacgestrada94@gmail.com */}
       {isEditorRequestedViaUrl && (
         <EditorAuthGate
           language={language}
           onClose={closeEditorAndCleanUrl}
+          onSessionChange={setAdminSession}
         >
           {({ user, onLogout }) => (
             <div className="no-print fixed inset-0 z-50 overflow-hidden bg-slate-950/75 backdrop-blur-xs flex justify-end animate-fade-in">

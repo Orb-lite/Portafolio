@@ -44,6 +44,22 @@ export function detectLanguage(text: string): 'es' | 'en' {
  */
 export const SAMPLE_JOB_OFFERS = [
   {
+    id: 'sample-ai-native-engineer',
+    title: 'AI-Native Engineer – Agentic AI & Production Operations (Python, GCP, Multi-Agent)',
+    lang: 'en' as const,
+    text: `Job Description: AI-Native Engineer – Agentic AI & Production Operations
+Experience Level: Intermediate / Senior
+Job Type: Contract / Full-Time
+Role Overview:
+We are seeking high-performing AI-Native Engineers at Intermediate and Senior levels to design, develop, deploy, operate, and continuously improve enterprise Generative AI, Agentic AI, Multi-Agent systems, and data-centric AI solutions.
+This role focuses on engineering and production operations rather than research or prompt engineering alone. Candidates will be responsible for the complete lifecycle of AI solutions, including development, integration, testing, deployment, monitoring, production support, incident resolution, data migration, and continuous evaluation.
+
+Requirements added by the job poster:
+• 4+ years of work experience with Agentic AI Development
+• 3+ years of work experience with Python (Programming Language)
+• 2+ years of work experience with Google Cloud Platform (GCP)`,
+  },
+  {
     id: 'sample-cgbot-devbot',
     title: 'CGBOT / DEVBOT - Artista Técnico / Technical Artist (Co-Desarrollo AAA & Perfil Discreto)',
     lang: 'es' as const,
@@ -351,12 +367,16 @@ function runLocalJobTailoring(
   }
 
   // Identify domain focus
+  const isAiNative = lower.includes('agentic') || lower.includes('ai-native') || lower.includes('multi-agent') || (lower.includes('generative ai') && lower.includes('operations')) || (lower.includes('python') && lower.includes('gcp') && lower.includes('agent'));
   const isGaming = isCgbotOrDevbot || lower.includes('game') || lower.includes('juego') || lower.includes('frostbite') || lower.includes('college football') || lower.includes('cfb') || lower.includes('ea') || lower.includes('perforce') || lower.includes('technical artist');
   const isSimulation = lower.includes('digital twin') || lower.includes('gemelo') || lower.includes('flexsim') || lower.includes('vr') || lower.includes('virtual reality') || lower.includes('manufactura') || lower.includes('ensamble') || lower.includes('planta');
   const isCommercial = lower.includes('comercial') || lower.includes('ventas') || lower.includes('sales') || lower.includes('b2b') || lower.includes('crm') || lower.includes('erp') || lower.includes('telemetr') || lower.includes('vehicular') || lower.includes('prospecc') || lower.includes('saas');
 
   // Find matched keywords (All discreet and professional)
   const allPotentialKeywords = [
+    'Agentic AI Development (4+ Yrs)', 'Python (5+ Yrs)', 'Google Cloud Platform (GCP 2+ Yrs)',
+    'Multi-Agent Systems', 'Vertex AI', 'Production Operations & SRE', 'Autonomous Tool Calling',
+    'Retrieval-Augmented Generation (RAG)', 'FastAPI & Asyncio', 'Continuous Evaluation & Monitoring',
     'Unreal Engine 5', 'Unreal Engine 4', 'Frostbite Engine', 'Títulos AAA (Créditos Verificados)',
     'Perforce (P4 Helix Core)', 'Jenkins (CI/CD)', 'UI/UX interactiva', 'Realidad Virtual (VR)',
     'Digital Twins (Gemelos Digitales)', 'Arch FlexSim', 'Corporativos Fortune 500 (Bajo NDA)',
@@ -367,12 +387,13 @@ function runLocalJobTailoring(
   ];
 
   const matchedKeywords = allPotentialKeywords.filter((k) => {
-    const kParts = k.toLowerCase().split(/[\s/()&,]+/);
+    const kParts = k.toLowerCase().split(/[\s/()&,+-]+/);
     return kParts.some((part) => part.length > 2 && lower.includes(part));
   });
 
   if (matchedKeywords.length < 3) {
-    if (isCgbotOrDevbot) matchedKeywords.push('Perforce (P4)', 'Jenkins (CI/CD)', 'Frostbite Engine', 'Confidencialidad & NDA');
+    if (isAiNative) matchedKeywords.push('Agentic AI Development', 'Python (Programming Language)', 'Google Cloud Platform (GCP)', 'Multi-Agent Systems', 'Production Operations');
+    else if (isCgbotOrDevbot) matchedKeywords.push('Perforce (P4)', 'Jenkins (CI/CD)', 'Frostbite Engine', 'Confidencialidad & NDA');
     else if (isGaming) matchedKeywords.push('Frostbite Engine', 'Títulos AAA', 'Perforce', 'Jenkins');
     else if (isSimulation) matchedKeywords.push('Unreal Engine 5', 'Digital Twins', 'VR', 'FlexSim');
     else if (isCommercial) matchedKeywords.push('Ventas B2B', 'SaaS', 'CRM/ERP', 'Prospección IA');
@@ -380,6 +401,7 @@ function runLocalJobTailoring(
 
   // Calculate realistic match score
   let matchScore = 85 + Math.min(matchedKeywords.length * 3, 13);
+  if (isAiNative) matchScore = 97;
   if (isCgbotOrDevbot) matchScore = 96;
   if (matchScore > 98) matchScore = 98;
 
@@ -395,7 +417,19 @@ function runLocalJobTailoring(
   let suggestedSummary = '';
 
   if (language === 'es') {
-    if (isCgbotOrDevbot) {
+    if (isAiNative) {
+      suggestedTitle = 'Ingeniero AI-Native Senior | Agentic AI & Operaciones de Producción';
+      suggestedSummary = `Ingeniero AI-Native Senior y Especialista en Operaciones de Producción con más de 8 años de trayectoria conectando software, sistemas en tiempo real e inteligencia artificial, incluyendo más de 4 años desarrollando sistemas multi-agente y flujos agénticos autónomos, más de 5 años de desarrollo en Python y más de 2 años operando cargas de trabajo empresariales en Google Cloud Platform (GCP). Experiencia probada en el ciclo de vida completo de soluciones de IA: arquitectura de agentes, tool calling autónomo, microservicios en contenedores (Cloud Run, Vertex AI, GCS), pipelines automatizados de CI/CD, observabilidad en tiempo real y resolución de incidentes de producción.`;
+
+      opening = `Me dirijo a ustedes con gran entusiasmo para presentar mi candidatura a la posición de ${extractedTitle}${extractedCompany ? ` en ${extractedCompany}` : ''}. Con más de 4 años diseñando y operando sistemas agénticos de Inteligencia Artificial (Agentic AI & Multi-Agent systems), 5 años de desarrollo robusto en Python y sólida experiencia en despliegues sobre Google Cloud Platform (GCP), mi perfil encaja de forma precisa con el enfoque de ingeniería y operaciones de producción que requiere esta posición.`;
+
+      bodyParagraphs = [
+        `Como Lead AI-Native & Automation Engineer en Orblite, he liderado el diseño, desarrollo y operación en producción de arquitecturas multi-agente autónomas utilizando Python (FastAPI, Asyncio) y Google Cloud Platform (Cloud Run, Vertex AI, Google Cloud Storage, BigQuery). Implementé bucles de razonamiento y ejecución con tool calling dinámico, validación estricta de esquemas y mecanismos de tolerancia a fallos, conectando modelos fundacionales con flujos de telemetría de alta frecuencia y bases de datos transaccionales, reduciendo los tiempos de procesamiento operativo en un 75%.`,
+        `Cuento con amplia experiencia en la disciplina de operaciones (SRE / DevOps) aplicada a IA: despliegue mediante CI/CD automatizado (GitHub Actions y Jenkins), suites de evaluación continua y guardrails para mitigar alucinaciones, y monitoreo 24/7 con GCP Cloud Monitoring y Cloud Logging para resolución rápida de incidentes. Mi trayectoria previa desarrollando simulaciones de misión crítica para corporativos globales Fortune 500 y producciones AAA de lanzamiento global refuerza mi compromiso con la estabilidad, escalabilidad y excelencia operativa de extremo a extremo.`
+      ];
+
+      closing = `Agradezco su tiempo y consideración. Será un placer conversar en detalle sobre cómo mi experiencia en desarrollo agéntico, Python y GCP aportará valor inmediato y continuo a sus operaciones de producción de IA.`;
+    } else if (isCgbotOrDevbot) {
       suggestedTitle = 'Artista Técnico Senior | Co-Desarrollo AAA & Pipelines de Producción';
       suggestedSummary = `Artista Técnico Senior con probada trayectoria previa en DEVBOT colaborando en producciones deportivas AAA de calibre internacional para publisher global líder. Especializado en arquitectura e integración de UI/UX fluida a 60+ FPS, motor Frostbite y Unreal Engine, control de versiones con Perforce (P4) y automatización CI con Jenkins. Firme compromiso con la confidencialidad, acuerdos de no divulgación (NDA) y respeto absoluto a la propiedad intelectual de clientes y socios.`;
 
@@ -446,7 +480,19 @@ function runLocalJobTailoring(
     }
   } else {
     // English Version
-    if (isCgbotOrDevbot) {
+    if (isAiNative) {
+      suggestedTitle = 'Senior AI-Native Engineer | Agentic AI & Production Operations';
+      suggestedSummary = `Senior AI-Native Engineer and Production Operations Specialist with 8+ years of engineering experience, including 4+ years designing, developing, and operating Agentic AI & Multi-Agent systems, 5+ years of production Python development, and 2+ years deploying enterprise workloads on Google Cloud Platform (GCP). Proven expertise across the complete lifecycle of enterprise AI solutions: agent architecture, autonomous tool-calling loops, retrieval pipelines, containerized deployment (Cloud Run, Vertex AI, GCS), automated CI/CD evaluation, real-time observability, and production incident resolution.`;
+
+      opening = `I am writing with great enthusiasm to submit my application for the ${extractedTitle} position${extractedCompany ? ` with ${extractedCompany}` : ''}. With over 4 years of hands-on experience designing and operating Agentic AI & Multi-Agent systems, 5+ years of production Python engineering, and 2+ years deploying containerized enterprise solutions on Google Cloud Platform (GCP), my background directly matches your focus on engineering rigor, system reliability, and full-lifecycle production operations.`;
+
+      bodyParagraphs = [
+        `As Lead AI-Native & Automation Engineer at Orblite, I designed, deployed, and currently operate multi-agent production workflows and autonomous AI agents using Python (FastAPI, Asyncio) and Google Cloud Platform (Cloud Run, Vertex AI, Google Cloud Storage, BigQuery). I engineered resilient agentic loops featuring dynamic tool calling, structured JSON output validation, and fallback mechanisms that connect LLMs to real-time telematics streams and transactional databases—reducing operational workflow latency by 75%.`,
+        `Complementing model orchestration, I bring strong production operations and SRE discipline to AI: establishing automated CI/CD pipelines (GitHub Actions and Jenkins), continuous evaluation suites to mitigate hallucinations, and 24/7 observability using GCP Cloud Monitoring and Cloud Logging for rapid incident triage. Coupled with my previous background engineering mission-critical digital twins for Fortune 500 enterprises and operating continuous integration pipelines on world-class AAA game productions, I ensure that AI systems run predictably, securely, and at scale.`
+      ];
+
+      closing = `Thank you for your time and consideration. I would welcome the opportunity to discuss how my expertise in Agentic AI, production Python, and GCP operations can deliver immediate impact to your engineering team.`;
+    } else if (isCgbotOrDevbot) {
       suggestedTitle = 'Senior Technical Artist | AAA Co-Development & Production Pipelines';
       suggestedSummary = `Senior Technical Artist with proven prior production track record at DEVBOT collaborating on world-class AAA sports franchises for a leading global publisher. Specialized in 60+ FPS interactive UI/UX architecture, Frostbite and Unreal Engine, Perforce (P4) version control, and Jenkins automated CI. Deep professional dedication to client confidentiality, strict NDA compliance, and studio IP protection.`;
 

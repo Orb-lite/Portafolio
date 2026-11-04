@@ -36,7 +36,7 @@ export interface LocalizedArray {
   es: string[];
 }
 
-export type WorkClassification = 'aaa-studio' | 'personal-rnd' | 'enterprise-client';
+export type WorkClassification = 'aaa-studio' | 'personal-rnd' | 'enterprise-client' | 'proprietary-platform';
 
 export interface ProjectItem {
   id: string;
@@ -485,22 +485,23 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       en: '3D Simulation & VFX',
       es: 'Arquitectura de Software & Telemática',
     },
-    workClassification: 'enterprise-client',
+    workClassification: 'proprietary-platform',
     year: '2026 - Present',
     engine: 'React / TypeScript / Leaflet / Supabase',
     mediaType: 'image',
-    mediaSrc: '/portfolio_assets/orblite-plataforma-rastreo.svg',
-    thumbnailSrc: '/portfolio_assets/orblite-plataforma-rastreo.svg',
+    mediaSrc: '/portfolio_assets/orblite-rastreo-rutas-2.png',
+    thumbnailSrc: '/portfolio_assets/orblite-rastreo-dashboard-1.png',
     mediaNote: {
-      en: "Live production interface of ORB-LITE (Wialon Lite) tracking platform: Real-time satellite GPS mapping across North America, 30 active units, Swarm APIs integration, and Smart Route Planner (Planificador Inteligente) with street-level optimization.",
-      es: 'Interfaz de producción en vivo de la plataforma de rastreo ORB-LITE (Wialon Lite): Mapeo satelital GPS en tiempo real para Norteamérica y México, 30 unidades activas, integración con Swarm APIs y Planificador Inteligente con optimización de rutas por calles.',
+      en: "Isaac's proprietary production platform (orb-lite.com): Real-time satellite GPS tracking across Mexico & US, 30 active units, 15 Wialon resources, Swarm APIs integration, and Smart Route Planner (Planificador Inteligente) with street-level route optimization.",
+      es: 'Plataforma propietaria de Isaac (orb-lite.com - sin restricciones de confidencialidad): Sistema de rastreo satelital GPS en tiempo real para México y EE. UU., 30 unidades satelitales activas, 15 recursos Wialon, integración Swarm APIs y Planificador Inteligente de rutas optimizadas por calles.',
     },
     description: {
-      en: 'Commercial telematics SaaS platform engineered for real-time fleet GPS tracking, IoT telemetry analytics, and operational routing. Built with React, TypeScript, Leaflet GIS mapping, Supabase, and Swarm APIs. Features the Smart Route Planner (Planificador Inteligente) with multi-stop street routing optimization, geofences, live units telemetry, and client fleet synchronization.',
-      es: 'Plataforma SaaS comercial de telemática desarrollada para rastreo satelital GPS de flotas en tiempo real, analítica IoT y planificación operativa de rutas. Construida con React, TypeScript, mapas Leaflet GIS, Supabase y Swarm APIs. Incluye el Planificador Inteligente con optimización de rutas punto a punto por calles, geocercas, telemetría de unidades en vivo y sincronización con flotas de clientes.',
+      en: "Proprietary commercial SaaS telematics platform architected and developed by Isaac Gómez Estrada for real-time fleet GPS tracking, telemetry streaming, and automated street routing. Features live multi-point Leaflet GIS maps, the Smart Route Planner (Planificador Inteligente) with multi-stop street routing optimization, geofences, unit telemetry inspection, and Wialon Lite protocol synchronization.",
+      es: 'Plataforma SaaS comercial de telemática desarrollada y operada como proyecto propietario por Isaac Gómez Estrada para rastreo satelital GPS de flotas en tiempo real, transmisión de telemetría y ruteo automatizado. Incluye mapas interactivos Leaflet GIS, el Planificador Inteligente con optimización de rutas por calles punto a punto, geocercas, telemetría de unidades en vivo y sincronización con protocolos Wialon Lite.',
     },
     highlights: {
       en: [
+        'Proprietary full-stack commercial platform (orb-lite.com) — zero client NDA constraints',
         'Interactive real-time GPS tracking dashboard with Leaflet GIS mapping covering Mexico and USA',
         'Smart Route Planner (Planificador Inteligente) with address geocoding and return-to-origin optimization',
         'Integration with Wialon Lite protocols and custom Swarm APIs for high-frequency telemetry data',
@@ -508,6 +509,7 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
         'Full-stack architecture with TypeScript, React, Tailwind CSS, and Supabase database backend',
       ],
       es: [
+        'Plataforma comercial y plataforma propia (orb-lite.com) — 100% de propiedad directa, sin restricciones de NDA',
         'Dashboard interactivo de rastreo satelital GPS en tiempo real con mapeo Leaflet GIS para México y EE. UU.',
         'Planificador Inteligente con geocodificación de direcciones y optimización de rutas con retorno a origen',
         'Integración con protocolos Wialon Lite y Swarm APIs propietarias para telemetría de alta frecuencia',
@@ -524,6 +526,22 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       'Tailwind CSS',
       'Supabase SQL',
       'Fleet Telematics',
+    ],
+    galleryImages: [
+      {
+        src: '/portfolio_assets/orblite-rastreo-rutas-2.png',
+        caption: {
+          en: 'Production Interface: Planificador Inteligente (Smart Route Planner) with street-level optimization and Leaflet GIS mapping.',
+          es: 'Interfaz en Producción: Planificador Inteligente con optimización de rutas por calles y mapa Leaflet GIS.',
+        },
+      },
+      {
+        src: '/portfolio_assets/orblite-rastreo-dashboard-1.png',
+        caption: {
+          en: 'Real-time Satellite Tracking Dashboard: 30 units across Mexico & US, Wialon Lite synchronization, and Swarm APIs.',
+          es: 'Panel de Rastreo Satelital en Tiempo Real: 30 unidades en México y EE. UU., sincronización Wialon Lite y Swarm APIs.',
+        },
+      },
     ],
     externalUrl: 'https://orb-lite.com',
     externalLabel: {
@@ -889,15 +907,20 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
           const isAaa = project.workClassification === 'aaa-studio';
           const isPersonalRnd = project.workClassification === 'personal-rnd';
           const isEnterprise = project.workClassification === 'enterprise-client';
+          const isProprietary = project.workClassification === 'proprietary-platform';
 
           const badgeLabel = isAaa
             ? (isEn ? 'AAA Studio (NDA)' : 'Estudio AAA (NDA)')
             : isPersonalRnd
             ? (isEn ? 'Personal R&D' : 'I+D Personal')
+            : isProprietary
+            ? (isEn ? 'Proprietary Platform' : 'Plataforma Propia')
             : (isEn ? 'Enterprise (NDA)' : 'Corporativo (NDA)');
 
           const mediaBadgeText = project.youtubeId
             ? (isEn ? 'Official Gameplay Broadcast' : 'Transmisión Oficial AAA')
+            : isProprietary
+            ? (isEn ? 'Live Production SaaS' : 'Producción en Vivo (SaaS)')
             : project.mediaSrc
             ? (isEn ? "Isaac's Screen Recording" : 'Grabación de Pantalla (Isaac)')
             : (isEn ? 'Project Showcase' : 'Muestra del Proyecto');
@@ -946,11 +969,14 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                           ? 'bg-amber-500 text-slate-950'
                           : isPersonalRnd
                           ? 'bg-sky-500 text-slate-950'
+                          : isProprietary
+                          ? 'bg-cyan-400 text-slate-950'
                           : 'bg-emerald-500 text-slate-950'
                       }`}
                     >
                       {isAaa && <Trophy className="w-3 h-3" />}
                       {isPersonalRnd && <Monitor className="w-3 h-3" />}
+                      {isProprietary && <Globe className="w-3 h-3" />}
                       {isEnterprise && <Building2 className="w-3 h-3" />}
                       <span>{mediaBadgeText}</span>
                     </div>

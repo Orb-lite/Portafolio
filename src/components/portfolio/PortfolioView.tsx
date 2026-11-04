@@ -162,8 +162,8 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
   {
     id: 'scores-sports-sim',
     title: {
-      en: 'Sports Broadcast & Real-Time Scoreboard HUD System',
-      es: 'Simulación de Transmisión Deportiva y Marcador HUD en Tiempo Real',
+      en: 'Sports Broadcast & Real-Time Scoreboard HUD System (scores.mp4)',
+      es: 'Simulación de Transmisión Deportiva y Marcador HUD en Tiempo Real (scores.mp4)',
     },
     subtitle: {
       en: 'ActionScript, C++ & Frostbite Engine Broadcast Scorebug Pipeline',
@@ -178,11 +178,12 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     year: '2022 - 2024',
     engine: 'Frostbite Engine',
     mediaType: 'video',
+    mediaSrc: '/portfolio_assets/scores.mp4',
     youtubeId: '3Rkj6FlMcLU',
     thumbnailSrc: 'https://img.youtube.com/vi/3Rkj6FlMcLU/maxresdefault.jpg',
     mediaNote: {
-      en: 'AAA broadcast scoreboard system engineered on Frostbite under studio NDA. Publicly demonstrated via official game broadcast footage and verified MobyGames credits.',
-      es: 'Sistema de HUD y marcador televisivo desarrollado en Frostbite bajo acuerdo de confidencialidad de estudio. Demostrado mediante metraje oficial de transmisión y créditos verificados en MobyGames.',
+      en: 'Screen recording (scores.mp4) & official broadcast: Dynasty Hub UI debug panels (ScreenKey, mcScreenManager, frametime graph) and sub-frame scoreboard updates engineered in ActionScript and high-performance C++ on Frostbite Engine architecture.',
+      es: 'Grabación de pantalla (scores.mp4) y transmisión oficial: Paneles de depuración Dynasty Hub UI (ScreenKey, mcScreenManager, gráfica de frametime) y máquina de estados del marcador deportivo desarrollados en ActionScript y C++ sobre Frostbite Engine.',
     },
     description: {
       en: 'Real-time sports game broadcast scoreboard and HUD system engineered using ActionScript integrated with high-performance C++ runtime on Frostbite Engine architecture for EA Sports College Football 25 title pipelines. Features sub-frame responsive scoreboard state machines, live clock synchronization, and broadcast-grade visual transitions.',
@@ -212,14 +213,114 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     featured: true,
   },
   {
-    id: 'vdb-volumetric-sim',
+    id: 'goblins-castle',
     title: {
-      en: 'OpenVDB Volumetric Smoke & Cloud Simulation',
-      es: 'Simulación Volumétrica de Humo y Nubes con OpenVDB',
+      en: 'Goblins Castle - Medieval Dark Fantasy Action RPG',
+      es: 'Goblins Castle - RPG de Acción y Fantasía Oscura Medieval',
     },
     subtitle: {
-      en: 'GPU-Accelerated Heterogeneous Volume Rendering',
-      es: 'Renderizado de Volúmenes Heterogéneos Acelerado por GPU',
+      en: '64-bit Development PCD3D_SM5 In-Engine Viewport Preview',
+      es: 'Preview de Desarrollo en 64 bits (PCD3D_SM5) en Unreal Engine',
+    },
+    category: 'virtual-env',
+    categoryLabel: {
+      en: 'Interactive Virtual Environments',
+      es: 'Entornos Virtuales Interactivos',
+    },
+    workClassification: 'personal-rnd',
+    year: '2022',
+    engine: 'Unreal Engine (PCD3D_SM5)',
+    mediaType: 'video',
+    mediaSrc: '/portfolio_assets/Goblins_Castle (64-bit Development PCD3D_SM5)  2022-10-26 17-21-27.mp4',
+    mediaNote: {
+      en: "Direct Unreal Engine 64-bit Development preview screen capture (Goblins_Castle 2022-10-26): Knight third-person locomotion, castle dungeon environment, sword combat combos, reactive AI enemies, dynamic torch lighting, and interactive quest HUD ('Compra una espada').",
+      es: "Grabación directa de pantalla en Unreal Engine 64-bit Development preview (Goblins_Castle 2022-10-26): Locomoción en tercera persona con caballero, entorno de mazmorra y castillo medieval, combos de combate con espada, IA de enemigos reactiva, iluminación dinámica de antorchas y HUD de misiones ('Compra una espada').",
+    },
+    description: {
+      en: 'Atmospheric third-person medieval action RPG prototype engineered in Unreal Engine (64-bit Development build). Features fluid knight character movement, sword collision tracing, responsive combat combos, dynamic lighting with torch flicker, quest objective HUD tracking, and dungeon modular architecture.',
+      es: 'Prototipo de RPG de acción medieval en tercera persona desarrollado en Unreal Engine (build 64-bit Development). Cuenta con locomoción fluida de personaje caballero, trazado de colisiones para combate con espada, combos de ataque responsivos, iluminación dinámica con antorchas, seguimiento de misiones en HUD y arquitectura modular de mazmorra.',
+    },
+    highlights: {
+      en: [
+        'Custom third-person locomotion, sprint, dodge, and sword attack combo animation states',
+        'DirectX Shader Model 5 dynamic point lights, volumetric dungeon shadows, and stone PBR materials',
+        'Interactive player HUD with quest objective alerts and health/stamina monitoring',
+        'Stable 60+ FPS performance in 64-bit Development in-editor viewport testing',
+      ],
+      es: [
+        'Locomoción en tercera persona, carrera, esquive y máquina de estados para animaciones de combate con espada',
+        'Luces dinámicas puntuales en DirectX SM5, sombras volumétricas de mazmorra y materiales PBR de piedra',
+        'HUD interactivo del jugador con alertas de objetivos de misión y barras de salud/estamina',
+        'Rendimiento sostenido a más de 60 FPS en pruebas de viewport 64-bit Development',
+      ],
+    },
+    techStack: ['Unreal Engine', 'DirectX SM5', 'Combat Mechanics', 'Third-Person Locomotion', 'Level Design', 'Blueprints / C++'],
+    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
+    externalLabel: {
+      en: 'View in Drive Portfolio Folder',
+      es: 'Ver en Carpeta Drive de Portafolio',
+    },
+    featured: true,
+  },
+  {
+    id: 'gamejam-devbot',
+    title: {
+      en: 'DevBot Game Jam - Rapid Action Prototype Preview',
+      es: 'DevBot Game Jam - Prototipo Rápido de Acción y Mecánicas',
+    },
+    subtitle: {
+      en: 'NetMode Standalone 64-bit Windows Gameplay Loop & Physics',
+      es: 'Ciclo de Jugabilidad y Físicas en NetMode Standalone (Windows 64 bits)',
+    },
+    category: 'virtual-env',
+    categoryLabel: {
+      en: 'Interactive Virtual Environments',
+      es: 'Game Jam & Prototipado Rápido',
+    },
+    workClassification: 'personal-rnd',
+    year: '2022',
+    engine: 'Unreal Engine (Standalone NetMode)',
+    mediaType: 'video',
+    mediaSrc: '/portfolio_assets/GameJam_DevBot Preview [NetMode_ Standalone]  (64-bit_Windows)  2022-10-13 18-32-24.mp4',
+    mediaNote: {
+      en: "Screen recording from Isaac's NetMode Standalone 64-bit Windows preview (GameJam_DevBot 2022-10-13): Rapid prototype mechanics engineered during the DEVBOT studio game jam, testing high-mobility locomotion, responsive physics, and level obstacle navigation.",
+      es: "Grabación de pantalla desde el preview NetMode Standalone de 64 bits para Windows de Isaac (GameJam_DevBot 2022-10-13): Prototipo rápido de mecánicas desarrollado en el Game Jam del estudio DEVBOT, probando locomoción ágil, físicas reactivas y navegación de obstáculos.",
+    },
+    description: {
+      en: 'Fast-paced game jam prototype engineered under rapid turnaround constraints at DEVBOT studio. Packaged as a standalone 64-bit Windows executable, testing character responsiveness, platform traversal physics, and spatial timing challenges.',
+      es: 'Prototipo de acción ágil desarrollado bajo estrictas restricciones de tiempo en el Game Jam del estudio DEVBOT. Empaquetado como ejecutable Standalone para Windows de 64 bits, validando respuesta del personaje, físicas de movimiento en plataformas y desafíos espaciales de precisión.',
+    },
+    highlights: {
+      en: [
+        'Packaged and benchmarked as NetMode Standalone 64-bit Windows release',
+        'High-velocity character movement physics, variable jumping, and obstacle collision',
+        'Rapid level grayboxing, lighting pass, and responsive game loop completed under game jam deadline',
+        'Co-development collaboration and agile prototyping inside DEVBOT pipeline',
+      ],
+      es: [
+        'Empaquetado y validado en build ejecutable Standalone NetMode de 64 bits para Windows',
+        'Físicas de movimiento de alta velocidad, salto variable y colisión precisa con obstáculos',
+        'Grayboxing rápido de nivel, pase de iluminación y ciclo de juego interactivo completado en plazo de jam',
+        'Colaboración y prototipado ágil dentro de la cultura de co-desarrollo de DEVBOT',
+      ],
+    },
+    techStack: ['Unreal Engine', 'DEVBOT Game Jam', 'Standalone NetMode', 'Character Physics', 'Rapid Prototyping'],
+    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
+    externalLabel: {
+      en: 'View in Drive Portfolio Folder',
+      es: 'Ver en Carpeta Drive de Portafolio',
+    },
+    featured: true,
+  },
+  {
+    id: 'vdb-volumetric-sim',
+    title: {
+      en: 'OpenVDB Volumetric Smoke & Cloud Simulation (VDB.mp4)',
+      es: 'Simulación Volumétrica de Humo y Nubes con OpenVDB (VDB.mp4)',
+    },
+    subtitle: {
+      en: 'GPU-Accelerated Heterogeneous Volume Rendering & Niagara VFX',
+      es: 'Renderizado de Volúmenes Heterogéneos Acelerado por GPU y Niagara VFX',
     },
     category: 'simulation',
     categoryLabel: {
@@ -229,15 +330,16 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     workClassification: 'personal-rnd',
     year: '2024',
     engine: 'Unreal Engine 5 (Niagara & OpenVDB)',
-    mediaType: 'external',
+    mediaType: 'video',
+    mediaSrc: '/portfolio_assets/VDB (1).mp4',
     mediaNote: {
-      en: "Personal research project exploring OpenVDB sparse voxel volume rendering and Niagara in Unreal Engine 5.",
-      es: 'Proyecto de investigación personal explorando renderizado de volúmenes OpenVDB y Niagara en Unreal Engine 5.',
+      en: "Isaac's personal technical R&D in Unreal Engine 5: Direct screen recording testing OpenVDB sparse voxel volume rendering, dynamic velocity advection, and real-time volumetric raymarching shaders.",
+      es: 'I+D técnico personal de Isaac en Unreal Engine 5: Grabación directa de pantalla probando renderizado de volúmenes dispersos en OpenVDB, advección de velocidad y shaders de raymarching volumétrico en tiempo real.',
     },
     externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
     externalLabel: {
-      en: 'View Project in Drive Archive',
-      es: 'Ver Proyecto en Carpeta Drive',
+      en: 'View in Drive Portfolio Folder',
+      es: 'Ver en Carpeta Drive de Portafolio',
     },
     description: {
       en: 'Cutting-edge volumetric simulation inside Unreal Engine 5 taking advantage of OpenVDB spatial data structures. Computes high-density smoke plumes, atmospheric scattering, and light absorption in real time.',
@@ -248,11 +350,13 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
         'GPU-accelerated raymarching of 3D density grids without baking artifacts',
         'Physically accurate phase function scattering and shadow penetration',
         'Interactive viewport parameter adjustments for density, absorption, and velocity',
+        'Niagara particle emitter integration with volumetric collision grids',
       ],
       es: [
         'Raymarching acelerado por GPU de mallas volumétricas 3D sin artefactos de horneado',
         'Dispersión física precisa mediante funciones de fase y penetración de sombras',
         'Ajustes interactivos de densidad, absorción y velocidad en tiempo real desde el viewport',
+        'Integración de emisores de partículas Niagara con cuadrículas de colisión volumétrica',
       ],
     },
     techStack: ['Unreal Engine 5', 'OpenVDB', 'Niagara VFX', 'Heterogeneous Volumes', 'GPU Shaders'],
@@ -307,12 +411,12 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
   {
     id: 'procedural-world-gen',
     title: {
-      en: 'RWGen - Procedural World & Environment Generation',
-      es: 'RWGen - Generación Procedimental de Mundos y Terrenos',
+      en: 'RWGen - Procedural World & Environment Generation (landscape.mp4)',
+      es: 'RWGen - Generación Procedimental de Mundos y Terrenos (landscape.mp4)',
     },
     subtitle: {
-      en: 'Algorithmic Terrain Biomes & Runtime Spatial Streaming',
-      es: 'Biomas Algorítmicos de Terreno y Streaming Espacial en Tiempo de Ejecución',
+      en: 'Algorithmic Terrain Biomes, Foliage Streaming & Environmental Flythrough',
+      es: 'Biomas Algorítmicos de Terreno, Streaming de Vegetación y Recorrido de Paisaje',
     },
     category: 'virtual-env',
     categoryLabel: {
@@ -322,15 +426,16 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     workClassification: 'personal-rnd',
     year: '2022',
     engine: 'Unreal Engine Procedural Systems',
-    mediaType: 'external',
+    mediaType: 'video',
+    mediaSrc: '/portfolio_assets/landscape.mp4',
     mediaNote: {
-      en: 'Personal algorithmic terrain generation and biome scattering research in Unreal Engine.',
-      es: 'Investigación personal de generación algorítmica de terrenos y biomas procedimentales en Unreal Engine.',
+      en: "Isaac's personal screen recording (landscape.mp4): Testing algorithmic terrain generation, procedural heightmaps, atmospheric lighting, and high-framerate landscape navigation in Unreal Engine.",
+      es: 'Grabación de pantalla personal de Isaac (landscape.mp4): Pruebas de generación algorítmica de terrenos, mapas de altura procedimentales, iluminación atmosférica y navegación de paisajes en Unreal Engine.',
     },
     externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
     externalLabel: {
-      en: 'View Project in Drive Archive',
-      es: 'Ver Proyecto en Carpeta Drive',
+      en: 'View in Drive Portfolio Folder',
+      es: 'Ver en Carpeta Drive de Portafolio',
     },
     description: {
       en: 'Algorithmic terrain generation and procedural landscape populating. Demonstrates runtime biome generation, rule-based vegetation scattering, and scalable level-of-detail (LOD) streaming.',
@@ -648,6 +753,13 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeModalProject, setActiveModalProject] = useState<ProjectItem | null>(null);
   const [selectedArtIndex, setSelectedArtIndex] = useState<number>(0);
+  const [videoErrors, setVideoErrors] = useState<Record<string, boolean>>({});
+  const [modalVideoError, setModalVideoError] = useState<boolean>(false);
+
+  const openProjectModal = (project: ProjectItem) => {
+    setModalVideoError(false);
+    setActiveModalProject(project);
+  };
 
   const categories = [
     {
@@ -935,9 +1047,9 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                 {project.mediaType === 'video' && (project.mediaSrc || project.youtubeId) ? (
                   <div
                     className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500 bg-slate-950"
-                    onClick={() => setActiveModalProject(project)}
+                    onClick={() => openProjectModal(project)}
                   >
-                    {project.mediaSrc ? (
+                    {project.mediaSrc && !videoErrors[project.id] ? (
                       <video
                         src={project.mediaSrc}
                         autoPlay
@@ -945,6 +1057,7 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                         playsInline
                         loop
                         preload="metadata"
+                        onError={() => setVideoErrors((prev) => ({ ...prev, [project.id]: true }))}
                         className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
                       />
                     ) : project.youtubeId ? (
@@ -960,7 +1073,17 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                           }}
                         />
                       </div>
-                    ) : null}
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex flex-col items-center justify-center p-4 text-center">
+                        <div className="w-11 h-11 rounded-xl bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-400 mb-2">
+                          <Film className="w-5 h-5" />
+                        </div>
+                        <span className="text-white text-xs font-bold line-clamp-1">{title}</span>
+                        <span className="text-sky-300 text-[10px] font-mono mt-0.5 line-clamp-1">
+                          {project.mediaSrc ? project.mediaSrc.split('/').pop() : project.engine}
+                        </span>
+                      </div>
+                    )}
 
                     {/* Classification overlay pill */}
                     <div
@@ -995,7 +1118,7 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                 ) : project.mediaType === 'image' && project.mediaSrc ? (
                   <div
                     className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500 bg-slate-950 flex items-center justify-center overflow-hidden"
-                    onClick={() => setActiveModalProject(project)}
+                    onClick={() => openProjectModal(project)}
                   >
                     <img
                       src={project.mediaSrc}
@@ -1263,7 +1386,7 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                       />
-                    ) : activeModalProject.mediaSrc ? (
+                    ) : activeModalProject.mediaSrc && !modalVideoError ? (
                       <video
                         key={activeModalProject.mediaSrc}
                         controls
@@ -1271,6 +1394,7 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                         muted
                         playsInline
                         preload="auto"
+                        onError={() => setModalVideoError(true)}
                         className="w-full h-full object-contain"
                       >
                         <source src={activeModalProject.mediaSrc} type="video/mp4" />
@@ -1278,7 +1402,36 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                           ? 'Your browser does not support HTML5 video streaming.'
                           : 'Tu navegador no soporta reproducción de video HTML5.'}
                       </video>
-                    ) : null}
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 flex flex-col items-center justify-center p-6 text-center space-y-3">
+                        <div className="w-14 h-14 rounded-2xl bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-400 shadow-lg">
+                          <Film className="w-7 h-7" />
+                        </div>
+                        <div>
+                          <h4 className="text-white font-bold text-base">
+                            {activeModalProject.title[language] || activeModalProject.title.en}
+                          </h4>
+                          <p className="text-sky-300 text-xs font-mono mt-1">
+                            {activeModalProject.mediaSrc?.split('/').pop()}
+                          </p>
+                        </div>
+                        <p className="text-slate-300 text-xs max-w-md">
+                          {isEn
+                            ? 'Video clip indexed in Isaac Gómez Estrada portfolio archive. View direct media recordings, project files, and uncompressed footage in Google Drive.'
+                            : 'Clip de video catalogado en el portafolio de Isaac Gómez Estrada. Puedes ver el archivo multimedia, grabaciones originales y proyectos completos en Google Drive.'}
+                        </p>
+                        <a
+                          href={activeModalProject.externalUrl || 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing'}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs shadow-md transition-all hover:scale-105"
+                        >
+                          <FolderOpen className="w-4 h-4" />
+                          <span>{isEn ? 'Open Project in Google Drive' : 'Abrir Proyecto en Google Drive'}</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center justify-between flex-wrap gap-2 text-xs text-slate-500 px-1">
                     <span className="flex items-center gap-1.5">

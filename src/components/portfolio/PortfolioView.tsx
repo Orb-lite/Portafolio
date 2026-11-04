@@ -58,6 +58,8 @@ export interface ProjectItem {
   externalUrl?: string;
   externalLabel?: LocalizedString;
   mobyGamesUrl?: string;
+  galleryImages?: Array<{ src: string; caption?: LocalizedString }>;
+  extraVideoSrc?: string;
   featured?: boolean;
 }
 
@@ -408,33 +410,65 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     workClassification: 'enterprise-client',
     year: '2024 - 2026',
     engine: 'Unreal Engine 5 & FlexSim',
-    mediaType: 'external',
+    mediaType: 'video',
+    mediaSrc: '/portfolio_assets/digital-twin-campus-standalone.mp4',
+    thumbnailSrc: '/portfolio_assets/digital-twin-campus-thumb.jpg',
     mediaNote: {
-      en: 'Enterprise industrial simulation and VR training at Flex for Fortune 500 manufacturing plants (proprietary client data protected by NDA).',
-      es: 'Simulación industrial corporativa y entrenamiento VR en Flex para plantas de manufactura Fortune 500 (datos propietarios de clientes protegidos por NDA).',
+      en: "Enterprise digital twin screen capture from Isaac's 64-bit D3D Shader Model 6 Standalone build at Flex: Real-time Guadalajara North campus navigation, building B29 monitoring, machine line telemetry, failure list triage, and live power consumption dashboards.",
+      es: 'Grabación de pantalla del gemelo digital corporativo desde el build Standalone de 64 bits (D3D Shader Model 6) de Isaac en Flex: Navegación del campus Guadalajara Norte, monitoreo del edificio B29, telemetría de líneas de producción, lista de fallas y dashboards de consumo energético en tiempo real.',
     },
     description: {
-      en: 'High-precision real-time 3D Digital Twins of industrial manufacturing floors for global Fortune 500 enterprises across automotive, advanced technology, and pharmaceutical sectors (under strict NDAs). Modeled assembly line throughput, automated failure detection, and thermal spacing.',
-      es: 'Gemelos Digitales 3D en tiempo real de alta precisión para plantas industriales de empresas Fortune 500 globales en sectores automotriz, tecnología avanzada y farmacéutica (bajo estricta confidencialidad). Modelado de capacidad de ensamble, detección automática de fallas y espaciado térmico.',
+      en: 'High-precision real-time 3D Digital Twin of industrial manufacturing facilities engineered with Unreal Engine 5, D3D Shader Model 6, and Arch FlexSim. Features interactive campus navigation (Guadalajara North campus), building-level telemetry (B29), real-time machine utilization dashboards, line failure alerts (AOI Zenith, Vitrox, Heller Reflow Oven), throughput tracking, yield metrics, and power consumption monitoring for Fortune 500 enterprise operations.',
+      es: 'Gemelo Digital 3D en tiempo real de alta precisión para instalaciones de manufactura industrial desarrollado con Unreal Engine 5, D3D Shader Model 6 y Arch FlexSim. Incluye navegación interactiva de campus (Campus Guadalajara Norte), telemetría a nivel de edificio (B29), tableros de utilización de maquinaria en tiempo real, alertas y triage de fallas (AOI Zenith, Vitrox, Horno de Reflujo Heller), seguimiento de rendimiento de producción (Yield, Throughput) y monitoreo de consumo eléctrico para operaciones corporativas Fortune 500.',
     },
     highlights: {
       en: [
-        'Pre-empted physical machine assembly bottlenecks using predictive 3D simulations',
-        'Calculated optimal machinery spacing to avoid thermal overheating on floor',
-        'Created immersive VR training modules for safe operational onboarding on heavy robotics',
+        'Standalone 64-bit D3D Shader Model 6 executable build running interactive campus flythrough',
+        'Live IoT telematics integration: Temperature, Humidity, Energy, Water & Nitrogen consumption tracking',
+        'Machine-level inspection (SIPLACE, AOI Zenith, Vitrox, Heller Reflow Oven) with live yield & failure triage',
+        'Real-time power consumption gauge dashboard and workstation multi-monitor telemetry center setup',
+        'Automated bottleneck detection & predictive simulation of automated lines prior to physical deployment',
       ],
       es: [
-        'Detección anticipada de cuellos de botella en ensamble mediante simulaciones predictivas 3D',
-        'Cálculo de separación óptima de maquinaria para prevenir sobrecalentamiento en planta',
-        'Módulos inmersivos de capacitación en Realidad Virtual para inducción segura en robótica pesada',
+        'Build ejecutable Standalone de 64 bits en D3D Shader Model 6 con navegación interactiva por todo el campus',
+        'Integración telemática de sensores IoT en vivo: temperatura, humedad, energía, agua y nitrógeno',
+        'Inspección detallada de maquinaria (SIPLACE, AOI Zenith, Vitrox, Horno Heller) con yield y reporte de fallas en vivo',
+        'Dashboard de consumo de energía con indicadores en tiempo real y estación de trabajo multi-monitor de telemetría',
+        'Detección predictiva de cuellos de botella y simulación de líneas automatizadas antes de su despliegue físico',
       ],
     },
-    techStack: ['Unreal Engine 5', 'FlexSim', 'Industrial IoT', 'VR (Virtual Reality)', 'Python', 'Digital Twins'],
+    techStack: [
+      'Unreal Engine 5',
+      'Arch FlexSim',
+      'D3D Shader Model 6',
+      'Industrial IoT',
+      'Digital Twins',
+      'Real-Time Telemetry',
+      'C++ / Blueprints',
+      'VR Simulation',
+    ],
+    galleryImages: [
+      {
+        src: '/portfolio_assets/digital-twin-workstation-setup.jpg',
+        caption: {
+          en: 'Engineering workstation setup: Real-time building power consumption meters, thermal heatmap, and live 3D production line viewport in Unreal Engine.',
+          es: 'Estación de trabajo de ingeniería: Medidores de consumo eléctrico en tiempo real, mapa de calor térmico y viewport 3D de la línea de producción en Unreal Engine.',
+        },
+      },
+      {
+        src: '/portfolio_assets/digital-twin-campus-thumb.jpg',
+        caption: {
+          en: 'Guadalajara North Campus 3D overview with building markers (B-1, B-28, B-29) and interactive view controls.',
+          es: 'Vista general 3D del Campus Guadalajara Norte con marcadores de edificios (B-1, B-28, B-29) y controles de navegación interactiva.',
+        },
+      },
+    ],
     externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
     externalLabel: {
       en: 'View Portfolio Drive Folder',
       es: 'Ver Carpeta de Portafolio en Drive',
     },
+    featured: true,
   },
   {
     id: 'orblite-platform',
@@ -453,34 +487,50 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     },
     workClassification: 'enterprise-client',
     year: '2026 - Present',
-    engine: 'React / TypeScript / Supabase',
-    mediaType: 'external',
+    engine: 'React / TypeScript / Leaflet / Supabase',
+    mediaType: 'image',
+    mediaSrc: '/portfolio_assets/orblite-plataforma-rastreo.svg',
+    thumbnailSrc: '/portfolio_assets/orblite-plataforma-rastreo.svg',
     mediaNote: {
-      en: 'Commercial SaaS telematics platform and vehicle tracking portal engineered for active fleet operations.',
-      es: 'Plataforma SaaS comercial de telemática y portal de monitoreo vehicular para operaciones de flotas en vivo.',
+      en: "Live production interface of ORB-LITE (Wialon Lite) tracking platform: Real-time satellite GPS mapping across North America, 30 active units, Swarm APIs integration, and Smart Route Planner (Planificador Inteligente) with street-level optimization.",
+      es: 'Interfaz de producción en vivo de la plataforma de rastreo ORB-LITE (Wialon Lite): Mapeo satelital GPS en tiempo real para Norteamérica y México, 30 unidades activas, integración con Swarm APIs y Planificador Inteligente con optimización de rutas por calles.',
     },
     description: {
-      en: 'Commercial telematics SaaS platform engineered from the ground up for GPS tracking, telemetry analytics, and vehicle operations. Includes proprietary internal CRM and ERP systems, AI-powered prospecting tools, and high-performance cloud deployment.',
-      es: 'Plataforma SaaS comercial de telemática desarrollada desde cero para rastreo GPS, analítica telemática y operaciones vehiculares. Incluye sistemas CRM y ERP propietarios, automatización de prospección con IA y despliegue cloud de alto rendimiento.',
+      en: 'Commercial telematics SaaS platform engineered for real-time fleet GPS tracking, IoT telemetry analytics, and operational routing. Built with React, TypeScript, Leaflet GIS mapping, Supabase, and Swarm APIs. Features the Smart Route Planner (Planificador Inteligente) with multi-stop street routing optimization, geofences, live units telemetry, and client fleet synchronization.',
+      es: 'Plataforma SaaS comercial de telemática desarrollada para rastreo satelital GPS de flotas en tiempo real, analítica IoT y planificación operativa de rutas. Construida con React, TypeScript, mapas Leaflet GIS, Supabase y Swarm APIs. Incluye el Planificador Inteligente con optimización de rutas punto a punto por calles, geocercas, telemetría de unidades en vivo y sincronización con flotas de clientes.',
     },
     highlights: {
       en: [
-        'End-to-end full-stack web architecture serving live fleets and enterprise clients',
-        'Real-time telemetry map tracking, automated alerts, and financial reporting',
-        'Source code publicly visible on GitHub organization repositories',
+        'Interactive real-time GPS tracking dashboard with Leaflet GIS mapping covering Mexico and USA',
+        'Smart Route Planner (Planificador Inteligente) with address geocoding and return-to-origin optimization',
+        'Integration with Wialon Lite protocols and custom Swarm APIs for high-frequency telemetry data',
+        'Multi-client route resource management (15 client resources, 30 active satellite units)',
+        'Full-stack architecture with TypeScript, React, Tailwind CSS, and Supabase database backend',
       ],
       es: [
-        'Arquitectura web full-stack de extremo a extremo para flotas activas y clientes corporativos',
-        'Rastreo telemático en mapa en tiempo real, alertas automatizadas y reportes financieros',
-        'Repositorios de código estructurados y visibles en la organización de GitHub',
+        'Dashboard interactivo de rastreo satelital GPS en tiempo real con mapeo Leaflet GIS para México y EE. UU.',
+        'Planificador Inteligente con geocodificación de direcciones y optimización de rutas con retorno a origen',
+        'Integración con protocolos Wialon Lite y Swarm APIs propietarias para telemetría de alta frecuencia',
+        'Gestión de recursos de rutas por cliente (15 recursos en Wialon, 30 unidades satelitales activas)',
+        'Arquitectura full-stack con TypeScript, React, Tailwind CSS y base de datos Supabase',
       ],
     },
-    techStack: ['TypeScript', 'React', 'Tailwind CSS', 'Supabase', 'Vercel', 'Cloudflare', 'REST APIs'],
+    techStack: [
+      'TypeScript',
+      'React',
+      'Leaflet GIS',
+      'Swarm APIs',
+      'Wialon Protocols',
+      'Tailwind CSS',
+      'Supabase SQL',
+      'Fleet Telematics',
+    ],
     externalUrl: 'https://orb-lite.com',
     externalLabel: {
       en: 'Visit orb-lite.com',
       es: 'Visitar orb-lite.com',
     },
+    featured: true,
   },
   {
     id: 'unreal-editor-project4',
@@ -918,7 +968,7 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                   </div>
                 ) : project.mediaType === 'image' && project.mediaSrc ? (
                   <div
-                    className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500 bg-slate-950 flex items-center justify-center overflow-hidden"
                     onClick={() => setActiveModalProject(project)}
                   >
                     <img
@@ -926,13 +976,20 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                       alt={title}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute top-2.5 left-3 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shadow bg-pink-500 text-slate-950">
-                      <Sparkles className="w-3 h-3" />
-                      <span>{isEn ? 'Visual Art' : 'Arte Visual'}</span>
+                    <div
+                      className={`absolute top-2.5 left-3 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shadow ${
+                        isEnterprise
+                          ? 'bg-emerald-500 text-slate-950'
+                          : 'bg-pink-500 text-slate-950'
+                      }`}
+                    >
+                      {isEnterprise ? <Globe className="w-3 h-3" /> : <Sparkles className="w-3 h-3" />}
+                      <span>{isEnterprise ? (isEn ? 'Live Platform UI' : 'Interfaz en Vivo') : (isEn ? 'Visual Art' : 'Arte Visual')}</span>
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
-                    <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs">
-                      {isEn ? 'View Full Art Canvas' : 'Ver Galería de Arte'}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
+                    <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1 pointer-events-none">
+                      <ExternalLink className="w-3 h-3 text-sky-400" />
+                      <span>{isEn ? 'View Platform Showcase' : 'Ver Interfaz & Detalles'}</span>
                     </span>
                   </div>
                 ) : (
@@ -1235,30 +1292,87 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                 </div>
               ) : activeModalProject.mediaType === 'image' ? (
                 <div className="w-full bg-slate-950 rounded-xl overflow-hidden flex flex-col items-center justify-center p-3 sm:p-5 space-y-4">
-                  <img
-                    src={`/portfolio_assets/concept-artwork-${selectedArtIndex + 1}.png`}
-                    alt={`${activeModalProject.title[language] || activeModalProject.title.en} ${selectedArtIndex + 1}`}
-                    className="max-h-[520px] w-auto max-w-full object-contain rounded-lg shadow-xl"
-                  />
-                  <div className="flex items-center gap-2 pt-2">
-                    {[0, 1, 2].map((idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => setSelectedArtIndex(idx)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${
-                          selectedArtIndex === idx
-                            ? 'bg-sky-600 text-white shadow-md'
-                            : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                        }`}
-                      >
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>{isEn ? `Artwork #${idx + 1}` : `Ilustración #${idx + 1}`}</span>
-                      </button>
+                  {activeModalProject.id === 'concept-artworks' ? (
+                    <>
+                      <img
+                        src={`/portfolio_assets/concept-artwork-${selectedArtIndex + 1}.png`}
+                        alt={`${activeModalProject.title[language] || activeModalProject.title.en} ${selectedArtIndex + 1}`}
+                        className="max-h-[520px] w-auto max-w-full object-contain rounded-lg shadow-xl"
+                      />
+                      <div className="flex items-center gap-2 pt-2">
+                        {[0, 1, 2].map((idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => setSelectedArtIndex(idx)}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${
+                              selectedArtIndex === idx
+                                ? 'bg-sky-600 text-white shadow-md'
+                                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                            }`}
+                          >
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>{isEn ? `Artwork #${idx + 1}` : `Ilustración #${idx + 1}`}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="w-full flex flex-col items-center space-y-2">
+                      <div className="w-full rounded-lg overflow-hidden border border-slate-800 shadow-2xl bg-slate-900">
+                        <img
+                          src={activeModalProject.mediaSrc || activeModalProject.thumbnailSrc}
+                          alt={activeModalProject.title[language] || activeModalProject.title.en}
+                          className="w-full h-auto max-h-[560px] object-contain mx-auto"
+                        />
+                      </div>
+                      <div className="w-full flex items-center justify-between text-xs text-slate-400 px-1 pt-1">
+                        <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+                          <Globe className="w-3.5 h-3.5" />
+                          <span>{isEn ? 'Production Telematics UI Interface' : 'Interfaz de Producción en Vivo'}</span>
+                        </span>
+                        {activeModalProject.externalUrl && (
+                          <a
+                            href={activeModalProject.externalUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-sky-400 hover:text-sky-300 font-semibold inline-flex items-center gap-1 underline underline-offset-2"
+                          >
+                            <span>{isEn ? 'Launch Platform Live' : 'Abrir Plataforma en Vivo'}</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : null}
+
+              {/* Gallery Images Strip (for projects that have photo attachments like Digital Twin workstation setup) */}
+              {activeModalProject.galleryImages && activeModalProject.galleryImages.length > 0 && (
+                <div className="space-y-3 pt-2">
+                  <h4 className="text-xs uppercase tracking-wider font-bold text-slate-400 flex items-center gap-2">
+                    <Monitor className="w-4 h-4 text-sky-500" />
+                    <span>{isEn ? 'Production Workstation & Setup Visuals' : 'Capturas y Estación de Trabajo en Vivo'}</span>
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {activeModalProject.galleryImages.map((img, i) => (
+                      <div key={i} className="group/gal relative rounded-xl overflow-hidden border border-slate-200 bg-slate-950 shadow-sm flex flex-col">
+                        <img
+                          src={img.src}
+                          alt={`Gallery ${i + 1}`}
+                          className="w-full h-56 object-cover group-hover/gal:scale-105 transition-transform duration-300"
+                        />
+                        {img.caption && (
+                          <div className="p-3 bg-slate-900 text-slate-300 text-xs leading-relaxed border-t border-slate-800">
+                            {img.caption[language] || img.caption.en}
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </div>
-              ) : null}
+              )}
 
               {/* Description & Specs */}
               <div className="space-y-4">

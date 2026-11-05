@@ -64,6 +64,20 @@ export const resumeDataEs: ResumeData = {
       ],
     },
     {
+      id: 'exp-bethesda',
+      role: 'AI & Gameplay Engineering Intern (Bootcamp)',
+      company: 'Bethesda Softworks',
+      location: 'Remoto',
+      startDate: 'Jun 2021',
+      endDate: 'Ago 2021',
+      isCurrent: false,
+      highlights: [
+        'Desarrollo e implementación de algoritmos de Inteligencia Artificial para NPCs y jugadores en Unreal Engine y C++.',
+        'Programación especializada de sistemas de navegación heurística A* (A-Star) para cálculo óptimo de rutas (pathways) sobre cuadrículas dinámicas con evitación de obstáculos en tiempo real.',
+        'Pruebas y optimización de rendimiento en ejecutable NetMode Standalone de 64 bits para Windows (BethesdaTest).',
+      ],
+    },
+    {
       id: 'exp-navi',
       role: 'Artista Técnico & Desarrollador 3D Interactivo',
       company: 'Navi 3D - Realidad Virtual y Maquetas Virtuales',
@@ -269,6 +283,20 @@ export const resumeDataEn: ResumeData = {
         'Real-Time Telemetry & Sensor Simulation: Architected end-to-end full-stack infrastructure for real-time vehicle telematics, simulating high-frequency sensor streams and vehicle telemetry.',
         'Systems & Internal Platforms: Developed internal ERP/CRM tooling and asset tracking platforms using TypeScript, React, RESTful APIs, and Supabase SQL.',
         'Tech Stack: TypeScript, React, RESTful APIs, SQL (Supabase), Python, Cloudflare.',
+      ],
+    },
+    {
+      id: 'exp-bethesda',
+      role: 'AI & Gameplay Engineering Intern (Bootcamp)',
+      company: 'Bethesda Softworks',
+      location: 'Remote',
+      startDate: 'Jun 2021',
+      endDate: 'Aug 2021',
+      isCurrent: false,
+      highlights: [
+        'Engineered AI systems and autonomous behaviors for NPCs and players utilizing Unreal Engine and C++.',
+        'Implemented custom A* (A-Star) heuristic pathfinding algorithms for dynamic tile grid navigation and real-time obstacle avoidance.',
+        'Benchmarked path smoothing and performance optimization in 64-bit NetMode Standalone Windows builds (BethesdaTest).',
       ],
     },
     {

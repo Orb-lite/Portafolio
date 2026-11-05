@@ -122,6 +122,57 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     featured: true,
   },
   {
+    id: 'bethesda-ai-pathfinding',
+    title: {
+      en: 'Bethesda AI Bootcamp - A* Pathfinding & NPC Navigation',
+      es: 'Bethesda AI Bootcamp - Navegación de NPCs y Pathfinding A*',
+    },
+    subtitle: {
+      en: 'A* Grid Pathfinding, Obstacle Avoidance & NPC AI (Bethesda Internship 2021)',
+      es: 'Búsqueda de Caminos Heurística A*, Evitación de Obstáculos e IA de NPCs (Bethesda 2021)',
+    },
+    category: 'virtual-env',
+    categoryLabel: {
+      en: 'AI & Gameplay Systems',
+      es: 'Inteligencia Artificial & Gameplay',
+    },
+    workClassification: 'aaa-studio',
+    year: 'Jun 2021 - Ago 2021',
+    engine: 'Unreal Engine & C++',
+    mediaType: 'video',
+    mediaSrc: '/portfolio_assets/bethesda-astar-pathfinding.mp4',
+    thumbnailSrc: '/portfolio_assets/bethesda-astar-thumb.jpg',
+    mediaNote: {
+      en: 'Direct Unreal Engine screen capture (BethesdaTest Preview [NetMode: Standalone] 64-bit/Windows): Real-time A* (A-Star) pathfinding algorithm calculation on dynamic grid tiles, demonstrating heuristic waypoint generation and obstacle collision avoidance for NPCs and player navigation.',
+      es: 'Grabación directa de pantalla en Unreal Engine (BethesdaTest Preview [NetMode: Standalone] 64-bit/Windows): Cálculo en tiempo real del algoritmo de búsqueda de caminos A* (A-Star) sobre cuadrícula dinámica, generando rutas óptimas y evitando obstáculos para NPCs y jugadores.',
+    },
+    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
+    externalLabel: {
+      en: 'View in Drive Portfolio Folder',
+      es: 'Ver en Carpeta Drive de Portafolio',
+    },
+    description: {
+      en: 'Autonomous NPC and player pathfinding simulation engineered during the Bethesda Softworks AI Bootcamp and Internship (June - August 2021). Built in Unreal Engine and C++, implementing custom A* (A-Star) heuristic search algorithms over dynamic grid topologies. Features real-time path recalculation, reactive obstacle evasion, dynamic tile states (open, closed, path, goal), and 60+ FPS performance in NetMode Standalone.',
+      es: 'Simulación de búsqueda de caminos autónoma para NPCs y jugadores desarrollada durante el AI Bootcamp e Internship de Bethesda Softworks (Junio - Agosto 2021). Desarrollado en Unreal Engine y C++ implementando algoritmos de búsqueda heurística A* (A-Star) sobre topologías de cuadrícula dinámica. Incluye recálculo de rutas en tiempo real, evasión reactiva de obstáculos, estados dinámicos de casillas y rendimiento a más de 60 FPS en NetMode Standalone.',
+    },
+    highlights: {
+      en: [
+        'Custom A* (A-Star) heuristic cost evaluation (gCost + hCost = fCost) for optimal pathfinding',
+        'Dynamic grid cell states with real-time obstacle avoidance and path rerouting',
+        'Autonomous NPC locomotion and player destination trajectory synchronization',
+        'Developed during Bethesda Softworks AI Bootcamp (June - August 2021) in NetMode Standalone 64-bit Windows build',
+      ],
+      es: [
+        'Evaluación heurística personalizada de costo A* (gCost + hCost = fCost) para trayectorias óptimas',
+        'Casillas de cuadrícula dinámicas con evitación reactiva de obstáculos y redireccionamiento en tiempo real',
+        'Locomoción autónoma de NPCs y sincronización de trayectoria hacia el objetivo del jugador',
+        'Desarrollado durante el AI Bootcamp de Bethesda Softworks (Junio - Agosto 2021) en build ejecutable NetMode Standalone para Windows',
+      ],
+    },
+    techStack: ['Unreal Engine', 'C++', 'A* Pathfinding', 'Game AI', 'Bethesda Softworks', 'Algorithms', 'Standalone NetMode'],
+    featured: true,
+  },
+  {
     id: 'watercolor-sim',
     title: {
       en: 'Acuarela - Stylized Interactive Virtual Environment',

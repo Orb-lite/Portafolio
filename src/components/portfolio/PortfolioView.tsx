@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Gamepad2,
   FolderOpen,
@@ -6,6 +6,9 @@ import {
   Globe,
   ExternalLink,
   Play,
+  Pause,
+  Volume2,
+  VolumeX,
   Film,
   Sparkles,
   Layers,
@@ -24,7 +27,9 @@ import {
   Building2,
   Lock,
   Info,
+  Youtube,
 } from 'lucide-react';
+import { YouTubeUploaderModal } from '../modals/YouTubeUploaderModal';
 
 export interface LocalizedString {
   en: string;
@@ -136,6 +141,7 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     engine: 'Unreal Engine (PCD3D_SM5)',
     mediaType: 'video',
     mediaSrc: '/portfolio_assets/watercolor-development-viewport.mp4',
+    thumbnailSrc: '/portfolio_assets/watercolor-thumb.jpg',
     mediaNote: {
       en: "Isaac's personal technical R&D in Unreal Engine: Direct screen recording from Isaac's independent development workstation testing custom watercolor HLSL post-process shaders.",
       es: 'I+D técnico personal de Isaac en Unreal Engine: Grabación de pantalla directa desde su estación de desarrollo independiente probando shaders de post-proceso en HLSL estilo acuarela.',
@@ -162,8 +168,8 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
   {
     id: 'scores-sports-sim',
     title: {
-      en: 'Sports Broadcast & Real-Time Scoreboard HUD System (scores.mp4)',
-      es: 'Simulación de Transmisión Deportiva y Marcador HUD en Tiempo Real (scores.mp4)',
+      en: 'Sports Broadcast & Real-Time Scoreboard HUD System',
+      es: 'Simulación de Transmisión Deportiva y Marcador HUD en Tiempo Real',
     },
     subtitle: {
       en: 'ActionScript, C++ & Frostbite Engine Broadcast Scorebug Pipeline',
@@ -178,12 +184,11 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     year: '2022 - 2024',
     engine: 'Frostbite Engine',
     mediaType: 'video',
-    mediaSrc: '/portfolio_assets/scores.mp4',
-    youtubeId: '3Rkj6FlMcLU',
-    thumbnailSrc: 'https://img.youtube.com/vi/3Rkj6FlMcLU/maxresdefault.jpg',
+    mediaSrc: '/portfolio_assets/scores-cfb25-debug.mp4',
+    thumbnailSrc: '/portfolio_assets/scores-cfb25-thumb.jpg',
     mediaNote: {
-      en: 'Screen recording (scores.mp4) & official broadcast: Dynasty Hub UI debug panels (ScreenKey, mcScreenManager, frametime graph) and sub-frame scoreboard updates engineered in ActionScript and high-performance C++ on Frostbite Engine architecture.',
-      es: 'Grabación de pantalla (scores.mp4) y transmisión oficial: Paneles de depuración Dynasty Hub UI (ScreenKey, mcScreenManager, gráfica de frametime) y máquina de estados del marcador deportivo desarrollados en ActionScript y C++ sobre Frostbite Engine.',
+      en: 'Direct in-engine screen capture: Dynasty Hub UI debug panels (ScreenKey, mcScreenManager, frametime graph) and sub-frame scoreboard updates engineered in ActionScript and high-performance C++ on Frostbite Engine architecture.',
+      es: 'Grabación de pantalla directa in-engine: Paneles de depuración Dynasty Hub UI (ScreenKey, mcScreenManager, gráfica de frametime) y máquina de estados del marcador deportivo desarrollados en ActionScript y C++ sobre Frostbite Engine.',
     },
     description: {
       en: 'Real-time sports game broadcast scoreboard and HUD system engineered using ActionScript integrated with high-performance C++ runtime on Frostbite Engine architecture for EA Sports College Football 25 title pipelines. Features sub-frame responsive scoreboard state machines, live clock synchronization, and broadcast-grade visual transitions.',
@@ -231,7 +236,8 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     year: '2022',
     engine: 'Unreal Engine (PCD3D_SM5)',
     mediaType: 'video',
-    mediaSrc: '/portfolio_assets/Goblins_Castle (64-bit Development PCD3D_SM5)  2022-10-26 17-21-27.mp4',
+    mediaSrc: '/portfolio_assets/goblins-castle-gameplay.mp4',
+    thumbnailSrc: '/portfolio_assets/goblins-castle-thumb.jpg',
     mediaNote: {
       en: "Direct Unreal Engine 64-bit Development preview screen capture (Goblins_Castle 2022-10-26): Knight third-person locomotion, castle dungeon environment, sword combat combos, reactive AI enemies, dynamic torch lighting, and interactive quest HUD ('Compra una espada').",
       es: "Grabación directa de pantalla en Unreal Engine 64-bit Development preview (Goblins_Castle 2022-10-26): Locomoción en tercera persona con caballero, entorno de mazmorra y castillo medieval, combos de combate con espada, IA de enemigos reactiva, iluminación dinámica de antorchas y HUD de misiones ('Compra una espada').",
@@ -281,7 +287,8 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     year: '2022',
     engine: 'Unreal Engine (Standalone NetMode)',
     mediaType: 'video',
-    mediaSrc: '/portfolio_assets/GameJam_DevBot Preview [NetMode_ Standalone]  (64-bit_Windows)  2022-10-13 18-32-24.mp4',
+    mediaSrc: '/portfolio_assets/devbot-gamejam-combat.mp4',
+    thumbnailSrc: '/portfolio_assets/devbot-gamejam-thumb.jpg',
     mediaNote: {
       en: "Screen recording from Isaac's NetMode Standalone 64-bit Windows preview (GameJam_DevBot 2022-10-13): Rapid prototype mechanics engineered during the DEVBOT studio game jam, testing high-mobility locomotion, responsive physics, and level obstacle navigation.",
       es: "Grabación de pantalla desde el preview NetMode Standalone de 64 bits para Windows de Isaac (GameJam_DevBot 2022-10-13): Prototipo rápido de mecánicas desarrollado en el Game Jam del estudio DEVBOT, probando locomoción ágil, físicas reactivas y navegación de obstáculos.",
@@ -313,28 +320,29 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     featured: true,
   },
   {
-    id: 'vdb-volumetric-sim',
+    id: 'vdb-realestate-digitaltwin',
     title: {
-      en: 'OpenVDB Volumetric Smoke & Cloud Simulation (VDB.mp4)',
-      es: 'Simulación Volumétrica de Humo y Nubes con OpenVDB (VDB.mp4)',
+      en: 'VDB - Interactive 3D Real Estate & Urban Master Plan',
+      es: 'VDB - Master Plan y Torre Residencial 3D Interactiva',
     },
     subtitle: {
-      en: 'GPU-Accelerated Heterogeneous Volume Rendering & Niagara VFX',
-      es: 'Renderizado de Volúmenes Heterogéneos Acelerado por GPU y Niagara VFX',
+      en: 'Real-Time Day/Night Sun Simulation, Urban Amenities & Master Plan Navigation',
+      es: 'Simulación de Ciclo Día/Noche, Telemetría Urbana y Navegación de Master Plan',
     },
     category: 'simulation',
     categoryLabel: {
-      en: '3D Simulation & VFX',
-      es: 'Simulación 3D & Efectos Visuales',
+      en: '3D Simulation & Digital Twins',
+      es: 'Simulación 3D & Gemelos Digitales',
     },
     workClassification: 'personal-rnd',
-    year: '2024',
-    engine: 'Unreal Engine 5 (Niagara & OpenVDB)',
+    year: '2023 - 2024',
+    engine: 'Unreal Engine Interactive 3D',
     mediaType: 'video',
-    mediaSrc: '/portfolio_assets/VDB (1).mp4',
+    mediaSrc: '/portfolio_assets/vdb-realestate-digitaltwin.mp4',
+    thumbnailSrc: '/portfolio_assets/vdb-realestate-thumb.jpg',
     mediaNote: {
-      en: "Isaac's personal technical R&D in Unreal Engine 5: Direct screen recording testing OpenVDB sparse voxel volume rendering, dynamic velocity advection, and real-time volumetric raymarching shaders.",
-      es: 'I+D técnico personal de Isaac en Unreal Engine 5: Grabación directa de pantalla probando renderizado de volúmenes dispersos en OpenVDB, advección de velocidad y shaders de raymarching volumétrico en tiempo real.',
+      en: "Direct interactive screen capture (VDB): Real-time architectural visualization of 30+ story luxury tower, interactive day/night celestial lighting slider, surrounding urban points of interest (Andares, Hospital Puerta de Hierro), and master plan zoning.",
+      es: 'Grabación directa de pantalla interactiva (VDB): Visualización arquitectónica en tiempo real de torre de 30+ pisos, control interactivo de iluminación solar día/noche, puntos de interés urbano en el entorno (Andares, Hospital Puerta de Hierro) y zonificación de master plan.',
     },
     externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
     externalLabel: {
@@ -342,24 +350,24 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       es: 'Ver en Carpeta Drive de Portafolio',
     },
     description: {
-      en: 'Cutting-edge volumetric simulation inside Unreal Engine 5 taking advantage of OpenVDB spatial data structures. Computes high-density smoke plumes, atmospheric scattering, and light absorption in real time.',
-      es: 'Simulación volumétrica de vanguardia en Unreal Engine 5 utilizando estructuras de datos espaciales OpenVDB. Calcula plumas de humo de alta densidad, dispersión atmosférica y absorción lumínica en tiempo real.',
+      en: 'Interactive 3D real estate visualization and architectural digital twin engineered in Unreal Engine. Allows prospective buyers and city planners to freely orbit high-rise developments, inspect urban points of interest, toggle interactive time-of-day lighting from bright noon to illuminated night ambiance, and review master plan floorplates.',
+      es: 'Visualización 3D interactiva de bienes raíces y gemelo digital arquitectónico desarrollado en Unreal Engine. Permite a inversionistas y planificadores urbanos orbitar desarrollos verticales en tiempo real, inspeccionar puntos de interés urbanos circundantes, alternar el ciclo de iluminación solar día/noche y revisar la distribución del master plan.',
     },
     highlights: {
       en: [
-        'GPU-accelerated raymarching of 3D density grids without baking artifacts',
-        'Physically accurate phase function scattering and shadow penetration',
-        'Interactive viewport parameter adjustments for density, absorption, and velocity',
-        'Niagara particle emitter integration with volumetric collision grids',
+        'Dynamic real-time time-of-day sun trajectory with automated building interior/exterior illumination',
+        'Interactive HUD with compass orientation, master plan floorplates, and urban service locators',
+        'High-density foliage and realistic city environment optimized for steady 60 FPS performance',
+        'Custom interactive UI controls for real estate client showcases',
       ],
       es: [
-        'Raymarching acelerado por GPU de mallas volumétricas 3D sin artefactos de horneado',
-        'Dispersión física precisa mediante funciones de fase y penetración de sombras',
-        'Ajustes interactivos de densidad, absorción y velocidad en tiempo real desde el viewport',
-        'Integración de emisores de partículas Niagara con cuadrículas de colisión volumétrica',
+        'Trayectoria solar dinámica en tiempo real con encendido automático de iluminación interior y exterior',
+        'HUD interactivo con brújula de orientación, master plan de niveles y localizador de servicios urbanos',
+        'Vegetación de alta densidad y entorno urbano fotorrealista optimizado para 60 FPS sostenidos',
+        'Controles de interfaz interactiva personalizados para salas de ventas y presentaciones inmobiliarias',
       ],
     },
-    techStack: ['Unreal Engine 5', 'OpenVDB', 'Niagara VFX', 'Heterogeneous Volumes', 'GPU Shaders'],
+    techStack: ['Unreal Engine', 'Architectural Visualization', 'Interactive 3D', 'Day/Night Simulation', 'UI/UX Blueprints'],
     featured: true,
   },
   {
@@ -369,8 +377,8 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       es: 'ClassSim - Simulación Virtual Interactiva de Aulas',
     },
     subtitle: {
-      en: 'Spatial Presence & Interactive Education Environment',
-      es: 'Presencia Espacial y Entorno Interactivo de Educación',
+      en: 'Spatial Presence & Interactive Education Environment in Unreal Engine',
+      es: 'Presencia Espacial y Entorno Interactivo de Educación en Unreal Engine',
     },
     category: 'virtual-env',
     categoryLabel: {
@@ -380,10 +388,12 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     workClassification: 'personal-rnd',
     year: '2020',
     engine: 'Unreal Engine (Standalone NetMode)',
-    mediaType: 'external',
+    mediaType: 'video',
+    mediaSrc: '/portfolio_assets/class-sim-interactive-classroom.mp4',
+    thumbnailSrc: '/portfolio_assets/class-sim-thumb.jpg',
     mediaNote: {
-      en: 'Personal interactive 3D virtual environment and spatial navigation study built in Unreal Engine.',
-      es: 'Estudio y entorno virtual 3D interactivo personal de navegación espacial desarrollado en Unreal Engine.',
+      en: "Direct in-engine screen recording from Isaac's 64-bit Windows Standalone build (ClassSim Preview 2020-11-13): Interactive 3D classroom for biology education, embedded blackboard video playback, holographic 3D science displays on student desks, and interactive information cards.",
+      es: "Grabación de pantalla directa in-engine del build Standalone de 64 bits para Windows de Isaac (ClassSim Preview 2020-11-13): Aula virtual 3D interactiva para educación en biología, reproducción de video en pizarra digital, exhibiciones científicas holográficas 3D en pupitres y tarjetas informativas interactivas.",
     },
     externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
     externalLabel: {
@@ -391,22 +401,25 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       es: 'Ver Proyecto en Carpeta Drive',
     },
     description: {
-      en: 'Interactive 3D simulation of an academic auditorium and classroom setting designed for training, multi-perspective spatial awareness, and interactive virtual navigation.',
-      es: 'Simulación 3D interactiva de un auditorio y aula académica diseñada para capacitación, conciencia espacial multiperspectiva y navegación virtual interactiva.',
+      en: 'Interactive 3D simulation of an academic classroom setting designed for training, multi-perspective spatial awareness, and interactive virtual education in Unreal Engine. Features an embedded blackboard video lecture player, interactive 3D biology exhibition cases (Gametes, Fertilization, Asexual and Sexual reproduction), first-person raycast interactions, and realistic interior lighting.',
+      es: 'Simulación 3D interactiva de un aula académica diseñada para capacitación pedagógica, conciencia espacial y educación virtual interactiva en Unreal Engine. Incluye reproductor de lecciones en video integrado en la pizarra digital, vitrinas interactivas 3D de biología (Gametos, Fecundación, Reproducción Asexual y Sexual), interacción mediante raycast en primera persona e iluminación interior realista.',
     },
     highlights: {
       en: [
-        'Interactive first-person controller with collision geometry and sightline testing',
-        'Realistic architectural scaling, natural light bounce, and seating arrangements',
-        'Optimized standalone Windows build for lightweight distribution',
+        'Interactive first-person controller with collision geometry, mouse look, and reticle interaction',
+        'Blackboard video lecture streaming synchronization with classroom ambient acoustics',
+        'Interactive 3D science exhibition vitrines with real-time popup educational cards',
+        'Optimized 64-bit NetMode Standalone executable running smoothly on Windows',
       ],
       es: [
-        'Controlador interactivo en primera persona con geometría de colisión y análisis visual',
-        'Escala arquitectónica realista, rebote de luz natural y distribución ergonómica',
-        'Build ejecutable Standalone para Windows altamente optimizado para distribución ligera',
+        'Controlador interactivo en primera persona con geometría de colisión, cursor y selección por raycast',
+        'Sincronización de video en pizarra digital con acústica ambiental del aula',
+        'Vitrinas interactivas 3D de biología con tarjetas educativas emergentes en tiempo real',
+        'Build ejecutable Standalone NetMode de 64 bits optimizado con rendimiento fluido en Windows',
       ],
     },
-    techStack: ['Unreal Engine', 'Architectural Visualization', 'Standalone Build', 'C++ / Blueprints'],
+    techStack: ['Unreal Engine', 'Interactive 3D', 'Educational Simulation', 'Standalone Build', 'C++ / Blueprints'],
+    featured: true,
   },
   {
     id: 'procedural-world-gen',
@@ -427,10 +440,11 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     year: '2022',
     engine: 'Unreal Engine Procedural Systems',
     mediaType: 'video',
-    mediaSrc: '/portfolio_assets/landscape.mp4',
+    mediaSrc: '/portfolio_assets/unreal-landscape-openworld.mp4',
+    thumbnailSrc: '/portfolio_assets/unreal-landscape-thumb.jpg',
     mediaNote: {
-      en: "Isaac's personal screen recording (landscape.mp4): Testing algorithmic terrain generation, procedural heightmaps, atmospheric lighting, and high-framerate landscape navigation in Unreal Engine.",
-      es: 'Grabación de pantalla personal de Isaac (landscape.mp4): Pruebas de generación algorítmica de terrenos, mapas de altura procedimentales, iluminación atmosférica y navegación de paisajes en Unreal Engine.',
+      en: "Direct Unreal Engine screen recording (IWG Studios landscape.mp4): Third-person medieval RPG locomotion, dynamic open-world landscape, castle courtyard, quest HUD system ('Misiones: Compra una espada'), and vegetation wind simulation.",
+      es: "Grabación directa de pantalla en Unreal Engine (IWG Studios landscape.mp4): Locomoción RPG medieval en tercera persona, paisaje de mundo abierto dinámico, patio de castillo, sistema de misiones ('Misiones: Compra una espada') y simulación de viento en vegetación.",
     },
     externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
     externalLabel: {
@@ -475,6 +489,7 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     engine: 'Unreal Engine (Server 64-bit PCD3D_SM5)',
     mediaType: 'video',
     mediaSrc: '/portfolio_assets/unreal-multiplayer-server-preview.mp4',
+    thumbnailSrc: '/portfolio_assets/unreal-multiplayer-thumb.jpg',
     mediaNote: {
       en: "Isaac's personal R&D screen capture: Testing client-server replication, authoritative physics, and network debug tools in Unreal Engine.",
       es: 'Grabación de pantalla de I+D personal de Isaac: Pruebas de replicación cliente-servidor, físicas autoritativas y depuración de red en Unreal Engine.',
@@ -675,6 +690,7 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     engine: 'Unreal Editor',
     mediaType: 'video',
     mediaSrc: '/portfolio_assets/unreal-editor-workflow.mp4',
+    thumbnailSrc: '/portfolio_assets/unreal-editor-thumb.jpg',
     mediaNote: {
       en: "Isaac's personal screen recording inside Unreal Editor: Level assembly, material instancing, lighting building, and viewport profiling.",
       es: 'Grabación de pantalla personal de Isaac dentro de Unreal Editor: Montaje de nivel, instancias de materiales, cálculo de iluminación y perfilado en viewport.',
@@ -742,6 +758,294 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
   },
 ];
 
+interface CardVideoPlayerProps {
+  project: ProjectItem;
+  title: string;
+  isEn: boolean;
+  onOpenModal: () => void;
+  badgeLabel: string;
+  isAaa: boolean;
+  isPersonalRnd: boolean;
+  isProprietary: boolean;
+  isEnterprise: boolean;
+}
+
+export function CardVideoPlayer({
+  project,
+  title,
+  isEn,
+  onOpenModal,
+  badgeLabel,
+  isAaa,
+  isPersonalRnd,
+  isProprietary,
+  isEnterprise,
+}: CardVideoPlayerProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const [isMuted, setIsMuted] = useState<boolean>(true);
+  const [progress, setProgress] = useState<number>(0);
+  const [hasError, setHasError] = useState<boolean>(false);
+  const [showYouTubeInline, setShowYouTubeInline] = useState<boolean>(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !project.mediaSrc) return;
+
+    video.defaultMuted = true;
+    video.muted = true;
+    setIsMuted(true);
+
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => setIsPlaying(true))
+        .catch(() => {
+          setIsPlaying(false);
+        });
+    }
+  }, [project.mediaSrc]);
+
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      video
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
+    } else {
+      video.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const video = videoRef.current;
+    if (!video) return;
+    const nextMuted = !video.muted;
+    video.muted = nextMuted;
+    setIsMuted(nextMuted);
+    if (video.paused) {
+      video.play().then(() => setIsPlaying(true)).catch(() => {});
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    const video = videoRef.current;
+    if (!video || !video.duration) return;
+    setProgress((video.currentTime / video.duration) * 100);
+  };
+
+  // Badge classification component
+  const BadgePill = () => (
+    <div
+      className={`absolute top-2.5 left-3 z-30 flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shadow pointer-events-none ${
+        isAaa
+          ? 'bg-amber-500 text-slate-950'
+          : isPersonalRnd
+          ? 'bg-sky-500 text-slate-950'
+          : isProprietary
+          ? 'bg-cyan-400 text-slate-950'
+          : 'bg-emerald-500 text-slate-950'
+      }`}
+    >
+      {isAaa && <Trophy className="w-3 h-3" />}
+      {isPersonalRnd && <Monitor className="w-3 h-3" />}
+      {isProprietary && <Globe className="w-3 h-3" />}
+      {isEnterprise && <Building2 className="w-3 h-3" />}
+      <span>{badgeLabel}</span>
+    </div>
+  );
+
+  // If YouTube and user clicked inline playback
+  if (project.youtubeId && showYouTubeInline) {
+    return (
+      <div className="w-full relative aspect-video bg-black overflow-hidden group/vid">
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${project.youtubeId}?autoplay=1&rel=0`}
+          title={title}
+          className="w-full h-full border-0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+        <BadgePill />
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenModal();
+          }}
+          className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-slate-950/80 hover:bg-slate-900 text-white text-xs z-30 backdrop-blur-xs shadow-md transition-all flex items-center gap-1"
+          title={isEn ? 'View full case study' : 'Ver caso de estudio completo'}
+        >
+          <Maximize2 className="w-3.5 h-3.5 text-sky-400" />
+          <span className="text-[10px] font-semibold">{isEn ? 'Details' : 'Detalles'}</span>
+        </button>
+      </div>
+    );
+  }
+
+  // If YouTube video waiting for user click
+  if (project.youtubeId && !project.mediaSrc) {
+    return (
+      <div
+        className="w-full relative aspect-video bg-slate-950 cursor-pointer group/vid overflow-hidden"
+        onClick={() => setShowYouTubeInline(true)}
+      >
+        <img
+          src={project.thumbnailSrc || `https://img.youtube.com/vi/${project.youtubeId}/hqdefault.jpg`}
+          alt={title}
+          className="w-full h-full object-cover opacity-90 group-hover/vid:opacity-100 group-hover/vid:scale-105 transition-all duration-500"
+          onError={(e) => {
+            if (project.youtubeId && !e.currentTarget.src.includes('hqdefault')) {
+              e.currentTarget.src = `https://img.youtube.com/vi/${project.youtubeId}/hqdefault.jpg`;
+            }
+          }}
+        />
+        <BadgePill />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+
+        {/* Big centered red YouTube play button */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-14 h-14 rounded-full bg-red-600 hover:bg-red-500 text-white flex items-center justify-center shadow-2xl transition-all transform group-hover/vid:scale-110 active:scale-95">
+            <Play className="w-6 h-6 ml-0.5 fill-white text-white" />
+          </div>
+        </div>
+
+        {/* Quick controls bar */}
+        <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between z-20">
+          <span className="text-[11px] font-medium text-white/95 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1.5 shadow-sm">
+            <Film className="w-3 h-3 text-red-500" />
+            <span>{isEn ? 'Click to Play Broadcast' : 'Clic para Reproducir'}</span>
+          </span>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenModal();
+            }}
+            className="px-2.5 py-1 rounded-lg bg-slate-900/80 hover:bg-sky-600 text-white text-[11px] font-semibold backdrop-blur-xs transition-colors flex items-center gap-1 shadow-sm"
+          >
+            <Maximize2 className="w-3 h-3 text-sky-400" />
+            <span>{isEn ? 'Details' : 'Detalles'}</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Interactive MP4 player with direct on-card playback and sound controls
+  return (
+    <div
+      className="w-full relative aspect-video bg-slate-950 group/vid overflow-hidden cursor-pointer"
+      onClick={togglePlay}
+    >
+      {project.mediaSrc && !hasError ? (
+        <video
+          ref={videoRef}
+          src={project.mediaSrc}
+          poster={project.thumbnailSrc}
+          playsInline
+          loop
+          preload="auto"
+          onTimeUpdate={handleTimeUpdate}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onError={() => setHasError(true)}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <img
+          src={project.thumbnailSrc || ''}
+          alt={title}
+          className="w-full h-full object-cover"
+        />
+      )}
+
+      <BadgePill />
+
+      {/* Progress timeline bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 z-20 overflow-hidden">
+        <div
+          className="h-full bg-sky-400 transition-all duration-150"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
+      {/* Center Play overlay when paused */}
+      {!isPlaying && (
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-950/40 backdrop-blur-[1px] transition-all z-10 pointer-events-none">
+          <div className="w-13 h-13 rounded-full bg-sky-500 text-slate-950 flex items-center justify-center shadow-2xl transition-transform transform scale-100 group-hover/vid:scale-110">
+            <Play className="w-6 h-6 ml-0.5 fill-slate-950 text-slate-950" />
+          </div>
+        </div>
+      )}
+
+      {/* Top right floating sound and expand controls */}
+      <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 z-30">
+        <button
+          type="button"
+          onClick={toggleMute}
+          className="p-1.5 rounded-lg bg-slate-950/80 hover:bg-slate-900 text-white backdrop-blur-xs transition-colors shadow-sm"
+          title={isMuted ? (isEn ? 'Unmute audio' : 'Activar sonido') : (isEn ? 'Mute audio' : 'Silenciar')}
+        >
+          {isMuted ? <VolumeX className="w-4 h-4 text-slate-300" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
+        </button>
+
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenModal();
+          }}
+          className="p-1.5 rounded-lg bg-slate-950/80 hover:bg-slate-900 text-white backdrop-blur-xs transition-colors shadow-sm"
+          title={isEn ? 'Expand case study' : 'Ver caso de estudio completo'}
+        >
+          <Maximize2 className="w-4 h-4 text-slate-300 hover:text-white" />
+        </button>
+      </div>
+
+      {/* Bottom control bar */}
+      <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between z-20 pointer-events-auto">
+        <button
+          type="button"
+          onClick={togglePlay}
+          className="px-2.5 py-1 rounded-md bg-slate-900/85 hover:bg-slate-900 text-white text-xs flex items-center gap-1.5 backdrop-blur-xs shadow-sm transition-all"
+        >
+          {isPlaying ? (
+            <>
+              <Pause className="w-3.5 h-3.5 text-sky-400 fill-sky-400" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">{isEn ? 'Pause' : 'Pausar'}</span>
+            </>
+          ) : (
+            <>
+              <Play className="w-3.5 h-3.5 text-sky-400 fill-sky-400" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">{isEn ? 'Play' : 'Reproducir'}</span>
+            </>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenModal();
+          }}
+          className="px-2.5 py-1 rounded-md bg-slate-900/85 hover:bg-sky-600 text-white text-[10px] font-bold backdrop-blur-xs transition-colors flex items-center gap-1 shadow-sm"
+        >
+          <Film className="w-3 h-3 text-sky-400" />
+          <span>{isEn ? 'Case Study' : 'Caso de Estudio'}</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
 interface PortfolioViewProps {
   language?: 'es' | 'en';
   onSwitchToCv: () => void;
@@ -755,6 +1059,23 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
   const [selectedArtIndex, setSelectedArtIndex] = useState<number>(0);
   const [videoErrors, setVideoErrors] = useState<Record<string, boolean>>({});
   const [modalVideoError, setModalVideoError] = useState<boolean>(false);
+  const [isYouTubeModalOpen, setIsYouTubeModalOpen] = useState<boolean>(false);
+  const [projectsList, setProjectsList] = useState<ProjectItem[]>(PORTFOLIO_PROJECTS);
+
+  const handleVideoUploaded = (projectId: string, youtubeId: string) => {
+    setProjectsList((prev) =>
+      prev.map((p) =>
+        p.id === projectId
+          ? {
+              ...p,
+              youtubeId,
+              mediaType: 'video',
+              thumbnailSrc: `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`,
+            }
+          : p
+      )
+    );
+  };
 
   const openProjectModal = (project: ProjectItem) => {
     setModalVideoError(false);
@@ -794,7 +1115,7 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
     },
   ];
 
-  const filteredProjects = PORTFOLIO_PROJECTS.filter((p) => {
+  const filteredProjects = projectsList.filter((p) => {
     if (selectedCategory === 'all') return true;
     if (selectedCategory === 'aaa-studio') return p.workClassification === 'aaa-studio';
     if (selectedCategory === 'personal-rnd') return p.workClassification === 'personal-rnd';
@@ -1043,79 +1364,20 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
               className="group bg-white rounded-2xl border border-slate-200/90 hover:border-sky-500 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden"
             >
               {/* Project Media Preview Area */}
-              <div className="relative aspect-video bg-slate-950 flex items-center justify-center overflow-hidden">
+              <div className="w-full relative aspect-video bg-slate-950 flex items-center justify-center overflow-hidden">
                 {project.mediaType === 'video' && (project.mediaSrc || project.youtubeId) ? (
-                  <div
-                    className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500 bg-slate-950"
-                    onClick={() => openProjectModal(project)}
-                  >
-                    {project.mediaSrc && !videoErrors[project.id] ? (
-                      <video
-                        src={project.mediaSrc}
-                        autoPlay
-                        muted
-                        playsInline
-                        loop
-                        preload="metadata"
-                        onError={() => setVideoErrors((prev) => ({ ...prev, [project.id]: true }))}
-                        className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
-                      />
-                    ) : project.youtubeId ? (
-                      <div className="w-full h-full relative overflow-hidden">
-                        <img
-                          src={project.thumbnailSrc || `https://img.youtube.com/vi/${project.youtubeId}/hqdefault.jpg`}
-                          alt={title}
-                          className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
-                          onError={(e) => {
-                            if (project.youtubeId && !e.currentTarget.src.includes('hqdefault')) {
-                              e.currentTarget.src = `https://img.youtube.com/vi/${project.youtubeId}/hqdefault.jpg`;
-                            }
-                          }}
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex flex-col items-center justify-center p-4 text-center">
-                        <div className="w-11 h-11 rounded-xl bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-400 mb-2">
-                          <Film className="w-5 h-5" />
-                        </div>
-                        <span className="text-white text-xs font-bold line-clamp-1">{title}</span>
-                        <span className="text-sky-300 text-[10px] font-mono mt-0.5 line-clamp-1">
-                          {project.mediaSrc ? project.mediaSrc.split('/').pop() : project.engine}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Classification overlay pill */}
-                    <div
-                      className={`absolute top-2.5 left-3 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shadow ${
-                        isAaa
-                          ? 'bg-amber-500 text-slate-950'
-                          : isPersonalRnd
-                          ? 'bg-sky-500 text-slate-950'
-                          : isProprietary
-                          ? 'bg-cyan-400 text-slate-950'
-                          : 'bg-emerald-500 text-slate-950'
-                      }`}
-                    >
-                      {isAaa && <Trophy className="w-3 h-3" />}
-                      {isPersonalRnd && <Monitor className="w-3 h-3" />}
-                      {isProprietary && <Globe className="w-3 h-3" />}
-                      {isEnterprise && <Building2 className="w-3 h-3" />}
-                      <span>{mediaBadgeText}</span>
-                    </div>
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="w-12 h-12 rounded-full bg-sky-600/90 text-white flex items-center justify-center shadow-lg group-hover:bg-sky-500 group-hover:scale-110 transition-all">
-                        <Play className="w-5 h-5 ml-0.5" />
-                      </div>
-                    </div>
-                    <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1 pointer-events-none">
-                      <Film className="w-3 h-3 text-sky-400" />
-                      <span>{project.youtubeId ? (isEn ? 'Watch Official Video' : 'Ver Transmisión Oficial') : (isEn ? 'Watch Screen Recording' : 'Ver Grabación de Pantalla')}</span>
-                    </span>
-                  </div>
-                ) : project.mediaType === 'image' && project.mediaSrc ? (
+                  <CardVideoPlayer
+                  project={project}
+                  title={title}
+                  isEn={isEn}
+                  onOpenModal={() => openProjectModal(project)}
+                  badgeLabel={mediaBadgeText}
+                  isAaa={isAaa}
+                  isPersonalRnd={isPersonalRnd}
+                  isProprietary={isProprietary}
+                  isEnterprise={isEnterprise}
+                />
+              ) : project.mediaType === 'image' && project.mediaSrc ? (
                   <div
                     className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500 bg-slate-950 flex items-center justify-center overflow-hidden"
                     onClick={() => openProjectModal(project)}
@@ -1238,17 +1500,19 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                       <ChevronRight className="w-3.5 h-3.5" />
                     </button>
 
-                    {project.externalUrl && (
-                      <a
-                        href={project.externalUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-1 transition-colors"
-                      >
-                        <span>{isEn ? 'External' : 'Enlace'}</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {project.externalUrl && (
+                        <a
+                          href={project.externalUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-1 transition-colors"
+                        >
+                          <span>{isEn ? 'External' : 'Enlace'}</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1393,6 +1657,7 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
                         autoPlay
                         muted
                         playsInline
+                        poster={activeModalProject.thumbnailSrc}
                         preload="auto"
                         onError={() => setModalVideoError(true)}
                         className="w-full h-full object-contain"
@@ -1640,6 +1905,14 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout }
           </div>
         </div>
       )}
+
+      {/* YouTube Uploader & Post Generator Studio Modal */}
+      <YouTubeUploaderModal
+        isOpen={isYouTubeModalOpen}
+        onClose={() => setIsYouTubeModalOpen(false)}
+        language={language}
+        onVideoUploaded={handleVideoUploaded}
+      />
     </div>
   );
 }

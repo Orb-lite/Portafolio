@@ -13,6 +13,7 @@ import { exportResumeToAtsPdf } from './utils/atsPdfExport';
 import { exportResumeToDocx } from './utils/docxExport';
 import { PortfolioView } from './components/portfolio/PortfolioView';
 import { AboutMeView } from './components/about/AboutMeView';
+import { TileAbsorberGame } from './components/game/TileAbsorberGame';
 import { EditorAuthGate } from './components/auth/EditorAuthGate';
 import { getStoredSession, AdminUser } from './services/authService';
 import {
@@ -34,6 +35,7 @@ import {
   Trophy,
   Layers,
   Heart,
+  Gamepad2,
   Lock,
   X,
   SlidersHorizontal,
@@ -41,7 +43,7 @@ import {
 } from 'lucide-react';
 
 export default function App() {
-  const [mainTab, setMainTab] = useState<'portfolio' | 'about' | 'cv'>('portfolio');
+  const [mainTab, setMainTab] = useState<'portfolio' | 'about' | 'cv' | 'game'>('portfolio');
   const [language, setLanguage] = useState<'es' | 'en'>('en'); // Default to English with Technical Artist base profile
   const [resumeData, setResumeData] = useState<ResumeData>(resumeDataEn);
   const [styleConfig, setStyleConfig] = useState<StyleConfig>(defaultStyleConfig);
@@ -479,6 +481,23 @@ export default function App() {
               <FileText className="w-4 h-4 text-emerald-400" />
               <span>{isEn ? '📄 CV & Resume (2-Page PDF)' : '📄 Currículum Vitae (PDF 2 Páginas)'}</span>
             </button>
+
+            {/* Tab 4: Tile Absorber Game (Supabase + Gamertag + Highscore) */}
+            <button
+              type="button"
+              onClick={() => setMainTab('game')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                mainTab === 'game'
+                  ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md shadow-cyan-950/40 ring-1 ring-cyan-400/50'
+                  : 'text-cyan-300 hover:text-white hover:bg-slate-800/80'
+              }`}
+            >
+              <Gamepad2 className="w-4 h-4 text-cyan-400" />
+              <span>{isEn ? '🎮 Tile Absorber (Game)' : '🎮 Tile Absorber (Juego)'}</span>
+              <span className="text-[10px] font-mono bg-cyan-400/20 text-cyan-300 px-1.5 py-0.2 rounded font-bold">
+                PRO
+              </span>
+            </button>
           </div>
         </div>
       </header>
@@ -498,6 +517,7 @@ export default function App() {
             language={language}
             onSwitchToCv={() => setMainTab('cv')}
             onSwitchToAbout={() => setMainTab('about')}
+            onSwitchToGame={() => setMainTab('game')}
           />
         </main>
       )}
@@ -654,6 +674,16 @@ export default function App() {
               />
             </div>
           </div>
+        </main>
+      )}
+
+      {/* VIEW 4: Tile Absorber Arcade Game (Supabase + Gamertag + Highscore Leaderboard) */}
+      {mainTab === 'game' && (
+        <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6">
+          <TileAbsorberGame
+            language={language}
+            onBackToPortfolio={() => setMainTab('portfolio')}
+          />
         </main>
       )}
 

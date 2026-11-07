@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { resumeDataEs, resumeDataEn, defaultStyleConfig } from './data/defaultResume';
+import {
+  resumeDataEs,
+  resumeDataEn,
+  resumeDataAiEn,
+  resumeDataAiEs,
+  ResumeProfileType,
+  defaultStyleConfig,
+} from './data/defaultResume';
 import { ResumeData, StyleConfig } from './types/resume';
 import { ResumeDocument } from './components/resume/ResumeDocument';
 import { PersonalInfoEditor } from './components/editor/PersonalInfoEditor';
@@ -44,8 +51,9 @@ import {
 
 export default function App() {
   const [mainTab, setMainTab] = useState<'portfolio' | 'about' | 'cv' | 'game'>('portfolio');
-  const [language, setLanguage] = useState<'es' | 'en'>('en'); // Default to English with Technical Artist base profile
-  const [resumeData, setResumeData] = useState<ResumeData>(resumeDataEn);
+  const [language, setLanguage] = useState<'es' | 'en'>('en'); // Default to English
+  const [activeProfile, setActiveProfile] = useState<ResumeProfileType>('ai-native'); // AI-Native Engineer default
+  const [resumeData, setResumeData] = useState<ResumeData>(resumeDataAiEn);
   const [styleConfig, setStyleConfig] = useState<StyleConfig>(defaultStyleConfig);
   const [activeTab, setActiveTab] = useState<'job_match' | 'personal' | 'experience' | 'skills' | 'design'>('job_match');
   const [isEditorRequestedViaUrl, setIsEditorRequestedViaUrl] = useState<boolean>(false);
@@ -114,34 +122,51 @@ export default function App() {
     }, 3800);
   };
 
+  const getTargetResume = (prof: ResumeProfileType, lang: 'es' | 'en'): ResumeData => {
+    if (prof === 'ai-native') {
+      return lang === 'en' ? resumeDataAiEn : resumeDataAiEs;
+    } else {
+      return lang === 'en' ? resumeDataEn : resumeDataEs;
+    }
+  };
+
+  const handleProfileSwitch = (newProfile: ResumeProfileType) => {
+    setActiveProfile(newProfile);
+    const target = getTargetResume(newProfile, language);
+    setResumeData(target);
+    showNotification(
+      language === 'es'
+        ? newProfile === 'ai-native'
+          ? 'Perfil seleccionado: Ingeniero AI-Native (IA Agéntica, Python, GCP)'
+          : 'Perfil seleccionado: Artista Técnico (Videojuegos AAA, UE5, Frostbite)'
+        : newProfile === 'ai-native'
+        ? 'Profile activated: AI-Native Engineer (Agentic AI, Python, GCP Ops)'
+        : 'Profile activated: Technical Artist (AAA Games, UE5, Frostbite)'
+    );
+  };
+
   const handleLanguageSwitch = (lang: 'es' | 'en') => {
     setLanguage(lang);
+    const target = getTargetResume(activeProfile, lang);
+    setResumeData(target);
     if (lang === 'en') {
-      setResumeData(resumeDataEn);
-      showNotification('English version activated (Full site & PDF translated).');
+      showNotification('English version activated (Full ATS resume translated).');
     } else {
-      setResumeData(resumeDataEs);
-      showNotification('Versión en Español activada (Sitio completo y PDF traducidos).');
+      showNotification('Versión en Español activada (CV completo para ATS traducido).');
     }
   };
 
   const handleDownloadAtsPdf = (targetLang?: 'es' | 'en', isCustomized = false) => {
     const langToExport = targetLang || language;
-    const dataToExport =
-      langToExport === 'en'
-        ? language === 'en'
-          ? resumeData
-          : resumeDataEn
-        : language === 'es'
-        ? resumeData
-        : resumeDataEs;
+    const dataToExport = getTargetResume(activeProfile, langToExport);
 
     setIsExporting(true);
     setExportType('pdf');
 
+    const profileSlug = activeProfile === 'ai-native' ? 'AI_Native_Engineer' : 'Technical_Artist';
     const fileName = isCustomized
-      ? `CV_Isaac_Gomez_Estrada_Technical_Artist_${langToExport.toUpperCase()}_Custom.pdf`
-      : `CV_Isaac_Gomez_Estrada_Technical_Artist_${langToExport.toUpperCase()}.pdf`;
+      ? `CV_Isaac_Gomez_Estrada_${profileSlug}_${langToExport.toUpperCase()}_Custom.pdf`
+      : `CV_Isaac_Gomez_Estrada_${profileSlug}_${langToExport.toUpperCase()}.pdf`;
 
     try {
       showNotification(
@@ -176,19 +201,13 @@ export default function App() {
 
   const handleDownloadDocx = async (targetLang?: 'es' | 'en') => {
     const langToExport = targetLang || language;
-    const dataToExport =
-      langToExport === 'en'
-        ? language === 'en'
-          ? resumeData
-          : resumeDataEn
-        : language === 'es'
-        ? resumeData
-        : resumeDataEs;
+    const dataToExport = getTargetResume(activeProfile, langToExport);
 
     setIsExporting(true);
     setExportType('docx');
 
-    const fileName = `CV_Isaac_Gomez_Estrada_Technical_Artist_${langToExport.toUpperCase()}.docx`;
+    const profileSlug = activeProfile === 'ai-native' ? 'AI_Native_Engineer' : 'Technical_Artist';
+    const fileName = `CV_Isaac_Gomez_Estrada_${profileSlug}_${langToExport.toUpperCase()}.docx`;
 
     try {
       showNotification(
@@ -536,6 +555,62 @@ export default function App() {
       {/* VIEW 3: Clean CV & Resume Presentation (Completely public and clean) */}
       {mainTab === 'cv' && (
         <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex flex-col items-center">
+          {/* Profile Selector Banner: Target Job Profile vs Technical Artist */}
+          <div className="no-print w-full flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 text-white p-3 sm:p-4 rounded-2xl shadow-md mb-4 border border-sky-800/40">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-sky-500/20 text-sky-400 border border-sky-400/30">
+                <Sparkles className="w-5 h-5 animate-pulse" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs uppercase font-extrabold tracking-wider text-sky-400">
+                    {language === 'es' ? 'Perfiles Profesionales Verificados' : 'Verified Professional Profiles'}
+                  </span>
+                  <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full border border-emerald-500/40">
+                    {language === 'es' ? 'ATS Optimizado' : 'ATS-Optimized'}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-300 hidden sm:block">
+                  {language === 'es'
+                    ? 'Selecciona el perfil adaptado a la vacante objetivo para previsualizar o descargar.'
+                    : 'Select the targeted profile matching the job requirements to preview or export.'}
+                </p>
+              </div>
+            </div>
+
+            {/* Profile Switcher Tabs */}
+            <div className="flex items-center gap-2 bg-slate-950/70 p-1 rounded-xl border border-slate-700/60 flex-wrap">
+              <button
+                type="button"
+                onClick={() => handleProfileSwitch('ai-native')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeProfile === 'ai-native'
+                    ? 'bg-sky-600 text-white shadow-md'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <span>🤖</span>
+                <span>{language === 'es' ? 'Ingeniero AI-Native' : 'AI-Native Engineer'}</span>
+                <span className="text-[9px] bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-black tracking-tight">
+                  TARGET
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleProfileSwitch('technical-artist')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeProfile === 'technical-artist'
+                    ? 'bg-sky-600 text-white shadow-md'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <span>🎮</span>
+                <span>{language === 'es' ? 'Artista Técnico (AAA)' : 'Technical Artist (AAA)'}</span>
+              </button>
+            </div>
+          </div>
+
           {/* Executive Document Presentation Toolbar with ATS Verification */}
           <div className="no-print w-full flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-3 rounded-2xl border border-slate-200 shadow-xs mb-6">
             {/* Left: Document details with ATS verification badge */}
@@ -543,7 +618,13 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <Eye className="w-4 h-4 text-sky-600" />
                 <span className="font-bold text-sm text-slate-900">
-                  {language === 'es' ? 'CV Artista Técnico (Formato ATS)' : 'Technical Artist Resume (ATS-Ready)'}
+                  {activeProfile === 'ai-native'
+                    ? language === 'es'
+                      ? 'CV Ingeniero AI-Native (IA Agéntica, Python, GCP)'
+                      : 'AI-Native Engineer Resume (Agentic AI & Ops)'
+                    : language === 'es'
+                    ? 'CV Artista Técnico (Formato ATS)'
+                    : 'Technical Artist Resume (ATS-Ready)'}
                 </span>
               </div>
               <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-300 px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">

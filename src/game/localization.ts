@@ -97,8 +97,8 @@ export const GAME_TEXT = {
     // Navigation & Top bar
     backToPortfolio: 'Back to Portfolio',
     gameEdition: 'Conveyor Realms 3D · Three.js Edition',
-    fofEdition: 'Fish of Fortune · Ocean 3D Edition',
-    switchToFof: 'Switch to Fish of Fortune',
+    fofEdition: 'Fish Feeder · Ocean 3D Edition',
+    switchToFof: 'Switch to Fish Feeder',
     switchToConveyor: 'Switch to Conveyor Realms',
     gameMenu: 'Game Menu',
     modeLabel: 'Mode',
@@ -160,7 +160,7 @@ export const GAME_TEXT = {
     winTitleConveyor: 'LEVEL COMPLETE!',
     winTitleFof: 'LEVEL COMPLETE!',
     winSubtextConveyor: 'Loved it? Take the game with you.',
-    winSubtextFof: 'Loved it? Take Fish of Fortune with you.',
+    winSubtextFof: 'Loved it? Take Fish Feeder with you.',
     downloadFree: 'DOWNLOAD FREE',
     continueLevel: 'Continue to Level',
     replayPastCleared: 'Past Level Cleared',
@@ -175,9 +175,9 @@ export const GAME_TEXT = {
 
     // Popups: Die / Lost / Stuck
     loseTitleConveyor: 'YOU LOST!',
-    loseTitleFof: 'OH NO, THE POOL IS FULL!',
+    loseTitleFof: 'YOU LOST!',
     loseSubtextConveyor: 'Try again on your phone.',
-    loseSubtextFof: 'Try again on the go. Play Fish of Fortune anywhere.',
+    loseSubtextFof: 'Try again. Play Fish Feeder anywhere.',
     outOfLives: 'Out of lives',
     youGotStuck: 'Conveyor track is full!',
     stuckExplanation: 'No valid tile matches were found for current runners.',
@@ -191,7 +191,7 @@ export const GAME_TEXT = {
 
     // Mobile Download Invite Modal
     mobileTitle: 'Play Conveyor Realms on Smartphone',
-    mobileTitleFof: 'Play Fish of Fortune on Smartphone',
+    mobileTitleFof: 'Play Fish Feeder on Smartphone',
     mobileBadge: 'Android / iOS PWA & APK',
     mobileDesc: 'Zero browser lag, tactile 60 FPS haptics, and instant resume.',
     scanQr: 'Scan Mobile QR',
@@ -236,8 +236,8 @@ export const GAME_TEXT = {
     // Navigation & Top bar
     backToPortfolio: 'Regresar al Portafolio',
     gameEdition: 'Conveyor Realms 3D · Edición Three.js',
-    fofEdition: 'Fish of Fortune · Edición Océano 3D',
-    switchToFof: 'Cambiar a Fish of Fortune',
+    fofEdition: 'Fish Feeder · Edición Océano 3D',
+    switchToFof: 'Cambiar a Fish Feeder',
     switchToConveyor: 'Cambiar a Conveyor Realms',
     gameMenu: 'Menú de Juego',
     modeLabel: 'Modo',
@@ -299,7 +299,7 @@ export const GAME_TEXT = {
     winTitleConveyor: '¡NIVEL COMPLETADO!',
     winTitleFof: '¡NIVEL COMPLETADO!',
     winSubtextConveyor: '¿Te gustó? Llévate el juego contigo.',
-    winSubtextFof: '¿Te gustó? Llévate Fish of Fortune contigo.',
+    winSubtextFof: '¿Te gustó? Llévate Fish Feeder contigo.',
     downloadFree: 'DESCARGAR GRATIS',
     continueLevel: 'Continuar al Nivel',
     replayPastCleared: 'Nivel Pasado Superado',
@@ -316,7 +316,7 @@ export const GAME_TEXT = {
     loseTitleConveyor: '¡PERDISTE!',
     loseTitleFof: '¡PERDISTE!',
     loseSubtextConveyor: 'Inténtalo de nuevo desde tu móvil.',
-    loseSubtextFof: 'Inténtalo de nuevo. Juega Fish of Fortune donde quieras.',
+    loseSubtextFof: 'Inténtalo de nuevo. Juega Fish Feeder donde quieras.',
     outOfLives: 'Sin vidas',
     youGotStuck: '¡La pista se llenó!',
     stuckExplanation: 'No hay coincidencias válidas de color con el borde.',
@@ -330,7 +330,7 @@ export const GAME_TEXT = {
 
     // Mobile Download Invite Modal
     mobileTitle: 'Juega Conveyor Realms en tu Smartphone',
-    mobileTitleFof: 'Juega Fish of Fortune en tu Smartphone',
+    mobileTitleFof: 'Juega Fish Feeder en tu Smartphone',
     mobileBadge: 'Android / iOS PWA y APK',
     mobileDesc: 'Sin lag de navegador, respuesta táctil a 60 FPS y guardado instantáneo.',
     scanQr: 'Escanear QR Móvil',

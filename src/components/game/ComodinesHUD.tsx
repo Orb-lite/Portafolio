@@ -22,6 +22,7 @@ interface ComodinesHUDProps {
   onActivate: () => void;
   level: number;
   language?: GameLanguage;
+  version?: import('../../game/types').GameVersion;
 }
 
 export const ComodinesHUD: React.FC<ComodinesHUDProps> = ({
@@ -31,7 +32,9 @@ export const ComodinesHUD: React.FC<ComodinesHUDProps> = ({
   onActivate,
   level,
   language = 'es',
+  version = 'fof',
 }) => {
+  const isFoF = version === 'fof';
   const t = GAME_TEXT[language];
   const localized = selectedComodin ? localizeComodin(selectedComodin, language) : null;
 
@@ -63,21 +66,33 @@ export const ComodinesHUD: React.FC<ComodinesHUDProps> = ({
   return (
     <div className="flex items-center gap-2">
       {hasUsedComodin ? (
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-900/80 border border-slate-700/60 text-slate-400 text-xs font-semibold backdrop-blur-md shadow-sm">
-          <CheckCircle2 className="w-3.5 h-3.5 text-slate-500" />
+        <div
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md shadow-sm ${
+            isFoF
+              ? 'bg-white/20 border border-white/50 text-white/70'
+              : 'bg-slate-900/80 border border-slate-700/60 text-slate-400'
+          }`}
+        >
+          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-300" />
           <span>{t.used}</span>
         </div>
       ) : localized ? (
-        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-900/90 border border-amber-400/40 backdrop-blur-md shadow-lg shadow-amber-500/10">
+        <div
+          className={`flex items-center gap-1.5 p-1 rounded-full backdrop-blur-md shadow-lg ${
+            isFoF
+              ? 'bg-white/25 border-2 border-white/70 shadow-orange-500/20'
+              : 'bg-slate-900/90 border border-amber-400/40 shadow-amber-500/10'
+          }`}
+        >
           <button
             type="button"
             onClick={onOpenModal}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl hover:bg-slate-800 text-xs font-bold text-slate-200 transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full hover:bg-white/20 text-xs font-bold text-white transition cursor-pointer"
             title={t.change}
           >
             {renderIcon(localized.iconName)}
             <span className="max-w-[110px] sm:max-w-[140px] truncate">{localized.name}</span>
-            <span className="text-[10px] font-black text-amber-400 bg-amber-400/20 px-1.5 py-0.2 rounded-md">
+            <span className="text-[10px] font-black text-amber-300 bg-black/30 px-1.5 py-0.5 rounded-full">
               T{localized.tier}
             </span>
           </button>
@@ -85,10 +100,10 @@ export const ComodinesHUD: React.FC<ComodinesHUDProps> = ({
           <button
             type="button"
             onClick={onActivate}
-            className="flex items-center gap-1 px-3 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs shadow-md transition active:scale-95 cursor-pointer animate-pulse"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-b from-[#ffbe3b] via-[#ff8d00] to-[#e65c00] border-2 border-white/80 text-white font-black text-xs shadow-md shadow-orange-500/40 hover:brightness-110 active:scale-95 transition cursor-pointer animate-pulse"
             title={t.activate}
           >
-            <Zap className="w-3.5 h-3.5 fill-slate-950" />
+            <Zap className="w-3.5 h-3.5 fill-current" />
             <span>{t.activateNow}</span>
           </button>
         </div>
@@ -96,11 +111,18 @@ export const ComodinesHUD: React.FC<ComodinesHUDProps> = ({
         <button
           type="button"
           onClick={onOpenModal}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-gradient-to-r from-indigo-900/80 to-purple-900/80 hover:from-indigo-800 hover:to-purple-800 text-amber-300 hover:text-amber-200 border border-amber-400/40 font-black text-xs shadow-lg backdrop-blur-md transition active:scale-95 cursor-pointer"
+          className={`group relative flex items-center gap-1.5 px-4 py-2 rounded-full font-black text-xs uppercase tracking-wide transition-all active:scale-95 cursor-pointer ${
+            isFoF
+              ? 'bg-gradient-to-b from-[#ffbe3b] via-[#ff8d00] to-[#e65c00] border-2 border-white/90 text-white shadow-[0_4px_14px_rgba(255,140,0,0.45),0_-1px_3px_rgba(255,255,255,0.4)_inset] hover:brightness-110'
+              : 'bg-gradient-to-r from-indigo-900/80 to-purple-900/80 hover:from-indigo-800 hover:to-purple-800 text-amber-300 hover:text-amber-200 border border-amber-400/40 shadow-lg backdrop-blur-md'
+          }`}
           title={`${t.choosePower} (${t.level} ${level})`}
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span>{t.powerTitle} ({t.options})</span>
+          {isFoF && (
+            <div className="absolute top-1 left-3 right-3 h-1 rounded-full bg-white/40 blur-[0.3px] pointer-events-none" />
+          )}
+          <Sparkles className="w-3.5 h-3.5 text-white filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
+          <span className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">POWER-UPS</span>
         </button>
       )}
     </div>

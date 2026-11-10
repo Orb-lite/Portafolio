@@ -36,13 +36,21 @@ export const BottomQueue: React.FC<BottomQueueProps> = ({
     <div className="absolute bottom-2 sm:bottom-4 left-0 right-0 z-20 flex flex-col items-center pointer-events-none select-none">
       {/* Track Slots HUD */}
       <div className="flex items-center gap-3 sm:gap-4 mb-2 pointer-events-auto">
-        {/* Counter indicator matching reference video: e.g. "5/5", "4/5" */}
-        <div className="flex items-baseline gap-0.5 px-3 py-1 bg-slate-900/85 backdrop-blur-md rounded-xl border border-slate-700/60 shadow-lg text-white font-black text-sm sm:text-base">
-          <span className="text-amber-400">{availableSlots}</span>
-          <span className="text-slate-400 font-semibold text-xs sm:text-sm">/{maxCapacity}</span>
+        {/* Counter indicator */}
+        <div
+          className={`flex items-baseline gap-0.5 px-3 py-1 rounded-xl font-black text-sm sm:text-base shadow-lg transition-all ${
+            isFoF
+              ? 'backdrop-blur-xl bg-white/20 border-2 border-white/60 text-white shadow-[0_4px_16px_rgba(8,145,178,0.25)]'
+              : 'bg-slate-900/85 backdrop-blur-md border border-slate-700/60 text-white'
+          }`}
+        >
+          <span className="text-amber-300">{availableSlots}</span>
+          <span className={`${isFoF ? 'text-white/70' : 'text-slate-400'} font-semibold text-xs sm:text-sm`}>
+            /{maxCapacity}
+          </span>
         </div>
 
-        {/* 5 slot boxes matching reference video */}
+        {/* 5 slot boxes matching reference */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           {Array.from({ length: maxCapacity }).map((_, idx) => {
             const isFilled = idx < activeRunnersCount;
@@ -50,17 +58,19 @@ export const BottomQueue: React.FC<BottomQueueProps> = ({
               <div
                 key={idx}
                 className={`w-7 h-7 sm:w-9 sm:h-9 rounded-xl border-2 flex items-center justify-center transition-all duration-300 ${
-                  isFilled
-                    ? isFoF
-                      ? 'bg-cyan-500/30 border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.5)]'
-                      : 'bg-indigo-600/30 border-indigo-400 shadow-[0_0_10px_rgba(99,102,241,0.4)]'
+                  isFoF
+                    ? isFilled
+                      ? 'bg-gradient-to-br from-amber-300 to-orange-500 border-white/90 shadow-[0_0_12px_rgba(251,146,60,0.7)]'
+                      : 'backdrop-blur-md bg-white/15 border-white/40'
+                    : isFilled
+                    ? 'bg-indigo-600/30 border-indigo-400 shadow-[0_0_10px_rgba(99,102,241,0.4)]'
                     : 'bg-slate-900/60 border-slate-700/60'
                 }`}
               >
                 {isFilled && (
                   <div
                     className={`w-3.5 h-3.5 rounded-full ${
-                      isFoF ? 'bg-cyan-300 shadow-sm' : 'bg-indigo-300 shadow-sm'
+                      isFoF ? 'bg-white shadow-sm' : 'bg-indigo-300 shadow-sm'
                     } animate-pulse`}
                   />
                 )}
@@ -71,7 +81,16 @@ export const BottomQueue: React.FC<BottomQueueProps> = ({
       </div>
 
       {/* 4 Runner Columns matching reference video */}
-      <div className="relative bg-slate-900/75 backdrop-blur-md px-3 sm:px-6 py-2.5 sm:py-3 rounded-3xl border border-slate-700/70 shadow-2xl pointer-events-auto flex gap-3 sm:gap-5 justify-center items-end">
+      <div
+        className={`relative px-3 sm:px-6 py-2.5 sm:py-3 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl pointer-events-auto flex gap-3 sm:gap-5 justify-center items-end transition-all ${
+          isFoF
+            ? 'backdrop-blur-2xl bg-white/20 border-2 border-white/60 shadow-[0_15px_40px_rgba(8,145,178,0.3)]'
+            : 'bg-slate-900/75 backdrop-blur-md border border-slate-700/70'
+        }`}
+      >
+        {isFoF && (
+          <div className="absolute top-1 left-8 right-8 h-2 rounded-full bg-gradient-to-b from-white/40 to-transparent pointer-events-none" />
+        )}
         {queueColumns.map((col, colIdx) => {
           const frontRunner = col[0];
           const hasRunner = Boolean(frontRunner);

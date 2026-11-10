@@ -27,7 +27,7 @@ export function getMusicTrackForLevel(level: number, version: GameVersion): Musi
     }
     return {
       path: '/audio/fish_of_fortune_theme.mp3',
-      title: 'Fish of Fortune (Coral Reef 124 BPM)',
+      title: 'Fish Feeder (Coral Reef 124 BPM)',
       artist: 'Isaac Gómez · Subaquatic Synth',
       bpm: 124,
     };

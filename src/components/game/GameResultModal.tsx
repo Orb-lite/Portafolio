@@ -273,6 +273,15 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
           <span>{t.autoSavedNotice}</span>
         </div>
 
+        {/* PROMINENT INVITATION TO DOWNLOAD THE GAME (END OF LEVEL & ON DEATH) */}
+        <DownloadGameInvite
+          context={isWin ? 'win' : 'death'}
+          level={level}
+          language={language}
+          gameName={isFoF ? 'Fish Feeder' : 'Conveyor Realms'}
+          compact={false}
+        />
+
         {/* GAMEPLAY ACTION BUTTONS */}
         <div className="w-full flex flex-col gap-2 mt-2">
           {/* WIN: Continue to Next Level */}

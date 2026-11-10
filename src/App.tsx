@@ -1,0 +1,1184 @@
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  resumeDataEs,
+  resumeDataEn,
+  resumeDataAiEn,
+  resumeDataAiEs,
+  ResumeProfileType,
+  defaultStyleConfig,
+} from './data/defaultResume';
+import { ResumeData, StyleConfig } from './types/resume';
+import { ResumeDocument } from './components/resume/ResumeDocument';
+import { PersonalInfoEditor } from './components/editor/PersonalInfoEditor';
+import { ExperienceEditor } from './components/editor/ExperienceEditor';
+import { SkillsEducationEditor } from './components/editor/SkillsEducationEditor';
+import { DesignSettingsEditor } from './components/editor/DesignSettingsEditor';
+import { JobOfferMatcher } from './components/editor/JobOfferMatcher';
+import { LinkedInImportModal } from './components/modals/LinkedInImportModal';
+import { exportElementToPdf, printResumeDocument } from './utils/pdfExport';
+import { exportResumeToAtsPdf } from './utils/atsPdfExport';
+import { exportResumeToDocx } from './utils/docxExport';
+import { PortfolioView } from './components/portfolio/PortfolioView';
+import { AboutMeView } from './components/about/AboutMeView';
+import { TileAbsorberGame } from './components/game/TileAbsorberGame';
+import { EditorAuthGate } from './components/auth/EditorAuthGate';
+import { getStoredSession, AdminUser } from './services/authService';
+import {
+  saveResumeToCache,
+  getResumeFromCache,
+  clearResumeCache,
+} from './services/sessionCache';
+import {
+  Download,
+  Printer,
+  Sparkles,
+  User,
+  Briefcase,
+  GraduationCap,
+  RotateCcw,
+  Eye,
+  Loader2,
+  CheckCircle,
+  Globe,
+  FileText,
+  FileType,
+  Github,
+  FolderOpen,
+  Trophy,
+  Layers,
+  Heart,
+  Gamepad2,
+  Fish,
+  Lock,
+  X,
+  SlidersHorizontal,
+  CheckCheck,
+  Sun,
+  Moon,
+} from 'lucide-react';
+
+export default function App() {
+  const [mainTab, setMainTab] = useState<'portfolio' | 'about' | 'cv' | 'game' | 'fish_of_fortune'>('portfolio');
+  const isGameView = mainTab === 'game' || mainTab === 'fish_of_fortune';
+  const [language, setLanguage] = useState<'es' | 'en'>('en'); // Default to English
+  const [theme, setTheme] = useState<'day' | 'night'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('portfolio_theme');
+      if (saved === 'day' || saved === 'night') return saved;
+    }
+    return 'night';
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('portfolio_theme', theme);
+      if (theme === 'night') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  }, [theme]);
+
+  const [activeProfile, setActiveProfile] = useState<ResumeProfileType>('ai-native'); // AI-Native Engineer default
+  const [resumeData, setResumeData] = useState<ResumeData>(() => {
+    const cached = getResumeFromCache('ai-native', 'en');
+    return cached?.data || resumeDataAiEn;
+  });
+  const [styleConfig, setStyleConfig] = useState<StyleConfig>(() => {
+    const cached = getResumeFromCache('ai-native', 'en');
+    return cached?.styleConfig || defaultStyleConfig;
+  });
+  const [activeTab, setActiveTab] = useState<'job_match' | 'personal' | 'experience' | 'skills' | 'design'>('job_match');
+  const [isEditorRequestedViaUrl, setIsEditorRequestedViaUrl] = useState<boolean>(false);
+  const [adminSession, setAdminSession] = useState<AdminUser | null>(() => getStoredSession());
+
+  // Auto-save edited resume and design settings to persistent cache
+  useEffect(() => {
+    saveResumeToCache(activeProfile, language, resumeData, styleConfig);
+  }, [activeProfile, language, resumeData, styleConfig]);
+
+  // Sync admin session across browser tabs
+  useEffect(() => {
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key?.includes('ig_admin_session')) {
+        setAdminSession(getStoredSession());
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+  const [exportType, setExportType] = useState<'pdf' | 'docx' | 'visual' | null>(null);
+  const [notification, setNotification] = useState<string | null>(null);
+  const [isLinkedInModalOpen, setIsLinkedInModalOpen] = useState<boolean>(false);
+  const [previewScale, setPreviewScale] = useState<number>(0.92);
+
+  const documentRef = useRef<HTMLDivElement>(null);
+  const isEn = language === 'en';
+
+  // Check URL parameters on mount to allow access ONLY via specific private URL (?editor=true, ?admin=true, #editor, /editor)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const checkUrlForEditor = () => {
+        const params = new URLSearchParams(window.location.search);
+        const hasEditorParam = params.has('editor') || params.has('admin');
+        const hasEditorHash =
+          window.location.hash.toLowerCase().includes('editor') ||
+          window.location.hash.toLowerCase().includes('admin');
+        const hasEditorPath =
+          window.location.pathname.toLowerCase().includes('/editor') ||
+          window.location.pathname.toLowerCase().includes('/admin');
+
+        if (hasEditorParam || hasEditorHash || hasEditorPath) {
+          setIsEditorRequestedViaUrl(true);
+        } else {
+          setIsEditorRequestedViaUrl(false);
+        }
+
+        if (params.get('lang') === 'en') {
+          setLanguage('en');
+          setResumeData(resumeDataEn);
+        }
+      };
+
+      checkUrlForEditor();
+      window.addEventListener('popstate', checkUrlForEditor);
+      window.addEventListener('hashchange', checkUrlForEditor);
+      return () => {
+        window.removeEventListener('popstate', checkUrlForEditor);
+        window.removeEventListener('hashchange', checkUrlForEditor);
+      };
+    }
+  }, []);
+
+  const closeEditorAndCleanUrl = () => {
+    setIsEditorRequestedViaUrl(false);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('editor');
+      url.searchParams.delete('admin');
+      if (url.hash === '#editor' || url.hash === '#admin') {
+        url.hash = '';
+      }
+      window.history.replaceState({}, '', url.pathname + (url.search ? url.search : ''));
+    }
+  };
+
+  const showNotification = (msg: string) => {
+    setNotification(msg);
+    setTimeout(() => {
+      setNotification(null);
+    }, 3800);
+  };
+
+  const getTargetResume = (prof: ResumeProfileType, lang: 'es' | 'en'): ResumeData => {
+    const cached = getResumeFromCache(prof, lang);
+    if (cached?.data) {
+      if (cached.styleConfig) setStyleConfig(cached.styleConfig);
+      return cached.data;
+    }
+    if (prof === 'ai-native') {
+      return lang === 'en' ? resumeDataAiEn : resumeDataAiEs;
+    } else {
+      return lang === 'en' ? resumeDataEn : resumeDataEs;
+    }
+  };
+
+  const handleProfileSwitch = (newProfile: ResumeProfileType) => {
+    setActiveProfile(newProfile);
+    const target = getTargetResume(newProfile, language);
+    setResumeData(target);
+    showNotification(
+      language === 'es'
+        ? newProfile === 'ai-native'
+          ? 'Perfil seleccionado: Ingeniero AI-Native (IA Agéntica, Python, GCP)'
+          : 'Perfil seleccionado: Artista Técnico (Videojuegos AAA, UE5, Frostbite)'
+        : newProfile === 'ai-native'
+        ? 'Profile activated: AI-Native Engineer (Agentic AI, Python, GCP Ops)'
+        : 'Profile activated: Technical Artist (AAA Games, UE5, Frostbite)'
+    );
+  };
+
+  const handleLanguageSwitch = (lang: 'es' | 'en') => {
+    setLanguage(lang);
+    const target = getTargetResume(activeProfile, lang);
+    setResumeData(target);
+    if (lang === 'en') {
+      showNotification('English version activated (Full ATS resume translated).');
+    } else {
+      showNotification('Versión en Español activada (CV completo para ATS traducido).');
+    }
+  };
+
+  const handleDownloadAtsPdf = (targetLang?: 'es' | 'en', isCustomized = false) => {
+    const langToExport = targetLang || language;
+    const dataToExport = getTargetResume(activeProfile, langToExport);
+
+    setIsExporting(true);
+    setExportType('pdf');
+
+    const profileSlug = activeProfile === 'ai-native' ? 'AI_Native_Engineer' : 'Technical_Artist';
+    const fileName = isCustomized
+      ? `CV_Isaac_Gomez_Estrada_${profileSlug}_${langToExport.toUpperCase()}_Custom.pdf`
+      : `CV_Isaac_Gomez_Estrada_${profileSlug}_${langToExport.toUpperCase()}.pdf`;
+
+    try {
+      showNotification(
+        langToExport === 'es'
+          ? 'Generando PDF con texto vectorial 100% compatible con ATS (Lensa / TopResume)...'
+          : 'Generating ATS-compliant PDF with 100% selectable vector text (Lensa & TopResume verified)...'
+      );
+
+      exportResumeToAtsPdf(dataToExport, {
+        fileName,
+        paperSize: styleConfig.paperSize,
+        language: langToExport,
+      });
+
+      showNotification(
+        langToExport === 'es'
+          ? '¡Tu CV en PDF compatible con ATS se ha descargado exitosamente!'
+          : 'Your ATS-compliant PDF resume downloaded successfully!'
+      );
+    } catch (err) {
+      console.error('Error generating ATS PDF:', err);
+      showNotification(
+        langToExport === 'es'
+          ? 'Error al generar el PDF. Puedes usar la opción de Imprimir o Word.'
+          : 'Error generating PDF. You can also use Print or Word export.'
+      );
+    } finally {
+      setIsExporting(false);
+      setExportType(null);
+    }
+  };
+
+  const handleDownloadDocx = async (targetLang?: 'es' | 'en') => {
+    const langToExport = targetLang || language;
+    const dataToExport = getTargetResume(activeProfile, langToExport);
+
+    setIsExporting(true);
+    setExportType('docx');
+
+    const profileSlug = activeProfile === 'ai-native' ? 'AI_Native_Engineer' : 'Technical_Artist';
+    const fileName = `CV_Isaac_Gomez_Estrada_${profileSlug}_${langToExport.toUpperCase()}.docx`;
+
+    try {
+      showNotification(
+        langToExport === 'es'
+          ? 'Generando documento oficial Microsoft Word (.docx) estructurado para ATS...'
+          : 'Generating official Microsoft Word (.docx) ATS-compliant resume...'
+      );
+
+      await exportResumeToDocx(dataToExport, {
+        fileName,
+        language: langToExport,
+      });
+
+      showNotification(
+        langToExport === 'es'
+          ? '¡Tu CV en Word (.docx) se ha descargado exitosamente!'
+          : 'Your ATS Word (.docx) resume downloaded successfully!'
+      );
+    } catch (err) {
+      console.error('Error generating DOCX resume:', err);
+      showNotification(
+        langToExport === 'es'
+          ? 'Error al generar el archivo .docx.'
+          : 'Error generating .docx resume file.'
+      );
+    } finally {
+      setIsExporting(false);
+      setExportType(null);
+    }
+  };
+
+  // Default PDF download maps directly to ATS PDF (preventing image flattening ATS rejection)
+  const handleDownloadPdf = (targetLang?: 'es' | 'en', isCustomized = false) => {
+    handleDownloadAtsPdf(targetLang, isCustomized);
+  };
+
+  const handleDownloadVisualPdf = async (targetLang?: 'es' | 'en', isCustomized = false) => {
+    const langToExport = targetLang || language;
+    if (targetLang && targetLang !== language) {
+      setLanguage(targetLang);
+      setResumeData(targetLang === 'en' ? resumeDataEn : resumeDataEs);
+      await new Promise((r) => setTimeout(r, 120));
+    }
+
+    setIsExporting(true);
+    setExportType('visual');
+    const fileName = isCustomized
+      ? `CV_Isaac_Gomez_Estrada_Visual_${langToExport.toUpperCase()}_Custom.pdf`
+      : `CV_Isaac_Gomez_Estrada_Visual_${langToExport.toUpperCase()}.pdf`;
+
+    await exportElementToPdf('resume-print-sheet', {
+      fileName,
+      paperSize: styleConfig.paperSize,
+      onStart: () => {
+        showNotification(
+          langToExport === 'es'
+            ? 'Generando PDF visual de 2 páginas...'
+            : 'Generating 2-page visual PDF...'
+        );
+      },
+      onFinish: () => {
+        setIsExporting(false);
+        setExportType(null);
+        showNotification(
+          langToExport === 'es'
+            ? '¡PDF visual descargado exitosamente!'
+            : 'Visual PDF downloaded successfully!'
+        );
+      },
+      onError: (err) => {
+        console.error(err);
+        setIsExporting(false);
+        setExportType(null);
+        showNotification('Error generating visual PDF.');
+      },
+    });
+  };
+
+  const handleNativePrint = () => {
+    printResumeDocument(`CV_Isaac_Gomez_Estrada_${language.toUpperCase()}`);
+    showNotification(
+      language === 'es'
+        ? 'Abriendo ventana de impresión nativa (selecciona "Guardar como PDF").'
+        : 'Opening native print dialog (choose "Save as PDF").'
+    );
+  };
+
+  const handleAutoFitOnePage = () => {
+    setStyleConfig((prev) => ({
+      ...prev,
+      spacing: 'compact',
+      fontSize: 'sm',
+    }));
+    showNotification(isEn ? 'Adjusted to compact layout.' : 'Ajustado a densidad compacta.');
+  };
+
+  const handleResetData = () => {
+    const confirmMsg =
+      language === 'es'
+        ? '¿Deseas restaurar todos los datos predeterminados de Isaac Gómez Estrada y borrar la caché local?'
+        : 'Do you want to reset all data to default for Isaac Gómez Estrada and clear local cache?';
+    if (window.confirm(confirmMsg)) {
+      clearResumeCache(activeProfile, language);
+      const original = activeProfile === 'ai-native'
+        ? (language === 'es' ? resumeDataAiEs : resumeDataAiEn)
+        : (language === 'es' ? resumeDataEs : resumeDataEn);
+      setResumeData(original);
+      setStyleConfig(defaultStyleConfig);
+      showNotification(language === 'es' ? 'Datos y caché restaurados correctamente.' : 'Data and cache reset to defaults.');
+    }
+  };
+
+  return (
+    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${theme === 'night' ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-800'}`}>
+      {/* 1. Global Navigation Bar (Hidden during print) - Completely clean for public users */}
+      {!isGameView && <header className="no-print bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-md">
+        {/* Top Info & Brand Bar */}
+        <div className="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80">
+          {/* Brand & Profile Indicator */}
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 text-white flex items-center justify-center font-black text-sm shadow-sm">
+              IG
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-sm font-bold tracking-tight text-white">
+                  {resumeData.personalInfo.fullName}
+                </h1>
+                <span className="text-[10px] text-amber-300 font-bold bg-amber-950/70 border border-amber-700/60 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <Trophy className="w-3 h-3 text-amber-400" />
+                  <span>{isEn ? 'Shipped AAA Credits' : 'Créditos Títulos AAA'}</span>
+                </span>
+                <span className="text-[10px] text-emerald-300 font-medium bg-emerald-950/60 border border-emerald-800/60 px-1.5 py-0.5 rounded">
+                  {isEn ? '32 yo · Virtual Environments (Since 2018)' : '32 años · Entornos Virtuales (Desde 2018)'}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5">
+                <span>{resumeData.personalInfo.email}</span>
+                <span aria-hidden="true">·</span>
+                <span className="text-emerald-400 font-medium">
+                  {isEn ? 'Zapopan & Guadalajara (On-site / Hybrid / Remote)' : 'Zapopan y Guadalajara (Presencial / Híbrido / Remoto)'}
+                </span>
+                <span aria-hidden="true">·</span>
+                <a
+                  href="https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-amber-400 hover:underline flex items-center gap-1 font-semibold"
+                >
+                  <Trophy className="w-2.5 h-2.5" />
+                  <span>MobyGames (EA Sports College Football 25)</span>
+                </a>
+                <span aria-hidden="true">·</span>
+                <a
+                  href="https://github.com/Orb-lite/Portafolio.git"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sky-300 hover:text-white hover:underline flex items-center gap-1"
+                >
+                  <Github className="w-2.5 h-2.5" />
+                  <span>GitHub: Portafolio</span>
+                </a>
+                <span aria-hidden="true">·</span>
+                <a
+                  href="https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-amber-300 hover:underline flex items-center gap-1"
+                >
+                  <FolderOpen className="w-2.5 h-2.5" />
+                  <span>{isEn ? 'Drive Folder' : 'Carpeta Drive'}</span>
+                </a>
+                <span aria-hidden="true">·</span>
+                <a
+                  href="https://orb-lite.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-cyan-300 hover:underline flex items-center gap-1"
+                >
+                  <Globe className="w-2.5 h-2.5" />
+                  <span>orb-lite.com</span>
+                </a>
+              </p>
+            </div>
+          </div>
+
+          {/* Global Theme Toggle, Language Toggle & Quick Export Buttons */}
+          <div className="flex items-center gap-2">
+            {/* Day / Night Theme Switcher */}
+            <div className="flex items-center bg-slate-800/90 p-0.5 rounded-lg border border-slate-700 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setTheme('day')}
+                className={`flex items-center gap-1 px-2 py-1 rounded-md transition-all ${
+                  theme === 'day'
+                    ? 'bg-amber-400 text-slate-950 font-bold shadow-xs'
+                    : 'text-slate-200 hover:bg-slate-700/80 hover:text-white'
+                }`}
+                title={isEn ? 'Switch whole application to Day (Light) Mode' : 'Cambiar todo el sitio a Modo Día'}
+              >
+                <Sun className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+                <span className="hidden sm:inline">{isEn ? 'Day' : 'Día'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme('night')}
+                className={`flex items-center gap-1 px-2 py-1 rounded-md transition-all ${
+                  theme === 'night'
+                    ? 'bg-indigo-600 text-white font-bold shadow-xs'
+                    : 'text-slate-200 hover:bg-slate-700/80 hover:text-white'
+                }`}
+                title={isEn ? 'Switch whole application to Night (Dark) Mode' : 'Cambiar todo el sitio a Modo Noche'}
+              >
+                <Moon className="w-3.5 h-3.5 text-indigo-200 fill-indigo-200" />
+                <span className="hidden sm:inline">{isEn ? 'Night' : 'Noche'}</span>
+              </button>
+            </div>
+
+            {/* Global Language Switcher */}
+            <div className="flex items-center bg-slate-800/90 p-0.5 rounded-lg border border-slate-700 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => handleLanguageSwitch('en')}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition-all ${
+                  language === 'en'
+                    ? 'bg-sky-600 text-white font-bold shadow-xs'
+                    : 'text-slate-200 hover:bg-slate-700/80 hover:text-white'
+                }`}
+                title="Switch whole application to English"
+              >
+                <span>🇺🇸</span>
+                <span>EN</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleLanguageSwitch('es')}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition-all ${
+                  language === 'es'
+                    ? 'bg-sky-600 text-white font-bold shadow-xs'
+                    : 'text-slate-200 hover:bg-slate-700/80 hover:text-white'
+                }`}
+                title="Cambiar todo el sitio a Español"
+              >
+                <span>🇲🇽</span>
+                <span>ES</span>
+              </button>
+            </div>
+
+            {/* Quick ATS PDF */}
+            <button
+              type="button"
+              disabled={isExporting}
+              onClick={() => handleDownloadAtsPdf()}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm transition-all disabled:opacity-50"
+              title={isEn ? 'Download ATS-Compliant PDF (100% Vector Selectable Text - Lensa & TopResume Tested)' : 'Descargar PDF compatible con ATS (Texto 100% seleccionable)'}
+            >
+              {isExporting && exportType === 'pdf' ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Download className="w-3.5 h-3.5" />
+              )}
+              <span>{isEn ? 'ATS PDF' : 'PDF ATS'}</span>
+            </button>
+
+            {/* Quick Word .docx */}
+            <button
+              type="button"
+              disabled={isExporting}
+              onClick={() => handleDownloadDocx()}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg text-white bg-sky-600 hover:bg-sky-500 shadow-sm transition-all disabled:opacity-50"
+              title={isEn ? 'Download Microsoft Word (.docx) ATS-Compliant Resume' : 'Descargar CV en formato Word (.docx)'}
+            >
+              {isExporting && exportType === 'docx' ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <FileText className="w-3.5 h-3.5" />
+              )}
+              <span>Word (.docx)</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Primary Page Navigation Tabs & OAuth Protected Editor Trigger */}
+        <div className="max-w-7xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-3 bg-slate-950/70">
+          <div className="flex items-center gap-2">
+            {/* Tab 1: Portfolio */}
+            <button
+              type="button"
+              onClick={() => setMainTab('portfolio')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                mainTab === 'portfolio'
+                  ? 'bg-sky-600 text-white shadow-md shadow-sky-950/40'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+              }`}
+            >
+              <Layers className="w-4 h-4 text-sky-400" />
+              <span>{isEn ? '📁 Portfolio Showcases' : '📁 Portafolio de Proyectos'}</span>
+            </button>
+
+            {/* Tab 2: About Me & Passions */}
+            <button
+              type="button"
+              onClick={() => setMainTab('about')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                mainTab === 'about'
+                  ? 'bg-sky-600 text-white shadow-md shadow-sky-950/40'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+              }`}
+            >
+              <Heart className="w-4 h-4 text-rose-400 fill-rose-400/40" />
+              <span>{isEn ? '🌟 About Me & Passions' : '🌟 Sobre Mí & Pasiones'}</span>
+            </button>
+
+            {/* Tab 3: CV & Resume */}
+            <button
+              type="button"
+              onClick={() => setMainTab('cv')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                mainTab === 'cv'
+                  ? 'bg-sky-600 text-white shadow-md shadow-sky-950/40'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+              }`}
+            >
+              <FileText className="w-4 h-4 text-emerald-400" />
+              <span>{isEn ? '📄 CV & Resume (2-Page PDF)' : '📄 Currículum Vitae (PDF 2 Páginas)'}</span>
+            </button>
+
+            {/* Tab 4: Tile Absorber Game (Supabase + Gamertag + Highscore) */}
+            <button
+              type="button"
+              onClick={() => setMainTab('game')}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all text-cyan-300 hover:text-white hover:bg-slate-800/80"
+            >
+              <Gamepad2 className="w-4 h-4 text-cyan-400" />
+              <span>{isEn ? '🎮 Tile Absorber (Game)' : '🎮 Tile Absorber (Juego)'}</span>
+              <span className="text-[10px] font-mono bg-cyan-400/20 text-cyan-300 px-1.5 py-0.2 rounded font-bold">
+                PRO
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMainTab('fish_of_fortune')}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all text-cyan-200 hover:text-white hover:bg-cyan-950/60"
+            >
+              <Fish className="w-4 h-4" />
+              <span>{isEn ? '🐟 Fish of Fortune' : '🐟 Peces de la Fortuna'}</span>
+            </button>
+          </div>
+        </div>
+      </header>}
+
+      {/* Toast Notification */}
+      {notification && (
+        <div className="no-print fixed bottom-5 right-5 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-xl border border-slate-700 flex items-center gap-2 animate-fade-in">
+          <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>{notification}</span>
+        </div>
+      )}
+
+      {/* VIEW 1: Portfolio View */}
+      {mainTab === 'portfolio' && (
+        <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6">
+          <PortfolioView
+            language={language}
+            onSwitchToCv={() => setMainTab('cv')}
+            onSwitchToAbout={() => setMainTab('about')}
+            onSwitchToGame={() => setMainTab('game')}
+          />
+        </main>
+      )}
+
+      {/* VIEW 2: About Me View */}
+      {mainTab === 'about' && (
+        <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6">
+          <AboutMeView
+            language={language}
+            onSwitchToPortfolio={() => setMainTab('portfolio')}
+            onSwitchToCv={() => setMainTab('cv')}
+          />
+        </main>
+      )}
+
+      {/* VIEW 3: Clean CV & Resume Presentation (Completely public and clean) */}
+      {mainTab === 'cv' && (
+        <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex flex-col items-center">
+          {/* Profile Selector Banner: Target Job Profile vs Technical Artist */}
+          <div className="no-print w-full flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 text-white p-3 sm:p-4 rounded-2xl shadow-md mb-4 border border-sky-800/40">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-sky-500/20 text-sky-400 border border-sky-400/30">
+                <Sparkles className="w-5 h-5 animate-pulse" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs uppercase font-extrabold tracking-wider text-sky-400">
+                    {language === 'es' ? 'Perfiles Profesionales Verificados' : 'Verified Professional Profiles'}
+                  </span>
+                  <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full border border-emerald-500/40">
+                    {language === 'es' ? 'ATS Optimizado' : 'ATS-Optimized'}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-300 hidden sm:block">
+                  {language === 'es'
+                    ? 'Selecciona el perfil adaptado a la vacante objetivo para previsualizar o descargar.'
+                    : 'Select the targeted profile matching the job requirements to preview or export.'}
+                </p>
+              </div>
+            </div>
+
+            {/* Profile Switcher Tabs */}
+            <div className="flex items-center gap-2 bg-slate-950/70 p-1 rounded-xl border border-slate-700/60 flex-wrap">
+              <button
+                type="button"
+                onClick={() => handleProfileSwitch('ai-native')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeProfile === 'ai-native'
+                    ? 'bg-sky-600 text-white shadow-md'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <span>🤖</span>
+                <span>{language === 'es' ? 'Ingeniero AI-Native' : 'AI-Native Engineer'}</span>
+                <span className="text-[9px] bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-black tracking-tight">
+                  TARGET
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleProfileSwitch('technical-artist')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeProfile === 'technical-artist'
+                    ? 'bg-sky-600 text-white shadow-md'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <span>🎮</span>
+                <span>{language === 'es' ? 'Artista Técnico (AAA)' : 'Technical Artist (AAA)'}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Executive Document Presentation Toolbar with ATS Verification */}
+          <div className="no-print w-full flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs mb-6">
+            {/* Left: Document details with ATS verification badge */}
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <div className="flex items-center gap-2">
+                <Eye className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                <span className="font-bold text-sm text-slate-900 dark:text-white">
+                  {activeProfile === 'ai-native'
+                    ? language === 'es'
+                      ? 'CV Ingeniero AI-Native (IA Agéntica, Python, GCP)'
+                      : 'AI-Native Engineer Resume (Agentic AI & Ops)'
+                    : language === 'es'
+                    ? 'CV Artista Técnico (Formato ATS)'
+                    : 'Technical Artist Resume (ATS-Ready)'}
+                </span>
+              </div>
+              <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
+                <CheckCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>{isEn ? '100% ATS Verified (Lensa & TopResume)' : '100% Compatible ATS (Lensa / TopResume)'}</span>
+              </span>
+            </div>
+
+            {/* Center: Language Switcher & Zoom */}
+            <div className="flex items-center gap-3">
+              {/* Dual Language Switcher */}
+              <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => handleLanguageSwitch('en')}
+                  className={`px-3 py-1 rounded-md transition-all ${
+                    language === 'en'
+                      ? 'bg-sky-600 text-white shadow-xs font-bold'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title="Switch CV to English"
+                >
+                  <span>🇺🇸 English</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLanguageSwitch('es')}
+                  className={`px-3 py-1 rounded-md transition-all ${
+                    language === 'es'
+                      ? 'bg-sky-600 text-white shadow-xs font-bold'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title="Cambiar CV a Español"
+                >
+                  <span>🇲🇽 Español</span>
+                </button>
+              </div>
+
+              {/* Zoom Controls */}
+              <div className="hidden sm:flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium">
+                <button
+                  type="button"
+                  onClick={() => setPreviewScale(0.8)}
+                  className={`px-2 py-0.5 rounded transition-all ${previewScale === 0.8 ? 'bg-white dark:bg-slate-700 font-bold shadow-xs text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+                >
+                  80%
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewScale(0.92)}
+                  className={`px-2 py-0.5 rounded transition-all ${previewScale === 0.92 ? 'bg-white dark:bg-slate-700 font-bold shadow-xs text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+                >
+                  92%
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewScale(1)}
+                  className={`px-2 py-0.5 rounded transition-all ${previewScale === 1 ? 'bg-white dark:bg-slate-700 font-bold shadow-xs text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+                >
+                  100%
+                </button>
+              </div>
+            </div>
+
+            {/* Right: ATS Export Action Buttons */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* 1. Download ATS-Compliant PDF */}
+              <button
+                type="button"
+                disabled={isExporting}
+                onClick={() => handleDownloadAtsPdf()}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm transition-all disabled:opacity-50"
+                title={isEn ? 'Download ATS-Compliant PDF with 100% selectable vector text' : 'Descargar PDF compatible con ATS (texto vectorial seleccionable)'}
+              >
+                {isExporting && exportType === 'pdf' ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Download className="w-3.5 h-3.5" />
+                )}
+                <span>{language === 'es' ? 'Descargar PDF ATS' : 'Download ATS PDF'}</span>
+              </button>
+
+              {/* 2. Download Microsoft Word (.docx) */}
+              <button
+                type="button"
+                disabled={isExporting}
+                onClick={() => handleDownloadDocx()}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-500 shadow-sm transition-all disabled:opacity-50"
+                title={isEn ? 'Download Microsoft Word (.docx) ATS-compliant resume' : 'Descargar documento Word (.docx) para ATS'}
+              >
+                {isExporting && exportType === 'docx' ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <FileText className="w-3.5 h-3.5" />
+                )}
+                <span>Word (.docx)</span>
+              </button>
+
+              {/* 3. Print / Save as PDF */}
+              <button
+                type="button"
+                onClick={handleNativePrint}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-700 transition-colors"
+                title={language === 'es' ? 'Imprimir o Guardar como PDF' : 'Print or Save as PDF'}
+              >
+                <Printer className="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" />
+                <span className="hidden lg:inline">{language === 'es' ? 'Imprimir' : 'Print'}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Clean, Full-Width Centered CV Document (No Editor Sidebar) */}
+          <div className="w-full flex justify-center overflow-x-auto pb-16">
+            <div
+              style={{
+                transform: `scale(${previewScale})`,
+                transformOrigin: 'top center',
+                width: styleConfig.paperSize === 'letter' ? '216mm' : '210mm',
+                transition: 'transform 0.15s ease',
+              }}
+              className="space-y-4 shadow-xl"
+            >
+              <ResumeDocument
+                innerRef={documentRef}
+                data={resumeData}
+                styleConfig={styleConfig}
+                language={language}
+              />
+            </div>
+          </div>
+        </main>
+      )}
+
+      {/* VIEW 4: Tile Absorber Arcade Game (Supabase + Gamertag + Highscore Leaderboard) */}
+      {(mainTab === 'game' || mainTab === 'fish_of_fortune') && (
+        <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6">
+          <TileAbsorberGame
+            key={mainTab}
+            language={language}
+            mode={mainTab === 'fish_of_fortune' ? 'fish_of_fortune' : 'pathway'}
+            onSwitchMode={() => setMainTab(mainTab === 'game' ? 'fish_of_fortune' : 'game')}
+            onBackToPortfolio={() => setMainTab('portfolio')}
+          />
+        </main>
+      )}
+
+      {/* PRIVATE RESUME EDITOR GATE: ONLY ACCESSIBLE VIA GOOGLE OAUTH FOR isaacgestrada94@gmail.com */}
+      {isEditorRequestedViaUrl && (
+        <EditorAuthGate
+          language={language}
+          onClose={closeEditorAndCleanUrl}
+          onSessionChange={setAdminSession}
+        >
+          {({ user, onLogout }) => (
+            <div className="no-print fixed inset-0 z-50 overflow-hidden bg-slate-950/75 backdrop-blur-xs flex justify-end animate-fade-in">
+              {/* Backdrop click to close */}
+              <div
+                className="flex-1 cursor-pointer"
+                onClick={closeEditorAndCleanUrl}
+                aria-hidden="true"
+              />
+
+              {/* Drawer Panel */}
+              <div className="w-full max-w-2xl bg-slate-50 h-full flex flex-col shadow-2xl border-l border-slate-300">
+                {/* Drawer Header */}
+                <div className="bg-slate-900 text-white p-4 border-b border-slate-800 flex items-center justify-between gap-3 shrink-0">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40">
+                      <Lock className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-sm font-bold text-white tracking-tight">
+                          {language === 'es' ? 'Editor Privado & Adaptador de CV' : 'Private Resume Customizer'}
+                        </h2>
+                        <span className="text-[10px] bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                          Admin
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-400">
+                        {language === 'es'
+                          ? `Sesión activa con ${user.email}. Personaliza o ajusta el CV según la vacante y exporta en PDF.`
+                          : `Active session for ${user.email}. Tailor resume to openings and export customized versions.`}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Primary Header Action: Export Customized PDF & Close */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={isExporting}
+                      onClick={() => handleDownloadPdf(language, true)}
+                      className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-500 shadow-md shadow-sky-950/50 transition-all disabled:opacity-50"
+                      title={isEn ? 'Export tailored version directly to PDF' : 'Exportar versión ajustada en PDF'}
+                    >
+                      {isExporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                      <span>{language === 'es' ? 'Exportar Personalizado' : 'Export Customized PDF'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={closeEditorAndCleanUrl}
+                      className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                      title={isEn ? 'Close Editor' : 'Cerrar Editor'}
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Drawer Editor Navigation Tabs */}
+                <div className="bg-white px-4 py-2 border-b border-slate-200 flex items-center justify-between text-xs font-semibold gap-1 overflow-x-auto shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('job_match')}
+                    className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
+                      activeTab === 'job_match'
+                        ? 'bg-amber-400 text-slate-950 font-bold shadow-xs'
+                        : 'text-amber-900 bg-amber-50 hover:bg-amber-100'
+                    }`}
+                    title={
+                      isEn
+                        ? 'Tailor to job offer and draft tailored Cover Letter'
+                        : 'Ajustar a propuesta de trabajo y redactar Cover Letter'
+                    }
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-700" />
+                    <span>{language === 'es' ? '🎯 Oferta & Carta' : '🎯 Job Match & Letter'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('personal')}
+                    className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
+                      activeTab === 'personal'
+                        ? 'bg-sky-600 text-white font-bold shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    <span>{language === 'es' ? 'Contacto' : 'Personal'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('experience')}
+                    className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
+                      activeTab === 'experience'
+                        ? 'bg-sky-600 text-white font-bold shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Briefcase className="w-3.5 h-3.5" />
+                    <span>{language === 'es' ? 'Experiencia' : 'Experience'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('skills')}
+                    className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
+                      activeTab === 'skills'
+                        ? 'bg-sky-600 text-white font-bold shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <GraduationCap className="w-3.5 h-3.5" />
+                    <span>{language === 'es' ? 'Habilidades' : 'Skills & Edu'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('design')}
+                    className={`py-2 px-3 rounded-lg flex items-center gap-1.5 whitespace-nowrap transition-all ${
+                      activeTab === 'design'
+                        ? 'bg-sky-600 text-white font-bold shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <SlidersHorizontal className="w-3.5 h-3.5" />
+                    <span>{language === 'es' ? 'Diseño' : 'Design'}</span>
+                  </button>
+                </div>
+
+                {/* Active Tab Content Area */}
+                <div className="flex-1 overflow-y-auto p-4 sm:p-5">
+                  {activeTab === 'job_match' && (
+                    <JobOfferMatcher
+                      currentResume={resumeData}
+                      styleConfig={styleConfig}
+                      appLanguage={language}
+                      onApplyOptimization={(updatedResume, targetLang) => {
+                        setResumeData(updatedResume);
+                        if (targetLang !== language) {
+                          setLanguage(targetLang);
+                        }
+                      }}
+                      onDownloadResumePdf={(targetLang) => handleDownloadPdf(targetLang, true)}
+                      onShowNotification={showNotification}
+                    />
+                  )}
+
+                  {activeTab === 'personal' && (
+                    <PersonalInfoEditor
+                      personalInfo={resumeData.personalInfo}
+                      onChange={(updated) =>
+                        setResumeData({ ...resumeData, personalInfo: updated })
+                      }
+                      language={language}
+                      onLanguageChange={handleLanguageSwitch}
+                    />
+                  )}
+
+                  {activeTab === 'experience' && (
+                    <ExperienceEditor
+                      experiences={resumeData.experiences}
+                      onChange={(updated) =>
+                        setResumeData({ ...resumeData, experiences: updated })
+                      }
+                    />
+                  )}
+
+                  {activeTab === 'skills' && (
+                    <SkillsEducationEditor
+                      skillCategories={resumeData.skillCategories}
+                      education={resumeData.education}
+                      certifications={resumeData.certifications}
+                      languages={resumeData.languages}
+                      achievements={resumeData.achievements}
+                      onSkillsChange={(cats) =>
+                        setResumeData({ ...resumeData, skillCategories: cats })
+                      }
+                      onEducationChange={(edus) =>
+                        setResumeData({ ...resumeData, education: edus })
+                      }
+                      onCertificationsChange={(certs) =>
+                        setResumeData({ ...resumeData, certifications: certs })
+                      }
+                      onLanguagesChange={(langs) =>
+                        setResumeData({ ...resumeData, languages: langs })
+                      }
+                      onAchievementsChange={(achs) =>
+                        setResumeData({ ...resumeData, achievements: achs })
+                      }
+                    />
+                  )}
+
+                  {activeTab === 'design' && (
+                    <DesignSettingsEditor
+                      styleConfig={styleConfig}
+                      onChange={(updated) => setStyleConfig(updated)}
+                      onAutoFitOnePage={handleAutoFitOnePage}
+                    />
+                  )}
+                </div>
+
+                {/* Drawer Footer Actions */}
+                <div className="bg-white p-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 shadow-lg shrink-0">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleResetData}
+                      className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>{language === 'es' ? 'Restaurar Predeterminado' : 'Reset Defaults'}</span>
+                    </button>
+                    <span className="text-slate-300">·</span>
+                    <button
+                      type="button"
+                      onClick={() => setIsLinkedInModalOpen(true)}
+                      className="flex items-center gap-1 text-xs text-sky-600 hover:text-sky-800 font-semibold"
+                    >
+                      <Sparkles className="w-3 h-3" />
+                      <span>{language === 'es' ? 'Perfiles Sugeridos' : 'Role Presets'}</span>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={closeEditorAndCleanUrl}
+                      className="px-3.5 py-2 text-xs font-semibold rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition-colors"
+                    >
+                      {language === 'es' ? 'Cerrar' : 'Close'}
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={isExporting}
+                      onClick={() => handleDownloadPdf(language, true)}
+                      className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-500 shadow-md transition-all disabled:opacity-50"
+                    >
+                      {isExporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                      <span>{language === 'es' ? 'Exportar Versión Personalizada' : 'Export Customized PDF'}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </EditorAuthGate>
+      )}
+
+      {/* Global Footer at the End of the Portfolio with Day/Night Toggle */}
+      <footer className="no-print mt-auto border-t border-slate-800 bg-slate-900/95 dark:bg-slate-950 text-slate-400 py-6 px-4">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
+            <span className="font-bold text-white tracking-tight">Portafolio Isaac Gómez Estrada</span>
+            <span className="hidden sm:inline text-slate-600">·</span>
+            <span className="text-slate-400">Technical Artist · Virtual Environments · EA Sports AAA Shipped Credits</span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-slate-400 font-medium">
+              {isEn ? 'Appearance:' : 'Apariencia:'}
+            </span>
+            <div className="flex items-center bg-slate-800/90 dark:bg-slate-900 p-0.5 rounded-lg border border-slate-700 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setTheme('day')}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition-all ${
+                  theme === 'day'
+                    ? 'bg-amber-400 text-slate-950 font-bold shadow-xs'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title={isEn ? 'Switch whole application to Day (Light) Mode' : 'Cambiar todo el sitio a Modo Día'}
+              >
+                <Sun className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+                <span>{isEn ? 'Day Mode' : 'Modo Día'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme('night')}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition-all ${
+                  theme === 'night'
+                    ? 'bg-indigo-600 text-white font-bold shadow-xs'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title={isEn ? 'Switch whole application to Night (Dark) Mode' : 'Cambiar todo el sitio a Modo Noche'}
+              >
+                <Moon className="w-3.5 h-3.5 text-indigo-200 fill-indigo-200" />
+                <span>{isEn ? 'Night Mode' : 'Modo Noche'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      {/* LinkedIn Import / Presets Modal */}
+      <LinkedInImportModal
+        isOpen={isLinkedInModalOpen}
+        onClose={() => setIsLinkedInModalOpen(false)}
+        currentData={resumeData}
+        language={language}
+        onApply={(newData) => {
+          setResumeData(newData);
+          showNotification(language === 'es' ? '¡Perfil actualizado con las sugerencias!' : 'Profile updated with suggestions!');
+        }}
+      />
+    </div>
+  );
+}

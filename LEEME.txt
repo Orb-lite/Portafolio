@@ -1,0 +1,10 @@
+Fish of Fortune - versión local
+
+Requisitos: Node.js 20.19+ o 22.12+.
+
+1. Abre PowerShell en esta carpeta.
+2. Ejecuta: npm install
+3. Ejecuta: npm run dev
+4. Abre la dirección local que muestre Vite (normalmente http://localhost:3000).
+
+No es necesario ejecutar npm install desde la carpeta outputs; entra primero a la carpeta Fish-of-Fortune-Local-v2 que contiene este archivo y package.json.

@@ -1,0 +1,273 @@
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signOut,
+} from 'firebase/auth';
+import firebaseConfig from '../../firebase-applet-config.json';
+
+// Initialize Firebase App singleton
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+export const auth = getAuth(app);
+
+const provider = new GoogleAuthProvider();
+provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
+provider.setCustomParameters({
+  prompt: 'select_account',
+});
+
+export const ALLOWED_ADMIN_EMAILS: string[] = [
+  'isaacgestrada94@gmail.com',
+  'ventas@orb-lite.com',
+];
+
+export const isEmailAuthorized = (email?: string | null): boolean => {
+  if (!email) return false;
+  const clean = email.toLowerCase().trim();
+  return ALLOWED_ADMIN_EMAILS.some((allowed) => allowed.toLowerCase().trim() === clean);
+};
+
+export const ALLOWED_ADMIN_EMAIL = ALLOWED_ADMIN_EMAILS[0];
+export const MASTER_ADMIN_PASSCODES = [
+  'isaac2026',
+  'orblite2026',
+  'ventas2026',
+  '3318359421',
+  'Isaac2026!',
+];
+
+export interface AdminUser {
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+  authMethod: 'google_oauth' | 'firebase_auth' | 'admin_passcode';
+}
+
+import {
+  saveAuthSessionToCache,
+  getAuthSessionFromCache,
+  clearAuthSessionCache,
+} from './sessionCache';
+
+// Helper to get stored session from persistent cache
+export const getStoredSession = (): AdminUser | null => {
+  const cached = getAuthSessionFromCache();
+  if (cached && isEmailAuthorized(cached.email)) {
+    return cached;
+  }
+  return null;
+};
+
+// Helper to save session to persistent cache with TTL
+export const saveSession = (user: AdminUser) => {
+  saveAuthSessionToCache(user);
+};
+
+// Helper to clear session from cache
+export const clearSession = () => {
+  clearAuthSessionCache();
+};
+
+// Auto-sync Firebase background auth state to cache
+if (typeof window !== 'undefined') {
+  try {
+    onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser && isEmailAuthorized(firebaseUser.email)) {
+        const adminUser: AdminUser = {
+          email: firebaseUser.email || '',
+          displayName: firebaseUser.displayName || 'Isaac Gómez Estrada',
+          photoURL: firebaseUser.photoURL || '',
+          authMethod: 'firebase_auth',
+        };
+        saveSession(adminUser);
+      }
+    });
+  } catch {
+    /* ignore */
+  }
+}
+
+// Helper to ensure Google Identity Services SDK script is ready
+export const ensureGsiLoaded = (): Promise<void> => {
+  if (typeof window === 'undefined') return Promise.resolve();
+  if ((window as any).google?.accounts?.oauth2) return Promise.resolve();
+  return new Promise((resolve) => {
+    const existing = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
+    if (!existing) {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => resolve();
+      script.onerror = () => resolve();
+      document.head.appendChild(script);
+    } else {
+      existing.addEventListener('load', () => resolve());
+      setTimeout(resolve, 1500);
+    }
+  });
+};
+
+// Google Identity Services (GIS) Token Request
+export const signInWithGoogleIdentityServices = async (): Promise<{
+  user: AdminUser;
+  isAuthorized: boolean;
+}> => {
+  await ensureGsiLoaded();
+  return new Promise((resolve, reject) => {
+    if (typeof window === 'undefined') {
+      return reject(new Error('Window is not defined'));
+    }
+
+    const google = (window as any).google;
+    if (!google?.accounts?.oauth2) {
+      return reject(new Error('Google Identity Services SDK not loaded'));
+    }
+
+    const clientId =
+      firebaseConfig.oAuthClientId ||
+      '834646135304-0c71savofie7k9r7uu03uclartlj1mnf.apps.googleusercontent.com';
+
+    try {
+      const tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: clientId,
+        scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+        prompt: 'select_account',
+        callback: async (tokenResponse: any) => {
+          if (tokenResponse.error) {
+            return reject(new Error(`Google OAuth error: ${tokenResponse.error}`));
+          }
+          if (!tokenResponse.access_token) {
+            return reject(new Error('No access token returned from Google'));
+          }
+
+          try {
+            // Fetch verified user profile directly from Google API
+            const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+              headers: {
+                Authorization: `Bearer ${tokenResponse.access_token}`,
+              },
+            });
+
+            if (!res.ok) {
+              throw new Error('Failed to fetch user profile from Google');
+            }
+
+            const profile = await res.json();
+            const email = (profile.email || '').toLowerCase().trim();
+            const isAuthorized = isEmailAuthorized(email);
+
+            const adminUser: AdminUser = {
+              email: profile.email || '',
+              displayName: profile.name || 'Isaac Gómez Estrada',
+              photoURL: profile.picture || '',
+              authMethod: 'google_oauth',
+            };
+
+            if (isAuthorized) {
+              saveSession(adminUser);
+            }
+
+            resolve({ user: adminUser, isAuthorized });
+          } catch (fetchErr) {
+            reject(fetchErr);
+          }
+        },
+      });
+
+      tokenClient.requestAccessToken();
+    } catch (initErr) {
+      reject(initErr);
+    }
+  });
+};
+
+// Firebase Auth fallback
+export const signInWithFirebaseAuth = async (): Promise<{
+  user: AdminUser;
+  isAuthorized: boolean;
+}> => {
+  const result = await signInWithPopup(auth, provider);
+  const email = (result.user.email || '').toLowerCase().trim();
+  const isAuthorized = isEmailAuthorized(email);
+
+  const adminUser: AdminUser = {
+    email: result.user.email || '',
+    displayName: result.user.displayName || 'Isaac Gómez Estrada',
+    photoURL: result.user.photoURL || '',
+    authMethod: 'firebase_auth',
+  };
+
+  if (isAuthorized) {
+    saveSession(adminUser);
+  }
+
+  return { user: adminUser, isAuthorized };
+};
+
+// Smart Dual-Engine Google Sign-in: Tries GIS first, then Firebase Auth
+export const signInWithGoogleUnified = async (): Promise<{
+  user: AdminUser;
+  isAuthorized: boolean;
+}> => {
+  // Try Google Identity Services first if available
+  const google = typeof window !== 'undefined' ? (window as any).google : null;
+  if (google?.accounts?.oauth2) {
+    try {
+      return await signInWithGoogleIdentityServices();
+    } catch (gisErr: any) {
+      console.warn('GIS failed, falling back to Firebase Auth:', gisErr);
+    }
+  }
+
+  // Fallback to Firebase Auth
+  try {
+    return await signInWithFirebaseAuth();
+  } catch (fbErr: any) {
+    console.error('Firebase Auth error:', fbErr);
+    throw fbErr;
+  }
+};
+
+// Emergency Admin Passcode (allows Isaac or Ventas to unlock if browser blocks popups in iframe or origin_mismatch)
+export const signInWithAdminPasscode = (
+  passcode: string,
+  selectedEmail?: string
+): {
+  user: AdminUser;
+  isAuthorized: boolean;
+} => {
+  const clean = passcode.trim();
+  const isValid = MASTER_ADMIN_PASSCODES.includes(clean);
+
+  if (isValid) {
+    const targetEmail =
+      selectedEmail && isEmailAuthorized(selectedEmail)
+        ? selectedEmail
+        : ALLOWED_ADMIN_EMAILS[0];
+
+    const isVentas = targetEmail.toLowerCase().includes('ventas');
+    const adminUser: AdminUser = {
+      email: targetEmail,
+      displayName: isVentas ? 'Orb-lite Ventas (Admin)' : 'Isaac Gómez Estrada (Admin)',
+      authMethod: 'admin_passcode',
+    };
+    saveSession(adminUser);
+    return { user: adminUser, isAuthorized: true };
+  }
+
+  throw new Error('Clave de administrador incorrecta.');
+};
+
+// Sign out
+export const logoutAdmin = async (): Promise<void> => {
+  clearSession();
+  try {
+    await signOut(auth);
+  } catch {
+    /* ignore */
+  }
+};

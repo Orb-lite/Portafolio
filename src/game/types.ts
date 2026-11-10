@@ -1,9 +1,22 @@
-export type GameVersion = 'chess' | 'primitive' | 'fof' | 'land' | 'birds' | 'humans' | 'cars' | 'aircraft';
+﻿export type GameVersion = 'chess' | 'primitive' | 'fof' | 'land' | 'birds' | 'humans' | 'cars' | 'aircraft';
 export type PolishLevel = 'v1' | 'v2' | 'v3';
 
-export type TileColor = 'white' | 'black' | 'blue' | 'yellow' | 'pink' | 'green' | 'purple' | 'red' | 'cyan' | 'orange' | 'magenta' | 'lime';
+export type SpecialTileType = 
+  | 'coral_bomb'      // 🪸 Coral Explosivo (desencadena explosiones secundarias)
+  | 'clam_trap'       // 🦪 Almeja Trampa (protege la perla hasta recibir un primer impacto)
+  | 'current_stream'  // 🌊 Corriente Marina (transfiere el daño a la hilera)
+  | 'frozen_pearl'    // 🧊 Perla Congelada (se descongela con explosiones o impactos cercanos)
+  | 'rainbow'         // 🌈 Perla Arcoíris / Candy Crush Color Bomb (Clear total del tablero)
+  | 'bomb';           // 💣 Perla Bomba (explota radio X/Y de 1 a 3 hileras)
 
-export const ALL_COLORS: TileColor[] = ['white', 'black', 'blue', 'yellow', 'pink', 'green', 'purple', 'red', 'cyan', 'orange', 'magenta', 'lime'];
+export type TileColor = 
+  | 'white' | 'black' | 'blue' | 'yellow' | 'pink' | 'green' | 'purple' 
+  | 'red' | 'cyan' | 'orange' | 'magenta' | 'lime' | 'rainbow' | 'bomb';
+
+export const ALL_COLORS: TileColor[] = [
+  'white', 'black', 'blue', 'yellow', 'pink', 'green', 'purple', 
+  'red', 'cyan', 'orange', 'magenta', 'lime', 'rainbow', 'bomb'
+];
 
 export interface GridTile {
   id: string;
@@ -11,21 +24,20 @@ export interface GridTile {
   col: number;
   color: TileColor;
   collected: boolean;
-  encapsulated?: boolean; // Trapped in an outer crystal bubble / cage
-  unlockAt?: number; // Game-clock timestamp when a shattered shield's tile becomes absorbable
-  absorbedProgress: number; // 0 to 1 for flight animation
+  encapsulated?: boolean; // Encapsulada en una burbuja de cristal
+  specialType?: SpecialTileType; // Mecánicas especiales de mapa / perla
+  shieldLayers?: number; // 🛡️ Sistema de 3 Capas de Escudo (0 a 3)
+  unlockAt?: number; // Game-clock timestamp
+  absorbedProgress: number; // 0 a 1 para animación de vuelo
   absorberId?: string;
   worldPos?: [number, number, number];
 }
 
-export interface RunnerQueueItem {
+export type RunnerQueueItem = {
   id: string;
   color: TileColor;
-  capacity: number; // e.g. 20
-  remaining: number;
-  colIndex: number;
-  rowIndex: number; // 0 = front row (selectable)
-}
+  count: number;
+};
 
 export type TrackSide = 'bottom' | 'right' | 'top' | 'left';
 
@@ -34,10 +46,10 @@ export interface ActiveRunner {
   color: TileColor;
   maxCapacity: number;
   remaining: number;
-  progress: number; // 0.0 to 1.0 along the continuous loop
+  progress: number;
   speed: number;
   slotIndex: number;
-  squishTime: number; // time accumulator for bounce
+  squishTime: number;
   scaleY: number;
   scaleXZ: number;
   state: 'spawning' | 'running' | 'clearing';
@@ -50,7 +62,7 @@ export interface FlyingTile {
   color: TileColor;
   startPos: [number, number, number];
   targetRunnerId: string;
-  progress: number; // 0 to 1
+  progress: number;
   arcHeight: number;
   rotationSpeed: number;
 }

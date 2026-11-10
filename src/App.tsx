@@ -272,7 +272,6 @@ export default function App() {
     }
   };
 
-  // Default PDF download maps directly to ATS PDF (preventing image flattening ATS rejection)
   const handleDownloadPdf = (targetLang?: 'es' | 'en', isCustomized = false) => {
     handleDownloadAtsPdf(targetLang, isCustomized);
   };
@@ -355,32 +354,30 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-100 text-slate-800">
-      {/* 1. Global Navigation Bar (Hidden during print) - Completely clean for public users */}
-      <header className="no-print bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-md">
-        {/* Top Info & Brand Bar */}
+      {/* 1. Global Navigation Bar con Glassmorphism y sombras de contraste */}
+      <header className="no-print bg-slate-950/90 backdrop-blur-md text-white border-b border-sky-500/30 sticky top-0 z-40 shadow-xl">
         <div className="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80">
-          {/* Brand & Profile Indicator */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 text-white flex items-center justify-center font-black text-sm shadow-sm">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 text-white flex items-center justify-center font-black text-sm shadow-md border border-sky-400/40">
               IG
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-sm font-bold tracking-tight text-white">
+                <h1 className="text-sm font-extrabold tracking-tight text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
                   {resumeData.personalInfo.fullName}
                 </h1>
-                <span className="text-[10px] text-amber-300 font-bold bg-amber-950/70 border border-amber-700/60 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="text-[10px] text-amber-300 font-bold bg-amber-950/80 border border-amber-600/70 px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
                   <Trophy className="w-3 h-3 text-amber-400" />
                   <span>{isEn ? 'Shipped AAA Credits' : 'Créditos Títulos AAA'}</span>
                 </span>
-                <span className="text-[10px] text-emerald-300 font-medium bg-emerald-950/60 border border-emerald-800/60 px-1.5 py-0.5 rounded">
+                <span className="text-[10px] text-emerald-300 font-medium bg-emerald-950/80 border border-emerald-700/70 px-1.5 py-0.5 rounded shadow-sm">
                   {isEn ? '32 yo · Virtual Environments (Since 2018)' : '32 años · Entornos Virtuales (Desde 2018)'}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5">
+              <p className="text-[11px] text-slate-300 flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                 <span>{resumeData.personalInfo.email}</span>
                 <span aria-hidden="true">·</span>
-                <span className="text-emerald-400 font-medium">
+                <span className="text-emerald-400 font-semibold">
                   {isEn ? 'Zapopan & Guadalajara (On-site / Hybrid / Remote)' : 'Zapopan y Guadalajara (Presencial / Híbrido / Remoto)'}
                 </span>
                 <span aria-hidden="true">·</span>
@@ -388,7 +385,7 @@ export default function App() {
                   href="https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-amber-400 hover:underline flex items-center gap-1 font-semibold"
+                  className="text-amber-300 hover:underline flex items-center gap-1 font-bold"
                 >
                   <Trophy className="w-2.5 h-2.5" />
                   <span>MobyGames (EA Sports College Football 25)</span>
@@ -427,10 +424,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* Global Language Toggle & Quick Export Buttons */}
           <div className="flex items-center gap-2">
-            {/* Global Language Switcher */}
-            <div className="flex items-center bg-slate-800/90 p-0.5 rounded-lg border border-slate-700 text-xs font-semibold">
+            <div className="flex items-center bg-slate-900/90 p-0.5 rounded-lg border border-sky-500/30 text-xs font-semibold shadow-inner">
               <button
                 type="button"
                 onClick={() => handleLanguageSwitch('en')}
@@ -439,7 +434,6 @@ export default function App() {
                     ? 'bg-sky-600 text-white font-bold shadow-xs'
                     : 'text-slate-400 hover:text-white'
                 }`}
-                title="Switch whole application to English"
               >
                 <span>🇺🇸</span>
                 <span>EN</span>
@@ -452,20 +446,17 @@ export default function App() {
                     ? 'bg-sky-600 text-white font-bold shadow-xs'
                     : 'text-slate-400 hover:text-white'
                 }`}
-                title="Cambiar todo el sitio a Español"
               >
                 <span>🇲🇽</span>
                 <span>ES</span>
               </button>
             </div>
 
-            {/* Quick ATS PDF */}
             <button
               type="button"
               disabled={isExporting}
               onClick={() => handleDownloadAtsPdf()}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm transition-all disabled:opacity-50"
-              title={isEn ? 'Download ATS-Compliant PDF (100% Vector Selectable Text - Lensa & TopResume Tested)' : 'Descargar PDF compatible con ATS (Texto 100% seleccionable)'}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg text-white bg-emerald-600 hover:bg-emerald-500 shadow-md border border-emerald-400/40 transition-all disabled:opacity-50"
             >
               {isExporting && exportType === 'pdf' ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -475,13 +466,11 @@ export default function App() {
               <span>{isEn ? 'ATS PDF' : 'PDF ATS'}</span>
             </button>
 
-            {/* Quick Word .docx */}
             <button
               type="button"
               disabled={isExporting}
               onClick={() => handleDownloadDocx()}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg text-white bg-sky-600 hover:bg-sky-500 shadow-sm transition-all disabled:opacity-50"
-              title={isEn ? 'Download Microsoft Word (.docx) ATS-Compliant Resume' : 'Descargar CV en formato Word (.docx)'}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg text-white bg-sky-600 hover:bg-sky-500 shadow-md border border-sky-400/40 transition-all disabled:opacity-50"
             >
               {isExporting && exportType === 'docx' ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -493,16 +482,15 @@ export default function App() {
           </div>
         </div>
 
-        {/* Primary Page Navigation Tabs & OAuth Protected Editor Trigger */}
-        <div className="max-w-7xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-3 bg-slate-950/70">
+        {/* Pestañas de Selección con resaltado especial para Fish Feeder */}
+        <div className="max-w-7xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-3 bg-slate-950/80">
           <div className="flex items-center gap-2">
-            {/* Tab 1: Portfolio */}
             <button
               type="button"
               onClick={() => setMainTab('portfolio')}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 mainTab === 'portfolio'
-                  ? 'bg-sky-600 text-white shadow-md shadow-sky-950/40'
+                  ? 'bg-sky-600 text-white shadow-md shadow-sky-950/40 border border-sky-400/40'
                   : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
               }`}
             >
@@ -510,13 +498,12 @@ export default function App() {
               <span>{isEn ? '📁 Portfolio Showcases' : '📁 Portafolio de Proyectos'}</span>
             </button>
 
-            {/* Tab 2: About Me & Passions */}
             <button
               type="button"
               onClick={() => setMainTab('about')}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 mainTab === 'about'
-                  ? 'bg-sky-600 text-white shadow-md shadow-sky-950/40'
+                  ? 'bg-sky-600 text-white shadow-md shadow-sky-950/40 border border-sky-400/40'
                   : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
               }`}
             >
@@ -524,13 +511,12 @@ export default function App() {
               <span>{isEn ? '🌟 About Me & Passions' : '🌟 Sobre Mí & Pasiones'}</span>
             </button>
 
-            {/* Tab 3: CV & Resume */}
             <button
               type="button"
               onClick={() => setMainTab('cv')}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 mainTab === 'cv'
-                  ? 'bg-sky-600 text-white shadow-md shadow-sky-950/40'
+                  ? 'bg-sky-600 text-white shadow-md shadow-sky-950/40 border border-sky-400/40'
                   : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
               }`}
             >
@@ -538,7 +524,6 @@ export default function App() {
               <span>{isEn ? '📄 CV & Resume (2-Page PDF)' : '📄 Currículum Vitae (PDF 2 Páginas)'}</span>
             </button>
 
-            {/* Tab 4: Tile Absorber Game (Supabase + Gamertag + Highscore) */}
             <button
               type="button"
               onClick={() => setMainTab('game')}
@@ -555,18 +540,17 @@ export default function App() {
               </span>
             </button>
 
-            {/* Tab 5: Fish Feeder Game Mode */}
             <button
               type="button"
               onClick={() => setMainTab('fish_of_fortune')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
                 mainTab === 'fish_of_fortune'
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 shadow-md shadow-cyan-950/40 ring-1 ring-cyan-300'
-                  : 'text-cyan-200 hover:text-white hover:bg-cyan-950/60'
+                  ? 'bg-gradient-to-r from-cyan-400 to-sky-500 text-slate-950 shadow-lg shadow-cyan-900/50 ring-2 ring-cyan-300 scale-105'
+                  : 'text-cyan-300 hover:text-white hover:bg-cyan-950/60 bg-slate-900/60 border border-cyan-500/30'
               }`}
             >
-              <Fish className="w-4 h-4 text-cyan-300" />
-              <span>🐟 Fish Feeder</span>
+              <Fish className="w-4 h-4 text-slate-950 fill-slate-950" />
+              <span>🐟 Fish Feeder (Aquatic 3D)</span>
             </button>
           </div>
         </div>
@@ -604,10 +588,9 @@ export default function App() {
         </main>
       )}
 
-      {/* VIEW 3: Clean CV & Resume Presentation (Completely public and clean) */}
+      {/* VIEW 3: Clean CV & Resume Presentation */}
       {mainTab === 'cv' && (
         <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex flex-col items-center">
-          {/* Profile Selector Banner: Target Job Profile vs Technical Artist */}
           <div className="no-print w-full flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 text-white p-3 sm:p-4 rounded-2xl shadow-md mb-4 border border-sky-800/40">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-sky-500/20 text-sky-400 border border-sky-400/30">
@@ -630,7 +613,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Profile Switcher Tabs */}
             <div className="flex items-center gap-2 bg-slate-950/70 p-1 rounded-xl border border-slate-700/60 flex-wrap">
               <button
                 type="button"
@@ -663,9 +645,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Executive Document Presentation Toolbar with ATS Verification */}
           <div className="no-print w-full flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-3 rounded-2xl border border-slate-200 shadow-xs mb-6">
-            {/* Left: Document details with ATS verification badge */}
             <div className="flex items-center gap-2.5 flex-wrap">
               <div className="flex items-center gap-2">
                 <Eye className="w-4 h-4 text-sky-600" />
@@ -685,9 +665,7 @@ export default function App() {
               </span>
             </div>
 
-            {/* Center: Language Switcher & Zoom */}
             <div className="flex items-center gap-3">
-              {/* Dual Language Switcher */}
               <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs font-semibold">
                 <button
                   type="button"
@@ -697,7 +675,6 @@ export default function App() {
                       ? 'bg-sky-600 text-white shadow-xs font-bold'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
-                  title="Switch CV to English"
                 >
                   <span>🇺🇸 English</span>
                 </button>
@@ -709,13 +686,11 @@ export default function App() {
                       ? 'bg-sky-600 text-white shadow-xs font-bold'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
-                  title="Cambiar CV a Español"
                 >
                   <span>🇲🇽 Español</span>
                 </button>
               </div>
 
-              {/* Zoom Controls */}
               <div className="hidden sm:flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs font-medium">
                 <button
                   type="button"
@@ -741,15 +716,12 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right: ATS Export Action Buttons */}
             <div className="flex items-center gap-2 flex-wrap">
-              {/* 1. Download ATS-Compliant PDF */}
               <button
                 type="button"
                 disabled={isExporting}
                 onClick={() => handleDownloadAtsPdf()}
                 className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm transition-all disabled:opacity-50"
-                title={isEn ? 'Download ATS-Compliant PDF with 100% selectable vector text' : 'Descargar PDF compatible con ATS (texto vectorial seleccionable)'}
               >
                 {isExporting && exportType === 'pdf' ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -759,13 +731,11 @@ export default function App() {
                 <span>{language === 'es' ? 'Descargar PDF ATS' : 'Download ATS PDF'}</span>
               </button>
 
-              {/* 2. Download Microsoft Word (.docx) */}
               <button
                 type="button"
                 disabled={isExporting}
                 onClick={() => handleDownloadDocx()}
                 className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-500 shadow-sm transition-all disabled:opacity-50"
-                title={isEn ? 'Download Microsoft Word (.docx) ATS-compliant resume' : 'Descargar documento Word (.docx) para ATS'}
               >
                 {isExporting && exportType === 'docx' ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -775,12 +745,10 @@ export default function App() {
                 <span>Word (.docx)</span>
               </button>
 
-              {/* 3. Print / Save as PDF */}
               <button
                 type="button"
                 onClick={handleNativePrint}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl border border-slate-200 transition-colors"
-                title={language === 'es' ? 'Imprimir o Guardar como PDF' : 'Print or Save as PDF'}
               >
                 <Printer className="w-3.5 h-3.5 text-slate-600" />
                 <span className="hidden lg:inline">{language === 'es' ? 'Imprimir' : 'Print'}</span>
@@ -788,7 +756,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Clean, Full-Width Centered CV Document (No Editor Sidebar) */}
           <div className="w-full flex justify-center overflow-x-auto pb-16">
             <div
               style={{
@@ -810,20 +777,25 @@ export default function App() {
         </main>
       )}
 
-      {/* VIEW 4: Tile Absorber Arcade Game & Fish Feeder Mode */}
+      {/* VIEW 4: Tile Absorber Arcade Game & Fish Feeder Mode con Sombra de Viñeta en Layout */}
       {(mainTab === 'game' || mainTab === 'fish_of_fortune') && (
-        <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6">
-          <TileAbsorberGame
-            key={`${mainTab}_${language}`}
-            language={language}
-            mode={mainTab === 'fish_of_fortune' ? 'fish_of_fortune' : 'pathway'}
-            onSwitchMode={() => setMainTab(mainTab === 'game' ? 'fish_of_fortune' : 'game')}
-            onBackToPortfolio={() => setMainTab('portfolio')}
-          />
+        <main className="flex-1 relative w-full h-full overflow-hidden bg-slate-950">
+          {/* Capa de Sombra Superior (Vignette Overlay) para aislar la UI del lienzo 3D */}
+          <div className="absolute top-0 left-0 w-full h-28 bg-gradient-to-b from-slate-950/90 via-slate-950/40 to-transparent pointer-events-none z-10"></div>
+          
+          <div className="relative z-0 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 h-full">
+            <TileAbsorberGame
+              key={`${mainTab}_${language}`}
+              language={language}
+              mode={mainTab === 'fish_of_fortune' ? 'fish_of_fortune' : 'pathway'}
+              onSwitchMode={() => setMainTab(mainTab === 'game' ? 'fish_of_fortune' : 'game')}
+              onBackToPortfolio={() => setMainTab('portfolio')}
+            />
+          </div>
         </main>
       )}
 
-      {/* PRIVATE RESUME EDITOR GATE: ONLY ACCESSIBLE VIA GOOGLE OAUTH FOR isaacgestrada94@gmail.com */}
+      {/* PRIVATE RESUME EDITOR GATE */}
       {isEditorRequestedViaUrl && (
         <EditorAuthGate
           language={language}
@@ -832,16 +804,13 @@ export default function App() {
         >
           {({ user, onLogout }) => (
             <div className="no-print fixed inset-0 z-50 overflow-hidden bg-slate-950/75 backdrop-blur-xs flex justify-end animate-fade-in">
-              {/* Backdrop click to close */}
               <div
                 className="flex-1 cursor-pointer"
                 onClick={closeEditorAndCleanUrl}
                 aria-hidden="true"
               />
 
-              {/* Drawer Panel */}
               <div className="w-full max-w-2xl bg-slate-50 h-full flex flex-col shadow-2xl border-l border-slate-300">
-                {/* Drawer Header */}
                 <div className="bg-slate-900 text-white p-4 border-b border-slate-800 flex items-center justify-between gap-3 shrink-0">
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40">
@@ -864,14 +833,12 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Primary Header Action: Export Customized PDF & Close */}
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       disabled={isExporting}
                       onClick={() => handleDownloadPdf(language, true)}
                       className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-500 shadow-md shadow-sky-950/50 transition-all disabled:opacity-50"
-                      title={isEn ? 'Export tailored version directly to PDF' : 'Exportar versión ajustada en PDF'}
                     >
                       {isExporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
                       <span>{language === 'es' ? 'Exportar Personalizado' : 'Export Customized PDF'}</span>
@@ -881,14 +848,12 @@ export default function App() {
                       type="button"
                       onClick={closeEditorAndCleanUrl}
                       className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                      title={isEn ? 'Close Editor' : 'Cerrar Editor'}
                     >
                       <X className="w-5 h-5" />
                     </button>
                   </div>
                 </div>
 
-                {/* Drawer Editor Navigation Tabs */}
                 <div className="bg-white px-4 py-2 border-b border-slate-200 flex items-center justify-between text-xs font-semibold gap-1 overflow-x-auto shrink-0">
                   <button
                     type="button"
@@ -898,11 +863,6 @@ export default function App() {
                         ? 'bg-amber-400 text-slate-950 font-bold shadow-xs'
                         : 'text-amber-900 bg-amber-50 hover:bg-amber-100'
                     }`}
-                    title={
-                      isEn
-                        ? 'Tailor to job offer and draft tailored Cover Letter'
-                        : 'Ajustar a propuesta de trabajo y redactar Cover Letter'
-                    }
                   >
                     <Sparkles className="w-3.5 h-3.5 text-amber-700" />
                     <span>{language === 'es' ? '🎯 Oferta & Carta' : '🎯 Job Match & Letter'}</span>
@@ -961,7 +921,6 @@ export default function App() {
                   </button>
                 </div>
 
-                {/* Active Tab Content Area */}
                 <div className="flex-1 overflow-y-auto p-4 sm:p-5">
                   {activeTab === 'job_match' && (
                     <JobOfferMatcher
@@ -1033,7 +992,6 @@ export default function App() {
                   )}
                 </div>
 
-                {/* Drawer Footer Actions */}
                 <div className="bg-white p-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 shadow-lg shrink-0">
                   <div className="flex items-center gap-2">
                     <button

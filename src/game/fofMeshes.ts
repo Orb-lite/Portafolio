@@ -1,96 +1,96 @@
-import * as THREE from 'three';
-import { TileColor } from './types';
+﻿import * as THREE from 'three';
+import { TileColor, SpecialTileType } from './types';
 import { TrackPath } from './trackPath';
 import { getNumberTexture, createConveyorTexture } from './proceduralTextures';
 
 export function getFofPearlMaterial(color: TileColor): THREE.MeshPhysicalMaterial {
-  switch (color) {
-    case 'white':
-      return new THREE.MeshPhysicalMaterial({
-        color: 0xfdf2f8,
-        roughness: 0.1,
-        metalness: 0.15,
-        clearcoat: 1.0,
-        sheen: 1.0,
-        sheenColor: new THREE.Color(0xfbcfe8),
-      });
-    case 'black':
-      return new THREE.MeshPhysicalMaterial({
-        color: 0x18181b,
-        roughness: 0.15,
-        metalness: 0.3,
-        clearcoat: 1.0,
-        sheen: 0.8,
-        sheenColor: new THREE.Color(0x818cf8),
-      });
-    case 'blue':
-      return new THREE.MeshPhysicalMaterial({
-        color: 0x0284c7,
-        roughness: 0.1,
-        metalness: 0.25,
-        clearcoat: 1.0,
-        sheen: 1.0,
-        sheenColor: new THREE.Color(0x38bdf8),
-      });
-    case 'yellow':
-      return new THREE.MeshPhysicalMaterial({
-        color: 0xf59e0b,
-        roughness: 0.1,
-        metalness: 0.3,
-        clearcoat: 1.0,
-        sheen: 1.0,
-        sheenColor: new THREE.Color(0xfef08a),
-      });
-    case 'pink':
-      return new THREE.MeshPhysicalMaterial({
-        color: 0xf43f5e,
-        roughness: 0.1,
-        metalness: 0.2,
-        clearcoat: 1.0,
-        sheen: 1.0,
-        sheenColor: new THREE.Color(0xfecdd3),
-      });
-    case 'green':
-      return new THREE.MeshPhysicalMaterial({
-        color: 0x059669,
-        roughness: 0.12,
-        metalness: 0.2,
-        clearcoat: 1.0,
-        sheen: 1.0,
-        sheenColor: new THREE.Color(0xa7f3d0),
-      });
-    case 'purple':
-      return new THREE.MeshPhysicalMaterial({ color: 0x7c3aed, roughness: 0.1, metalness: 0.2, clearcoat: 1, sheen: 1, sheenColor: new THREE.Color(0xc4b5fd) });
-    case 'red':
-      return new THREE.MeshPhysicalMaterial({ color: 0xdc2626, roughness: 0.1, metalness: 0.2, clearcoat: 1, sheen: 1, sheenColor: new THREE.Color(0xfca5a5) });
-    case 'cyan':
-      return new THREE.MeshPhysicalMaterial({ color: 0x0891b2, roughness: 0.1, metalness: 0.2, clearcoat: 1, sheen: 1, sheenColor: new THREE.Color(0xa5f3fc) });
-    case 'orange':
-      return new THREE.MeshPhysicalMaterial({ color: 0xea580c, roughness: 0.1, metalness: 0.2, clearcoat: 1, sheen: 1, sheenColor: new THREE.Color(0xfdba74) });
-    case 'magenta':
-      return new THREE.MeshPhysicalMaterial({ color: 0xc026d3, roughness: 0.1, metalness: 0.2, clearcoat: 1, sheen: 1, sheenColor: new THREE.Color(0xf0abfc) });
-    case 'lime':
-      return new THREE.MeshPhysicalMaterial({ color: 0x65a30d, roughness: 0.1, metalness: 0.2, clearcoat: 1, sheen: 1, sheenColor: new THREE.Color(0xd9f99d) });
-    default:
-      return new THREE.MeshPhysicalMaterial({ color: 0xffffff });
-  }
+  const fishColors = getFofFishColors(color);
+
+  return new THREE.MeshPhysicalMaterial({
+    color: fishColors.body,
+    roughness: 0.15,
+    metalness: 0.2,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.1,
+    sheen: 0.8,
+    sheenColor: new THREE.Color(fishColors.accent),
+  });
 }
 
-export function getFofFishColors(color: TileColor): { body: number; accent: number; badgeBg: string; text: string } {
-  switch (color) {
-    case 'white': return { body: 0xfff7ed, accent: 0xf97316, badgeBg: '#f97316', text: '#ffffff' };
-    case 'black': return { body: 0x0f172a, accent: 0x38bdf8, badgeBg: '#1e293b', text: '#38bdf8' };
-    case 'blue': return { body: 0x0284c7, accent: 0x7dd3fc, badgeBg: '#0284c7', text: '#ffffff' };
-    case 'yellow': return { body: 0xeab308, accent: 0xfef08a, badgeBg: '#eab308', text: '#0f172a' };
-    case 'pink': return { body: 0xf43f5e, accent: 0xfda4af, badgeBg: '#f43f5e', text: '#ffffff' };
-    case 'green': return { body: 0x059669, accent: 0x6ee7b7, badgeBg: '#059669', text: '#ffffff' };
-    case 'purple': return { body: 0x7c3aed, accent: 0xc4b5fd, badgeBg: '#6d28d9', text: '#ffffff' };
-    case 'red': return { body: 0xdc2626, accent: 0xfca5a5, badgeBg: '#b91c1c', text: '#ffffff' };
-    case 'cyan': return { body: 0x0891b2, accent: 0xa5f3fc, badgeBg: '#0e7490', text: '#ffffff' };
-    case 'orange': return { body: 0xea580c, accent: 0xfdba74, badgeBg: '#c2410c', text: '#ffffff' };
-    case 'magenta': return { body: 0xc026d3, accent: 0xf0abfc, badgeBg: '#a21caf', text: '#ffffff' };
-    case 'lime': return { body: 0x65a30d, accent: 0xd9f99d, badgeBg: '#4d7c0f', text: '#ffffff' };
-    default: return { body: 0xfff7ed, accent: 0xf97316, badgeBg: '#f97316', text: '#ffffff' };
+export function getFofFishColors(color: TileColor | string): { body: number; accent: number; badgeBg: string; text: string } {
+  const normalized = (color || 'blue').toLowerCase().trim();
+
+  switch (normalized) {
+    case 'rainbow':
+    case 'multicolor':
+    case 'prismatic':
+      return { body: 0xff007f, accent: 0x00ffff, badgeBg: '#d946ef', text: '#ffffff' };
+
+    case 'bomb':
+    case 'explosive':
+      return { body: 0xff4500, accent: 0xffd700, badgeBg: '#ef4444', text: '#ffffff' };
+
+    case 'pink':
+    case 'magenta':
+    case 'axolotl':
+      return { body: 0xec4899, accent: 0xfbcfe8, badgeBg: '#ec4899', text: '#ffffff' };
+
+    case 'yellow':
+    case 'clown':
+      return { body: 0xeab308, accent: 0xfef08a, badgeBg: '#eab308', text: '#0f172a' };
+
+    case 'blue':
+    case 'tang':
+      return { body: 0x3b82f6, accent: 0x93c5fd, badgeBg: '#3b82f6', text: '#ffffff' };
+
+    case 'cyan':
+    case 'tang jr':
+    case 'tang_jr':
+      return { body: 0x06b6d4, accent: 0xa5f3fc, badgeBg: '#06b6d4', text: '#ffffff' };
+
+    case 'purple':
+    case 'angler':
+      return { body: 0x8b5cf6, accent: 0xddd6fe, badgeBg: '#8b5cf6', text: '#ffffff' };
+
+    case 'black':
+    case 'obsidian':
+    case 'dark':
+      return { body: 0x1e293b, accent: 0x38bdf8, badgeBg: '#0f172a', text: '#38bdf8' };
+
+    case 'green':
+    case 'turtle':
+      return { body: 0x22c55e, accent: 0xbbf7d0, badgeBg: '#22c55e', text: '#ffffff' };
+
+    case 'red':
+      return { body: 0xef4444, accent: 0xfca5a5, badgeBg: '#ef4444', text: '#ffffff' };
+
+    case 'orange':
+      return { body: 0xf97316, accent: 0xffedd5, badgeBg: '#f97316', text: '#ffffff' };
+
+    case 'white':
+      return { body: 0xf8fafc, accent: 0xf97316, badgeBg: '#f97316', text: '#ffffff' };
+
+    default: {
+      const threeColor = new THREE.Color();
+      try {
+        threeColor.set(normalized);
+      } catch {
+        threeColor.setHex(0x3b82f6);
+      }
+
+      const bodyHex = threeColor.getHex();
+      const accentColor = threeColor.clone().offsetHSL(0, -0.2, 0.25);
+      const hexStr = `#${threeColor.getHexString()}`;
+      const luminance = 0.2126 * threeColor.r + 0.7152 * threeColor.g + 0.0722 * threeColor.b;
+      const textColor = luminance > 0.5 ? '#0f172a' : '#ffffff';
+
+      return {
+        body: bodyHex,
+        accent: accentColor.getHex(),
+        badgeBg: hexStr,
+        text: textColor,
+      };
+    }
   }
 }
 
@@ -113,7 +113,6 @@ export class FofMeshFactory {
       depthWrite: false,
     });
 
-    // Tiny shell pedestal underneath pearl
     this.trayGeo = new THREE.CylinderGeometry(0.2, 0.22, 0.06, 16);
     this.trayMat = new THREE.MeshStandardMaterial({
       color: 0x38bdf8,
@@ -122,7 +121,13 @@ export class FofMeshFactory {
     });
   }
 
-  public createPearlTile(color: TileColor, encapsulated = false, size = 0.44): THREE.Group {
+  public createPearlTile(
+    color: TileColor,
+    encapsulated = false,
+    size = 0.44,
+    shieldLayers = 0,
+    specialType?: SpecialTileType
+  ): THREE.Group {
     const group = new THREE.Group();
     const s = size / 0.44;
 
@@ -132,15 +137,73 @@ export class FofMeshFactory {
     tray.receiveShadow = true;
     group.add(tray);
 
-    const mat = getFofPearlMaterial(color);
-    const pearl = new THREE.Mesh(this.pearlGeo, mat);
-    pearl.position.y = 0.2 * s;
-    pearl.scale.set(s, s, s);
-    pearl.castShadow = true;
-    group.add(pearl);
+    // 1. Modelado según Mecánica Especial
+    if (specialType === 'coral_bomb') {
+      const coralGeo = new THREE.DodecahedronGeometry(0.19 * s);
+      const coralMat = new THREE.MeshStandardMaterial({
+        color: 0xff0055,
+        roughness: 0.3,
+        emissive: 0x990033,
+        emissiveIntensity: 0.6,
+      });
+      const coralMesh = new THREE.Mesh(coralGeo, coralMat);
+      coralMesh.position.y = 0.2 * s;
+      coralMesh.castShadow = true;
+      group.add(coralMesh);
+    } else if (specialType === 'clam_trap') {
+      const clamGeo = new THREE.ConeGeometry(0.22 * s, 0.22 * s, 5);
+      const clamMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.7 });
+      const clamMesh = new THREE.Mesh(clamGeo, clamMat);
+      clamMesh.position.y = 0.2 * s;
+      group.add(clamMesh);
+    } else {
+      const mat = getFofPearlMaterial(color);
+      const pearl = new THREE.Mesh(this.pearlGeo, mat);
+      pearl.position.y = 0.2 * s;
+      pearl.scale.set(s, s, s);
+      pearl.castShadow = true;
+      group.add(pearl);
+    }
+
+    // 2. Perla Congelada (Capa Externa de Hielo)
+    if (specialType === 'frozen_pearl') {
+      const iceGeo = new THREE.BoxGeometry(0.38 * s, 0.38 * s, 0.38 * s);
+      const iceMat = new THREE.MeshPhysicalMaterial({
+        color: 0xa5f3fc,
+        transmission: 0.85,
+        roughness: 0.1,
+        transparent: true,
+        opacity: 0.75,
+        depthWrite: false,
+      });
+      const iceMesh = new THREE.Mesh(iceGeo, iceMat);
+      iceMesh.position.y = 0.2 * s;
+      iceMesh.name = 'ice_block';
+      group.add(iceMesh);
+    }
+
+    // 🛡️ 3. SISTEMA DE 3 CAPAS DE ESCUDO
+    if (shieldLayers > 0) {
+      const shieldColors = [0x38bdf8, 0x8b5cf6, 0xef4444]; // Capa 1: Azul, Capa 2: Púrpura, Capa 3: Rojo Neón
+      for (let layer = 0; layer < shieldLayers; layer++) {
+        const shieldRadius = (0.22 + layer * 0.04) * s;
+        const shieldGeo = new THREE.SphereGeometry(shieldRadius, 14, 14);
+        const shieldMat = new THREE.MeshPhysicalMaterial({
+          color: shieldColors[layer % shieldColors.length],
+          transparent: true,
+          opacity: 0.45,
+          roughness: 0.1,
+          transmission: 0.6,
+          depthWrite: false,
+        });
+        const shieldMesh = new THREE.Mesh(shieldGeo, shieldMat);
+        shieldMesh.position.y = 0.2 * s;
+        shieldMesh.name = `shield_layer_${layer + 1}`;
+        group.add(shieldMesh);
+      }
+    }
 
     if (encapsulated) {
-      // Sea bubble encapsulation
       const bubble = new THREE.Mesh(this.bubbleGeo, this.bubbleMat);
       bubble.position.y = 0.2 * s;
       bubble.scale.set(s, s, s);
@@ -151,9 +214,6 @@ export class FofMeshFactory {
     return group;
   }
 
-  /**
-   * Creates the glowing ocean current track with coral reef borders and sunken treasure chest.
-   */
   public createCoralTrack(trackPath: TrackPath): {
     group: THREE.Group;
     beltMaterial: THREE.MeshStandardMaterial;
@@ -214,7 +274,6 @@ export class FofMeshFactory {
     beltMesh.receiveShadow = true;
     group.add(beltMesh);
 
-    // Coral Reef Border Curbs (Pearlescent seafoam turquoise & coral pink)
     const coralMat = new THREE.MeshStandardMaterial({
       color: 0x0284c7,
       roughness: 0.4,
@@ -256,43 +315,12 @@ export class FofMeshFactory {
     group.add(buildCoralCurb(-halfW));
     group.add(buildCoralCurb(halfW));
 
-    // Decorative underwater starfish & coral sponges around outer perimeter
     this.addOceanDecorations(group, trackPath);
 
     return { group, beltMaterial };
   }
 
-  private createTreasureDispenser(): THREE.Group {
-    const group = new THREE.Group();
-
-    // Golden Clam / Treasure Chest
-    const chestBaseGeo = new THREE.BoxGeometry(0.65, 0.35, 0.55);
-    const goldMat = new THREE.MeshStandardMaterial({
-      color: 0xd97706, // Rich Gold
-      metalness: 0.8,
-      roughness: 0.25,
-    });
-    const chest = new THREE.Mesh(chestBaseGeo, goldMat);
-    chest.position.set(-0.2, 0.18, 0);
-    chest.castShadow = true;
-    group.add(chest);
-
-    // Glowing pearl inside dispenser
-    const pearlGeo = new THREE.SphereGeometry(0.18, 16, 16);
-    const pearlMat = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      emissive: 0x38bdf8,
-      emissiveIntensity: 0.5,
-    });
-    const pearl = new THREE.Mesh(pearlGeo, pearlMat);
-    pearl.position.set(0.1, 0.22, 0);
-    group.add(pearl);
-
-    return group;
-  }
-
   private addOceanDecorations(parent: THREE.Group, trackPath: TrackPath) {
-    // Starfish
     const starGeo = new THREE.CylinderGeometry(0.14, 0.16, 0.04, 5);
     const starMat = new THREE.MeshStandardMaterial({ color: 0xf43f5e, roughness: 0.5 });
 
@@ -306,7 +334,6 @@ export class FofMeshFactory {
     star2.rotation.y = 1.2;
     parent.add(star2);
 
-    // Coral Sponges / Rock Clusters
     const rockGeo = new THREE.DodecahedronGeometry(0.25);
     const rockMat = new THREE.MeshStandardMaterial({ color: 0x0d9488, roughness: 0.7 });
 
@@ -319,9 +346,6 @@ export class FofMeshFactory {
     parent.add(rock2);
   }
 
-  /**
-   * Creates a stylized Fish runner with wagging tail, fins, expressive eyes and golden coin badge.
-   */
   public createFishRunner(
     color: TileColor,
     initialCount: number
@@ -333,7 +357,8 @@ export class FofMeshFactory {
     updateNumber: (num: number) => void;
   } {
     const group = new THREE.Group();
-    const isWhite = color === 'white';
+    const isWhite = String(color).toLowerCase() === 'white';
+    const isBlack = String(color).toLowerCase() === 'black';
     const fishTheme = getFofFishColors(color);
 
     const fishMat = new THREE.MeshStandardMaterial({
@@ -347,15 +372,13 @@ export class FofMeshFactory {
       metalness: 0.08,
     });
 
-    // Main fish body: streamlined ellipsoid / stretched sphere
     const bodyGeo = new THREE.SphereGeometry(0.26, 18, 18);
-    bodyGeo.scale(1.25, 0.95, 0.8); // length, height, width
+    bodyGeo.scale(1.25, 0.95, 0.8);
     const bodyMesh = new THREE.Mesh(bodyGeo, fishMat);
     bodyMesh.position.y = 0.32;
     bodyMesh.castShadow = true;
     group.add(bodyMesh);
 
-    // Cute 3D Fish Mouth at the front (+X) so the mouth always points in swimming direction
     const mouthGeo = new THREE.TorusGeometry(0.065, 0.025, 8, 16);
     const mouthMat = new THREE.MeshStandardMaterial({
       color: fishTheme.accent,
@@ -366,19 +389,31 @@ export class FofMeshFactory {
     mouthMesh.position.set(0.32, 0.30, 0);
     group.add(mouthMesh);
 
-    // Decorative Clownfish white stripe (if white runner) or glowing bioluminescent crest (if black runner)
     if (isWhite) {
       const stripeGeo = new THREE.TorusGeometry(0.24, 0.035, 8, 20);
-      const stripeMat = accentMat;
-      const stripe = new THREE.Mesh(stripeGeo, stripeMat);
+      const stripe = new THREE.Mesh(stripeGeo, accentMat);
       stripe.rotation.y = Math.PI / 2;
       stripe.position.set(0.02, 0.32, 0);
       group.add(stripe);
-    } else {
-      // Anglerfish glowing lure / antenna
+    } else if (isBlack) {
       const stalkGeo = new THREE.CylinderGeometry(0.015, 0.015, 0.25, 8);
-      const stalkMat = accentMat;
-      const stalk = new THREE.Mesh(stalkGeo, stalkMat);
+      const stalk = new THREE.Mesh(stalkGeo, accentMat);
+      stalk.position.set(0.18, 0.54, 0);
+      stalk.rotation.z = -0.4;
+      group.add(stalk);
+
+      const lureGeo = new THREE.SphereGeometry(0.06, 12, 12);
+      const lureMat = new THREE.MeshStandardMaterial({ 
+        color: 0x38bdf8, 
+        emissive: 0x38bdf8, 
+        emissiveIntensity: 0.9 
+      });
+      const lure = new THREE.Mesh(lureGeo, lureMat);
+      lure.position.set(0.26, 0.65, 0);
+      group.add(lure);
+    } else {
+      const stalkGeo = new THREE.CylinderGeometry(0.015, 0.015, 0.25, 8);
+      const stalk = new THREE.Mesh(stalkGeo, accentMat);
       stalk.position.set(0.18, 0.54, 0);
       stalk.rotation.z = -0.4;
       group.add(stalk);
@@ -390,13 +425,11 @@ export class FofMeshFactory {
       group.add(lure);
     }
 
-    // Expressive cartoon eyes
     const eyeWhiteGeo = new THREE.SphereGeometry(0.07, 12, 12);
     const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const eyePupilGeo = new THREE.SphereGeometry(0.045, 12, 12);
     const eyePupilMat = new THREE.MeshBasicMaterial({ color: 0x09090b });
 
-    // Right Eye
     const rightEyeGroup = new THREE.Group();
     rightEyeGroup.position.set(0.2, 0.36, 0.16);
     const rWhite = new THREE.Mesh(eyeWhiteGeo, eyeWhiteMat);
@@ -405,7 +438,6 @@ export class FofMeshFactory {
     rightEyeGroup.add(rWhite, rPupil);
     group.add(rightEyeGroup);
 
-    // Left Eye
     const leftEyeGroup = new THREE.Group();
     leftEyeGroup.position.set(0.2, 0.36, -0.16);
     const lWhite = new THREE.Mesh(eyeWhiteGeo, eyeWhiteMat);
@@ -414,19 +446,17 @@ export class FofMeshFactory {
     leftEyeGroup.add(lWhite, lPupil);
     group.add(leftEyeGroup);
 
-    // Wagging Caudal Tail Fin (hinged at back)
     const tailPivot = new THREE.Group();
     tailPivot.position.set(-0.3, 0.32, 0);
 
     const tailGeo = new THREE.ConeGeometry(0.18, 0.32, 4);
-    tailGeo.scale(0.3, 1.2, 1.0); // flat fin
+    tailGeo.scale(0.3, 1.2, 1.0);
     const tailMesh = new THREE.Mesh(tailGeo, accentMat);
     tailMesh.position.set(-0.14, 0, 0);
     tailMesh.rotation.z = Math.PI / 2;
     tailPivot.add(tailMesh);
     group.add(tailPivot);
 
-    // Pectoral Fins
     const finGeo = new THREE.SphereGeometry(0.1, 8, 8);
     finGeo.scale(1.2, 0.2, 0.6);
     const finR = new THREE.Mesh(finGeo, accentMat);
@@ -439,7 +469,6 @@ export class FofMeshFactory {
     finL.rotation.y = -0.3;
     group.add(finL);
 
-    // Golden Sea Coin / Pearl Badge on fish back
     const badgeTexture = getNumberTexture(
       initialCount,
       fishTheme.badgeBg,

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { GameVersion, PolishLevel, TileColor, TrackSide, FlyingTile, GridTile } from './types';
+import type { GameVersion, PolishLevel, TileColor, TrackSide, FlyingTile, GridTile } from './types';
 import { TrackPath } from './trackPath';
 import { GridManager } from './gridLogic';
 import { PrimitiveMeshFactory } from './primitiveMeshes';
@@ -15,10 +15,13 @@ const _vecA = new THREE.Vector3();
 const _vecB = new THREE.Vector3();
 
 export interface SceneCallbacks {
-  onTileAbsorbed: (tileId: string, color: TileColor, remainingCount: number) => void;
-  onRunnerCleared: (runnerId: string, color: TileColor) => void;
-  onWinState: (clearedLevel?: number) => void;
-  onSlotCountChange: (activeCount: number) => void;
+  onTileAbsorbed?: (tileId: string, color: TileColor, remainingCount: number) => void;
+  onTileCollected?: (tileId: string, color: TileColor, remainingCount: number) => void;
+  onRunnerCleared?: (runnerId: string, color: TileColor) => void;
+  onWinState?: (clearedLevel?: number) => void;
+  onLevelComplete?: () => void;
+  onGameOver?: () => void;
+  onSlotCountChange?: (activeCount: number) => void;
   onEncapsulationPopped?: (tileId: string) => void;
 }
 
@@ -32,7 +35,7 @@ export class GameSceneManager {
   private clock = new THREE.Clock();
 
   // Settings
-  public version: GameVersion = 'primitive';
+  public version: GameVersion = 'fof';
   public polish: PolishLevel = 'v3';
   public isFishMode: boolean = false;
   public speedMultiplier: number = 1.0;
@@ -133,9 +136,8 @@ export class GameSceneManager {
 
   // Screen shake & Camera
   private shakeIntensity: number = 0;
-  private baseCameraPos = new THREE.Vector3(0, 8.4, 4.6);
-  private cameraTarget = new THREE.Vector3(0, 0, 0.35);
-
+  private baseCameraPos = new THREE.Vector3(0, 19.0, 7.0);
+  private cameraTarget = new THREE.Vector3(0, 0.8, 0.35);
   private callbacks: SceneCallbacks;
   private textureLoader = new THREE.TextureLoader();
   private worldTextures = new Map<string, THREE.Texture>();
@@ -184,6 +186,9 @@ export class GameSceneManager {
     this.initScene();
     this.buildWorld(initialLevel);
     this.startLoop();
+
+    // Expone la instancia en window para pruebas en vivo desde la consola F12
+    (window as any).sceneManager = this;
   }
 
   private initRenderer() {
@@ -213,7 +218,7 @@ export class GameSceneManager {
       this.isSoftwareGl ? 1 : Math.min(window.devicePixelRatio, 2)
     );
     this.renderer.shadowMap.enabled = !this.isSoftwareGl;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap;
 
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
     this.container.appendChild(this.renderer.domElement);
@@ -222,7 +227,6 @@ export class GameSceneManager {
   private initScene() {
     this.scene = new THREE.Scene();
 
-    // Studio Environment Map via PMREMGenerator
     try {
       const pmrem = new THREE.PMREMGenerator(this.renderer);
       this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
@@ -231,36 +235,43 @@ export class GameSceneManager {
       // fallback
     }
 
-    // Camera setup - High angle top-down matching reference video composition
     const aspect = this.container.clientWidth / this.container.clientHeight;
-    this.camera = new THREE.PerspectiveCamera(46, aspect, 0.1, 300);
+    this.camera = new THREE.PerspectiveCamera(46, aspect, 0.1, 1000);
     this.camera.position.copy(this.baseCameraPos);
     this.camera.lookAt(this.cameraTarget);
 
-    // Warm Key Light + Cool Hemisphere Fill
     this.dirLight = new THREE.DirectionalLight(0xfff7ed, 1.8);
     this.dirLight.position.set(4, 12, 6);
     this.dirLight.castShadow = !this.isSoftwareGl;
     this.dirLight.shadow.mapSize.width = 1024;
     this.dirLight.shadow.mapSize.height = 1024;
     this.dirLight.shadow.camera.near = 0.5;
-    this.dirLight.shadow.camera.far = 25;
-    this.dirLight.shadow.camera.left = -5;
-    this.dirLight.shadow.camera.right = 5;
-    this.dirLight.shadow.camera.top = 5;
-    this.dirLight.shadow.camera.bottom = -5;
+    this.dirLight.shadow.camera.far = 60;
+    this.dirLight.shadow.camera.left = -15;
+    this.dirLight.shadow.camera.right = 15;
+    this.dirLight.shadow.camera.top = 15;
+    this.dirLight.shadow.camera.bottom = -15;
     this.dirLight.shadow.bias = -0.0005;
     this.scene.add(this.dirLight);
 
     this.hemiLight = new THREE.HemisphereLight(0x93c5fd, 0x1e293b, 0.8);
     this.scene.add(this.hemiLight);
 
-    // Add main groups
     this.scene.add(this.trackGroup);
     this.scene.add(this.backdropGroup);
     this.scene.add(this.gridGroup);
     this.scene.add(this.runnersGroup);
     this.scene.add(this.vfxGroup);
+  }
+
+  public setCameraDistance(y: number, z: number) {
+    this.baseCameraPos.set(0, y, z);
+    if (this.camera) {
+      this.camera.position.copy(this.baseCameraPos);
+      this.camera.lookAt(this.cameraTarget);
+      this.camera.updateProjectionMatrix();
+    }
+    console.log(`🎥 Posición actual -> Elevación Y: ${y}, Alejamiento Z: ${z}`);
   }
 
   public setMode(version: GameVersion, polish: PolishLevel, level: number = this.currentLevel) {
@@ -273,22 +284,28 @@ export class GameSceneManager {
   public buildWorld(level: number = this.currentLevel) {
     this.currentLevel = level;
     const levelConfig = getLevelConfig(level);
-    const boardHalfSize = levelConfig.rows * 0.3; // 0.6 world units per tile including spacing
+    const boardHalfSize = levelConfig.rows * 0.3;
     const trackExtent = boardHalfSize + 1.4;
-    const zoomScale = trackExtent / 3.8;
+
     this.trackPath = new TrackPath(-trackExtent, trackExtent, -trackExtent, trackExtent, 0.9);
-    this.baseCameraPos.set(0, 8.4 * zoomScale, 4.6 * zoomScale);
+
+    if (this.camera) {
+      this.camera.position.copy(this.baseCameraPos);
+      this.camera.lookAt(this.cameraTarget);
+      this.camera.updateProjectionMatrix();
+    }
+
     if (this.dirLight) {
-      this.dirLight.position.set(4 * zoomScale, 12 * zoomScale, 6 * zoomScale);
-      const shadowExtent = 5 * zoomScale;
+      this.dirLight.position.set(4, 12, 6);
+      const shadowExtent = 12;
       this.dirLight.shadow.camera.left = -shadowExtent;
       this.dirLight.shadow.camera.right = shadowExtent;
       this.dirLight.shadow.camera.top = shadowExtent;
       this.dirLight.shadow.camera.bottom = -shadowExtent;
-      this.dirLight.shadow.camera.far = 25 * zoomScale;
+      this.dirLight.shadow.camera.far = 60;
       this.dirLight.shadow.camera.updateProjectionMatrix();
     }
-    // Clear dynamic groups
+
     this.clearObstacleTimers();
     this.clearGroup(this.trackGroup);
     this.clearGroup(this.backdropGroup);
@@ -301,23 +318,20 @@ export class GameSceneManager {
     this.activeRunners = [];
     this.flyingTiles = [];
     this.activeParticles = [];
-    this.callbacks.onSlotCountChange(0);
+    this.callbacks.onSlotCountChange?.(0);
 
-    // Atmosphere & Background
     if (this.isFishMode) {
-      // Aquatic ocean floor
       const bgColor = new THREE.Color(0x062033);
       this.scene.background = bgColor;
-      this.scene.fog = new THREE.FogExp2(0x062033, 0.04 / zoomScale);
+      this.scene.fog = new THREE.FogExp2(0x062033, 0.008);
       this.dirLight.color.setHex(0xe0f2fe);
       this.hemiLight.color.setHex(0x38bdf8);
       this.hemiLight.groundColor.setHex(0x082f49);
 
-      this.buildScenery(level, trackExtent, zoomScale);
+      this.buildScenery(level, trackExtent, 1.0);
 
-      // Ocean floor sand plane with seamless coral texture
       const causticsTex = this.getWorldTexture('/assets/worlds/coral_cove.jpg', 6);
-      const floorSize = Math.max(34, trackExtent * 2 + 16);
+      const floorSize = Math.max(60, trackExtent * 2 + 30);
       const floorGeo = new THREE.PlaneGeometry(floorSize, floorSize);
       const floorMat = new THREE.MeshStandardMaterial({
         map: causticsTex,
@@ -330,7 +344,6 @@ export class GameSceneManager {
       this.groundMesh.receiveShadow = true;
       this.trackGroup.add(this.groundMesh);
 
-      // Coral Track
       const { group, beltMaterial } = this.fofFactory.createCoralTrack(this.trackPath);
       this.trackGroup.add(group);
       this.conveyorBeltMaterial = beltMaterial;
@@ -346,15 +359,14 @@ export class GameSceneManager {
       };
       const style = worldStyle[this.version as Exclude<GameVersion, 'fof'>];
       this.scene.background = new THREE.Color(style.background);
-      this.scene.fog = new THREE.Fog(style.background, 14 * zoomScale, 32 * zoomScale);
+      this.scene.fog = new THREE.Fog(style.background, 30, 90);
       this.dirLight.color.setHex(0xffffff);
       this.hemiLight.color.setHex(0xa5b4fc);
       this.hemiLight.groundColor.setHex(style.ground);
 
-      this.buildScenery(level, trackExtent, zoomScale);
+      this.buildScenery(level, trackExtent, 1.0);
 
-      // Smooth, non-tiled grand arena floor
-      const floorSize = Math.max(34, trackExtent * 2 + 16);
+      const floorSize = Math.max(60, trackExtent * 2 + 30);
       const floorGeo = new THREE.PlaneGeometry(floorSize, floorSize);
       const floorMat = new THREE.MeshStandardMaterial({
         color: style.ground,
@@ -367,7 +379,6 @@ export class GameSceneManager {
       this.groundMesh.receiveShadow = true;
       this.trackGroup.add(this.groundMesh);
 
-      // For Chess Kingdom, add an elegant polished gold arena ring framing the conveyor belt
       if (this.version === 'chess' || this.version === 'primitive') {
         const ringGeo = new THREE.RingGeometry(trackExtent + 0.15, trackExtent + 0.38, 64);
         const goldRingMat = new THREE.MeshStandardMaterial({
@@ -384,13 +395,11 @@ export class GameSceneManager {
         this.trackGroup.add(ringMesh);
       }
 
-      // Conveyor track
       const { group, beltMaterial } = this.primitiveFactory.createConveyorTrack(this.trackPath);
       this.trackGroup.add(group);
       this.conveyorBeltMaterial = beltMaterial;
     }
 
-    // Checkerboard Grid Tiles with dynamic level configuration
     this.gridManager.initGrid(this.currentLevel);
     const tileSize = this.gridManager.tileSize;
     for (const tile of this.gridManager.tiles) {
@@ -409,7 +418,6 @@ export class GameSceneManager {
     }
   }
 
-  /** Build a light-weight, level-aware diorama around the board. */
   private buildScenery(level: number, extent: number, zoom: number) {
     const group = this.backdropGroup;
     const scale = Math.max(0.78, Math.min(zoom, 4.5));
@@ -453,7 +461,6 @@ export class GameSceneManager {
     const backZ = -extent - 0.75 * unit;
     const sideX = extent + 0.95 * unit;
 
-    // Soft horizon mounds frame the play space while keeping the board clear.
     for (let i = -4; i <= 4; i++) {
       const x = i * extent * 0.31;
       const hill = add(new THREE.SphereGeometry(1, 10, 7), i % 2 ? nearMat : farMat,
@@ -462,7 +469,6 @@ export class GameSceneManager {
       hill.rotation.y = i * 0.12;
     }
 
-    // A glowing sun/moon shifts color and height as each world advances.
     const orb = add(new THREE.SphereGeometry(1, 20, 14), glowMat,
       extent * 0.68, (4.4 + (level % 5) * 0.28) * unit, backZ - 0.35 * unit,
       0.76 * unit, 0.76 * unit, 0.18 * unit);
@@ -472,12 +478,10 @@ export class GameSceneManager {
       for (let i = -3; i <= 3; i++) {
         const x = i * extent * 0.34;
         if (this.version === 'land') {
-          // Layered low-poly pines along the distant forest line.
           add(new THREE.CylinderGeometry(0.08 * unit, 0.13 * unit, 0.45 * unit, 6), farMat, x, 0.22 * unit, backZ + 0.2 * unit);
           add(new THREE.ConeGeometry((0.38 + (i & 1) * 0.08) * unit, (1.05 + ((level + i + 10) % 3) * 0.12) * unit, 7), i % 2 ? nearMat : accentMat, x, 0.88 * unit, backZ + 0.2 * unit);
           add(new THREE.ConeGeometry(0.27 * unit, 0.78 * unit, 7), farMat, x, 1.42 * unit, backZ + 0.2 * unit);
         } else {
-          // Puffy cloud banks at the horizon.
           for (let puff = -1; puff <= 1; puff++) {
             add(new THREE.SphereGeometry(0.48 * unit, 10, 7), accentMat,
               x + puff * 0.42 * unit, (2.5 + Math.abs(puff) * 0.12) * unit, backZ + 0.15 * unit,
@@ -486,7 +490,6 @@ export class GameSceneManager {
         }
       }
     } else if (this.version === 'chess' || this.version === 'primitive') {
-      // Baroque royal materials
       const goldMat = new THREE.MeshStandardMaterial({
         color: 0xf59e0b,
         metalness: 0.88,
@@ -512,7 +515,6 @@ export class GameSceneManager {
         metalness: 0.6,
       });
 
-      // 4 Grand Baroque Corner Rooks with Royal Gold Crowns framing the board
       const cornerOffsets = [
         { x: -(extent + 0.55), z: -(extent + 0.55) },
         { x: (extent + 0.55), z: -(extent + 0.55) },
@@ -521,39 +523,27 @@ export class GameSceneManager {
       ];
 
       for (const { x: cx, z: cz } of cornerOffsets) {
-        // Multi-tiered baroque pedestal
         add(new THREE.BoxGeometry(0.72 * unit, 0.18 * unit, 0.72 * unit), marbleDarkMat, cx, 0.09 * unit, cz);
         add(new THREE.CylinderGeometry(0.38 * unit, 0.44 * unit, 0.18 * unit, 16), goldMat, cx, 0.25 * unit, cz);
-
-        // Fluted sculpted tower shaft
         add(new THREE.CylinderGeometry(0.32 * unit, 0.38 * unit, 1.45 * unit, 16), marbleWhiteMat, cx, 1.05 * unit, cz);
-
-        // Ornate mid-level gold molding band
         add(new THREE.TorusGeometry(0.34 * unit, 0.045 * unit, 8, 20), goldMat, cx, 1.05 * unit, cz);
-
-        // Rook corbel cornice
         add(new THREE.CylinderGeometry(0.44 * unit, 0.32 * unit, 0.26 * unit, 16), marbleDarkMat, cx, 1.88 * unit, cz);
 
-        // 4 Rook battlements / crenels
         for (let c = 0; c < 4; c++) {
           const ca = c * Math.PI / 2 + Math.PI / 4;
           add(new THREE.BoxGeometry(0.14 * unit, 0.18 * unit, 0.14 * unit), marbleDarkMat,
             cx + Math.cos(ca) * 0.32 * unit, 2.05 * unit, cz + Math.sin(ca) * 0.32 * unit);
         }
 
-        // Royal Golden Crown atop the rook
         add(new THREE.CylinderGeometry(0.28 * unit, 0.28 * unit, 0.12 * unit, 16), goldMat, cx, 2.15 * unit, cz);
-        // Crown spikes / fleur-de-lis
         for (let s = 0; s < 4; s++) {
           const sa = s * Math.PI / 2;
           add(new THREE.ConeGeometry(0.05 * unit, 0.22 * unit, 5), goldMat,
             cx + Math.cos(sa) * 0.22 * unit, 2.3 * unit, cz + Math.sin(sa) * 0.22 * unit);
         }
-        // Glowing imperial ruby gem at the center of the crown
         add(new THREE.SphereGeometry(0.09 * unit, 12, 10), rubyMat, cx, 2.36 * unit, cz);
       }
 
-      // Distant castle ramparts along the back horizon
       for (let i = -3; i <= 3; i++) {
         const x = i * extent * 0.34;
         const towerMat = i % 2 ? nearMat : farMat;
@@ -575,7 +565,6 @@ export class GameSceneManager {
           side * (sideX - 0.18 * unit), 1.43 * unit, -extent * 0.62);
       }
     } else if (this.version === 'humans' || this.version === 'cars') {
-      // A compact neon city skyline, with randomized but level-seeded building heights.
       for (let i = -4; i <= 4; i++) {
         const x = i * extent * 0.27;
         const h = (1.05 + ((level * 7 + i * 11 + 60) % 7) * 0.22) * unit;
@@ -586,7 +575,6 @@ export class GameSceneManager {
         }
       }
       if (this.version === 'cars') {
-        // Trackside lamps add a racing-circuit silhouette.
         for (const side of [-1, 1]) {
           const x = side * sideX;
           add(new THREE.CylinderGeometry(0.035 * unit, 0.055 * unit, 1.55 * unit, 6), farMat, x, 0.76 * unit, -extent * 0.36);
@@ -594,7 +582,6 @@ export class GameSceneManager {
         }
       }
     } else if (this.version === 'aircraft') {
-      // Runway beacons and floating clouds create an airport-at-dusk horizon.
       for (let i = -3; i <= 3; i++) {
         const x = i * extent * 0.36;
         add(new THREE.CylinderGeometry(0.04 * unit, 0.06 * unit, 0.65 * unit, 7), farMat, x, 0.32 * unit, backZ + 0.12 * unit);
@@ -606,7 +593,6 @@ export class GameSceneManager {
         add(new THREE.SphereGeometry(0.46 * unit, 9, 6), accentMat, x, (3.0 + (i % 2) * 0.45) * unit, cloudZ, 1.55, 0.48, 0.8);
       }
     } else {
-      // Underwater coral gardens or the original dreamlike starter world.
       for (let i = -3; i <= 3; i++) {
         const x = i * extent * 0.34;
         if (this.isFishMode) {
@@ -616,7 +602,6 @@ export class GameSceneManager {
           }
           add(new THREE.SphereGeometry(0.23 * unit, 8, 6), i % 2 ? accentMat : glowMat, x, 1.1 * unit, backZ + 0.12 * unit);
         } else {
-          // Floating crystal shards for levels 1–9.
           const shard = add(new THREE.OctahedronGeometry((0.32 + (i & 1) * 0.13) * unit, 0), i % 2 ? accentMat : glowMat,
             x, (0.9 + ((level + i + 10) % 4) * 0.16) * unit, backZ + 0.12 * unit,
             0.7, 1.4, 0.7);
@@ -625,7 +610,6 @@ export class GameSceneManager {
       }
     }
 
-    // Level markers on the near corners give a small sense of progression.
     for (const side of [-1, 1]) {
       const pillar = add(new THREE.CylinderGeometry(0.12 * unit, 0.17 * unit, (0.55 + (level % 4) * 0.08) * unit, 8),
         side < 0 ? accentMat : glowMat, side * sideX, 0.26 * unit, -extent * 0.66);
@@ -643,9 +627,6 @@ export class GameSceneManager {
     }
   }
 
-  /**
-   * Spawn a runner from bottom queue onto the track dispenser at bottom-left!
-   */
   public launchRunner(
     color: TileColor,
     capacity: number,
@@ -656,14 +637,11 @@ export class GameSceneManager {
       return false;
     }
 
-    // Allow spawning runners even if no matching tiles immediately exist on board,
-    // enabling strategic queue rotation and absorbing layers as tiles get exposed
     const matchingOnBoard = this.gridManager.getRemainingCount(color);
     const actualCapacity = matchingOnBoard > 0 ? Math.min(capacity, matchingOnBoard) : capacity;
 
     const runnerId = `runner_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
 
-    // Build runner 3D mesh
     let runnerMeshGroup: THREE.Group;
     let tailMesh: THREE.Mesh | undefined;
     let badgeMat: THREE.MeshStandardMaterial;
@@ -688,7 +666,6 @@ export class GameSceneManager {
       updateNumber = themedObj.updateNumber;
     }
 
-    // Floating counter keeps the remaining piece quota visible above each runner.
     const counterCanvas = document.createElement('canvas');
     counterCanvas.width = 256;
     counterCanvas.height = 80;
@@ -729,19 +706,16 @@ export class GameSceneManager {
     };
     updateNumber(actualCapacity);
 
-    // Leap directly from UI column to the bottom conveyor track
     const colSpacing = 0.9;
     const colOffset = (colIndex - 1.5) * colSpacing;
     const spawnPos = new THREE.Vector3(colOffset, -0.9, this.trackPath.zMax + 1.0);
 
-    // Target landing on the bottom conveyor track
     const targetX = Math.max(
       this.trackPath.xMin + this.trackPath.radius,
       Math.min(this.trackPath.xMax - this.trackPath.radius, colOffset)
     );
     const targetPos = new THREE.Vector3(targetX, 0.1, this.trackPath.zMax);
 
-    // Initial progress along bottom track
     const x0 = this.trackPath.xMin + this.trackPath.radius;
     const initialDist = Math.max(0, targetX - x0);
     const initialProgress = initialDist / this.trackPath.totalLength;
@@ -760,7 +734,7 @@ export class GameSceneManager {
       badgeMat,
       updateNumber,
       progress: initialProgress,
-      speed: 0.16 * this.speedMultiplier, // loops ~ 6 seconds
+      speed: 0.16 * this.speedMultiplier,
       remaining: actualCapacity,
       allocatedRemaining: actualCapacity,
       squish: 0,
@@ -774,8 +748,16 @@ export class GameSceneManager {
       absorbedCount: 0,
     });
 
-    this.callbacks.onSlotCountChange(this.activeRunners.length);
+    this.callbacks.onSlotCountChange?.(this.activeRunners.length);
     return true;
+  }
+
+  public addRunner(color: TileColor, capacity: number, colIndex: number = 0): boolean {
+    return this.launchRunner(color, capacity, colIndex);
+  }
+
+  public spawnRunner(color: TileColor, capacity: number, colIndex: number = 0): boolean {
+    return this.launchRunner(color, capacity, colIndex);
   }
 
   public getActiveRunnerCount(): number {
@@ -807,10 +789,6 @@ export class GameSceneManager {
     this.chronoStasisTimer = 0;
     this.buildWorld(this.currentLevel);
   }
-
-  // ==========================================
-  // COMODINES TACTICAL POWERUPS IMPLEMENTATION
-  // ==========================================
 
   public rebuildGridTilesMaterials() {
     const tileSize = this.gridManager.tileSize;
@@ -869,24 +847,21 @@ export class GameSceneManager {
 
   public ejectMostIdleRunner(): boolean {
     if (this.activeRunners.length === 0) return false;
-    // Find runner with highest idleTimer or fewest absorbed
     const target = [...this.activeRunners].sort((a, b) => (b.idleTimer || 0) - (a.idleTimer || 0))[0];
     if (target && target.state === 'running') {
       target.state = 'clearing';
       this.spawnCelebrationBurst(target.meshGroup.position, target.color);
       soundManager.playCharacterCleared(this.isFishMode);
-      this.callbacks.onRunnerCleared(target.id, target.color);
-      this.callbacks.onSlotCountChange(Math.max(0, this.activeRunners.length - 1));
+      this.callbacks.onRunnerCleared?.(target.id, target.color);
+      this.callbacks.onSlotCountChange?.(Math.max(0, this.activeRunners.length - 1));
       return true;
     }
     return false;
   }
 
   public convertPerimeterTiles(targetColor: TileColor, count: number = 3): number {
-    // Find exposed outer tiles that don't match targetColor
     const uncollected = this.gridManager.tiles.filter((t) => !t.collected && t.color !== targetColor);
     if (uncollected.length === 0) return 0;
-    // Prefer border tiles
     const borderTiles = uncollected.filter(
       (t) => t.row === 0 || t.row === this.gridManager.rows - 1 || t.col === 0 || t.col === this.gridManager.cols - 1
     );
@@ -955,25 +930,17 @@ export class GameSceneManager {
     return swapCount;
   }
 
-  /**
-   * Main game physics, tile absorption logic, and animation tick
-   */
   private update(delta: number) {
     if (this.paused) return;
     const dt = Math.min(delta, 0.1);
     const time = this.clock.getElapsedTime();
 
-    // 1. Conveyor track scrolling chevrons animation (synchronized exactly to runners / cylinders speed)
     if (this.conveyorBeltMaterial && this.conveyorBeltMaterial.map) {
-      // Each runner progresses along the track at rate: 0.16 * this.speedMultiplier loops/sec
-      // The track polygon UV has u = 14 * progress.
-      // Therefore, the exact linear velocity of the belt is: 14 * 0.16 * this.speedMultiplier = 2.24 * this.speedMultiplier
       const runnerBaseSpeed = 0.16;
       const conveyorSpeed = 14 * runnerBaseSpeed * this.speedMultiplier;
       this.conveyorBeltMaterial.map.offset.x -= dt * conveyorSpeed;
     }
 
-    // 2. Active runners update
     if (this.magnetTimer > 0) {
       this.magnetTimer = Math.max(0, this.magnetTimer - dt);
       if (this.magnetTimer === 0) this.magnetMultiplier = 1.0;
@@ -992,18 +959,15 @@ export class GameSceneManager {
       if (runner.state === 'spawning') {
         runner.spawnTimer += dt * 2.8;
         const t = Math.min(1.0, runner.spawnTimer);
-        // High parabolic leap directly from UI rack up onto the conveyor track
         const jumpY = Math.sin(t * Math.PI) * 1.6;
         runner.meshGroup.position.lerpVectors(runner.spawnStartPos, runner.spawnTargetPos, t);
         runner.meshGroup.position.y += jumpY;
-
-        // Smoothly orient along the track (+X direction)
         runner.meshGroup.rotation.y = THREE.MathUtils.lerp(0.2, 0, t);
 
         if (t >= 1.0) {
           runner.state = 'running';
           runner.progress = runner.initialProgress;
-          runner.squish = 0.8; // Joyful bounce on landing
+          runner.squish = 0.8;
         }
         continue;
       }
@@ -1014,16 +978,14 @@ export class GameSceneManager {
         runner.meshGroup.scale.set(scale, scale, scale);
 
         if (runner.clearingTimer >= 1.0) {
-          // Finish clearing: remove completely from 3D scene and active list
           this.runnersGroup.remove(runner.meshGroup);
           this.activeRunners.splice(i, 1);
-          this.callbacks.onSlotCountChange(this.activeRunners.length);
+          this.callbacks.onSlotCountChange?.(this.activeRunners.length);
           continue;
         }
-        continue; // Do not advance along the track while clearing
+        continue;
       }
 
-      // Check if runner has fulfilled its quota, cleared its current batch, or timed out
       const inFlight = this.flyingTiles.filter((f) => f.targetRunnerId === runner.id).length;
       const matchingLeft = runner.isPrismatic
         ? this.gridManager.tiles.filter((t) => !t.collected).length
@@ -1038,48 +1000,37 @@ export class GameSceneManager {
         runner.idleTimer = 0;
       }
 
-      const quotaReached = runner.allocatedRemaining <= 0 && inFlight === 0;
-      const allMatchingCleared = matchingLeft === 0 && inFlight === 0;
-
-      // Anti-deadlock: If the runner already absorbed some tiles, and there are NO MORE exposed tiles
-      // of its color on the board perimeter: after 1.8s of sweeping, it clears with celebration!
-      // This frees up the conveyor slot immediately instead of trapping the player at 5/5!
-      const batchFinished = (runner.absorbedCount || 0) > 0 && !isExposed && inFlight === 0 && runner.idleTimer > 1.8;
-
-      // Track unjam: If a runner was launched with 0 matching tiles exposed, and the conveyor has 3+ runners:
-      // after 4 seconds without any absorption, it gracefully exits so the conveyor never jams!
-      const idleTimeout = !isExposed && inFlight === 0 && runner.idleTimer > 4.0 && this.activeRunners.length >= 3;
+      // 🔄 LÓGICA DE LOOP CONTINUO:
+      // El pez SOLO se elimina si agotó toda su capacidad reservada Y de tablero (remaining <= 0)
+      const quotaReached = runner.remaining <= 0 && runner.allocatedRemaining <= 0 && inFlight === 0;
+      const allMatchingCleared = matchingLeft === 0 && inFlight === 0 && runner.remaining <= 0;
 
       if (
         runner.state === 'running' &&
-        (quotaReached || allMatchingCleared || batchFinished || idleTimeout)
+        (quotaReached || allMatchingCleared)
       ) {
         runner.state = 'clearing';
         soundManager.playCharacterCleared(this.isFishMode);
         this.spawnCelebrationBurst(runner.meshGroup.position, runner.color);
-        this.callbacks.onRunnerCleared(runner.id, runner.color);
-        this.callbacks.onSlotCountChange(Math.max(0, this.activeRunners.length - 1));
+        this.callbacks.onRunnerCleared?.(runner.id, runner.color);
+        this.callbacks.onSlotCountChange?.(Math.max(0, this.activeRunners.length - 1));
         continue;
       }
 
-      // Running along conveyor track with potential Conveyor Surge boost
       const surgeMultiplier = this.conveyorSurgeTimer > 0 ? this.conveyorSurgeMultiplier : 1.0;
+      // Loop infinito alrededor del riel mientras le quede capacidad por absorber (runner.remaining > 0)
       runner.progress = (runner.progress + dt * runner.speed * surgeMultiplier) % 1.0;
       const point = this.trackPath.getPointAt(runner.progress);
 
       runner.meshGroup.position.x = point.x;
       runner.meshGroup.position.z = point.z;
-
-      // Natural orientation smoothing
       runner.meshGroup.rotation.y = point.angle;
 
-      // Fish swimming animation (tail waggle + slight body tilt)
       if (runner.tailMesh) {
         runner.tailMesh.rotation.y = Math.sin(time * (this.isFishMode ? 16 : 9)) * (this.isFishMode ? 0.45 : 0.25);
         if (this.isFishMode) runner.meshGroup.rotation.z = Math.sin(time * 8) * 0.08;
       }
 
-      // Squish & stretch bounce recovery
       if (runner.squish > 0) {
         runner.squish = Math.max(0, runner.squish - dt * 6);
         const squishFactor = Math.sin(runner.squish * Math.PI) * 0.35;
@@ -1088,7 +1039,6 @@ export class GameSceneManager {
         runner.meshGroup.scale.set(1, 1, 1);
       }
 
-      // Check tile absorption or encapsulation pop (only if allocatedRemaining > 0)
       if (runner.state === 'running' && runner.allocatedRemaining > 0) {
         const distThreshold = Math.max(0.48, this.gridManager.tileSize * 1.15) * this.magnetMultiplier;
         const exposedTile = this.gridManager.findExposedTile(
@@ -1102,11 +1052,9 @@ export class GameSceneManager {
 
         if (exposedTile && !exposedTile.collected) {
           if (exposedTile.encapsulated) {
-            // Runner pops the encapsulation shield!
             this.popEncapsulation(exposedTile);
-            runner.squish = 0.6; // Joyful bonk on shield pop
+            runner.squish = 0.6;
           } else if (exposedTile.unlockAt !== undefined && time < exposedTile.unlockAt) {
-            // The shattered shield leaves a short recovery window before its color can be absorbed.
           } else {
             exposedTile.unlockAt = undefined;
             runner.allocatedRemaining--;
@@ -1118,7 +1066,6 @@ export class GameSceneManager {
       }
     }
 
-    // 3. Update flying tiles (curved suction arc into runner)
     for (let i = this.flyingTiles.length - 1; i >= 0; i--) {
       const flight = this.flyingTiles[i];
       const flightSpeed = (this.polish === 'v1' ? 4.0 : 6.0) * this.speedMultiplier;
@@ -1130,67 +1077,60 @@ export class GameSceneManager {
         : flight.startPos;
 
       const t = Math.min(1.0, flight.progress);
-      // Quadratic bezier arc
       _vecA.lerpVectors(flight.startPos, targetPos, t);
       const arc = Math.sin(t * Math.PI) * flight.arcHeight;
       flight.mesh.position.set(_vecA.x, _vecA.y + arc, _vecA.z);
 
-      // Rotate while flying
       flight.mesh.rotation.x += flight.rotAxis.x * dt * 8;
       flight.mesh.rotation.y += flight.rotAxis.y * dt * 8;
       flight.mesh.rotation.z += flight.rotAxis.z * dt * 8;
 
-      // Scale down as it enters runner
       const s = Math.max(0.1, 1.0 - t * 0.8);
       flight.mesh.scale.set(s, s, s);
 
       if (t >= 1.0) {
-        // Tile arrived at runner!
         this.gridGroup.remove(flight.mesh);
         this.flyingTiles.splice(i, 1);
 
         if (targetRunner) {
           targetRunner.remaining = Math.max(0, targetRunner.remaining - 1);
           targetRunner.updateNumber(targetRunner.remaining);
-          targetRunner.squish = 1.0; // Trigger bounce squish
+          targetRunner.squish = 1.0;
 
-          // Sound effect
           soundManager.playAbsorb(20 - targetRunner.remaining, this.isFishMode);
 
-          // Juice: Screen shake on v3
           if (this.polish === 'v3') {
             this.shakeIntensity = Math.min(0.25, this.shakeIntensity + 0.08);
           }
 
-          // Small absorb sparkle burst
           this.spawnAbsorbParticles(targetRunner.meshGroup.position, flight.color);
 
-          this.callbacks.onTileAbsorbed(flight.startPos.x.toString(), flight.color, targetRunner.remaining);
+          const remainingBoardCount = this.gridManager.tiles.filter((t) => !t.collected).length;
+          this.callbacks.onTileAbsorbed?.(flight.startPos.x.toString(), flight.color, targetRunner.remaining);
+          this.callbacks.onTileCollected?.(flight.startPos.x.toString(), flight.color, remainingBoardCount);
 
-          // Check if runner completed its quota!
           const inFlightLeft = this.flyingTiles.filter((f) => f.targetRunnerId === targetRunner.id).length;
-          if (targetRunner.remaining <= 0 || (targetRunner.allocatedRemaining <= 0 && inFlightLeft === 0)) {
+          if (targetRunner.remaining <= 0 && targetRunner.allocatedRemaining <= 0 && inFlightLeft === 0) {
             if (targetRunner.state === 'running') {
               targetRunner.state = 'clearing';
               soundManager.playCharacterCleared(this.isFishMode);
               this.spawnCelebrationBurst(targetRunner.meshGroup.position, targetRunner.color);
-              this.callbacks.onRunnerCleared(targetRunner.id, targetRunner.color);
-              this.callbacks.onSlotCountChange(Math.max(0, this.activeRunners.length - 1));
+              this.callbacks.onRunnerCleared?.(targetRunner.id, targetRunner.color);
+              this.callbacks.onSlotCountChange?.(Math.max(0, this.activeRunners.length - 1));
             }
           }
 
-          // Check Win Condition
           if (this.gridManager.isCleared() && !this.hasTriggeredWin) {
             this.hasTriggeredWin = true;
             soundManager.playWin();
             this.triggerWinExplosion();
-            this.callbacks.onWinState(this.currentLevel);
+            this.callbacks.onWinState?.(this.currentLevel);
+            this.callbacks.onLevelComplete?.();
           }
         }
       }
     }
 
-    // 4. Update particles
     this.updateObstacleTimers(time);
     for (let i = this.activeParticles.length - 1; i >= 0; i--) {
       const p = this.activeParticles[i];
@@ -1242,7 +1182,6 @@ export class GameSceneManager {
       }
     }
 
-    // 4b. Update Shockwaves
     for (let i = this.activeShockwaves.length - 1; i >= 0; i--) {
       const sw = this.activeShockwaves[i];
       sw.life += dt;
@@ -1264,7 +1203,6 @@ export class GameSceneManager {
       }
     }
 
-    // 5. Screen shake recovery and camera application
     if (this.shakeIntensity > 0) {
       this.shakeIntensity = Math.max(0, this.shakeIntensity - dt * 3.0);
       const rx = (Math.random() - 0.5) * this.shakeIntensity * 0.15;
@@ -1418,7 +1356,7 @@ export class GameSceneManager {
   }
 
   private spawnAbsorbParticles(pos: THREE.Vector3, color: TileColor) {
-    if (this.polish === 'v1') return; // v1 is minimal
+    if (this.polish === 'v1') return;
 
     const count = this.polish === 'v3' ? 8 : 4;
     const isFish = this.isFishMode;
@@ -1428,18 +1366,16 @@ export class GameSceneManager {
       let pMat: THREE.Material;
 
       if (isFish) {
-        // Bubble or water droplet
         pGeo = new THREE.SphereGeometry(0.045, 8, 8);
         pMat = new THREE.MeshBasicMaterial({
-          color: color === 'white' ? 0x7dd3fc : 0x0284c7,
+          color: color === 'white' ? 0x7dd3fc : color === 'black' ? 0x38bdf8 : 0x0284c7,
           transparent: true,
           opacity: 0.8,
         });
       } else {
-        // Small pixel cube
         pGeo = new THREE.BoxGeometry(0.06, 0.06, 0.06);
         pMat = new THREE.MeshBasicMaterial({
-          color: color === 'white' ? 0xffffff : 0x1e293b,
+          color: color === 'white' ? 0xffffff : color === 'black' ? 0x0f172a : 0x1e293b,
         });
       }
 
@@ -1509,7 +1445,6 @@ export class GameSceneManager {
     }
   }
 
-  // Continuous render loop with software-gl safe pacing
   private startLoop() {
     let afterDrawTimeout = 0;
 
@@ -1640,7 +1575,6 @@ export class GameSceneManager {
       const initialScale = 0.8 + Math.random() * 0.4;
 
       if (particleType === 'crystal') {
-        // Sparkling faceted gem / octahedron
         const size = 0.09 + Math.random() * 0.07;
         pGeo = new THREE.OctahedronGeometry(size);
         pMat = new THREE.MeshStandardMaterial({
@@ -1651,7 +1585,6 @@ export class GameSceneManager {
           emissiveIntensity: 0.4,
         });
       } else if (particleType === 'confetti') {
-        // Fluttering ribbon
         isRibbon = true;
         const w = 0.14 + Math.random() * 0.08;
         const h = 0.07 + Math.random() * 0.04;
@@ -1664,7 +1597,6 @@ export class GameSceneManager {
           depthWrite: false,
         });
       } else {
-        // Glowing star / starlight orb
         const rad = 0.06 + Math.random() * 0.06;
         pGeo = new THREE.SphereGeometry(rad, 8, 8);
         pMat = new THREE.MeshBasicMaterial({
@@ -1682,9 +1614,8 @@ export class GameSceneManager {
       pMesh.rotation.set(Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2);
       this.vfxGroup.add(pMesh);
 
-      // Spherical explosion with upward bias
       const theta = Math.random() * Math.PI * 2;
-      const phi = (Math.random() * 0.5) * Math.PI; // upward hemisphere [0, PI/2]
+      const phi = (Math.random() - 0.5) * Math.PI;
       const spd = spreadSpeed * (0.6 + Math.random() * 0.8);
 
       const vel = new THREE.Vector3(
@@ -1720,11 +1651,6 @@ export class GameSceneManager {
     }
   }
 
-  /**
-   * Triggers a multi-stage celebratory 3D particle explosion in Three.js
-   * including central supernova, ground shockwave rings, corner aerial fireworks,
-   * cascading sparkling crystals, and grand finale fountain.
-   */
   public triggerWinExplosion() {
     this.clearWinExplosions();
 
@@ -1744,7 +1670,6 @@ export class GameSceneManager {
 
     const centerPos = new THREE.Vector3(0, 0.4, 0);
 
-    // Wave 0 (t = 0): Immediate Central Supernova Detonation & Double Floor Shockwave
     this.shakeIntensity = 0.55;
     this.spawnGroundShockwave(new THREE.Vector3(0, 0, 0), 12, gold, 1.4);
     this.spawnGroundShockwave(new THREE.Vector3(0, 0, 0), 7, white, 0.7);
@@ -1756,7 +1681,6 @@ export class GameSceneManager {
       drag: 0.96,
     });
 
-    // Wave 1 (t = 280ms): Left & Right Arena Cannons shooting high inward
     const t1 = window.setTimeout(() => {
       this.shakeIntensity = Math.max(this.shakeIntensity, 0.35);
       const leftPos = new THREE.Vector3(-2.8, 0.3, -1.8);
@@ -1781,7 +1705,6 @@ export class GameSceneManager {
     }, 280);
     this.winExplosionTimeouts.push(t1);
 
-    // Wave 2 (t = 600ms): Mid-air Aerial Shells over the board cascading fluttering ribbons
     const t2 = window.setTimeout(() => {
       this.shakeIntensity = Math.max(this.shakeIntensity, 0.28);
       const airPos1 = new THREE.Vector3(-1.4, 3.0, 0.4);
@@ -1805,7 +1728,6 @@ export class GameSceneManager {
     }, 600);
     this.winExplosionTimeouts.push(t2);
 
-    // Wave 3 (t = 950ms): Grand Finale Victory Fountain & Giant Outer Shockwave Ring
     const t3 = window.setTimeout(() => {
       this.shakeIntensity = Math.max(this.shakeIntensity, 0.45);
       this.spawnGroundShockwave(new THREE.Vector3(0, 0, 0), 16, royalPurple, 1.6);

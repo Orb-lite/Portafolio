@@ -70,7 +70,6 @@ const Pearl: React.FC<{
       style={{ width: size, height: size }}
       className={`rounded-full bg-gradient-to-br ${tintGradient} shadow-[0_4px_12px_rgba(0,0,0,0.25),0_0_10px_rgba(255,255,255,0.7)_inset] border border-white/80 relative pointer-events-none select-none ${className}`}
     >
-      {/* Specular curved highlight */}
       <div className="absolute top-[15%] left-[20%] w-[35%] h-[35%] rounded-full bg-white/90 blur-[0.3px]" />
     </div>
   );
@@ -113,7 +112,6 @@ const GlossyStar: React.FC<{
             <stop offset="50%" stopColor="#ffffff" stopOpacity="0" />
           </radialGradient>
         </defs>
-        {/* Outer Bevel / Glow Path */}
         <polygon
           points="50,5 64,36 98,38 72,62 80,95 50,77 20,95 28,62 2,38 36,36"
           fill="url(#starGradFront)"
@@ -121,7 +119,6 @@ const GlossyStar: React.FC<{
           strokeWidth="3.5"
           strokeLinejoin="round"
         />
-        {/* Inner Highlight Polygon */}
         <polygon
           points="50,14 60,38 86,40 66,58 72,83 50,69 28,83 34,58 14,40 40,38"
           fill="url(#starGloss)"
@@ -147,9 +144,9 @@ const StarCoin: React.FC<{ size?: number; className?: string }> = ({ size = 28, 
 };
 
 /* -------------------------------------------------------------
- * Cute Sad Orange Fish Mascot (Matching Image 2 Reference)
+ * Cute Sad Orange Fish Mascot (Grande en 190px)
  * -----------------------------------------------------------*/
-const SadFishMascot: React.FC<{ size?: number }> = ({ size = 96 }) => {
+const SadFishMascot: React.FC<{ size?: number }> = ({ size = 190 }) => {
   return (
     <div
       style={{ width: size, height: size }}
@@ -172,7 +169,6 @@ const SadFishMascot: React.FC<{ size?: number }> = ({ size = 96 }) => {
           </linearGradient>
         </defs>
 
-        {/* Tail fin */}
         <path
           d="M 92 60 C 105 45 118 42 116 55 C 114 62 108 65 116 75 C 117 84 105 82 92 66 Z"
           fill="url(#finGrad)"
@@ -181,7 +177,6 @@ const SadFishMascot: React.FC<{ size?: number }> = ({ size = 96 }) => {
           strokeLinejoin="round"
         />
 
-        {/* Top dorsal fin */}
         <path
           d="M 50 28 C 55 12 70 14 78 26 C 72 26 62 26 50 28 Z"
           fill="url(#finGrad)"
@@ -190,7 +185,6 @@ const SadFishMascot: React.FC<{ size?: number }> = ({ size = 96 }) => {
           strokeLinejoin="round"
         />
 
-        {/* Main Chubby Body */}
         <ellipse
           cx="60"
           cy="62"
@@ -201,39 +195,28 @@ const SadFishMascot: React.FC<{ size?: number }> = ({ size = 96 }) => {
           strokeWidth="3"
         />
 
-        {/* Cute belly highlight */}
         <path
           d="M 38 72 C 45 88 75 88 84 72 C 72 78 50 78 38 72 Z"
           fill="url(#fishBellyGrad)"
           opacity="0.75"
         />
 
-        {/* Head gloss reflection */}
         <ellipse cx="48" cy="42" rx="12" ry="5" fill="#ffffff" opacity="0.45" transform="rotate(-15 48 42)" />
 
-        {/* Left Sad Eye */}
         <g>
-          {/* Eyebrow angled sad */}
           <path d="M 40 47 Q 46 44 50 49" stroke="#792900" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-          {/* Eye */}
           <ellipse cx="45" cy="56" rx="5.5" ry="6.5" fill="#2d1500" />
-          {/* Big teary catchlight */}
           <circle cx="43.5" cy="53.5" r="2.2" fill="#ffffff" />
           <circle cx="47" cy="58.5" r="1.1" fill="#ffffff" />
         </g>
 
-        {/* Right Sad Eye */}
         <g>
-          {/* Eyebrow angled sad */}
           <path d="M 64 49 Q 68 44 74 47" stroke="#792900" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-          {/* Eye */}
           <ellipse cx="69" cy="56" rx="5.5" ry="6.5" fill="#2d1500" />
-          {/* Big teary catchlight */}
           <circle cx="67.5" cy="53.5" r="2.2" fill="#ffffff" />
           <circle cx="71" cy="58.5" r="1.1" fill="#ffffff" />
         </g>
 
-        {/* Sad downturned mouth */}
         <path
           d="M 52 74 Q 57 69 62 74"
           stroke="#5d1c00"
@@ -242,7 +225,6 @@ const SadFishMascot: React.FC<{ size?: number }> = ({ size = 96 }) => {
           fill="none"
         />
 
-        {/* Chubby side fins */}
         <path
           d="M 30 68 C 22 72 20 80 26 84 C 30 82 32 76 33 70 Z"
           fill="url(#finGrad)"
@@ -250,7 +232,6 @@ const SadFishMascot: React.FC<{ size?: number }> = ({ size = 96 }) => {
           strokeWidth="2"
         />
 
-        {/* Tiny sad tear drop */}
         <path
           d="M 40 64 C 40 68 44 68 44 64 C 44 62 42 60 42 60 C 42 60 40 62 40 64 Z"
           fill="#67e8f9"
@@ -296,7 +277,6 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showStats, setShowStats] = useState(false);
 
-  // Confetti celebration on win
   useEffect(() => {
     if (isWin) {
       try {
@@ -322,7 +302,7 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
         }, 320);
         return () => clearTimeout(timer);
       } catch {
-        // graceful fallback
+        // fallback
       }
     }
   }, [isWin]);
@@ -334,7 +314,7 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
         deferredPrompt.prompt();
         return;
       } catch {
-        // fallback to invite modal
+        // fallback
       }
     }
     setShowInviteModal(true);
@@ -355,9 +335,7 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
       aria-labelledby="game-result-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-300 select-none overflow-y-auto"
     >
-      {/* Outer wrapper positioning floating pearls and decorations */}
-      <div className="relative w-full max-w-xl my-auto pt-10 sm:pt-14 pb-4">
-        {/* Floating Pearls around perimeter matching reference screenshot */}
+      <div className="relative w-full max-w-xl my-auto pt-16 sm:pt-20 pb-4">
         <Pearl size={24} tint="lavender" className="absolute top-12 -left-2 sm:-left-4 z-20 animate-pulse" />
         <Pearl size={16} tint="cyan" className="absolute top-20 left-6 z-20 opacity-80" />
         <Pearl size={28} tint="white" className="absolute top-1/2 -left-4 sm:-left-6 z-20 shadow-cyan-500/50" />
@@ -370,7 +348,6 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
         <Pearl size={18} tint="pink" className="absolute bottom-20 right-6 z-20" />
         <Pearl size={16} tint="lavender" className="absolute bottom-8 -right-1 z-20" />
 
-        {/* Golden star coins around perimeter (Win only) */}
         {isWin && (
           <>
             <StarCoin size={30} className="absolute top-10 right-16 sm:right-24 z-20 rotate-12" />
@@ -379,7 +356,7 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
           </>
         )}
 
-        {/* Top Rim Mascot or Stars Deco (Partially overlaps the top edge) */}
+        {/* Mascot / Stars Header */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center pointer-events-none">
           {isWin ? (
             <div className="flex items-end justify-center gap-1 sm:gap-3">
@@ -388,15 +365,15 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
               <GlossyStar size={54} rotate={14} scale={0.92} />
             </div>
           ) : (
-            <div className="-mb-2">
-              <SadFishMascot size={90} />
+            <div className="mt-45 -mb-80 flex justify-center relative z-40">
+              <SadFishMascot size={190} />
             </div>
           )}
         </div>
 
-        {/* THE FROSTED TRANSLUCENT GLASS CAPSULE */}
+        {/* FROSTED GLASS CAPSULE */}
         <div
-          className={`relative w-full rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-9 pt-14 sm:pt-16 text-center text-white border-2 border-white/70 shadow-[0_25px_65px_rgba(8,145,178,0.35),0_0_40px_rgba(255,255,255,0.25)_inset] transition-all overflow-hidden ${
+          className={`relative w-full rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-9 pt-16 sm:pt-20 text-center text-white border-2 border-white/70 shadow-[0_25px_65px_rgba(8,145,178,0.35),0_0_40px_rgba(255,255,255,0.25)_inset] transition-all overflow-hidden ${
             isFoF
               ? 'backdrop-blur-2xl bg-white/20 sm:bg-white/25'
               : 'backdrop-blur-2xl bg-slate-900/60 sm:bg-slate-900/70 border-cyan-300/60'
@@ -407,11 +384,9 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
               : undefined,
           }}
         >
-          {/* Top highlight specular curved reflection arc */}
           <div className="absolute top-1.5 left-10 right-10 h-3 rounded-full bg-gradient-to-b from-white/60 to-transparent pointer-events-none" />
           <div className="absolute top-3 left-6 w-24 h-12 rounded-full bg-white/20 blur-md pointer-events-none -rotate-12" />
 
-          {/* Replay Pill Header if replaying past level */}
           {isWin && isReplay && (
             <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-2 rounded-full bg-white/30 border border-white/60 text-xs font-black text-amber-300 uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
@@ -419,7 +394,6 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
             </div>
           )}
 
-          {/* MAIN HEADLINE (¡NIVEL COMPLETADO! / ¡PERDISTE!) */}
           <h1
             id="game-result-title"
             className="text-3xl sm:text-4xl md:text-5xl font-black tracking-wide text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)] mt-1 mb-2 uppercase"
@@ -427,12 +401,10 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
             {titleText}
           </h1>
 
-          {/* SUBTITLE */}
           <p className="text-sm sm:text-base md:text-lg font-bold text-white/95 max-w-md mx-auto mb-6 leading-snug drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]">
             {subtitleText}
           </p>
 
-          {/* BIG GLOSSY AMBER-ORANGE PILL BUTTON: ✨ DESCARGAR GRATIS */}
           <div className="w-full flex justify-center mb-6">
             <button
               type="button"
@@ -440,9 +412,7 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
               aria-label={t.downloadFree}
               className="group relative w-full sm:w-[84%] max-w-md py-3.5 sm:py-4 px-6 rounded-full font-black text-lg sm:text-xl text-white tracking-wide border-2 border-white/90 shadow-[0_12px_28px_rgba(255,140,0,0.55),0_-3px_8px_rgba(255,255,255,0.45)_inset] bg-gradient-to-b from-[#ffbe3b] via-[#ff8d00] to-[#e65c00] hover:brightness-110 active:scale-95 transition-all duration-150 cursor-pointer flex items-center justify-center gap-3"
             >
-              {/* Inner top gloss highlight bar */}
               <div className="absolute top-1.5 left-6 right-6 h-1.5 rounded-full bg-white/50 blur-[0.4px] pointer-events-none" />
-
               <span className="text-xl sm:text-2xl filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">✨</span>
               <span className="drop-shadow-[0_2px_3px_rgba(0,0,0,0.3)] font-black uppercase">
                 {t.downloadFree}
@@ -450,9 +420,7 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
             </button>
           </div>
 
-          {/* GAMEPLAY ACTION BUTTONS: Pathway, Replay / Restart, and Next Level (if win) */}
           <div className="w-full max-w-md mx-auto flex flex-col gap-2.5">
-            {/* WIN: Continue to Next Level */}
             {isWin && onNextLevel && (
               <button
                 type="button"
@@ -464,7 +432,6 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
               </button>
             )}
 
-            {/* DIE: Retry Level */}
             {!isWin && onRetry && (
               <button
                 type="button"
@@ -477,7 +444,6 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
               </button>
             )}
 
-            {/* Replay past cleared jump */}
             {isWin && isReplay && onJumpToFrontier && frontierLevel && (
               <button
                 type="button"
@@ -489,21 +455,17 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
               </button>
             )}
 
-            {/* Secondary actions row: Volver al Camino (Pathway) & Volver a Iniciar (Restart) */}
             <div className="grid grid-cols-2 gap-2.5">
-              {/* Return to Pathway */}
               {onBackToPath && (
                 <button
                   type="button"
                   onClick={onBackToPath}
                   className="py-2.5 px-3 rounded-full font-bold text-xs sm:text-sm text-white border border-white/60 bg-white/20 hover:bg-white/30 active:scale-95 backdrop-blur-md transition cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
                 >
-                  <Map className="w-4 h-4 text-emerald-200" />
                   <span className="truncate">{t.returnToPathway}</span>
                 </button>
               )}
 
-              {/* Replay / Restart current level */}
               {(isWin ? onRestart : onRetry) && (
                 <button
                   type="button"
@@ -516,7 +478,6 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
               )}
             </div>
 
-            {/* Lives countdown and ad watch option if died */}
             {!isWin && lives < maxLives && (
               <div className="mt-1 p-3 rounded-2xl bg-white/15 backdrop-blur-md border border-white/30 text-left text-xs space-y-2">
                 <div className="flex items-center justify-between text-white font-bold">
@@ -551,7 +512,6 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
               </div>
             )}
 
-            {/* Optional Collapsible Stats Drawer */}
             {isWin && (
               <div className="mt-1">
                 <button
@@ -583,7 +543,6 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
             )}
           </div>
 
-          {/* Creator Attribution */}
           <div className="mt-4 pt-2 border-t border-white/20 flex items-center justify-center gap-1 text-[11px] text-white/80 font-medium">
             <Sparkles className="w-3 h-3 text-amber-300" />
             <span>Fish Feeder · By Dimpz Games · Isaac Gómez</span>
@@ -591,7 +550,6 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
         </div>
       </div>
 
-      {/* Mobile Download Invite Modal Overlay */}
       {showInviteModal && (
         <div className="fixed inset-0 z-60 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md">
           <div className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-3xl bg-slate-900 border border-cyan-400/50 p-4 sm:p-6 shadow-2xl text-left">

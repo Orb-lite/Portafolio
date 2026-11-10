@@ -38,7 +38,9 @@ export class GridManager {
     this.tileSize = pitch * 0.88;
     this.tileSpacing = pitch * 0.12;
 
-    const availableColors = ALL_COLORS.slice(0, config.colorsCount);
+    
+    
+    const availableColors: TileColor[] = ALL_COLORS;
 
     const totalWidth = this.cols * (this.tileSize + this.tileSpacing) - this.tileSpacing;
     const totalDepth = this.rows * (this.tileSize + this.tileSpacing) - this.tileSpacing;
@@ -57,13 +59,23 @@ export class GridManager {
       Array.from({ length: clusterCols }, () => 0)
     );
 
-    let seed = 0;
-    for (let cr = 0; cr < clusterRows; cr++) {
-      for (let cc = 0; cc < clusterCols; cc++) {
-        clusterMap[cr][cc] = (cr * 3 + cc * 2 + seed) % availableColors.length;
-        seed++;
+  for (let cr = 0; cr < clusterRows; cr++) {
+  for (let cc = 0; cc < clusterCols; cc++) {
+    let nextColorIdx = Math.floor(Math.random() * availableColors.length);
+    
+    // Evita repetir el mismo color que el bloque de la izquierda o arriba
+    const leftColor = cc > 0 ? clusterMap[cr][cc - 1] : -1;
+    const topColor = cr > 0 ? clusterMap[cr - 1][cc] : -1;
+    
+    if (availableColors.length > 1) {
+      while (nextColorIdx === leftColor || nextColorIdx === topColor) {
+        nextColorIdx = Math.floor(Math.random() * availableColors.length);
       }
     }
+    
+    clusterMap[cr][cc] = nextColorIdx;
+  }
+}
 
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {

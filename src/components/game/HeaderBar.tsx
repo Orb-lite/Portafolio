@@ -2,7 +2,7 @@ import React from 'react';
 import { GameVersion } from '../../game/types';
 import { getThemeName } from '../../game/experience';
 import { GameLanguage, GAME_TEXT } from '../../game/localization';
-import { Volume2, VolumeX, RotateCcw, BookOpen, Sparkles, Heart, Map, Trophy, Database, User, Gamepad2, Fish, Crown, Box } from 'lucide-react';
+import { Volume2, VolumeX, RotateCcw, BookOpen, Sparkles, Heart, Map, Trophy, User, Fish, Crown, Box, Zap } from 'lucide-react';
 import { ComodinesHUD } from './ComodinesHUD';
 
 interface HeaderBarProps {
@@ -65,213 +65,144 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   const t = GAME_TEXT[language];
   const progressPct = Math.min(100, Math.round((tilesAbsorbed / Math.max(1, totalTiles)) * 100));
 
+  // Estilo base idéntico a las tarjetas laterales (oscuridad traslúcida + blur + borde suave)
+  const cardStyle = "bg-slate-900/40 backdrop-blur-md border border-white/30 rounded-2xl p-2 sm:p-2.5 shadow-2xl transition-all";
+
   return (
-    <header className="absolute top-0 left-0 right-0 z-30 pointer-events-none p-2 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-      {/* Left: App Title & Creator Credit */}
-      <div
-        className={`pointer-events-auto flex items-center gap-2 px-3.5 py-2 rounded-2xl transition-all ${
-          isFoF
-            ? 'backdrop-blur-xl bg-white/20 border-2 border-white/60 text-white shadow-[0_8px_25px_rgba(8,145,178,0.25)]'
-            : 'bg-slate-900/85 backdrop-blur-md border border-slate-700/60 shadow-xl'
-        }`}
-      >
-        <div
-          className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm shadow-md transition-all ${
-            isFoF
-              ? 'bg-gradient-to-tr from-amber-400 via-orange-400 to-amber-500 text-white shadow-orange-500/30'
-              : 'bg-gradient-to-tr from-slate-200 to-slate-400 text-slate-950'
-          }`}
-        >
-          {isFoF ? <Fish className="w-4 h-4 fill-white text-white" /> : isChess ? <Crown className="w-4 h-4" /> : <Box className="w-4 h-4" />}
+    <header className="absolute top-0 left-0 right-0 z-30 p-2 sm:p-3 flex flex-wrap items-center justify-between gap-2 select-none">
+      
+      {/* 1. Izquierda: Título del Juego y Créditos */}
+      <div className={`${cardStyle} flex items-center gap-2.5 px-3.5`}>
+        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-400 via-orange-500 to-amber-500 flex items-center justify-center font-black text-slate-950 shadow-md shrink-0">
+          {isFoF ? <Fish className="w-4 h-4 fill-slate-950 text-slate-950" /> : isChess ? <Crown className="w-4 h-4" /> : <Box className="w-4 h-4" />}
         </div>
-        <div>
-          <h1 className="text-xs sm:text-sm font-bold text-white tracking-tight flex items-center gap-1.5">
+        <div className="flex flex-col">
+          <h1 className="text-xs sm:text-sm font-extrabold text-white tracking-tight flex items-center gap-1.5 leading-none">
             {isFoF ? 'Fish Feeder' : 'Conveyor Realms'}
-            <span
-              className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
-                isFoF
-                  ? 'bg-white/30 text-white border border-white/60'
-                  : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
-              }`}
-            >
+            <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/10 text-cyan-300 border border-white/20">
               {isFoF ? t.fishFeederMode : getThemeName(version, language)}
             </span>
           </h1>
-          <div className="flex items-center gap-1.5 text-[10px]">
-            <span className={`${isFoF ? 'text-amber-200' : 'text-amber-400'} font-semibold flex items-center gap-0.5`}>
+          <div className="flex items-center gap-1.5 text-[10px] mt-1">
+            <span className="text-amber-400 font-bold flex items-center gap-0.5">
               <Sparkles className="w-2.5 h-2.5 inline" />
               By Dimpz Games
             </span>
             <span className="text-white/40 hidden sm:inline">•</span>
-            <span className="text-white/70 hidden sm:inline">Technical Artist</span>
+            <span className="text-white/80 font-medium hidden sm:inline">Technical Artist</span>
           </div>
         </div>
       </div>
 
-      {/* Center: Current board level and lifetime XP HUD */}
-      <div
-        className={`pointer-events-auto flex items-center gap-2 px-3.5 py-1.5 rounded-2xl transition-all ${
-          isFoF
-            ? 'backdrop-blur-xl bg-white/20 border-2 border-white/60 text-white shadow-[0_8px_25px_rgba(8,145,178,0.25)]'
-            : 'bg-slate-900/90 backdrop-blur-md border border-slate-700/70 shadow-2xl'
-        }`}
-      >
-        <div
-          className={`w-7 h-7 rounded-xl ${
-            isFoF
-              ? 'bg-gradient-to-tr from-[#ffbe3b] to-[#ff8d00] text-white border border-white/80'
-              : frontierLevel && level < frontierLevel
-              ? 'bg-gradient-to-tr from-cyan-500 to-emerald-400 text-slate-950'
-              : 'bg-gradient-to-tr from-amber-500 to-yellow-300 text-slate-950'
-          } font-black text-xs flex items-center justify-center shadow-md`}
-        >
+      {/* 2. Centro: Nivel, XP acumulada, Pearls y Vidas */}
+      <div className={`${cardStyle} flex items-center gap-3 px-3.5`}>
+        <div className="w-8 h-8 rounded-xl bg-amber-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center shadow-md shrink-0 border border-slate-950">
           {level}
         </div>
         <div className="flex flex-col min-w-[110px] sm:min-w-[140px]">
-          <div className="flex justify-between items-center text-[10px] font-bold">
-            <div className="flex items-center gap-1">
-              <span className={isFoF ? 'text-amber-200 tracking-wide' : 'text-amber-400 tracking-wide'}>
-                {t.level} {level}
-              </span>
-              {frontierLevel && level < frontierLevel && (
-                <span className="text-[8px] font-black text-emerald-200 bg-white/20 px-1 py-0.2 rounded border border-white/40 uppercase">
-                  {t.replay}
-                </span>
-              )}
-            </div>
-            <span className={`${isFoF ? 'text-white/80' : 'text-slate-300'} font-mono text-[9px]`}>
+          <div className="flex justify-between items-center text-[10px] font-extrabold">
+            <span className="text-amber-400 tracking-wide uppercase">
+              {t.level} {level}
+            </span>
+            <span className="text-slate-200 font-mono text-[9px]">
               {experience.toLocaleString()} {t.totalXp}
             </span>
           </div>
-          <div className={`flex justify-between items-center text-[9px] font-semibold ${isFoF ? 'text-white/80' : 'text-slate-400'} mt-1`}>
+          <div className="flex justify-between items-center text-[9px] font-bold text-slate-300 mt-0.5">
             <span>{t.board}</span>
             <span>{tilesAbsorbed} / {totalTiles} {isFoF ? t.pearls : t.tiles}</span>
           </div>
-          <div className={`w-full h-2 ${isFoF ? 'bg-white/20 border-white/40' : 'bg-slate-800 border-slate-700/60'} rounded-full overflow-hidden border mt-0.5`}>
+          <div className="w-full h-1.5 bg-slate-950/60 rounded-full overflow-hidden border border-white/20 mt-1">
             <div
-              className={`h-full ${
-                isFoF
-                  ? 'bg-gradient-to-r from-amber-300 via-orange-400 to-yellow-300 shadow-[0_0_8px_rgba(251,191,36,0.7)]'
-                  : 'bg-gradient-to-r from-amber-400 via-yellow-400 to-emerald-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]'
-              } transition-all duration-300 rounded-full`}
+              className="h-full bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-300 transition-all duration-300 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.5)]"
               style={{ width: `${progressPct}%` }}
             />
           </div>
         </div>
-        <div
-          className={`flex items-center gap-1 rounded-xl px-2.5 py-1 text-xs font-bold ${
-            isFoF ? 'bg-white/25 border border-white/50 text-white' : 'bg-slate-800/80 text-rose-200'
-          }`}
-          title={t.lives}
-        >
-          <Heart className={`h-3.5 w-3.5 ${lives > 0 ? 'fill-rose-400 text-rose-300' : 'text-slate-400'}`} />
-          <span className={lives > 0 ? 'text-white font-black' : 'text-slate-400'}>{lives}/{maxLives}</span>
+        
+        {/* Contador de Vidas */}
+        <div className="flex items-center gap-1 bg-slate-950/30 border border-white/20 rounded-xl px-2.5 py-1 text-xs font-black text-white">
+          <Heart className={`h-3.5 w-3.5 ${lives > 0 ? 'fill-rose-500 text-rose-500' : 'text-slate-500'}`} />
+          <span>{lives}/{maxLives}</span>
         </div>
       </div>
 
-      {/* Center-Right: Level-based world theme & Comodines HUD */}
-      <div className="pointer-events-auto flex items-center gap-2">
-        {onOpenComodines && onActivateComodin && (
-          <ComodinesHUD
-            selectedComodin={selectedComodin}
-            hasUsedComodin={hasUsedComodin}
-            onOpenModal={onOpenComodines}
-            onActivate={onActivateComodin}
-            level={level}
-            language={language}
-            version={version}
-          />
-        )}
-        <div
-          className={`hidden md:flex items-center gap-2 p-1.5 rounded-2xl shadow-xl ${
-            isFoF
-              ? 'backdrop-blur-xl bg-white/20 border-2 border-white/60 text-white'
-              : 'bg-slate-900/90 backdrop-blur-md border border-slate-700/70 shadow-2xl'
-          }`}
-        >
-          <div
-            className={`px-3 py-1 rounded-xl text-xs font-bold ${
-              isFoF ? 'bg-white/25 text-white border border-white/50' : 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/40'
-            }`}
-          >
-            {getThemeName(version)}
-          </div>
-        </div>
-      </div>
-
-      {/* Right: Actions, Leaderboard, Supabase, Audio, Docs */}
-      <div
-        className={`pointer-events-auto flex items-center gap-1.5 px-2.5 py-1.5 rounded-2xl shadow-xl ${
-          isFoF
-            ? 'backdrop-blur-xl bg-white/20 border-2 border-white/60 text-white'
-            : 'bg-slate-900/85 backdrop-blur-md border border-slate-700/60'
-        }`}
+      {/* 3. Botón Destacado Power-Ups */}
+      <button
+        type="button"
+        onClick={selectedComodin && !hasUsedComodin ? onActivateComodin : onOpenComodines}
+        className="bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 text-slate-950 font-black text-xs sm:text-sm px-4 py-2.5 rounded-2xl shadow-xl border-2 border-amber-200/90 uppercase tracking-wider flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 cursor-pointer"
       >
-        {/* Gamertag Profile Chip */}
+        <Zap className="w-4 h-4 fill-slate-950 text-slate-950 animate-pulse" />
+        <span>{selectedComodin ? selectedComodin.name : 'POWER-UPS'}</span>
+      </button>
+
+      {/* 4. Derecha: Gamertag, Audio, Velocidad y Botones de Menú */}
+      <div className={`${cardStyle} flex items-center gap-1.5`}>
         {gamertag && onOpenGamertag && (
           <button
+            type="button"
             onClick={onOpenGamertag}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-400/40 text-xs font-black text-cyan-300 transition cursor-pointer"
-            title="Editar Gamertag"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-950/30 hover:bg-slate-950/50 border border-white/20 text-xs font-black text-cyan-300 transition cursor-pointer"
           >
             <User className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="max-w-[70px] sm:max-w-[105px] truncate">{gamertag}</span>
+            <span className="max-w-[70px] sm:max-w-[100px] truncate">{gamertag}</span>
           </button>
         )}
 
-        {/* Leaderboard High Scores */}
         {onOpenLeaderboard && (
           <button
+            type="button"
             onClick={onOpenLeaderboard}
-            className="p-1.5 rounded-xl text-amber-300 hover:text-white hover:bg-slate-800 transition cursor-pointer"
-            title="Salón de la Fama / Leaderboard"
+            className="p-1.5 rounded-xl text-amber-400 hover:bg-white/10 transition cursor-pointer"
+            title="Leaderboard"
           >
-            <Trophy className="w-4 h-4 text-amber-400" />
+            <Trophy className="w-4 h-4" />
           </button>
         )}
 
-        {/* Speed toggle */}
         <button
+          type="button"
           onClick={() => onSpeedChange(speed === 1.0 ? 1.5 : speed === 1.5 ? 2.0 : 1.0)}
-          className="px-2 py-1 rounded-xl text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition"
-          title="Toggle Game Speed"
+          className="px-2 py-1 rounded-xl text-xs font-black text-white bg-slate-950/40 hover:bg-slate-950/60 border border-white/20 transition"
         >
           {speed}x
         </button>
 
-        {/* Audio Toggle */}
         <button
+          type="button"
           onClick={onToggleSound}
-          className="p-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition"
-          title={soundEnabled ? t.mute : t.unmute}
+          className="p-1.5 rounded-xl text-white hover:bg-white/10 transition"
         >
           {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4 text-rose-400" />}
         </button>
 
-        {/* Reset */}
         <button
+          type="button"
           onClick={onReset}
-          className="p-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition"
-          title={t.reset}
+          className="p-1.5 rounded-xl text-white hover:bg-white/10 transition"
         >
           <RotateCcw className="w-4 h-4" />
         </button>
 
-        <button onClick={onOpenMap} className="flex items-center gap-1.5 rounded-xl bg-emerald-500/10 px-2.5 py-1.5 text-xs font-bold text-emerald-200 hover:bg-emerald-500/20 transition cursor-pointer" title={t.pathway}>
-          <Map className="w-4 h-4 text-emerald-300" />
-          <span>{t.pathway}</span>
+        <button
+          type="button"
+          onClick={onOpenMap}
+          className="flex items-center gap-1 rounded-xl bg-slate-950/40 hover:bg-slate-950/60 border border-white/20 px-2.5 py-1 text-xs font-bold text-white transition cursor-pointer"
+        >
+          <span className="hidden sm:inline">{t.pathway}</span>
         </button>
 
-        {/* Documentation / Changelog */}
         <button
+          type="button"
           onClick={onOpenDocs}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition cursor-pointer"
-          title={t.gameInfo}
+          className="flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold text-white bg-slate-950/40 hover:bg-slate-950/60 border border-white/20 transition cursor-pointer"
         >
           <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
-          <span>{t.gameInfo}</span>
+          <span className="hidden md:inline">{t.gameInfo}</span>
         </button>
       </div>
+
     </header>
   );
 };

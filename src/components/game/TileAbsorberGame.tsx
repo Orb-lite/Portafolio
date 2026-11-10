@@ -3,7 +3,7 @@ import { ALL_COLORS, GameVersion } from "../../game/types";
 import { getLevelConfig, getThemeForLevel, getVisualThemeForLevel } from "../../game/experience";
 import { GameSceneManager } from "../../game/threeScene";
 import { HeaderBar } from "./HeaderBar";
-import { BottomQueue, QueueRunner } from "./BottomQueue";
+import { QueueRunner } from "./BottomQueue";
 import { WinModal } from "./WinModal";
 import { DocModal } from "./DocModal";
 import { LifeModal } from "./LifeModal";
@@ -47,6 +47,24 @@ interface TileAbsorberGameProps {
 
 const savedProgress = getSavedProgress();
 const MAX_ACTIVE_RUNNERS = 5;
+
+// Mapeador universal de colores para sincronizar la UI lateral con las fichas y peces del mapa 3D
+const getTileColorBg = (color: string) => {
+  switch (color?.toLowerCase()) {
+    case 'blue': return 'bg-blue-600 border-blue-400 text-white';
+    case 'green': return 'bg-emerald-500 border-emerald-300 text-slate-950';
+    case 'red': return 'bg-rose-500 border-rose-300 text-white';
+    case 'yellow': return 'bg-amber-400 border-amber-200 text-slate-950';
+    case 'purple': return 'bg-purple-600 border-purple-300 text-white';
+    case 'orange': return 'bg-orange-500 border-orange-300 text-slate-950';
+    case 'cyan': return 'bg-cyan-400 border-cyan-200 text-slate-950';
+    case 'magenta':
+    case 'pink': 
+      return 'bg-fuchsia-500 border-fuchsia-300 text-white';
+    case 'white': return 'bg-slate-100 border-slate-300 text-slate-950';
+    default: return 'bg-slate-700 border-slate-500 text-white';
+  }
+};
 
 export function TileAbsorberGame({
   language = "es",
@@ -94,7 +112,6 @@ export function TileAbsorberGame({
   const [isSupabaseConfigOpen, setIsSupabaseConfigOpen] = useState(false);
   const [isWebAdViewerOpen, setIsWebAdViewerOpen] = useState(false);
 
-  // Comodines System: 1 Usable per Level of 3 Options, evolving across tiers
   const [comodinesOptions, setComodinesOptions] = useState<ComodinDefinition[]>(() =>
     generateComodinesForLevel(savedProgress.level, getLevelConfig(savedProgress.level).hasEncapsulations)
   );
@@ -112,7 +129,6 @@ export function TileAbsorberGame({
     }, 4500);
   };
 
-  // Restore comodin session from cache for the current playing level
   useEffect(() => {
     const cached = getComodinSessionFromCache(playingLevel);
     if (cached) {
@@ -124,12 +140,10 @@ export function TileAbsorberGame({
     }
   }, [playingLevel, comodinesOptions]);
 
-  // Persist comodin session to cache
   useEffect(() => {
     saveComodinSessionToCache(playingLevel, selectedComodin?.id || null, hasUsedComodin);
   }, [playingLevel, selectedComodin, hasUsedComodin]);
 
-  // Adaptively play electronic soundtrack depending on the block levels and version
   useEffect(() => {
     soundManager.playMusicForLevel(playingLevel, version);
     return () => {
@@ -229,10 +243,11 @@ export function TileAbsorberGame({
   };
 
   const addExperience = useCallback((amount: number) => setExperience((prev) => prev + amount), []);
+
   const createQueueForLevel = useCallback((lvl: number): QueueRunner[][] => {
     const config = getLevelConfig(lvl, isFishOfFortune);
     const availableColors = ALL_COLORS.slice(0, config.colorsCount);
-    return [0, 1, 2, 3].map((c) =>
+    return [0, 1].map((c) =>
       Array.from({ length: 6 }, (_, r) => ({
         id: `queue_${lvl}_${c}_${r}_${Date.now()}_${Math.random()}`,
         color: availableColors[(c * 3 + r) % availableColors.length],
@@ -240,6 +255,7 @@ export function TileAbsorberGame({
       }))
     );
   }, [isFishOfFortune]);
+
   const [queueColumns, setQueueColumns] = useState<QueueRunner[][]>(() => createQueueForLevel(savedProgress.level));
 
   useEffect(() => {
@@ -282,7 +298,6 @@ export function TileAbsorberGame({
             setElapsedTime(Math.round((Date.now() - startTime) / 1000));
             addExperience(100);
 
-            // Auto-guardado automático instantáneo: se guarda el progreso cada que pasa de nivel sin botones
             const nextFrontier = playingLevel + 1;
             setLevel((curr) => {
               const updated = Math.max(curr, nextFrontier);
@@ -297,7 +312,6 @@ export function TileAbsorberGame({
               return updated;
             });
 
-            // Enviar puntaje a la base de datos de Supabase
             void submitGameScore({
               gamertag: userProfile.gamertag,
               score: experience + 100,
@@ -335,30 +349,35 @@ export function TileAbsorberGame({
   const handleLaunchRunner = (colIdx: number) => {
     const col = queueColumns[colIdx];
     if (!col?.length || !sceneManagerRef.current || isStuck || showMap) return;
-    const runner = col[0];
+    
+    const activeRunner = col[col.length - 1];
     const capacityBoost = titanRunnerBoostRef.current ? 8 : 0;
     if (titanRunnerBoostRef.current) {
       titanRunnerBoostRef.current = false;
     }
-    const finalCapacity = runner.capacity + capacityBoost;
+    const finalCapacity = activeRunner.capacity + capacityBoost;
 
-    if (sceneManagerRef.current.launchRunner(runner.color, finalCapacity, colIdx)) {
+    if (sceneManagerRef.current.launchRunner(activeRunner.color, finalCapacity, colIdx)) {
       setShowTutorialHand(false);
       setQueueColumns((prev) =>
         prev.map((items, i) => {
           if (i !== colIdx) return items;
-          const remaining = items.slice(1);
-          while (remaining.length < 5) {
-            const colors = ALL_COLORS.slice(0, getLevelConfig(playingLevel).colorsCount);
-            // Allow spawning any valid color for the current level for flexible player strategy
-            const chosenColor = colors[Math.floor(Math.random() * colors.length)];
-            remaining.push({
-              id: `queue_replenish_${Date.now()}_${Math.random()}`,
-              color: chosenColor,
-              capacity: getLevelConfig(playingLevel).runnerCapacity,
-            });
-          }
-          return remaining;
+          const updated = [...items];
+          updated.pop();
+
+          const exposedColors = sceneManagerRef.current?.getExposedColors() || [];
+          const availableColors = exposedColors.length > 0
+            ? exposedColors
+            : ALL_COLORS.slice(0, getLevelConfig(playingLevel, isFishOfFortune).colorsCount);
+
+          const chosenColor = availableColors[Math.floor(Math.random() * availableColors.length)];
+
+          updated.unshift({
+            id: `queue_replenish_${Date.now()}_${Math.random()}`,
+            color: chosenColor,
+            capacity: getLevelConfig(playingLevel, isFishOfFortune).runnerCapacity,
+          });
+          return updated;
         })
       );
     }
@@ -489,7 +508,6 @@ export function TileAbsorberGame({
     if (sceneManagerRef.current) sceneManagerRef.current.paused = true;
   }, [hasWon, showMap]);
 
-  // Strategic stuck detection: Bad strategy fills conveyor and causes lockup
   useEffect(() => {
     if (hasWon || isStuck || showMap || !sceneManagerRef.current) return;
     if (sceneManagerRef.current.chronoStasisTimer > 0) return;
@@ -514,7 +532,10 @@ export function TileAbsorberGame({
     }
 
     if (activeSlotCount === 0 && exposed.length > 0) {
-      const canLaunchValidRunner = queueColumns.some((col) => col[0] && exposed.includes(col[0].color));
+      const canLaunchValidRunner = queueColumns.some((col) => {
+        const bottomCard = col[col.length - 1];
+        return bottomCard && exposed.includes(bottomCard.color);
+      });
       if (!canLaunchValidRunner) {
         const timeout = window.setTimeout(handleStuck, 1200);
         return () => window.clearTimeout(timeout);
@@ -576,7 +597,6 @@ export function TileAbsorberGame({
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Top action row with Back to Portfolio button and mode switcher */}
       <div className="flex items-center justify-between px-2 flex-wrap gap-2">
         <div className="flex items-center gap-2">
           {onBackToPortfolio && (
@@ -590,7 +610,6 @@ export function TileAbsorberGame({
             </button>
           )}
 
-          {/* Mode Switcher Button */}
           {onSwitchMode && (
             <button
               type="button"
@@ -651,7 +670,6 @@ export function TileAbsorberGame({
         </div>
       </div>
 
-      {/* Main 3D Game Container */}
       <div className="relative w-full h-[78vh] min-h-[600px] max-h-[880px] rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-slate-950 select-none">
         <HeaderBar
           version={version}
@@ -680,7 +698,6 @@ export function TileAbsorberGame({
           onActivateComodin={() => handleActivateComodin()}
         />
 
-        {/* Floating Animated Tactical Comodin Banner */}
         {comodinNotification && (
           <div className="absolute top-20 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-slate-950/95 border-2 border-amber-400 text-amber-200 shadow-2xl backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-300 pointer-events-none">
             <Zap className="w-5 h-5 text-amber-400 fill-amber-400 animate-pulse shrink-0" />
@@ -693,17 +710,69 @@ export function TileAbsorberGame({
 
         <div ref={mountRef} className="absolute inset-0 z-0 h-full w-full cursor-grab active:cursor-grabbing" />
 
+        {/* CONTROLES LATERALES (Slots en cinta arriba + Matriz con colores vinculados al mapa y opacidad al 80%) */}
         {!showMap && (
-          <BottomQueue
-            version={version}
-            language={language}
-            activeRunnersCount={activeSlotCount}
-            maxCapacity={MAX_ACTIVE_RUNNERS}
-            queueColumns={queueColumns}
-            onLaunch={handleLaunchRunner}
-            showTutorialHand={showTutorialHand}
-            exposedColors={sceneManagerRef.current?.getExposedColors()}
-          />
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center select-none">
+            
+            <div className="flex flex-col items-center mb-2">
+              <span className="text-[11px] font-black text-white drop-shadow-md tracking-wider mb-1">
+                {activeSlotCount}/5
+              </span>
+              <div className="flex flex-col gap-1.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`w-9 h-6 rounded-lg transition-all border ${
+                      i < activeSlotCount
+                        ? 'bg-cyan-500 border-cyan-300 shadow-sm shadow-cyan-500/50'
+                        : 'bg-slate-900/60 border-slate-700/60'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-slate-900/40 backdrop-blur-md p-2 rounded-2xl border border-white/30 shadow-2xl flex gap-2">
+              {queueColumns.map((col, colIdx) => {
+                const activeCard = col[col.length - 1];
+
+                return (
+                  <div key={colIdx} className="flex flex-col gap-1.5 items-center">
+                    
+                    {/* Tarjetas superiores por venir (Al 80% de opacidad para mantener nitidez visual) */}
+                    {col.slice(0, col.length - 1).map((item, idx) => {
+                      const colorClasses = getTileColorBg(item.color);
+                      
+                      return (
+                        <div
+                          key={item.id || idx}
+                          className={`w-10 h-10 rounded-xl ${colorClasses} border opacity-80 flex flex-col items-center justify-center shadow-inner pointer-events-none transition-all`}
+                        >
+                          <span className="text-[11px] font-black leading-none drop-shadow-xs">
+                            {item.capacity}
+                          </span>
+                        </div>
+                      );
+                    })}
+
+                    {/* Única tarjeta activa lanzadora (Color 100% brillante + Anillo de selección) */}
+                    {activeCard && (
+                      <button
+                        type="button"
+                        onClick={() => handleLaunchRunner(colIdx)}
+                        className={`w-11 h-12 rounded-xl ${getTileColorBg(activeCard.color)} border-2 border-slate-950 flex flex-col items-center justify-center shadow-xl active:scale-95 transition-all transform hover:scale-105 ring-2 ring-white/90 cursor-pointer mt-1`}
+                      >
+                        <span className="text-xs font-black leading-none drop-shadow-xs">
+                          {activeCard.capacity}
+                        </span>
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+          </div>
         )}
 
         {hasWon && (
@@ -763,7 +832,6 @@ export function TileAbsorberGame({
           />
         )}
 
-        {/* 1 per Level Comodines Tactical Modal */}
         <ComodinesModal
           language={language}
           isOpen={isComodinesModalOpen}
@@ -783,7 +851,6 @@ export function TileAbsorberGame({
 
         <DocModal language={language} isOpen={isDocsOpen} onClose={() => setIsDocsOpen(false)} />
 
-        {/* Modales de Supabase, Gamertag, Highscore y HTTPS Ad Viewer */}
         {isLeaderboardOpen && (
           <LeaderboardModal
             language={language}
@@ -802,8 +869,6 @@ export function TileAbsorberGame({
             onSave={(tag) => setUserProfile((prev) => ({ ...prev, gamertag: tag }))}
           />
         )}
-
-
 
         {isWebAdViewerOpen && (
           <WebAdViewerModal

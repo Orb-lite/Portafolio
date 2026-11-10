@@ -871,6 +871,7 @@ export function TileAbsorberGame({
         {showMap && (
           <LevelMap
             language={language}
+            mode={mode}
             frontierLevel={level}
             selectedLevel={playingLevel}
             experience={experience}

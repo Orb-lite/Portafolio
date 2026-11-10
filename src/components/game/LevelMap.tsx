@@ -169,6 +169,141 @@ const WORLD_DEFS: Record<GameVersion, WorldDefinition> = {
   },
 };
 
+const FOF_WORLD_DEFS: WorldDefinition[] = [
+  {
+    theme: 'fof',
+    title: 'Coral Cove',
+    subtitle: 'Sunlit Pearl Reef & Coral Shallows',
+    badgeIcon: Fish,
+    texture: '/assets/worlds/coral_cove.jpg',
+    themeColor: '#22d3ee',
+    pathBase: '#083344',
+    pathFill: '#0e7490',
+    pathTrim: '#67e8f9',
+    pathDash: '5 7',
+    blendColor: '#082f49',
+    nodeBg: 'from-cyan-400 via-teal-500 to-blue-600',
+    activeRing: 'ring-cyan-300',
+  },
+  {
+    theme: 'fof',
+    title: 'Bioluminescent Trench',
+    subtitle: 'Deep Glow & Angler Sanctuary',
+    badgeIcon: Sparkles,
+    texture: '/assets/worlds/coral_cove.jpg',
+    themeColor: '#a855f7',
+    pathBase: '#2e1065',
+    pathFill: '#581c87',
+    pathTrim: '#c084fc',
+    pathDash: '4 6',
+    blendColor: '#1e1b4b',
+    nodeBg: 'from-fuchsia-400 via-purple-500 to-indigo-600',
+    activeRing: 'ring-purple-300',
+  },
+  {
+    theme: 'fof',
+    title: 'Turtle Atoll',
+    subtitle: 'Emerald Seaweed & Coral Gardens',
+    badgeIcon: Trees,
+    texture: '/assets/worlds/coral_cove.jpg',
+    themeColor: '#34d399',
+    pathBase: '#064e3b',
+    pathFill: '#047857',
+    pathTrim: '#6ee7b7',
+    pathDash: '6 6',
+    blendColor: '#022c22',
+    nodeBg: 'from-emerald-400 via-teal-500 to-cyan-600',
+    activeRing: 'ring-emerald-300',
+  },
+  {
+    theme: 'fof',
+    title: 'Sunken Galleon Trench',
+    subtitle: 'Ancient Golden Reef & Pearl Flora',
+    badgeIcon: Trophy,
+    texture: '/assets/worlds/coral_cove.jpg',
+    themeColor: '#fbbf24',
+    pathBase: '#451a03',
+    pathFill: '#78350f',
+    pathTrim: '#fde68a',
+    pathDash: '4 8',
+    blendColor: '#292524',
+    nodeBg: 'from-amber-400 via-yellow-500 to-orange-600',
+    activeRing: 'ring-amber-300',
+  },
+  {
+    theme: 'fof',
+    title: 'Clownfish Haven',
+    subtitle: 'Warm Anemone Meadows & Coral Gardens',
+    badgeIcon: Flame,
+    texture: '/assets/worlds/coral_cove.jpg',
+    themeColor: '#f97316',
+    pathBase: '#431407',
+    pathFill: '#9a3412',
+    pathTrim: '#fed7aa',
+    pathDash: '5 5',
+    blendColor: '#1c1917',
+    nodeBg: 'from-orange-400 via-rose-500 to-amber-600',
+    activeRing: 'ring-orange-300',
+  },
+  {
+    theme: 'fof',
+    title: 'Manta Horizon',
+    subtitle: 'Crystal Clear Ocean Waters',
+    badgeIcon: Crown,
+    texture: '/assets/worlds/coral_cove.jpg',
+    themeColor: '#38bdf8',
+    pathBase: '#0c4a6e',
+    pathFill: '#0369a1',
+    pathTrim: '#bae6fd',
+    pathDash: '6 6',
+    blendColor: '#082f49',
+    nodeBg: 'from-sky-400 via-blue-500 to-cyan-600',
+    activeRing: 'ring-sky-300',
+  },
+  {
+    theme: 'fof',
+    title: 'Atlantis Coral Citadel',
+    subtitle: 'Mythic Pearl Throne & Ancient Ruins',
+    badgeIcon: Crown,
+    texture: '/assets/worlds/coral_cove.jpg',
+    themeColor: '#facc15',
+    pathBase: '#14532d',
+    pathFill: '#15803d',
+    pathTrim: '#fef08a',
+    pathDash: '4 8',
+    blendColor: '#064e3b',
+    nodeBg: 'from-yellow-300 via-emerald-400 to-cyan-500',
+    activeRing: 'ring-yellow-300',
+  },
+];
+
+const FOF_WORLD_TITLES_ES = [
+  { title: 'Ensenada de Coral', subtitle: 'Aguas Poco Profundas y Arrecife de Perlas' },
+  { title: 'Abismo Bioluminiscente', subtitle: 'Resplandor Profundo y Santuario de Peces' },
+  { title: 'Atolón de Tortugas', subtitle: 'Jardines de Algas Esmeralda y Coral Dorado' },
+  { title: 'Fosa del Galeón Hundido', subtitle: 'Galeón Dorado Ancestral y Flora de Perlas' },
+  { title: 'Refugio del Pez Payaso', subtitle: 'Praderas Cálidas de Anémonas y Coral' },
+  { title: 'Horizonte de Mantarrayas', subtitle: 'Aguas Cristalinas de Mar Abierto' },
+  { title: 'Ciudadela de Coral de Atlántida', subtitle: 'Trono Mítico de Perlas Ancestrales' },
+];
+
+function getWorldDefForLevel(lvl: number, isFishMode: boolean, isEn: boolean): WorldDefinition {
+  if (isFishMode) {
+    const idx = Math.min(FOF_WORLD_DEFS.length - 1, Math.floor((lvl - 1) / 10));
+    const base = FOF_WORLD_DEFS[idx];
+    if (!isEn && FOF_WORLD_TITLES_ES[idx]) {
+      return {
+        ...base,
+        title: FOF_WORLD_TITLES_ES[idx].title,
+        subtitle: FOF_WORLD_TITLES_ES[idx].subtitle,
+      };
+    }
+    return base;
+  }
+  const theme = getThemeForLevel(lvl);
+  return WORLD_DEFS[theme] || WORLD_DEFS.chess;
+}
+
 import { GameLanguage, GAME_TEXT } from '../../game/localization';
 
 interface LevelMapProps {
@@ -177,6 +312,7 @@ interface LevelMapProps {
   selectedLevel?: number;
   experience?: number;
   language?: GameLanguage;
+  mode?: "pathway" | "fish_of_fortune";
   onSelectLevel: (level: number) => void;
   onClose: () => void;
   onOpenLeaderboard?: () => void;
@@ -189,12 +325,14 @@ export const LevelMap: React.FC<LevelMapProps> = ({
   selectedLevel,
   experience,
   language = 'es',
+  mode = 'pathway',
   onSelectLevel,
   onClose,
   onOpenLeaderboard,
   onOpenGamertag,
 }) => {
   const isEn = language === 'en';
+  const isFishMode = mode === 'fish_of_fortune';
   const t = GAME_TEXT[language];
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showPastLevelsDrawer, setShowPastLevelsDrawer] = useState(false);
@@ -245,8 +383,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
       const end = Math.min(endLevel, mapLevelCount);
       const startY = mapHeight - 160 - (start - 1) * STEP;
       const endY = mapHeight - 160 - (end - 1) * STEP;
-      const theme = getThemeForLevel(start);
-      const def = WORLD_DEFS[theme] || WORLD_DEFS.chess;
+      const def = getWorldDefForLevel(start, isFishMode, isEn);
 
       const sliceStart = Math.max(0, start - 2);
       const sliceEnd = Math.min(points.length, end + 1);
@@ -264,7 +401,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
       startLevel = endLevel + 1;
     }
     return regions;
-  }, [mapHeight, mapLevelCount, points]);
+  }, [mapHeight, mapLevelCount, points, isFishMode, isEn]);
 
   // Smooth scroller helper
   const scrollToLevel = (lvl: number, behavior: ScrollBehavior = 'smooth') => {
@@ -307,12 +444,16 @@ export const LevelMap: React.FC<LevelMapProps> = ({
         <div className="flex items-center justify-between px-3 sm:px-6 py-2.5">
           <div>
             <p className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300">
-              <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-              Conveyor Realms • Adventure Pathway
+              {isFishMode ? <Fish className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-cyan-300" /> : <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
+              {isFishMode
+                ? (isEn ? "Fish Feeder • Aquatic Adventure Pathway" : "Fish Feeder • Ruta Acuática de Coral")
+                : "Conveyor Realms • Adventure Pathway"}
             </p>
             <div className="flex items-center gap-2 mt-0.5">
               <h1 className="text-base sm:text-xl font-black tracking-tight text-white">
-                World Frontier
+                {isFishMode
+                  ? (isEn ? "Ocean Frontier" : "Frontera Marina")
+                  : "World Frontier"}
               </h1>
               <span className="rounded-full bg-amber-400/20 border border-amber-300/40 px-2 py-0.5 text-[10px] font-black text-amber-300">
                 {isEn ? `Frontier: Level ${activeFrontier}` : `Por Hacer: Nivel ${activeFrontier}`}
@@ -450,10 +591,14 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                 </div>
                 <div>
                   <span className="text-[10px] font-black uppercase tracking-wider text-amber-400">
-                    {isEn ? "Pathway Stats" : "Estadísticas Pathway"}
+                    {isFishMode
+                      ? (isEn ? "Ocean Pathway Stats" : "Estadísticas del Arrecife")
+                      : (isEn ? "Pathway Stats" : "Estadísticas Pathway")}
                   </span>
                   <h3 className="text-xs sm:text-sm font-black text-white leading-tight">
-                    {isEn ? "Highscore & Frontier" : "Récord & Frontera"}
+                    {isFishMode
+                      ? (isEn ? "Highscore & Reef Frontier" : "Récord & Arrecife Actual")
+                      : (isEn ? "Highscore & Frontier" : "Récord & Frontera")}
                   </h3>
                 </div>
               </div>
@@ -560,10 +705,16 @@ export const LevelMap: React.FC<LevelMapProps> = ({
       {/* Main Full-Width Scrollable World Viewport */}
       <div
         ref={scrollRef}
-        className="absolute inset-0 overflow-y-auto overscroll-contain pt-28 sm:pt-28 pb-20"
+        className={`absolute inset-0 overflow-y-auto overscroll-contain pt-28 sm:pt-28 pb-20 ${isFishMode ? 'bg-[#041a2e]' : 'bg-slate-950'}`}
         style={{ scrollbarColor: '#38bdf8 rgba(15,23,42,0.6)' }}
       >
-        <div className="relative w-full overflow-hidden" style={{ height: mapHeight }}>
+        {isFishMode && (
+          <div
+            className="pointer-events-none fixed inset-0 z-0 opacity-25 bg-cover bg-center"
+            style={{ backgroundImage: `url('/assets/worlds/coral_cove.jpg')` }}
+          />
+        )}
+        <div className="relative w-full overflow-hidden z-10" style={{ height: mapHeight }}>
           {/* Full-Width Seamless World Bands - Wide Panoramic Landscapes (NO Repeating Tile Squares) */}
           {worldRegions.map(({ start, end, top, height, def }, idx) => {
             const nextDef = worldRegions[idx + 1]?.def || def;
@@ -722,7 +873,9 @@ export const LevelMap: React.FC<LevelMapProps> = ({
 
             <div className="absolute inset-x-0 bottom-6 text-center">
               <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-slate-950/80 px-4 py-1.5 text-xs font-black uppercase tracking-[0.25em] text-cyan-300 shadow-xl backdrop-blur-md">
-                {isEn ? "☁️ Unexplored Fog • Complete frontier level to reveal" : "☁️ Niebla Inexplorada • Completa el nivel por hacer para revelar"}
+                {isFishMode
+                  ? (isEn ? "🌊 Abyssal Depths • Complete frontier level to explore" : "🌊 Profundidades Abisales • Completa el nivel por hacer para explorar")
+                  : (isEn ? "☁️ Unexplored Fog • Complete frontier level to reveal" : "☁️ Niebla Inexplorada • Completa el nivel por hacer para revelar")}
               </span>
             </div>
           </div>
@@ -734,8 +887,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
               const isFrontier = level === activeFrontier;
               const locked = level > activeFrontier;
               const isSelected = level === activeSelected;
-              const theme = getThemeForLevel(level);
-              const def = WORLD_DEFS[theme] || WORLD_DEFS.chess;
+              const def = getWorldDefForLevel(level, isFishMode, isEn);
 
               return (
                 <div

@@ -268,9 +268,9 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
   }, [isFishOfFortune]);
 
   useEffect(() => {
-    soundManager.setLevelMusic(getThemeForLevel(playingLevel), playingLevel);
+    soundManager.setLevelMusic(getVisualThemeForLevel(playingLevel, isFishOfFortune), playingLevel, isFishOfFortune);
     return () => soundManager.stopLevelMusic();
-  }, [playingLevel]);
+  }, [playingLevel, isFishOfFortune]);
 
   useEffect(() => {
     if (!mountRef.current) return;

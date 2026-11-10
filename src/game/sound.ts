@@ -1,6 +1,5 @@
-// Procedural Web Audio API sound generator (Zero external dependencies)
 class SoundManager {
-  private static readonly MUSIC_GAIN = 0.22;
+  private static readonly MUSIC_GAIN = 0.28;
   private ctx: AudioContext | null = null;
   private enabled: boolean = true;
   private musicTimer: number | null = null;
@@ -8,6 +7,16 @@ class SoundManager {
   private musicLevel = 1;
   private musicStep = 0;
   private musicGain: GainNode | null = null;
+  private musicFilterNode: BiquadFilterNode | null = null;
+  private musicDriveNode: WaveShaperNode | null = null;
+
+  // Real audio elements for Sixty Frames (Tile Absorber) and Aquatic Pulse (Fish of Fortune)
+  private fofAudio: HTMLAudioElement | null = null;
+  private cyberAudio: HTMLAudioElement | null = null;
+  private currentAudio: HTMLAudioElement | null = null;
+  private currentTrackType: 'fof' | 'cyber' | null = null;
+  private mediaSources = new WeakMap<HTMLAudioElement, MediaElementAudioSourceNode>();
+  private interactionListenerAdded = false;
 
   constructor() {
     // Lazily initialize audio context on first user interaction
@@ -23,6 +32,73 @@ class SoundManager {
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume().catch(() => {});
     }
+
+    if (typeof window !== 'undefined' && !this.interactionListenerAdded) {
+      this.interactionListenerAdded = true;
+      const unlockAudio = () => {
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume().catch(() => {});
+        }
+        if (this.enabled && this.currentAudio && this.currentAudio.paused) {
+          this.currentAudio.play().catch(() => {});
+        }
+      };
+      window.addEventListener('pointerdown', unlockAudio, { passive: true });
+      window.addEventListener('keydown', unlockAudio, { passive: true });
+    }
+  }
+
+  private setupAudioNodes() {
+    if (!this.ctx) return;
+    if (!this.musicGain) {
+      this.musicGain = this.ctx.createGain();
+      this.musicGain.gain.setValueAtTime(this.enabled ? SoundManager.MUSIC_GAIN : 0, this.ctx.currentTime);
+      this.musicGain.connect(this.ctx.destination);
+    }
+    if (!this.musicFilterNode) {
+      this.musicFilterNode = this.ctx.createBiquadFilter();
+      this.musicFilterNode.type = 'lowpass';
+      this.musicFilterNode.frequency.setValueAtTime(4500, this.ctx.currentTime);
+      this.musicFilterNode.Q.setValueAtTime(1.2, this.ctx.currentTime);
+    }
+    if (!this.musicDriveNode) {
+      this.musicDriveNode = this.ctx.createWaveShaper();
+      this.musicDriveNode.curve = this.makeDistortionCurve(0);
+      this.musicDriveNode.oversample = '2x';
+      this.musicFilterNode.connect(this.musicDriveNode);
+      this.musicDriveNode.connect(this.musicGain);
+    }
+  }
+
+  private makeDistortionCurve(amount: number = 0): Float32Array<ArrayBuffer> {
+    const k = amount * 40;
+    const n = 4096;
+    const buffer = new ArrayBuffer(n * 4);
+    const curve = new Float32Array(buffer);
+    if (amount <= 0.01) {
+      for (let i = 0; i < n; ++i) {
+        curve[i] = (i * 2) / n - 1;
+      }
+      return curve;
+    }
+    const deg = Math.PI / 180;
+    for (let i = 0; i < n; ++i) {
+      const x = (i * 2) / n - 1;
+      curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+    }
+    return curve;
+  }
+
+  private connectAudioElement(audio: HTMLAudioElement) {
+    if (!this.ctx || !this.musicFilterNode) return;
+    if (this.mediaSources.has(audio)) return;
+    try {
+      const sourceNode = this.ctx.createMediaElementSource(audio);
+      sourceNode.connect(this.musicFilterNode);
+      this.mediaSources.set(audio, sourceNode);
+    } catch {
+      // Audio element plays through default output if MediaElementAudioSource already connected or unsupported
+    }
   }
 
   public setEnabled(enabled: boolean) {
@@ -31,76 +107,160 @@ class SoundManager {
     if (this.musicGain && this.ctx) {
       this.musicGain.gain.setTargetAtTime(enabled ? SoundManager.MUSIC_GAIN : 0, this.ctx.currentTime, 0.12);
     }
+    if (this.currentAudio) {
+      if (enabled) {
+        this.currentAudio.play().catch(() => {});
+      } else {
+        this.currentAudio.pause();
+      }
+    }
   }
 
-  /** Start an original procedural score that changes with the current level world. */
-  public setLevelMusic(theme: import('./types').GameVersion, level: number) {
+  /**
+   * Start level-adaptive soundtrack for either Fish of Fortune or Tile Absorber.
+   * Modulates playback speed, filter resonance, exciter saturation, and procedural accompaniment
+   * based on the player's current level tier.
+   */
+  public setLevelMusic(theme: import('./types').GameVersion, level: number, isFishMode?: boolean) {
+    const isFish = isFishMode !== undefined ? isFishMode : (theme === 'fof');
+    const targetTrackType: 'fof' | 'cyber' = isFish ? 'fof' : 'cyber';
     this.musicTheme = theme;
     this.musicLevel = Math.max(1, level);
     this.initCtx();
-    if (!this.ctx) return;
-    if (!this.musicGain) {
-      this.musicGain = this.ctx.createGain();
-      this.musicGain.connect(this.ctx.destination);
+    this.setupAudioNodes();
+
+    // Level-adaptive DSP parameters:
+    // Level 1: 3800Hz warm introductory low-pass, clean drive, 1.00x (~124 BPM)
+    // Level 2: 6200Hz clarity opening, 1.02x (~126.5 BPM)
+    // Level 3: 10500Hz electro brightness, 1.04x (~129 BPM) + procedural synchronized arpeggios
+    // Level 4: 15000Hz wide presence, 1.06x (~131.5 BPM)
+    // Level 5+: 20000Hz (full spectrum unleashed), resonant Q, 1.08x - 1.15x, harmonic saturation
+    const lpfCutoff = this.musicLevel === 1 ? 3800
+      : this.musicLevel === 2 ? 6200
+      : this.musicLevel === 3 ? 10500
+      : this.musicLevel === 4 ? 15000
+      : 20000;
+    const resonanceQ = Math.min(3.5, 1.0 + (this.musicLevel - 1) * 0.45);
+    const speedRate = Math.min(1.15, 1.0 + (this.musicLevel - 1) * 0.02);
+    const driveAmount = Math.max(0, Math.min(0.24, (this.musicLevel - 3) * 0.05));
+
+    if (this.ctx && this.musicFilterNode) {
+      this.musicFilterNode.frequency.setTargetAtTime(lpfCutoff, this.ctx.currentTime, 0.4);
+      this.musicFilterNode.Q.setTargetAtTime(resonanceQ, this.ctx.currentTime, 0.4);
     }
-    this.musicGain.gain.setTargetAtTime(this.enabled ? SoundManager.MUSIC_GAIN : 0, this.ctx.currentTime, 0.15);
+    if (this.musicDriveNode) {
+      this.musicDriveNode.curve = this.makeDistortionCurve(driveAmount);
+    }
+
+    if (typeof window !== 'undefined') {
+      if (!this.fofAudio) {
+        this.fofAudio = new Audio('/audio/fish_of_fortune_theme.mp3');
+        this.fofAudio.loop = true;
+        this.fofAudio.preload = 'auto';
+      }
+      if (!this.cyberAudio) {
+        this.cyberAudio = new Audio('/audio/tile_absorber_sixty_frames.mp3');
+        this.cyberAudio.loop = true;
+        this.cyberAudio.preload = 'auto';
+      }
+
+      const activeAudio = targetTrackType === 'fof' ? this.fofAudio : this.cyberAudio;
+      const inactiveAudio = targetTrackType === 'fof' ? this.cyberAudio : this.fofAudio;
+
+      this.connectAudioElement(activeAudio);
+      activeAudio.playbackRate = speedRate;
+
+      const prevTrackType = this.currentTrackType;
+      this.currentTrackType = targetTrackType;
+      this.currentAudio = activeAudio;
+
+      if (prevTrackType !== targetTrackType) {
+        inactiveAudio.pause();
+        inactiveAudio.currentTime = 0;
+        if (this.enabled) {
+          activeAudio.play().catch(() => {});
+        }
+      } else {
+        if (this.enabled && activeAudio.paused) {
+          activeAudio.play().catch(() => {});
+        }
+      }
+    }
+
+    // Procedural accompaniment layers for Level 3+
     if (this.musicTimer !== null) window.clearInterval(this.musicTimer);
     this.musicStep = 0;
-    this.playMusicStep();
-    // Music moves from an ambient pulse in early levels to a quicker arcade beat later on.
-    const bpm = Math.min(132, 78 + (this.musicLevel % 10) * 3);
-    this.musicTimer = window.setInterval(() => this.playMusicStep(), (60_000 / bpm) * 0.5);
+    const currentBpm = 124 * speedRate;
+    this.musicTimer = window.setInterval(() => this.playMusicStep(isFish, speedRate), (60_000 / currentBpm) * 0.5);
   }
 
   public stopLevelMusic() {
     if (this.musicTimer !== null && typeof window !== 'undefined') window.clearInterval(this.musicTimer);
     this.musicTimer = null;
+    if (this.fofAudio) this.fofAudio.pause();
+    if (this.cyberAudio) this.cyberAudio.pause();
     if (this.musicGain && this.ctx) this.musicGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.15);
   }
 
-  private playMusicStep() {
-    if (!this.ctx || !this.musicGain || this.ctx.state !== 'running') return;
-    const scales: Record<import('./types').GameVersion, number[]> = {
-      chess: [0, 3, 5, 7, 10], primitive: [0, 3, 5, 7, 10], fof: [0, 2, 4, 7, 9], land: [0, 2, 5, 7, 9],
-      birds: [0, 4, 7, 9, 11], humans: [0, 2, 4, 7, 9], cars: [0, 3, 5, 8, 10], aircraft: [0, 2, 5, 7, 11],
-    };
-    const scale = scales[this.musicTheme];
+  private playMusicStep(isFish: boolean, speedRate: number) {
+    if (!this.ctx || !this.musicGain || this.ctx.state !== 'running' || !this.enabled) return;
+    // Only layer procedural accompaniment from Level 3 onwards
+    if (this.musicLevel < 3) return;
+
     const step = this.musicStep++;
-    const root = this.musicTheme === 'chess' || this.musicTheme === 'cars' ? 110 : 130.81;
-    const fof = this.musicTheme === 'fof';
-    // A buoyant, tropical arpeggio for the Fish of Fortune world; all notes
-    // are newly generated and deliberately avoid copying the game's recording.
-    const fofPattern = [0, 2, 4, 2, 1, 3, 4, 3, 0, 2, 4, 1, 3, 2, 1, 4];
-    const degree = fof
-      ? scale[fofPattern[step % fofPattern.length]]
-      : scale[(step * 3 + Math.floor(step / 4)) % scale.length];
-    const octave = fof ? (step % 8 === 6 || step % 8 === 7 ? 2 : 1) : (step % 8 === 7 ? 2 : 1);
     const now = this.ctx.currentTime;
-    const playNote = (frequency: number, duration: number, volume: number, type: OscillatorType) => {
+    const root = 130.81; // C3 in F minor / Ab major
+
+    const playTone = (freq: number, duration: number, volume: number, type: OscillatorType, pan: number = 0.5) => {
       if (!this.ctx || !this.musicGain) return;
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
+      const panner = this.ctx.createStereoPanner ? this.ctx.createStereoPanner() : null;
+
       osc.type = type;
-      osc.frequency.setValueAtTime(frequency, now);
+      osc.frequency.setValueAtTime(freq, now);
       gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(volume, now + 0.025);
+      gain.gain.linearRampToValueAtTime(volume * SoundManager.MUSIC_GAIN * 0.6, now + 0.015);
       gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
       osc.connect(gain);
-      gain.connect(this.musicGain);
+      if (panner) {
+        panner.pan.setValueAtTime(pan * 2 - 1, now);
+        gain.connect(panner);
+        panner.connect(this.musicGain);
+      } else {
+        gain.connect(this.musicGain);
+      }
+
       osc.start(now);
-      osc.stop(now + duration + 0.03);
+      osc.stop(now + duration + 0.02);
     };
-    const timbre: OscillatorType = this.musicTheme === 'cars' ? 'sawtooth' : this.musicTheme === 'birds' || fof ? 'triangle' : 'sine';
-    const beatMs = 60_000 / Math.min(132, 78 + (this.musicLevel % 10) * 3);
-    if (fof) {
-      // Marimba-like pluck, rounded bass pulse, and a soft upper sparkle.
-      playNote(root * Math.pow(2, degree / 12) * octave, 0.34, step % 4 === 0 ? 0.34 : 0.26, 'triangle');
-      if (step % 4 === 0) playNote(root / 2, beatMs / 1000 * 1.65, 0.24, 'sine');
-      if (step % 4 === 2) playNote(root * Math.pow(2, scale[(fofPattern[(step + 2) % fofPattern.length] + 2) % scale.length] / 12) * 2, 0.2, 0.11, 'sine');
-      return;
+
+    if (isFish) {
+      // Fish of Fortune: Crystalline pearl plucks in F minor pentatonic (F4, Ab4, Bb4, C5, Eb5, F5)
+      const pearlFrequencies = [349.23, 415.30, 466.16, 523.25, 622.25, 698.46, 830.61];
+      if (step % 2 === 1) {
+        const noteIdx = (step * 3 + Math.floor(step / 4)) % pearlFrequencies.length;
+        const pan = 0.2 + 0.6 * ((step % 8) / 8);
+        playTone(pearlFrequencies[noteIdx], 0.28, 0.35, 'triangle', pan);
+      }
+      // Subaquatic sonar ping accent every 8 steps on Level 5+
+      if (this.musicLevel >= 5 && step % 16 === 0) {
+        playTone(1760, 0.45, 0.25, 'sine', 0.7);
+      }
+    } else {
+      // Tile Absorber 3D: Cyber sawtooth / square arpeggiator accompanying "SIXTY FRAMES"
+      const cyberFrequencies = [261.63, 311.13, 349.23, 392.00, 466.16, 523.25, 622.25];
+      if (step % 2 === 1) {
+        const noteIdx = (step * 2) % cyberFrequencies.length;
+        const pan = 0.5 + 0.4 * Math.sin(step);
+        playTone(cyberFrequencies[noteIdx], 0.18, 0.28, 'sawtooth', pan);
+      }
+      // Overdrive laser pulse accent on Level 5+
+      if (this.musicLevel >= 5 && step % 16 === 12) {
+        playTone(880, 0.12, 0.3, 'square', 0.3);
+      }
     }
-    playNote(root * Math.pow(2, degree / 12) * octave, 0.24, step % 4 === 0 ? 0.28 : 0.2, timbre);
-    if (step % 4 === 0) playNote(root / 2, 0.42, 0.18, 'triangle');
   }
 
   public isEnabled(): boolean {

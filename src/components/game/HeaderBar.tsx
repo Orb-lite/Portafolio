@@ -84,7 +84,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
                   : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
               }`}
             >
-              {isFoF ? 'Fish of Fortune' : getThemeName(version)}
+              {isFoF ? 'Fish Feeder' : getThemeName(version)}
             </span>
           </h1>
           <div className="flex items-center gap-1.5 text-[10px]">

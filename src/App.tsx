@@ -48,6 +48,7 @@ import {
   Layers,
   Heart,
   Gamepad2,
+  Fish,
   Lock,
   X,
   SlidersHorizontal,
@@ -55,7 +56,7 @@ import {
 } from 'lucide-react';
 
 export default function App() {
-  const [mainTab, setMainTab] = useState<'portfolio' | 'about' | 'cv' | 'game'>('portfolio');
+  const [mainTab, setMainTab] = useState<'portfolio' | 'about' | 'cv' | 'game' | 'fish_of_fortune'>('portfolio');
   const [language, setLanguage] = useState<'es' | 'en'>('en'); // Default to English
   const [activeProfile, setActiveProfile] = useState<ResumeProfileType>('ai-native'); // AI-Native Engineer default
   const [resumeData, setResumeData] = useState<ResumeData>(() => {
@@ -553,6 +554,20 @@ export default function App() {
                 PRO
               </span>
             </button>
+
+            {/* Tab 5: Fish Feeder Game Mode */}
+            <button
+              type="button"
+              onClick={() => setMainTab('fish_of_fortune')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                mainTab === 'fish_of_fortune'
+                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 shadow-md shadow-cyan-950/40 ring-1 ring-cyan-300'
+                  : 'text-cyan-200 hover:text-white hover:bg-cyan-950/60'
+              }`}
+            >
+              <Fish className="w-4 h-4 text-cyan-300" />
+              <span>🐟 Fish Feeder</span>
+            </button>
           </div>
         </div>
       </header>
@@ -573,6 +588,7 @@ export default function App() {
             onSwitchToCv={() => setMainTab('cv')}
             onSwitchToAbout={() => setMainTab('about')}
             onSwitchToGame={() => setMainTab('game')}
+            onSwitchToFishFeeder={() => setMainTab('fish_of_fortune')}
           />
         </main>
       )}
@@ -794,11 +810,14 @@ export default function App() {
         </main>
       )}
 
-      {/* VIEW 4: Tile Absorber Arcade Game (Supabase + Gamertag + Highscore Leaderboard) */}
-      {mainTab === 'game' && (
+      {/* VIEW 4: Tile Absorber Arcade Game & Fish Feeder Mode */}
+      {(mainTab === 'game' || mainTab === 'fish_of_fortune') && (
         <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6">
           <TileAbsorberGame
+            key={mainTab}
             language={language}
+            mode={mainTab === 'fish_of_fortune' ? 'fish_of_fortune' : 'pathway'}
+            onSwitchMode={() => setMainTab(mainTab === 'game' ? 'fish_of_fortune' : 'game')}
             onBackToPortfolio={() => setMainTab('portfolio')}
           />
         </main>

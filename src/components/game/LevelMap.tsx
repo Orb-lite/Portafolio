@@ -64,8 +64,8 @@ const WORLD_DEFS: Record<GameVersion, WorldDefinition> = {
   },
   fof: {
     theme: 'fof',
-    title: 'Coral Cove',
-    subtitle: 'Sunlit Underwater Realm',
+    title: 'Fish Feeder',
+    subtitle: 'Sunlit Coral Realm (Coral Cove)',
     badgeIcon: Fish,
     texture: '/assets/worlds/coral_cove.jpg',
     themeColor: '#22d3ee',

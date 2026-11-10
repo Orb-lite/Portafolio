@@ -32,6 +32,7 @@ import {
   PlayCircle,
   Skull,
   Activity,
+  Fish,
 } from 'lucide-react';
 import realGameScreenshot from '../../assets/images/regenerated_image_1794206153590.png';
 
@@ -815,9 +816,16 @@ interface PortfolioViewProps {
   onSwitchToCv: () => void;
   onSwitchToAbout: () => void;
   onSwitchToGame?: () => void;
+  onSwitchToFishFeeder?: () => void;
 }
 
-export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout, onSwitchToGame }: PortfolioViewProps) {
+export function PortfolioView({
+  language = 'es',
+  onSwitchToCv,
+  onSwitchToAbout,
+  onSwitchToGame,
+  onSwitchToFishFeeder,
+}: PortfolioViewProps) {
   const isEn = language === 'en';
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeModalProject, setActiveModalProject] = useState<ProjectItem | null>(null);
@@ -972,7 +980,19 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout, 
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold transition-all hover:scale-[1.02] shadow-sm shadow-cyan-950/40"
               >
                 <Gamepad2 className="w-4 h-4 text-cyan-300" />
-                <span>{isEn ? '🎮 Play Tile Absorber' : '🎮 Jugar Tile Absorber'}</span>
+                <span>{isEn ? '🎮 Play Conveyor Realms' : '🎮 Jugar Conveyor Realms'}</span>
+                <ChevronRight className="w-3 h-3" />
+              </button>
+            )}
+
+            {onSwitchToFishFeeder && (
+              <button
+                type="button"
+                onClick={onSwitchToFishFeeder}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-bold transition-all hover:scale-[1.02] shadow-sm shadow-teal-950/40"
+              >
+                <Fish className="w-4 h-4 text-emerald-200" />
+                <span>{isEn ? '🐟 Play Fish Feeder' : '🐟 Jugar Fish Feeder'}</span>
                 <ChevronRight className="w-3 h-3" />
               </button>
             )}
@@ -1101,19 +1121,29 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout, 
               </p>
             </div>
 
-            {/* Quick Play CTA */}
-            {onSwitchToGame && (
-              <div className="shrink-0 flex items-center gap-3">
+            {/* Quick Play CTAs */}
+            <div className="shrink-0 flex items-center gap-2.5 flex-wrap">
+              {onSwitchToGame && (
                 <button
                   type="button"
                   onClick={onSwitchToGame}
-                  className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-sky-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-black text-sm shadow-xl shadow-cyan-950/60 transition-all hover:scale-105 active:scale-95"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 via-sky-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-black text-xs sm:text-sm shadow-xl shadow-cyan-950/60 transition-all hover:scale-105 active:scale-95"
                 >
                   <Play className="w-4 h-4 fill-slate-950 text-slate-950" />
-                  <span>{isEn ? 'Play Tile Absorber Live' : '▶ Jugar Tile Absorber Ahora'}</span>
+                  <span>{isEn ? 'Play Conveyor Realms' : '▶ Conveyor Realms'}</span>
                 </button>
-              </div>
-            )}
+              )}
+              {onSwitchToFishFeeder && (
+                <button
+                  type="button"
+                  onClick={onSwitchToFishFeeder}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black text-xs sm:text-sm shadow-xl shadow-teal-950/60 transition-all hover:scale-105 active:scale-95"
+                >
+                  <Fish className="w-4 h-4 fill-slate-950 text-slate-950" />
+                  <span>{isEn ? '🐟 Play Fish Feeder' : '🐟 Jugar Fish Feeder'}</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Interactive Media Showcase & Quick Specs */}
@@ -1216,15 +1246,25 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout, 
               </div>
 
               {/* Action buttons */}
-              <div className="flex flex-col sm:flex-row items-center gap-3">
+              <div className="flex flex-col sm:flex-row items-center gap-2.5">
                 {onSwitchToGame && (
                   <button
                     type="button"
                     onClick={onSwitchToGame}
-                    className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs shadow-md transition-all hover:scale-102"
+                    className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs shadow-md transition-all hover:scale-102"
                   >
                     <Gamepad2 className="w-4 h-4 text-slate-950" />
-                    <span>{isEn ? 'Launch Playable Game' : 'Lanzar Partida Jugable'}</span>
+                    <span>{isEn ? 'Launch Conveyor 3D' : 'Lanzar Conveyor 3D'}</span>
+                  </button>
+                )}
+                {onSwitchToFishFeeder && (
+                  <button
+                    type="button"
+                    onClick={onSwitchToFishFeeder}
+                    className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-bold text-xs shadow-md transition-all hover:scale-102"
+                  >
+                    <Fish className="w-4 h-4 text-slate-950" />
+                    <span>{isEn ? '🐟 Fish Feeder Mode' : '🐟 Modo Fish Feeder'}</span>
                   </button>
                 )}
                 <button
@@ -1233,10 +1273,10 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout, 
                     const tileProject = PORTFOLIO_PROJECTS.find((p) => p.id === 'tile-absorber-3d');
                     if (tileProject) openProjectModal(tileProject);
                   }}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 transition-all hover:scale-102"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 transition-all hover:scale-102"
                 >
                   <Info className="w-4 h-4 text-cyan-400" />
-                  <span>{isEn ? 'View Technical Specs Modal' : 'Ver Ficha Técnica'}</span>
+                  <span>{isEn ? 'Specs' : 'Ficha'}</span>
                 </button>
               </div>
             </div>
@@ -2085,7 +2125,20 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout, 
                         className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-black text-xs shadow-md transition-all hover:scale-105"
                       >
                         <Gamepad2 className="w-3.5 h-3.5" />
-                        <span>{isEn ? 'Play Game Now' : '🎮 Jugar Ahora'}</span>
+                        <span>{isEn ? 'Play Conveyor Realms' : '🎮 Conveyor Realms'}</span>
+                      </button>
+                    )}
+                    {activeModalProject.id === 'tile-absorber-3d' && onSwitchToFishFeeder && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveModalProject(null);
+                          onSwitchToFishFeeder();
+                        }}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs shadow-md transition-all hover:scale-105"
+                      >
+                        <Fish className="w-3.5 h-3.5" />
+                        <span>{isEn ? '🐟 Play Fish Feeder' : '🐟 Jugar Fish Feeder'}</span>
                       </button>
                     )}
                     {activeModalProject.externalUrl && (

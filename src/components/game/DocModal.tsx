@@ -8,7 +8,7 @@ interface DocModalProps {
 
 const worlds = [
   { icon: Crown, levels: '1–9', name: 'Chess Kingdom' },
-  { icon: Fish, levels: '10–19', name: 'Fish of Fortune' },
+  { icon: Fish, levels: '10–19', name: 'Fish Feeder' },
   { icon: PawPrint, levels: '20–29', name: 'Land Animals' },
   { icon: Bird, levels: '30–39', name: 'Birds' },
   { icon: Sparkles, levels: '40–49', name: 'Humans' },

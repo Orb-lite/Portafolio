@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { ALL_COLORS, GameVersion } from "../../game/types";
-import { getLevelConfig, getThemeForLevel } from "../../game/experience";
+import { getLevelConfig, getThemeForLevel, getVisualThemeForLevel } from "../../game/experience";
 import { GameSceneManager } from "../../game/threeScene";
 import { HeaderBar } from "./HeaderBar";
 import { BottomQueue, QueueRunner } from "./BottomQueue";
@@ -32,20 +32,30 @@ import { GamertagModal } from "./GamertagModal";
 import { SupabaseConfigModal } from "./SupabaseConfigModal";
 import { WebAdViewerModal } from "./WebAdViewerModal";
 import { ComodinesModal } from "./ComodinesModal";
+import { GameMenuModal } from "./GameMenuModal";
 import { generateComodinesForLevel, ComodinDefinition } from "../../game/comodines";
 import { saveComodinSessionToCache, getComodinSessionFromCache } from "../../services/sessionCache";
-import { ArrowLeft, Sparkles, Gamepad2, Zap } from "lucide-react";
+import { ArrowLeft, Sparkles, Gamepad2, Zap, Fish, Menu } from "lucide-react";
 
 interface TileAbsorberGameProps {
   language?: "en" | "es";
+  mode?: "pathway" | "fish_of_fortune";
+  onSwitchMode?: () => void;
   onBackToPortfolio?: () => void;
 }
 
 const savedProgress = getSavedProgress();
 const MAX_ACTIVE_RUNNERS = 5;
 
-export function TileAbsorberGame({ language = "es", onBackToPortfolio }: TileAbsorberGameProps) {
+export function TileAbsorberGame({
+  language = "es",
+  mode = "pathway",
+  onSwitchMode,
+  onBackToPortfolio,
+}: TileAbsorberGameProps) {
   const isEn = language === "en";
+  const isFishOfFortune = mode === "fish_of_fortune";
+  const [isGameMenuOpen, setIsGameMenuOpen] = useState(false);
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneManagerRef = useRef<GameSceneManager | null>(null);
   const stuckHandledRef = useRef(false);
@@ -54,9 +64,11 @@ export function TileAbsorberGame({ language = "es", onBackToPortfolio }: TileAbs
   const [playingLevel, setPlayingLevel] = useState<number>(savedProgress.level);
   const [experience, setExperience] = useState<number>(savedProgress.experience);
   const [experienceAtLevelStart, setExperienceAtLevelStart] = useState<number>(savedProgress.experience);
-  const currentLevelConfig = getLevelConfig(playingLevel);
+  const currentLevelConfig = getLevelConfig(playingLevel, isFishOfFortune);
   const totalTilesInLevel = currentLevelConfig.rows * currentLevelConfig.cols;
-  const [version, setVersion] = useState<GameVersion>(() => getThemeForLevel(savedProgress.level));
+  const [version, setVersion] = useState<GameVersion>(() =>
+    getVisualThemeForLevel(savedProgress.level, isFishOfFortune)
+  );
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [speed, setSpeed] = useState(1);
   const [activeSlotCount, setActiveSlotCount] = useState(0);
@@ -209,7 +221,7 @@ export function TileAbsorberGame({ language = "es", onBackToPortfolio }: TileAbs
 
   const addExperience = useCallback((amount: number) => setExperience((prev) => prev + amount), []);
   const createQueueForLevel = useCallback((lvl: number): QueueRunner[][] => {
-    const config = getLevelConfig(lvl);
+    const config = getLevelConfig(lvl, isFishOfFortune);
     const availableColors = ALL_COLORS.slice(0, config.colorsCount);
     return [0, 1, 2, 3].map((c) =>
       Array.from({ length: 6 }, (_, r) => ({
@@ -218,7 +230,7 @@ export function TileAbsorberGame({ language = "es", onBackToPortfolio }: TileAbs
         capacity: config.runnerCapacity,
       }))
     );
-  }, []);
+  }, [isFishOfFortune]);
   const [queueColumns, setQueueColumns] = useState<QueueRunner[][]>(() => createQueueForLevel(savedProgress.level));
 
   useEffect(() => {
@@ -366,7 +378,7 @@ export function TileAbsorberGame({ language = "es", onBackToPortfolio }: TileAbs
 
   const startLevel = (selected: number) => {
     if (selected > level || selected < 1 || lifeState.lives < 1) return;
-    const theme = getThemeForLevel(selected);
+    const theme = getVisualThemeForLevel(selected, isFishOfFortune);
     stuckHandledRef.current = false;
     setPlayingLevel(selected);
     setVersion(theme);
@@ -377,7 +389,7 @@ export function TileAbsorberGame({ language = "es", onBackToPortfolio }: TileAbs
     setSelectedComodin(null);
     titanRunnerBoostRef.current = false;
     safetyNetArmedRef.current = false;
-    setComodinesOptions(generateComodinesForLevel(selected, getLevelConfig(selected).hasEncapsulations));
+    setComodinesOptions(generateComodinesForLevel(selected, getLevelConfig(selected, isFishOfFortune).hasEncapsulations));
     setTilesAbsorbedCount(0);
     setStartTime(Date.now());
     setExperienceAtLevelStart(experience);
@@ -393,15 +405,16 @@ export function TileAbsorberGame({ language = "es", onBackToPortfolio }: TileAbs
       const nextFrontier = playingLevel + 1;
       setLevel(nextFrontier);
       setPlayingLevel(nextFrontier);
-      setVersion(getThemeForLevel(nextFrontier));
-      setComodinesOptions(generateComodinesForLevel(nextFrontier, getLevelConfig(nextFrontier).hasEncapsulations));
+      const nextTheme = getVisualThemeForLevel(nextFrontier, isFishOfFortune);
+      setVersion(nextTheme);
+      setComodinesOptions(generateComodinesForLevel(nextFrontier, getLevelConfig(nextFrontier, isFishOfFortune).hasEncapsulations));
       setSelectedComodin(null);
       setHasUsedComodin(false);
       titanRunnerBoostRef.current = false;
       safetyNetArmedRef.current = false;
       setQueueColumns(createQueueForLevel(nextFrontier));
       if (sceneManagerRef.current)
-        sceneManagerRef.current.setMode(getThemeForLevel(nextFrontier), "v3", nextFrontier);
+        sceneManagerRef.current.setMode(nextTheme, "v3", nextFrontier);
     }
     setExperienceAtLevelStart(experience);
     setHasWon(false);
@@ -431,7 +444,7 @@ export function TileAbsorberGame({ language = "es", onBackToPortfolio }: TileAbs
   const handleNextLevel = () => {
     const nextPlayableLevel = playingLevel + 1;
     const nextFrontier = playingLevel >= level ? playingLevel + 1 : level;
-    const nextTheme = getThemeForLevel(nextPlayableLevel);
+    const nextTheme = getVisualThemeForLevel(nextPlayableLevel, isFishOfFortune);
     setLevel(nextFrontier);
     setPlayingLevel(nextPlayableLevel);
     setVersion(nextTheme);
@@ -439,7 +452,7 @@ export function TileAbsorberGame({ language = "es", onBackToPortfolio }: TileAbs
     setSelectedComodin(null);
     titanRunnerBoostRef.current = false;
     safetyNetArmedRef.current = false;
-    setComodinesOptions(generateComodinesForLevel(nextPlayableLevel, getLevelConfig(nextPlayableLevel).hasEncapsulations));
+    setComodinesOptions(generateComodinesForLevel(nextPlayableLevel, getLevelConfig(nextPlayableLevel, isFishOfFortune).hasEncapsulations));
     setQueueColumns(createQueueForLevel(nextPlayableLevel));
     setExperienceAtLevelStart(experience);
     setTilesAbsorbedCount(0);
@@ -554,21 +567,69 @@ export function TileAbsorberGame({ language = "es", onBackToPortfolio }: TileAbs
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Top action row with Back to Portfolio button */}
-      <div className="flex items-center justify-between px-2">
-        {onBackToPortfolio && (
-          <button
-            type="button"
-            onClick={onBackToPortfolio}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-cyan-400 hover:text-cyan-300 border border-cyan-500/30 font-bold text-xs shadow-md transition-all hover:scale-105"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>{isEn ? "Back to Portfolio" : "Regresar al Portafolio"}</span>
-          </button>
-        )}
+      {/* Top action row with Back to Portfolio button and mode switcher */}
+      <div className="flex items-center justify-between px-2 flex-wrap gap-2">
+        <div className="flex items-center gap-2">
+          {onBackToPortfolio && (
+            <button
+              type="button"
+              onClick={onBackToPortfolio}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-cyan-400 hover:text-cyan-300 border border-cyan-500/30 font-bold text-xs shadow-md transition-all hover:scale-105"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>{isEn ? "Back to Portfolio" : "Regresar al Portafolio"}</span>
+            </button>
+          )}
+
+          {/* Mode Switcher Button */}
+          {onSwitchMode && (
+            <button
+              type="button"
+              onClick={onSwitchMode}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-bold text-xs shadow-md transition-all hover:scale-105 border ${
+                isFishOfFortune
+                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white border-emerald-400/40"
+                  : "bg-slate-900/90 hover:bg-slate-800 text-cyan-300 border-cyan-500/30"
+              }`}
+            >
+              {isFishOfFortune ? (
+                <>
+                  <Gamepad2 className="w-3.5 h-3.5 text-cyan-200" />
+                  <span>{isEn ? "Switch to Conveyor Realms" : "Cambiar a Conveyor Realms"}</span>
+                </>
+              ) : (
+                <>
+                  <Fish className="w-3.5 h-3.5 text-teal-300" />
+                  <span>{isEn ? "Switch to 🐟 Fish Feeder" : "Cambiar a 🐟 Fish Feeder"}</span>
+                </>
+              )}
+            </button>
+          )}
+
+          {isFishOfFortune && (
+            <button
+              type="button"
+              onClick={() => setIsGameMenuOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-950/80 hover:bg-cyan-900 text-cyan-200 border border-cyan-500/30 font-bold text-xs shadow-md transition-all hover:scale-105"
+            >
+              <Menu className="w-3.5 h-3.5" />
+              <span>{isEn ? "Fish Menu" : "Menú Pez"}</span>
+            </button>
+          )}
+        </div>
+
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 ml-auto">
-          <Gamepad2 className="w-4 h-4 text-cyan-400" />
-          <span>Conveyor Realms 3D · Three.js Edition</span>
+          {isFishOfFortune ? (
+            <>
+              <Fish className="w-4 h-4 text-teal-400 animate-pulse" />
+              <span className="text-teal-300 font-bold">Fish Feeder · Aquatic 3D Edition</span>
+            </>
+          ) : (
+            <>
+              <Gamepad2 className="w-4 h-4 text-cyan-400" />
+              <span>Conveyor Realms 3D · Three.js Edition</span>
+            </>
+          )}
         </div>
       </div>
 
@@ -720,6 +781,28 @@ export function TileAbsorberGame({ language = "es", onBackToPortfolio }: TileAbs
           <WebAdViewerModal
             onRewardEarned={handleWebAdRewardEarned}
             onClose={() => setIsWebAdViewerOpen(false)}
+          />
+        )}
+
+        {isFishOfFortune && isGameMenuOpen && (
+          <GameMenuModal
+            language={language}
+            level={playingLevel}
+            frontierLevel={level}
+            onResume={() => setIsGameMenuOpen(false)}
+            onOpenPathway={() => {
+              setIsGameMenuOpen(false);
+              requestPathExit();
+            }}
+            onOpenPowerUps={() => {
+              setIsGameMenuOpen(false);
+              setIsComodinesModalOpen(true);
+            }}
+            onRestart={() => {
+              setIsGameMenuOpen(false);
+              handleReset();
+            }}
+            onBackToPortfolio={onBackToPortfolio}
           />
         )}
       </div>

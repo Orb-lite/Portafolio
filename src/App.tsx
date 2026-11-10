@@ -609,7 +609,7 @@ export default function App() {
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all text-cyan-200 hover:text-white hover:bg-cyan-950/60"
             >
               <Fish className="w-4 h-4" />
-              <span>{isEn ? '🐟 Fish of Fortune' : '🐟 Peces de la Fortuna'}</span>
+              <span>{isEn ? '🐟 Fish Feeder' : '🐟 Fish Feeder'}</span>
             </button>
           </div>
         </div>

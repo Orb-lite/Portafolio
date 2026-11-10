@@ -336,7 +336,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
             <p className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300">
               <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
               {fishOfFortuneMode
-                ? (isEn ? 'Fish of Fortune • Level Pathway' : 'Fish of Fortune • Camino de niveles')
+                ? (isEn ? 'Fish Feeder • Level Pathway' : 'Fish Feeder • Camino de niveles')
                 : (isEn ? 'Conveyor Realms • Adventure Pathway' : 'Conveyor Realms • Camino de aventura')}
             </p>
             <div className="flex items-center gap-2 mt-0.5">

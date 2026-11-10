@@ -609,7 +609,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
         {onSwitchMode && !isFishOfFortune && (
           <button type="button" onClick={onSwitchMode} className="ml-auto inline-flex items-center gap-2 rounded-xl border border-cyan-400/30 bg-slate-900/90 px-3 py-1.5 text-xs font-bold text-cyan-200 hover:bg-cyan-950/70 transition">
             {isFishOfFortune ? <Gamepad2 className="w-4 h-4" /> : <span className="text-sm">🐟</span>}
-            <span>{isFishOfFortune ? (isEn ? 'Tile Absorber Pathway' : 'Camino Tile Absorber') : (isEn ? 'Fish of Fortune' : 'Peces de la Fortuna')}</span>
+            <span>{isFishOfFortune ? (isEn ? 'Tile Absorber Pathway' : 'Camino Tile Absorber') : (isEn ? 'Fish Feeder' : 'Fish Feeder')}</span>
           </button>
         )}
       </div>

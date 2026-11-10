@@ -77,7 +77,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
-                <span className="truncate text-[11px] font-black tracking-wide">Fish of Fortune</span>
+                <span className="truncate text-[11px] font-black tracking-wide">Fish Feeder</span>
                 <span className="shrink-0 rounded-md bg-cyan-400/15 px-1.5 py-0.5 text-[9px] font-black text-cyan-100">
                   {isEn ? 'LEVEL' : 'NIVEL'} {level}
                 </span>
@@ -163,7 +163,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
         </div>
         <div>
           <h1 className="text-xs sm:text-sm font-bold text-white tracking-tight flex items-center gap-1.5">
-            {isFoF ? 'Fish of Fortune' : 'Conveyor Realms'}
+            {isFoF ? 'Fish Feeder' : 'Conveyor Realms'}
             <span
               className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
                 isFoF
@@ -171,7 +171,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
                   : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
               }`}
             >
-              {isFoF ? (isEn ? 'Fish of Fortune' : 'Peces de la Fortuna') : getThemeName(version, language)}
+              {isFoF ? (isEn ? 'Fish Feeder' : 'Fish Feeder') : getThemeName(version, language)}
             </span>
           </h1>
           <div className="flex items-center gap-1.5 text-[10px]">

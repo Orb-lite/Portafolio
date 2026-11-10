@@ -58281,7 +58281,7 @@ function le() {
 	}, t.allowFsRead = void 0, t.loadImageFile = t.loadFile;
 }(E.API), function(e) {
 	function r() {
-		return (i$1.html2canvas ? Promise.resolve(i$1.html2canvas) : __vitePreload(() => import("./html2canvas-DNLxY7wT.js").then((m) => /* @__PURE__ */ __toESM(m.default)), [])).catch(function(t) {
+		return (i$1.html2canvas ? Promise.resolve(i$1.html2canvas) : __vitePreload(() => import("./html2canvas-DUYy6VRk.js").then((m) => /* @__PURE__ */ __toESM(m.default)), [])).catch(function(t) {
 			return Promise.reject(/* @__PURE__ */ new Error("Could not load html2canvas: " + t));
 		}).then(function(t) {
 			return t.default ? t.default : t;
@@ -59448,7 +59448,7 @@ function le() {
 		ignoreAnimation: !0,
 		ignoreDimensions: !0
 	}, d = this;
-	return (i$1.canvg ? Promise.resolve(i$1.canvg) : __vitePreload(() => import("./index.es-CnCOMKPs.js"), [])).catch(function(t) {
+	return (i$1.canvg ? Promise.resolve(i$1.canvg) : __vitePreload(() => import("./index.es-BMOqh2Qr.js"), [])).catch(function(t) {
 		return Promise.reject(/* @__PURE__ */ new Error("Could not load canvg: " + t));
 	}).then(function(t) {
 		return t.default ? t.default : t;
@@ -100945,7 +100945,7 @@ function getVisualThemeForLevel(level, fishOfFortuneOnly = false) {
 function getThemeName(theme, language = "en") {
 	if (language === "es") switch (theme) {
 		case "chess": return "Reino de Ajedrez";
-		case "fof": return "Peces de la Fortuna";
+		case "fof": return "Fish Feeder";
 		case "land": return "Animales Terrestres";
 		case "birds": return "Aves";
 		case "humans": return "Humanos";
@@ -100955,7 +100955,7 @@ function getThemeName(theme, language = "en") {
 	}
 	switch (theme) {
 		case "chess": return "Chess Kingdom";
-		case "fof": return "Fish of Fortune";
+		case "fof": return "Fish Feeder";
 		case "land": return "Land Animals";
 		case "birds": return "Birds";
 		case "humans": return "Humans";
@@ -140359,7 +140359,7 @@ var HeaderBar = ({ language = "en", version, lives, maxLives, soundEnabled, spee
 							className: "flex items-center justify-between gap-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 								className: "truncate text-[11px] font-black tracking-wide",
-								children: "Fish of Fortune"
+								children: "Fish Feeder"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 								className: "shrink-0 rounded-md bg-cyan-400/15 px-1.5 py-0.5 text-[9px] font-black text-cyan-100",
 								children: [
@@ -140473,9 +140473,9 @@ var HeaderBar = ({ language = "en", version, lives, maxLives, soundEnabled, spee
 					children: isFoF ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Fish, { className: "w-4 h-4" }) : isChess ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Crown, { className: "w-4 h-4" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Box, { className: "w-4 h-4" })
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h1", {
 					className: "text-xs sm:text-sm font-bold text-white tracking-tight flex items-center gap-1.5",
-					children: [isFoF ? "Fish of Fortune" : "Conveyor Realms", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					children: [isFoF ? "Fish Feeder" : "Conveyor Realms", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 						className: `text-[10px] px-2 py-0.5 rounded-full font-semibold ${isFoF ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40" : "bg-indigo-500/20 text-indigo-300 border border-indigo-500/40"}`,
-						children: isFoF ? isEn ? "Fish of Fortune" : "Peces de la Fortuna" : getThemeName(version, language)
+						children: isFoF ? isEn ? "Fish Feeder" : "Fish Feeder" : getThemeName(version, language)
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "flex items-center gap-1.5 text-[10px]",
@@ -141655,7 +141655,7 @@ var worlds = [
 	{
 		icon: Fish,
 		levels: "10–19",
-		name: "Fish of Fortune"
+		name: "Fish Feeder"
 	},
 	{
 		icon: PawPrint,
@@ -141744,7 +141744,7 @@ var DocModal = ({ isOpen, onClose, language = "en" }) => {
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 									className: "mb-3 text-xs text-slate-300 leading-relaxed",
-									children: isEn ? "Both games feature Candy Crush-style power items: aquatic pearls in Fish of Fortune and high-tech quantum tiles in Conveyor Realms!" : "¡Ambos juegos cuentan con poderes estilo Candy Crush: perlas marinas en Fish of Fortune y mosaicos cuánticos en Conveyor Realms!"
+									children: isEn ? "Both games feature Candy Crush-style power items: aquatic pearls in Fish Feeder and high-tech quantum tiles in Conveyor Realms!" : "¡Ambos juegos cuentan con poderes estilo Candy Crush: perlas marinas en Fish Feeder y mosaicos cuánticos en Conveyor Realms!"
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
 									className: "space-y-2 leading-relaxed text-slate-300 text-xs sm:text-sm",
@@ -141850,7 +141850,7 @@ var DocModal = ({ isOpen, onClose, language = "en" }) => {
 											className: "font-semibold text-slate-100",
 											children: isEn ? name : [
 												"Reino de Ajedrez",
-												"Peces de la Fortuna",
+												"Fish Feeder",
 												"Animales Terrestres",
 												"Aves",
 												"Humanos",
@@ -164183,7 +164183,7 @@ var LevelMap = ({ language = "en", fishOfFortuneMode = false, frontierLevel, cur
 						className: "flex items-center justify-between px-3 sm:px-6 py-2.5",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 							className: "flex items-center gap-1.5 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sparkles, { className: "h-3 w-3 sm:h-3.5 sm:w-3.5" }), fishOfFortuneMode ? isEn ? "Fish of Fortune • Level Pathway" : "Fish of Fortune • Camino de niveles" : isEn ? "Conveyor Realms • Adventure Pathway" : "Conveyor Realms • Camino de aventura"]
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sparkles, { className: "h-3 w-3 sm:h-3.5 sm:w-3.5" }), fishOfFortuneMode ? isEn ? "Fish Feeder • Level Pathway" : "Fish Feeder • Camino de niveles" : isEn ? "Conveyor Realms • Adventure Pathway" : "Conveyor Realms • Camino de aventura"]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "flex items-center gap-2 mt-0.5",
 							children: [
@@ -166485,7 +166485,7 @@ function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMode, onB
 				children: [isFishOfFortune ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Gamepad2, { className: "w-4 h-4" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 					className: "text-sm",
 					children: "🐟"
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: isFishOfFortune ? isEn ? "Tile Absorber Pathway" : "Camino Tile Absorber" : isEn ? "Fish of Fortune" : "Peces de la Fortuna" })]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: isFishOfFortune ? isEn ? "Tile Absorber Pathway" : "Camino Tile Absorber" : isEn ? "Fish Feeder" : "Fish Feeder" })]
 			})]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			onPointerMove: isFishOfFortune ? (event) => {
@@ -176960,7 +176960,7 @@ function App() {
 								type: "button",
 								onClick: () => setMainTab("fish_of_fortune"),
 								className: "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all text-cyan-200 hover:text-white hover:bg-cyan-950/60",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Fish, { className: "w-4 h-4" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: isEn ? "🐟 Fish of Fortune" : "🐟 Peces de la Fortuna" })]
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Fish, { className: "w-4 h-4" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: isEn ? "🐟 Fish Feeder" : "🐟 Fish Feeder" })]
 							})
 						]
 					})

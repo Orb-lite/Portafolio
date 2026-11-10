@@ -9,7 +9,7 @@ interface DocModalProps {
 
 const worlds = [
   { icon: Crown, levels: '1–9', name: 'Chess Kingdom' },
-  { icon: Fish, levels: '10–19', name: 'Fish of Fortune' },
+  { icon: Fish, levels: '10–19', name: 'Fish Feeder' },
   { icon: PawPrint, levels: '20–29', name: 'Land Animals' },
   { icon: Bird, levels: '30–39', name: 'Birds' },
   { icon: Sparkles, levels: '40–49', name: 'Humans' },
@@ -56,8 +56,8 @@ export const DocModal: React.FC<DocModalProps> = ({ isOpen, onClose, language = 
             </h3>
             <p className="mb-3 text-xs text-slate-300 leading-relaxed">
               {isEn
-                ? 'Both games feature Candy Crush-style power items: aquatic pearls in Fish of Fortune and high-tech quantum tiles in Conveyor Realms!'
-                : '¡Ambos juegos cuentan con poderes estilo Candy Crush: perlas marinas en Fish of Fortune y mosaicos cuánticos en Conveyor Realms!'}
+                ? 'Both games feature Candy Crush-style power items: aquatic pearls in Fish Feeder and high-tech quantum tiles in Conveyor Realms!'
+                : '¡Ambos juegos cuentan con poderes estilo Candy Crush: perlas marinas en Fish Feeder y mosaicos cuánticos en Conveyor Realms!'}
             </p>
             <ul className="space-y-2 leading-relaxed text-slate-300 text-xs sm:text-sm">
               <li className="flex items-start gap-2">
@@ -101,7 +101,7 @@ export const DocModal: React.FC<DocModalProps> = ({ isOpen, onClose, language = 
               {worlds.map(({ icon: Icon, levels, name }, index) => (
                 <div key={name} className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2">
                   <Icon className="h-4 w-4 shrink-0 text-amber-300" />
-                  <span className="font-semibold text-slate-100">{isEn ? name : ['Reino de Ajedrez', 'Peces de la Fortuna', 'Animales Terrestres', 'Aves', 'Humanos', 'Automóviles', 'Aeronaves'][index]}</span>
+                  <span className="font-semibold text-slate-100">{isEn ? name : ['Reino de Ajedrez', 'Fish Feeder', 'Animales Terrestres', 'Aves', 'Humanos', 'Automóviles', 'Aeronaves'][index]}</span>
                   <span className="ml-auto font-mono text-[10px] text-slate-400">{levels}</span>
                 </div>
               ))}

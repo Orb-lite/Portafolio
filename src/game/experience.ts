@@ -53,7 +53,7 @@ export function getThemeName(theme: import('./types').GameVersion, language: 'en
   if (language === 'es') {
     switch (theme) {
       case 'chess': return 'Reino de Ajedrez';
-      case 'fof': return 'Peces de la Fortuna';
+      case 'fof': return 'Fish Feeder';
       case 'land': return 'Animales Terrestres';
       case 'birds': return 'Aves';
       case 'humans': return 'Humanos';
@@ -64,7 +64,7 @@ export function getThemeName(theme: import('./types').GameVersion, language: 'en
   }
   switch (theme) {
     case 'chess': return 'Chess Kingdom';
-    case 'fof': return 'Fish of Fortune';
+    case 'fof': return 'Fish Feeder';
     case 'land': return 'Land Animals';
     case 'birds': return 'Birds';
     case 'humans': return 'Humans';

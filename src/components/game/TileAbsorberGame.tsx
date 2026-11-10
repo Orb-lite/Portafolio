@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { ALL_COLORS, GameVersion } from "../../game/types";
-import { getLevelConfig, getThemeForLevel, getVisualThemeForLevel } from "../../game/experience";
+import { ALL_COLORS, GameVersion, TileColor } from "../../game/types";
+import { getLevelConfig, getThemeForLevel, getVisualThemeForLevel, getColorsForLevel } from "../../game/experience";
 import { GameSceneManager } from "../../game/threeScene";
 import { HeaderBar } from "./HeaderBar";
 import { QueueRunner } from "./BottomQueue";
@@ -52,17 +52,21 @@ const MAX_ACTIVE_RUNNERS = 5;
 const getTileColorBg = (color: string) => {
   switch (color?.toLowerCase()) {
     case 'blue': return 'bg-blue-600 border-blue-400 text-white';
-    case 'green': return 'bg-emerald-500 border-emerald-300 text-slate-950';
-    case 'red': return 'bg-rose-500 border-rose-300 text-white';
     case 'yellow': return 'bg-amber-400 border-amber-200 text-slate-950';
-    case 'purple': return 'bg-purple-600 border-purple-300 text-white';
-    case 'orange': return 'bg-orange-500 border-orange-300 text-slate-950';
-    case 'cyan': return 'bg-cyan-400 border-cyan-200 text-slate-950';
+    case 'pink':
     case 'magenta':
-    case 'pink': 
-      return 'bg-fuchsia-500 border-fuchsia-300 text-white';
+      return 'bg-pink-500 border-pink-300 text-white';
+    case 'cyan': return 'bg-cyan-400 border-cyan-200 text-slate-950';
+    case 'green': return 'bg-emerald-500 border-emerald-300 text-slate-950';
+    case 'orange': return 'bg-orange-500 border-orange-300 text-slate-950';
+    case 'purple': return 'bg-purple-600 border-purple-300 text-white';
+    case 'red': return 'bg-rose-500 border-rose-300 text-white';
     case 'white': return 'bg-slate-100 border-slate-300 text-slate-950';
-    default: return 'bg-slate-700 border-slate-500 text-white';
+    case 'lime': return 'bg-lime-400 border-lime-200 text-slate-950';
+    case 'black': return 'bg-slate-900 border-slate-600 text-white';
+    case 'rainbow': return 'bg-gradient-to-tr from-pink-500 via-amber-300 to-cyan-400 border-white text-white shadow-cyan-500/50';
+    case 'bomb': return 'bg-gradient-to-tr from-rose-600 to-amber-500 border-amber-300 text-white animate-pulse shadow-rose-500/50';
+    default: return 'bg-sky-500 border-sky-300 text-white';
   }
 };
 
@@ -162,18 +166,20 @@ export function TileAbsorberGame({
         break;
       case 'rotacion_tactica': {
         const exposed = sceneManagerRef.current.getExposedColors();
-        const colors = exposed.length > 0 ? exposed : ALL_COLORS.slice(0, getLevelConfig(playingLevel).colorsCount);
+        const levelColors = getColorsForLevel(playingLevel, isFishOfFortune);
+        const colors = exposed.length > 0 ? exposed : levelColors;
         setQueueColumns((prev) =>
           prev.map((col, cIdx) => {
             if (!col.length) return col;
-            const newFrontColor = colors[cIdx % colors.length];
+            const newBottomColor = colors[cIdx % colors.length];
             const updated = [...col];
-            updated[0] = { ...updated[0], color: newFrontColor };
+            // Actualizar la tarjeta lanzadora activa (al fondo de la columna)
+            updated[updated.length - 1] = { ...updated[updated.length - 1], color: newBottomColor };
             return updated;
           })
         );
         soundManager.playComodinActivate();
-        triggerComodinNotification('¡ROTACIÓN TÁCTICA!', 'Fila frontal reorganizada con colores visibles en el tablero.');
+        triggerComodinNotification('¡ROTACIÓN TÁCTICA!', 'Lanzadores reconfigurados con colores expuestos en el arrecife.');
         break;
       }
       case 'corredor_titan':
@@ -244,16 +250,40 @@ export function TileAbsorberGame({
 
   const addExperience = useCallback((amount: number) => setExperience((prev) => prev + amount), []);
 
-  const createQueueForLevel = useCallback((lvl: number): QueueRunner[][] => {
+  const createQueueForLevel = useCallback((lvl: number, exposedHint?: TileColor[]): QueueRunner[][] => {
     const config = getLevelConfig(lvl, isFishOfFortune);
-    const availableColors = ALL_COLORS.slice(0, config.colorsCount);
-    return [0, 1].map((c) =>
-      Array.from({ length: 6 }, (_, r) => ({
-        id: `queue_${lvl}_${c}_${r}_${Date.now()}_${Math.random()}`,
-        color: availableColors[(c * 3 + r) % availableColors.length],
+    const levelColors = getColorsForLevel(lvl, isFishOfFortune);
+    const exposed = (exposedHint && exposedHint.length > 0)
+      ? exposedHint
+      : (sceneManagerRef.current?.getExposedColors() || []);
+
+    // Filtra colores expuestos válidos para asegurar que los lanzadores iniciales siempre puedan absorber perlas
+    const validExposed = exposed.filter((c) => levelColors.includes(c));
+    const activePool = validExposed.length > 0 ? validExposed : levelColors;
+
+    return [0, 1].map((colIdx) => {
+      // Color garantizado para el lanzador activo (tarjeta inferior col[5])
+      const bottomColor = activePool[colIdx % activePool.length];
+
+      const colItems: QueueRunner[] = [];
+      // Las 5 tarjetas en cola superior rotan armónicamente entre los colores del nivel
+      for (let r = 0; r < 5; r++) {
+        const poolColor = levelColors[(colIdx * 3 + r) % levelColors.length];
+        colItems.push({
+          id: `queue_${lvl}_${colIdx}_${r}_${Date.now()}_${Math.random()}`,
+          color: poolColor,
+          capacity: config.runnerCapacity,
+        });
+      }
+      // Tarjeta activa lanzadora inferior
+      colItems.push({
+        id: `queue_${lvl}_${colIdx}_active_${Date.now()}_${Math.random()}`,
+        color: bottomColor,
         capacity: config.runnerCapacity,
-      }))
-    );
+      });
+
+      return colItems;
+    });
   }, [isFishOfFortune]);
 
   const [queueColumns, setQueueColumns] = useState<QueueRunner[][]>(() => createQueueForLevel(savedProgress.level));
@@ -324,9 +354,11 @@ export function TileAbsorberGame({
       },
       version,
       "v3",
-      savedProgress.level
+      playingLevel
     );
     sceneManagerRef.current = manager;
+    // Sincroniza inmediatamente las tarjetas del selector con las perlas expuestas en el mapa 3D
+    setQueueColumns(createQueueForLevel(playingLevel, manager.getExposedColors()));
     const handleResize = () => manager.handleResize();
     window.addEventListener("resize", handleResize);
     return () => {
@@ -366,11 +398,19 @@ export function TileAbsorberGame({
           updated.pop();
 
           const exposedColors = sceneManagerRef.current?.getExposedColors() || [];
-          const availableColors = exposedColors.length > 0
-            ? exposedColors
-            : ALL_COLORS.slice(0, getLevelConfig(playingLevel, isFishOfFortune).colorsCount);
+          const remainingColors = sceneManagerRef.current?.getRemainingColors() || [];
+          const levelColors = getColorsForLevel(playingLevel, isFishOfFortune);
 
-          const chosenColor = availableColors[Math.floor(Math.random() * availableColors.length)];
+          // Prioridad de reposición:
+          // 1. Colores de perlas expuestas en el perímetro (inmediatamente útiles)
+          // 2. Colores restantes en el tablero (evita dar colores extintos)
+          // 3. Colores base del nivel
+          let pool = exposedColors.length > 0 ? exposedColors : remainingColors;
+          if (!pool || pool.length === 0) {
+            pool = levelColors;
+          }
+
+          const chosenColor = pool[Math.floor(Math.random() * pool.length)];
 
           updated.unshift({
             id: `queue_replenish_${Date.now()}_${Math.random()}`,
@@ -393,10 +433,12 @@ export function TileAbsorberGame({
     setExperience(experienceAtLevelStart);
     setTilesAbsorbedCount(0);
     setStartTime(Date.now());
-    setQueueColumns(createQueueForLevel(playingLevel));
     if (sceneManagerRef.current) {
       sceneManagerRef.current.paused = false;
       sceneManagerRef.current.resetLevel(playingLevel);
+      setQueueColumns(createQueueForLevel(playingLevel, sceneManagerRef.current.getExposedColors()));
+    } else {
+      setQueueColumns(createQueueForLevel(playingLevel));
     }
   };
   const handleReset = () => {
@@ -421,10 +463,12 @@ export function TileAbsorberGame({
     setTilesAbsorbedCount(0);
     setStartTime(Date.now());
     setExperienceAtLevelStart(experience);
-    setQueueColumns(createQueueForLevel(selected));
     if (sceneManagerRef.current) {
       sceneManagerRef.current.paused = false;
       sceneManagerRef.current.setMode(theme, "v3", selected);
+      setQueueColumns(createQueueForLevel(selected, sceneManagerRef.current.getExposedColors()));
+    } else {
+      setQueueColumns(createQueueForLevel(selected));
     }
   };
 
@@ -440,9 +484,12 @@ export function TileAbsorberGame({
       setHasUsedComodin(false);
       titanRunnerBoostRef.current = false;
       safetyNetArmedRef.current = false;
-      setQueueColumns(createQueueForLevel(nextFrontier));
-      if (sceneManagerRef.current)
+      if (sceneManagerRef.current) {
         sceneManagerRef.current.setMode(nextTheme, "v3", nextFrontier);
+        setQueueColumns(createQueueForLevel(nextFrontier, sceneManagerRef.current.getExposedColors()));
+      } else {
+        setQueueColumns(createQueueForLevel(nextFrontier));
+      }
     }
     setExperienceAtLevelStart(experience);
     setHasWon(false);
@@ -481,7 +528,6 @@ export function TileAbsorberGame({
     titanRunnerBoostRef.current = false;
     safetyNetArmedRef.current = false;
     setComodinesOptions(generateComodinesForLevel(nextPlayableLevel, getLevelConfig(nextPlayableLevel, isFishOfFortune).hasEncapsulations));
-    setQueueColumns(createQueueForLevel(nextPlayableLevel));
     setExperienceAtLevelStart(experience);
     setTilesAbsorbedCount(0);
     setStartTime(Date.now());
@@ -492,6 +538,9 @@ export function TileAbsorberGame({
     if (sceneManagerRef.current) {
       sceneManagerRef.current.setMode(nextTheme, "v3", nextPlayableLevel);
       sceneManagerRef.current.paused = false;
+      setQueueColumns(createQueueForLevel(nextPlayableLevel, sceneManagerRef.current.getExposedColors()));
+    } else {
+      setQueueColumns(createQueueForLevel(nextPlayableLevel));
     }
   };
 

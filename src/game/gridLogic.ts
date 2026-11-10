@@ -1,5 +1,5 @@
-import { GridTile, TileColor, TrackSide, ALL_COLORS } from './types';
-import { getLevelConfig } from './experience';
+import { GridTile, TileColor, TrackSide } from './types';
+import { getLevelConfig, getColorsForLevel } from './experience';
 
 export class GridManager {
   public rows: number;
@@ -7,24 +7,27 @@ export class GridManager {
   public tileSize: number;
   public tileSpacing: number;
   public level: number = 1;
+  public isFishMode: boolean = false;
   public tiles: GridTile[] = [];
 
   // 2D lookup [row][col] -> GridTile
   public grid: (GridTile | null)[][] = [];
 
-  constructor(level = 1) {
+  constructor(level = 1, isFishMode = false) {
     this.level = level;
-    const config = getLevelConfig(level);
+    this.isFishMode = isFishMode;
+    const config = getLevelConfig(level, isFishMode);
     this.rows = config.rows;
     this.cols = config.cols;
     this.tileSize = 0.44;
     this.tileSpacing = 0.05;
-    this.initGrid(level);
+    this.initGrid(level, isFishMode);
   }
 
-  public initGrid(level = this.level) {
+  public initGrid(level = this.level, isFishMode = this.isFishMode) {
     this.level = level;
-    const config = getLevelConfig(level);
+    this.isFishMode = isFishMode;
+    const config = getLevelConfig(level, isFishMode);
     this.rows = config.rows;
     this.cols = config.cols;
     this.tiles = [];
@@ -38,9 +41,8 @@ export class GridManager {
     this.tileSize = pitch * 0.88;
     this.tileSpacing = pitch * 0.12;
 
-    
-    
-    const availableColors: TileColor[] = ALL_COLORS;
+    // Constrain grid tiles strictly to the level's designated playable colors
+    const availableColors: TileColor[] = getColorsForLevel(level, isFishMode);
 
     const totalWidth = this.cols * (this.tileSize + this.tileSpacing) - this.tileSpacing;
     const totalDepth = this.rows * (this.tileSize + this.tileSpacing) - this.tileSpacing;

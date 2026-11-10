@@ -1,3 +1,5 @@
+import { PLAYABLE_COLORS, TileColor } from './types';
+
 /**
  * Board-based difficulty progression.
  * A board clear advances exactly one level; XP is tracked separately as score.
@@ -15,8 +17,8 @@ export interface LevelConfig {
 export function getLevelConfig(level: number, fishOfFortuneMode = false): LevelConfig {
   const currentLevel = Math.max(1, Math.floor(level));
   const colorsCount = fishOfFortuneMode
-    ? Math.min(12, 3 + Math.floor((currentLevel - 1) / 2))
-    : Math.min(12, 2 + Math.floor((currentLevel - 1) / 5));
+    ? Math.min(10, 3 + Math.floor((currentLevel - 1) / 2))
+    : Math.min(10, 2 + Math.floor((currentLevel - 1) / 5));
 
   // Match the reference's dense square board, then grow it slowly between worlds.
   const boardSize = Math.min(64, 15 + Math.floor((currentLevel - 1) / 3));
@@ -33,6 +35,12 @@ export function getLevelConfig(level: number, fishOfFortuneMode = false): LevelC
       : 0,
     runnerCapacity: 20,
   };
+}
+
+export function getColorsForLevel(level: number, fishOfFortuneMode = false): TileColor[] {
+  const config = getLevelConfig(level, fishOfFortuneMode);
+  const count = Math.min(PLAYABLE_COLORS.length, Math.max(2, config.colorsCount));
+  return PLAYABLE_COLORS.slice(0, count);
 }
 
 export function getThemeForLevel(level: number): import('./types').GameVersion {

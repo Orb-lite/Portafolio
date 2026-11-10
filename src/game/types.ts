@@ -1,4 +1,4 @@
-﻿export type GameVersion = 'chess' | 'primitive' | 'fof' | 'land' | 'birds' | 'humans' | 'cars' | 'aircraft';
+export type GameVersion = 'chess' | 'primitive' | 'fof' | 'land' | 'birds' | 'humans' | 'cars' | 'aircraft';
 export type PolishLevel = 'v1' | 'v2' | 'v3';
 
 export type SpecialTileType = 
@@ -10,12 +10,17 @@ export type SpecialTileType =
   | 'bomb';           // 💣 Perla Bomba (explota radio X/Y de 1 a 3 hileras)
 
 export type TileColor = 
-  | 'white' | 'black' | 'blue' | 'yellow' | 'pink' | 'green' | 'purple' 
-  | 'red' | 'cyan' | 'orange' | 'magenta' | 'lime' | 'rainbow' | 'bomb';
+  | 'blue' | 'yellow' | 'pink' | 'cyan' | 'green' | 'orange' | 'purple' 
+  | 'red' | 'white' | 'lime' | 'magenta' | 'black' | 'rainbow' | 'bomb';
+
+export const PLAYABLE_COLORS: TileColor[] = [
+  'blue', 'yellow', 'pink', 'cyan', 'green', 'orange', 'purple', 
+  'red', 'white', 'lime', 'magenta', 'black'
+];
 
 export const ALL_COLORS: TileColor[] = [
-  'white', 'black', 'blue', 'yellow', 'pink', 'green', 'purple', 
-  'red', 'cyan', 'orange', 'magenta', 'lime', 'rainbow', 'bomb'
+  ...PLAYABLE_COLORS,
+  'rainbow', 'bomb'
 ];
 
 export interface GridTile {

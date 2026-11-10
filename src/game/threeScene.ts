@@ -177,7 +177,7 @@ export class GameSceneManager {
     this.currentLevel = initialLevel;
 
     this.trackPath = new TrackPath();
-    this.gridManager = new GridManager(initialLevel);
+    this.gridManager = new GridManager(initialLevel, this.isFishMode);
     this.primitiveFactory = new PrimitiveMeshFactory();
     this.fofFactory = new FofMeshFactory();
     this.worldMeshFactory = new WorldMeshFactory();
@@ -283,7 +283,7 @@ export class GameSceneManager {
 
   public buildWorld(level: number = this.currentLevel) {
     this.currentLevel = level;
-    const levelConfig = getLevelConfig(level);
+    const levelConfig = getLevelConfig(level, this.isFishMode);
     const boardHalfSize = levelConfig.rows * 0.3;
     const trackExtent = boardHalfSize + 1.4;
 
@@ -400,7 +400,7 @@ export class GameSceneManager {
       this.conveyorBeltMaterial = beltMaterial;
     }
 
-    this.gridManager.initGrid(this.currentLevel);
+    this.gridManager.initGrid(this.currentLevel, this.isFishMode);
     const tileSize = this.gridManager.tileSize;
     for (const tile of this.gridManager.tiles) {
       let mesh: THREE.Object3D;

@@ -18,10 +18,8 @@ import {
   Lock,
 } from 'lucide-react';
 import { ComodinDefinition, ComodinTier } from '../../game/comodines';
-import { GAME_TEXT, localizeComodin, GameLanguage } from '../../game/localization';
 
 interface ComodinesModalProps {
-  language?: GameLanguage;
   isOpen: boolean;
   onClose: () => void;
   options: ComodinDefinition[];
@@ -32,7 +30,6 @@ interface ComodinesModalProps {
 }
 
 export const ComodinesModal: React.FC<ComodinesModalProps> = ({
-  language = 'en',
   isOpen,
   onClose,
   options,
@@ -42,7 +39,6 @@ export const ComodinesModal: React.FC<ComodinesModalProps> = ({
   onSelectAndActivate,
 }) => {
   if (!isOpen) return null;
-  const text = GAME_TEXT[language];
 
   const currentTier: ComodinTier = level >= 10 ? 3 : level >= 5 ? 2 : 1;
 
@@ -74,11 +70,11 @@ export const ComodinesModal: React.FC<ComodinesModalProps> = ({
   const getTierLabel = (tier: ComodinTier) => {
     switch (tier) {
       case 1:
-        return { label: language === 'en' ? 'TIER I · BASIC TACTICIAN' : 'NIVEL I · TÁCTICA BÁSICA', badge: 'bg-cyan-500/20 text-cyan-300 border-cyan-400/40' };
+        return { label: 'TIER I · TÁCTICO BÁSICO', badge: 'bg-cyan-500/20 text-cyan-300 border-cyan-400/40' };
       case 2:
-        return { label: language === 'en' ? 'TIER II · ADVANCED STRATEGIST' : 'NIVEL II · ESTRATEGA AVANZADO', badge: 'bg-purple-500/20 text-purple-300 border-purple-400/40' };
+        return { label: 'TIER II · ESTRATEGA AVANZADO', badge: 'bg-purple-500/20 text-purple-300 border-purple-400/40' };
       case 3:
-        return { label: language === 'en' ? 'TIER III · CONVEYOR MASTER' : 'NIVEL III · MAESTRO DE CINTA', badge: 'bg-amber-500/20 text-amber-300 border-amber-400/40' };
+        return { label: 'TIER III · MAESTRO DE CINTA', badge: 'bg-amber-500/20 text-amber-300 border-amber-400/40' };
     }
   };
 
@@ -94,17 +90,17 @@ export const ComodinesModal: React.FC<ComodinesModalProps> = ({
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-base sm:text-lg font-black text-white tracking-tight">
-                  {language === 'en' ? 'Tactical Power-ups' : 'Comodines tácticos'} · {language === 'en' ? 'Level' : 'Nivel'} {level}
+                  Comodines Tácticos · Nivel {level}
                 </h2>
                 <span className="text-[10px] px-2.5 py-0.5 rounded-full font-black uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40 tracking-wider">
-                  {language === 'en' ? 'Only 1 per Level' : 'Solo 1 por nivel'}
+                  Solo 1 por Nivel
                 </span>
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-black border ${getTierLabel(currentTier).badge}`}>
                   {getTierLabel(currentTier).label}
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
-                {language === 'en' ? 'Power-ups evolve with each level, but each has tactical trade-offs. Study the board and choose wisely!' : 'Los comodines mejoran con cada nivel, pero tienen riesgos tácticos. ¡Analiza el tablero y elige el adecuado!'}
+                Los comodines mejoran con cada nivel, pero tienen riesgos tácticos. ¡Analiza el tablero y escoge el indicado!
               </p>
             </div>
           </div>
@@ -112,7 +108,7 @@ export const ComodinesModal: React.FC<ComodinesModalProps> = ({
           <button
             onClick={onClose}
             className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition cursor-pointer"
-            aria-label={language === 'en' ? 'Close' : 'Cerrar'}
+            aria-label="Cerrar"
           >
             <X className="w-5 h-5" />
           </button>
@@ -123,7 +119,7 @@ export const ComodinesModal: React.FC<ComodinesModalProps> = ({
           <div className="bg-amber-950/60 border-b border-amber-500/30 px-5 py-2.5 flex items-center gap-2.5 text-xs text-amber-200">
             <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
             <span>
-              <strong>{language === 'en' ? 'Power-up already used this level:' : 'Comodín ya utilizado en este nivel:'}</strong> {language === 'en' ? 'You can choose a new power-up when you advance or restart this level.' : 'Podrás elegir uno nuevo al avanzar o reiniciar este nivel.'}
+              <strong>Comodín ya consumido en este nivel:</strong> Podrás elegir un nuevo comodín al avanzar al siguiente nivel o al reiniciar este nivel.
             </span>
           </div>
         )}
@@ -132,7 +128,6 @@ export const ComodinesModal: React.FC<ComodinesModalProps> = ({
         <div className="p-4 sm:p-6 overflow-y-auto flex-1">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {options.map((comodin, idx) => {
-              const localized = localizeComodin(comodin, language);
               const isSelected = selectedComodin?.id === comodin.id;
               const tierInfo = getTierLabel(comodin.tier);
 
@@ -150,12 +145,12 @@ export const ComodinesModal: React.FC<ComodinesModalProps> = ({
                     {/* Tier badge & number */}
                     <div className="flex items-center justify-between gap-2 mb-3">
                       <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${tierInfo.badge}`}>
-                        {language === 'en' ? 'Option' : 'Opción'} {idx + 1} · {language === 'en' ? 'Tier' : 'Nivel'} {comodin.tier}
+                        Opción {idx + 1} · Tier {comodin.tier}
                       </span>
                       {isSelected && (
                         <span className="flex items-center gap-1 text-[10px] font-black uppercase text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/30">
                           <Check className="w-3 h-3 text-amber-400" />
-                          {language === 'en' ? 'Equipped' : 'Equipado'}
+                          Equipado
                         </span>
                       )}
                     </div>
@@ -170,25 +165,25 @@ export const ComodinesModal: React.FC<ComodinesModalProps> = ({
                       </div>
                       <div>
                         <h3 className="text-base font-black text-white leading-snug">
-                          {localized.name}
+                          {comodin.name}
                         </h3>
                         <p className="text-xs font-semibold text-cyan-300">
-                          {localized.subtitle}
+                          {comodin.subtitle}
                         </p>
                       </div>
                     </div>
 
                     {/* Description */}
                     <p className="text-xs text-slate-300 mb-3.5 leading-relaxed bg-slate-950/50 p-2.5 rounded-xl border border-white/5">
-                      {localized.description}
+                      {comodin.description}
                     </p>
 
                     {/* Tactical Advice box */}
                     <div className="mb-2.5 p-2.5 rounded-xl bg-cyan-950/30 border border-cyan-500/20 text-[11px] text-cyan-200 flex items-start gap-2">
                       <Lightbulb className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
                       <div>
-                        <strong className="text-cyan-300 font-bold">{language === 'en' ? 'When to use: ' : 'Cuándo conviene: '}</strong>
-                        <span>{localized.tacticalAdvice}</span>
+                        <strong className="text-cyan-300 font-bold">Cuándo conviene: </strong>
+                        <span>{comodin.tacticalAdvice}</span>
                       </div>
                     </div>
 
@@ -196,8 +191,8 @@ export const ComodinesModal: React.FC<ComodinesModalProps> = ({
                     <div className="mb-4 p-2.5 rounded-xl bg-rose-950/30 border border-rose-500/20 text-[11px] text-rose-200 flex items-start gap-2">
                       <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
                       <div>
-                        <strong className="text-rose-300 font-bold">{language === 'en' ? 'Trade-off / Risk: ' : 'Riesgo / desafío: '}</strong>
-                        <span>{localized.tradeoff}</span>
+                        <strong className="text-rose-300 font-bold">Riesgo / Desafío: </strong>
+                        <span>{comodin.tradeoff}</span>
                       </div>
                     </div>
                   </div>
@@ -210,7 +205,7 @@ export const ComodinesModal: React.FC<ComodinesModalProps> = ({
                         className="w-full py-2 px-3 rounded-xl bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center gap-1.5 cursor-not-allowed"
                       >
                         <Lock className="w-3.5 h-3.5" />
-                        <span>{text.alreadyUsed}</span>
+                        <span>Ya usaste 1 comodín este nivel</span>
                       </button>
                     ) : (
                       <>
@@ -227,7 +222,7 @@ export const ComodinesModal: React.FC<ComodinesModalProps> = ({
                           }`}
                         >
                           <Check className="w-3.5 h-3.5" />
-                          <span>{isSelected ? text.equipped : text.equip}</span>
+                          <span>{isSelected ? 'Comodín Equipado' : 'Equipar este Comodín'}</span>
                         </button>
 
                         <button
@@ -239,7 +234,7 @@ export const ComodinesModal: React.FC<ComodinesModalProps> = ({
                           className="w-full py-1.5 px-3 rounded-xl font-bold text-[11px] bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white transition cursor-pointer flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
                         >
                           <Zap className="w-3 h-3 fill-white" />
-                          <span>{language === 'en' ? 'Activate Now!' : '¡Activar ahora!'}</span>
+                          <span>¡Activar de Inmediato!</span>
                         </button>
                       </>
                     )}
@@ -254,13 +249,13 @@ export const ComodinesModal: React.FC<ComodinesModalProps> = ({
         <div className="px-5 py-3 border-t border-slate-800/80 bg-slate-950 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>{text.chooseHint}</span>
+            <span>Selecciona 1 comodín para este nivel. Puedes activarlo ahora o guardarlo para el momento clave.</span>
           </div>
           <button
             onClick={onClose}
             className="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs cursor-pointer transition active:scale-95"
           >
-            {language === 'en' ? 'Back to Game' : 'Volver a la partida'}
+            Volver a la Partida
           </button>
         </div>
       </div>

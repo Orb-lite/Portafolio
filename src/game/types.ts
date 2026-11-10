@@ -5,17 +5,13 @@ export type TileColor = 'white' | 'black' | 'blue' | 'yellow' | 'pink' | 'green'
 
 export const ALL_COLORS: TileColor[] = ['white', 'black', 'blue', 'yellow', 'pink', 'green', 'purple', 'red', 'cyan', 'orange', 'magenta', 'lime'];
 
-export type SpecialCandyType = 'cross' | 'wrapped' | 'burst' | 'color';
-
 export interface GridTile {
   id: string;
   row: number;
   col: number;
   color: TileColor;
   collected: boolean;
-  encapsulated?: boolean; // Trapped in an outer crystal bubble / cage (up to 3 layers)
-  encapsulationLayers?: number; // 1, 2, or 3 protective shells / shields
-  special?: SpecialCandyType; // Candy Crush explosive pearl / power tile
+  encapsulated?: boolean; // Trapped in an outer crystal bubble / cage
   unlockAt?: number; // Game-clock timestamp when a shattered shield's tile becomes absorbable
   absorbedProgress: number; // 0 to 1 for flight animation
   absorberId?: string;

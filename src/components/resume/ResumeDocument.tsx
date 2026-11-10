@@ -158,14 +158,14 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
     <div
       ref={innerRef}
       id="resume-print-sheet"
-      className={`w-full bg-slate-200/60 dark:bg-slate-950 text-slate-800 dark:text-slate-100 ${fontClass} ${textScale} leading-relaxed selection:bg-slate-200 shadow-xl print:shadow-none print:m-0 print:p-0 print:bg-white`}
+      className={`w-full bg-slate-200/60 text-slate-800 ${fontClass} ${textScale} leading-relaxed selection:bg-slate-200 shadow-xl print:shadow-none print:m-0 print:p-0 print:bg-white`}
     >
       {/* ============================================================ */}
       {/* PAGE 1: HEADER + TOP EXPERIENCES + METRICS + SKILLS           */}
       {/* ============================================================ */}
       <div
         id="resume-page-1"
-        className="resume-page bg-white dark:bg-slate-900 shadow-md print:shadow-none flex flex-col relative"
+        className="resume-page bg-white shadow-md print:shadow-none flex flex-col relative"
         style={{ minHeight: '297mm', boxSizing: 'border-box' }}
       >
         {/* TEMPLATE 1: EXECUTIVE CLASSIC */}
@@ -324,7 +324,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                       <Briefcase className="w-3.5 h-3.5" />
                       <span>{t.summary}</span>
                     </h2>
-                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-justify text-[11px]">
+                    <p className="text-slate-600 leading-relaxed text-justify text-[11px]">
                       {displaySummary}
                     </p>
                   </section>
@@ -349,25 +349,25 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                         style={breakAvoidStyle}
                       >
                         <div className="flex flex-row items-baseline justify-between gap-1 mb-0.5">
-                          <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-xs">
+                          <h3 className="font-semibold text-slate-900 text-xs">
                             {exp.role}
                           </h3>
-                          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium shrink-0">
+                          <span className="text-[10px] text-slate-500 font-medium shrink-0">
                             {exp.startDate} — {exp.isCurrent ? t.present : (exp.endDate === 'Presente' || exp.endDate === 'Present' ? t.present : exp.endDate)}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-[11px] text-slate-600 dark:text-slate-300 mb-1.5 font-medium">
+                        <div className="flex items-center gap-2 text-[11px] text-slate-600 mb-1.5 font-medium">
                           <span style={{ color: accentColor }}>{exp.company}</span>
                           {exp.location && (
                             <>
-                              <span aria-hidden="true" className="text-slate-300 dark:text-slate-600">·</span>
+                              <span aria-hidden="true" className="text-slate-300">·</span>
                               <span>{exp.location}</span>
                             </>
                           )}
                         </div>
 
                         {exp.highlights && exp.highlights.length > 0 && (
-                          <ul className={`${bulletSpacing} text-slate-600 dark:text-slate-300 text-[11px] pl-3.5`}>
+                          <ul className={`${bulletSpacing} text-slate-600 text-[11px] pl-3.5`}>
                             {exp.highlights.map((h, i) => (
                               <li
                                 key={i}
@@ -387,7 +387,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
               </main>
 
               {/* Sidebar Column (4 cols): Logros & Competencias Clave */}
-              <aside className="col-span-4 space-y-4 border-l border-slate-200 dark:border-slate-800 pl-5">
+              <aside className="col-span-4 space-y-4 border-l border-slate-200 pl-5">
                 {achievements && achievements.length > 0 && (
                   <section className={sectionMargin}>
                     <h2
@@ -402,12 +402,12 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                       {achievements.map((ach) => (
                         <div
                           key={ach.id}
-                          className="p-2 rounded bg-slate-50 dark:bg-slate-800/90 border border-slate-100 dark:border-slate-700/80 break-inside-avoid achievement-card"
+                          className="p-2 rounded bg-slate-50 border border-slate-100 break-inside-avoid achievement-card"
                           data-break-avoid="true"
                           style={breakAvoidStyle}
                         >
                           <div className="flex items-baseline justify-between mb-0.5">
-                            <span className="text-[11px] font-semibold text-slate-800 dark:text-slate-100">
+                            <span className="text-[11px] font-semibold text-slate-800">
                               {ach.title}
                             </span>
                             <span
@@ -417,7 +417,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                               {ach.metric}
                             </span>
                           </div>
-                          <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+                          <p className="text-[10px] text-slate-500 leading-tight">
                             {ach.description}
                           </p>
                         </div>
@@ -691,11 +691,11 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
 
       {/* Visual Page Break Guide in Preview */}
       <div className="no-print my-4 flex items-center justify-center gap-3">
-        <div className="h-px bg-slate-300 dark:bg-slate-700 flex-1 max-w-xs" />
-        <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 px-3 py-1 rounded-full shadow-xs border border-slate-200 dark:border-slate-700">
+        <div className="h-px bg-slate-300 flex-1 max-w-xs" />
+        <span className="text-[11px] font-semibold text-slate-500 bg-white px-3 py-1 rounded-full shadow-xs border border-slate-200">
           {t.page2Break}
         </span>
-        <div className="h-px bg-slate-300 dark:bg-slate-700 flex-1 max-w-xs" />
+        <div className="h-px bg-slate-300 flex-1 max-w-xs" />
       </div>
 
       {/* ============================================================ */}
@@ -703,7 +703,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
       {/* ============================================================ */}
       <div
         id="resume-page-2"
-        className="resume-page bg-white dark:bg-slate-900 shadow-md print:shadow-none flex flex-col relative"
+        className="resume-page bg-white shadow-md print:shadow-none flex flex-col relative"
         style={{
           minHeight: '297mm',
           boxSizing: 'border-box',
@@ -737,25 +737,25 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                         style={breakAvoidStyle}
                       >
                         <div className="flex flex-row items-baseline justify-between gap-1 mb-0.5">
-                          <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-xs">
+                          <h3 className="font-semibold text-slate-900 text-xs">
                             {exp.role}
                           </h3>
-                          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium shrink-0">
+                          <span className="text-[10px] text-slate-500 font-medium shrink-0">
                             {exp.startDate} — {exp.isCurrent ? t.present : (exp.endDate === 'Presente' || exp.endDate === 'Present' ? t.present : exp.endDate)}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-[11px] text-slate-600 dark:text-slate-300 mb-1.5 font-medium">
+                        <div className="flex items-center gap-2 text-[11px] text-slate-600 mb-1.5 font-medium">
                           <span style={{ color: accentColor }}>{exp.company}</span>
                           {exp.location && (
                             <>
-                              <span aria-hidden="true" className="text-slate-300 dark:text-slate-600">·</span>
+                              <span aria-hidden="true" className="text-slate-300">·</span>
                               <span>{exp.location}</span>
                             </>
                           )}
                         </div>
 
                         {exp.highlights && exp.highlights.length > 0 && (
-                          <ul className={`${bulletSpacing} text-slate-600 dark:text-slate-300 text-[11px] pl-3.5`}>
+                          <ul className={`${bulletSpacing} text-slate-600 text-[11px] pl-3.5`}>
                             {exp.highlights.map((h, i) => (
                               <li
                                 key={i}
@@ -776,7 +776,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
 
               {/* Sidebar Column (4 cols, el lateral con los 3 espacios del borde superior):
                   EDUCACIÓN COMPLETO + CERTIFICACIONES + IDIOMAS */}
-              <aside className="col-span-4 space-y-5 border-l border-slate-200 dark:border-slate-800 pl-5">
+              <aside className="col-span-4 space-y-5 border-l border-slate-200 pl-5">
                 {/* 1. EDUCACIÓN (COMPLETO EN LA SEGUNDA PÁGINA) */}
                 <section className={sectionMargin}>
                   <h2
@@ -791,18 +791,18 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                     {education.map((edu) => (
                       <div
                         key={edu.id}
-                        className="break-inside-avoid edu-item p-2 rounded bg-slate-50 dark:bg-slate-800/90 border border-slate-100 dark:border-slate-700/80"
+                        className="break-inside-avoid edu-item p-2 rounded bg-slate-50 border border-slate-100"
                         data-break-avoid="true"
                         style={breakAvoidStyle}
                       >
-                        <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-[11px] leading-snug">
+                        <h3 className="font-semibold text-slate-900 text-[11px] leading-snug">
                           {edu.degree}
                         </h3>
-                        <p className="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">
+                        <p className="text-[10px] text-slate-600 mt-0.5">
                           {edu.institution} · {edu.graduationYear}
                         </p>
                         {edu.details && (
-                          <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-normal">
+                          <p className="text-[10px] text-slate-500 mt-1 leading-normal">
                             {edu.details}
                           </p>
                         )}
@@ -826,14 +826,14 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                       {certifications.map((cert) => (
                         <div
                           key={cert.id}
-                          className="break-inside-avoid cert-item text-[10px] p-2 rounded-lg bg-slate-50/80 dark:bg-slate-800/90 border border-slate-100 dark:border-slate-700/80"
+                          className="break-inside-avoid cert-item text-[10px] p-1.5 rounded bg-slate-50/80 border border-slate-100"
                           data-break-avoid="true"
                           style={breakAvoidStyle}
                         >
-                          <p className="font-semibold text-slate-800 dark:text-slate-100 leading-tight">
+                          <p className="font-medium text-slate-800 leading-tight">
                             {cert.name}
                           </p>
-                          <p className="text-slate-500 dark:text-slate-400 mt-0.5 text-[9.5px]">
+                          <p className="text-slate-500 mt-0.5">
                             {cert.issuer} {cert.year ? `(${cert.year})` : ''}
                           </p>
                         </div>
@@ -855,10 +855,10 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                     >
                       {t.languages}
                     </h2>
-                    <div className="flex flex-col gap-1 text-[11px] text-slate-600 dark:text-slate-300">
+                    <div className="flex flex-col gap-1 text-[11px] text-slate-600">
                       {languages.map((l) => (
                         <div key={l.id} className="flex items-center gap-1">
-                          <span className="font-medium text-slate-800 dark:text-slate-100">{l.name}:</span>
+                          <span className="font-medium text-slate-800">{l.name}:</span>
                           <span>{l.level}</span>
                         </div>
                       ))}

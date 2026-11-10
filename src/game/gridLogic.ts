@@ -7,16 +7,14 @@ export class GridManager {
   public tileSize: number;
   public tileSpacing: number;
   public level: number = 1;
-  public fishOfFortuneMode: boolean;
   public tiles: GridTile[] = [];
 
   // 2D lookup [row][col] -> GridTile
   public grid: (GridTile | null)[][] = [];
 
-  constructor(level = 1, fishOfFortuneMode = false) {
+  constructor(level = 1) {
     this.level = level;
-    this.fishOfFortuneMode = fishOfFortuneMode;
-    const config = getLevelConfig(level, fishOfFortuneMode);
+    const config = getLevelConfig(level);
     this.rows = config.rows;
     this.cols = config.cols;
     this.tileSize = 0.44;
@@ -24,10 +22,9 @@ export class GridManager {
     this.initGrid(level);
   }
 
-  public initGrid(level = this.level, fishOfFortuneMode = this.fishOfFortuneMode) {
+  public initGrid(level = this.level) {
     this.level = level;
-    this.fishOfFortuneMode = fishOfFortuneMode;
-    const config = getLevelConfig(level, fishOfFortuneMode);
+    const config = getLevelConfig(level);
     this.rows = config.rows;
     this.cols = config.cols;
     this.tiles = [];
@@ -60,12 +57,11 @@ export class GridManager {
       Array.from({ length: clusterCols }, () => 0)
     );
 
+    let seed = 0;
     for (let cr = 0; cr < clusterRows; cr++) {
       for (let cc = 0; cc < clusterCols; cc++) {
-        // Keep color groups contiguous while cycling through every unlocked
-        // color, including levels where the number of clusters is divisible
-        // by the color count (which previously produced all-white boards).
-        clusterMap[cr][cc] = (cr * 2 + cc) % availableColors.length;
+        clusterMap[cr][cc] = (cr * 3 + cc * 2 + seed) % availableColors.length;
+        seed++;
       }
     }
 
@@ -85,22 +81,6 @@ export class GridManager {
         const posX = startX + c * (this.tileSize + this.tileSpacing);
         const posZ = startZ + r * (this.tileSize + this.tileSpacing);
 
-        // Compute multi-layered shells (1, 2, or 3 shells) at higher levels in both games
-        let shellLayers = 0;
-        if (shouldEncapsulate) {
-          if (level <= 3) {
-            shellLayers = 1;
-          } else if (level <= 6) {
-            shellLayers = Math.random() < 0.35 ? 2 : 1;
-          } else if (level <= 10) {
-            shellLayers = Math.random() < 0.2 ? 3 : (Math.random() < 0.6 ? 2 : 1);
-          } else {
-            // Level 11+ (High & higher levels): Heavy 2 and 3 shell armored fortifications
-            const roll = Math.random();
-            shellLayers = roll < 0.45 ? 3 : (roll < 0.8 ? 2 : 1);
-          }
-        }
-
         const tile: GridTile = {
           id: `tile_${r}_${c}`,
           row: r,
@@ -108,7 +88,6 @@ export class GridManager {
           color,
           collected: false,
           encapsulated: shouldEncapsulate,
-          encapsulationLayers: shouldEncapsulate ? shellLayers : 0,
           absorbedProgress: 0,
           worldPos: [posX, 0.2, posZ],
         };
@@ -116,71 +95,6 @@ export class GridManager {
         this.tiles.push(tile);
         this.grid[r][c] = tile;
       }
-    }
-
-    // Candy Crush-style Special Pearls & Power Tiles in BOTH Fish of Fortune and Tile Absorber!
-    // Includes:
-    // 1. Cross / Striped ('cross') - blasts along full X and Y rows/cols
-    // 2. Wrapped ('wrapped') - "envolved candy" exploding along Y and X axes AND a 3x3 blast area!
-    // 3. Burst ('burst') - radial 3x3 blast
-    // 4. Color Bomb / The Exploding Pearl ('color') - detonates all matching color pearls/tiles
-    // Plus at higher levels, some explosive pearls/tiles are ALSO trapped inside 1, 2, or 3 protective shells!
-    if (this.tiles.length >= 4) {
-      const occupied = new Set<string>();
-      const placeSpecial = (kind: NonNullable<GridTile['special']>, count: number) => {
-        for (let i = 0; i < count; i++) {
-          // Spread specials through the board while keeping them away from outer perimeter
-          const row = Math.max(1, Math.min(this.rows - 2, Math.floor(this.rows * (((i * 0.37) + 0.28 + (level * 0.07)) % 1))));
-          const col = Math.max(1, Math.min(this.cols - 2, Math.floor(this.cols * (((i * 0.61) + 0.24 + (level * 0.11)) % 1))));
-          let candidate: GridTile | null | undefined = this.grid[row]?.[col];
-          if (!candidate || occupied.has(`${row}:${col}`)) {
-            candidate = this.tiles.find(
-              (tile) =>
-                !occupied.has(`${tile.row}:${tile.col}`) &&
-                tile.row > 0 &&
-                tile.row < this.rows - 1 &&
-                tile.col > 0 &&
-                tile.col < this.cols - 1
-            );
-          }
-          if (!candidate) return;
-
-          candidate.special = kind;
-
-          // At high and higher levels, explosive pearls/tiles themselves can have 1, 2, or 3 shells!
-          if (level >= 4 && Math.random() < Math.min(0.75, 0.25 + (level - 4) * 0.04)) {
-            candidate.encapsulated = true;
-            let specialShells = 1;
-            if (level >= 10 && Math.random() < 0.45) {
-              specialShells = 3;
-            } else if (level >= 6 && Math.random() < 0.6) {
-              specialShells = 2;
-            }
-            candidate.encapsulationLayers = specialShells;
-          } else if (level < 4) {
-            candidate.encapsulated = false;
-            candidate.encapsulationLayers = 0;
-          }
-
-          occupied.add(`${candidate.row}:${candidate.col}`);
-        }
-      };
-
-      // Guaranteed specials from Level 1 so players immediately enjoy Candy Crush explosions!
-      const boardScale = Math.max(1, Math.floor((this.rows * this.cols) / 100));
-      const crossCount = Math.min(6, (level === 1 ? 1 : 2) + Math.floor(level / 8) * boardScale);
-      const wrappedCount = Math.min(6, (level === 1 ? 1 : 2) + Math.floor(level / 7) * boardScale);
-      const burstCount = level >= 2 ? Math.min(4, 1 + Math.floor(level / 9) * boardScale) : 0;
-      const colorBombCount = level >= 3 ? Math.min(3, 1 + Math.floor(level / 12) * boardScale) : 0;
-
-      // 1. Cross ray / striped (X and Y beam blast)
-      placeSpecial('cross', crossCount);
-      // 2. Wrapped candy ("envolved candy exploding to Y and X plus 3x3")
-      placeSpecial('wrapped', wrappedCount);
-      // 3. Radial burst 3x3
-      if (burstCount > 0) placeSpecial('burst', burstCount);
-      // 4. The Exploding Pearl / Color Bomb
-      if (colorBombCount > 0) placeSpecial('color', colorBombCount);
     }
   }
 

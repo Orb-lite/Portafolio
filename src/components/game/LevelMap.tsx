@@ -29,13 +29,6 @@ import {
 
 const STEP = 150; // Distance between levels in pixels
 const OVERLAP = 180; // Overlap buffer between world regions for seamless dissolution
-const FISH_PATH_PALETTE = [
-  { base: '#7c3aed', fill: '#ec4899', edge: '#fef08a', light: '#fbcfe8', deep: '#be185d' },
-  { base: '#075985', fill: '#22d3ee', edge: '#f0fdfa', light: '#a5f3fc', deep: '#0e7490' },
-  { base: '#854d0e', fill: '#facc15', edge: '#fff7ed', light: '#fef08a', deep: '#ca8a04' },
-  { base: '#6b21a8', fill: '#a78bfa', edge: '#f5f3ff', light: '#ddd6fe', deep: '#6d28d9' },
-  { base: '#065f46', fill: '#34d399', edge: '#ecfdf5', light: '#a7f3d0', deep: '#047857' },
-];
 
 interface WorldDefinition {
   theme: GameVersion;
@@ -177,8 +170,6 @@ const WORLD_DEFS: Record<GameVersion, WorldDefinition> = {
 };
 
 interface LevelMapProps {
-  language?: 'en' | 'es';
-  fishOfFortuneMode?: boolean;
   frontierLevel?: number;
   currentLevel?: number;
   selectedLevel?: number;
@@ -190,8 +181,6 @@ interface LevelMapProps {
 }
 
 export const LevelMap: React.FC<LevelMapProps> = ({
-  language = 'en',
-  fishOfFortuneMode = false,
   frontierLevel,
   currentLevel,
   selectedLevel,
@@ -201,15 +190,6 @@ export const LevelMap: React.FC<LevelMapProps> = ({
   onOpenLeaderboard,
   onOpenGamertag,
 }) => {
-  const isEn = language === 'en';
-  const worldName = (theme: GameVersion) => {
-    const names: Record<GameVersion, [string, string]> = {
-      chess: ['Chess Kingdom', 'Reino de Ajedrez'], primitive: ['Origins', 'Orígenes'], fof: ['Coral Cove', 'Ensenada Coral'],
-      land: ['Land Animals', 'Animales terrestres'], birds: ['Birds', 'Aves'], humans: ['Humans', 'Humanos'],
-      cars: ['Cars', 'Automóviles'], aircraft: ['Aircraft', 'Aeronaves'],
-    };
-    return names[theme][isEn ? 0 : 1];
-  };
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showPastLevelsDrawer, setShowPastLevelsDrawer] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile>(() => getStoredUser());
@@ -259,25 +239,13 @@ export const LevelMap: React.FC<LevelMapProps> = ({
       const end = Math.min(endLevel, mapLevelCount);
       const startY = mapHeight - 160 - (start - 1) * STEP;
       const endY = mapHeight - 160 - (end - 1) * STEP;
-      const theme = fishOfFortuneMode ? 'fof' : getThemeForLevel(start);
+      const theme = getThemeForLevel(start);
       const def = WORLD_DEFS[theme] || WORLD_DEFS.chess;
 
       const sliceStart = Math.max(0, start - 2);
       const sliceEnd = Math.min(points.length, end + 1);
       const regionPoints = points.slice(sliceStart, sliceEnd);
       const segmentPath = regionPoints.map(p => `${p.x},${p.y}`).join(' ');
-      const segmentCurve = regionPoints.length > 1
-        ? regionPoints.slice(0, -1).reduce((path, point, idx) => {
-            const next = regionPoints[idx + 1];
-            const prev = regionPoints[Math.max(0, idx - 1)];
-            const after = regionPoints[Math.min(regionPoints.length - 1, idx + 2)];
-            const c1x = point.x + (next.x - prev.x) / 6;
-            const c1y = point.y + (next.y - prev.y) / 6;
-            const c2x = next.x - (after.x - point.x) / 6;
-            const c2y = next.y - (after.y - point.y) / 6;
-            return `${path} C ${c1x},${c1y} ${c2x},${c2y} ${next.x},${next.y}`;
-          }, `M ${regionPoints[0].x},${regionPoints[0].y}`)
-        : '';
 
       regions.push({
         start,
@@ -286,12 +254,11 @@ export const LevelMap: React.FC<LevelMapProps> = ({
         height: (startY - endY + STEP) + OVERLAP,
         def,
         segmentPath,
-        segmentCurve,
       });
       startLevel = endLevel + 1;
     }
     return regions;
-  }, [fishOfFortuneMode, mapHeight, mapLevelCount, points]);
+  }, [mapHeight, mapLevelCount, points]);
 
   // Smooth scroller helper
   const scrollToLevel = (lvl: number, behavior: ScrollBehavior = 'smooth') => {
@@ -335,20 +302,18 @@ export const LevelMap: React.FC<LevelMapProps> = ({
           <div>
             <p className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300">
               <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-              {fishOfFortuneMode
-                ? (isEn ? 'Fish Feeder • Level Pathway' : 'Fish Feeder • Camino de niveles')
-                : (isEn ? 'Conveyor Realms • Adventure Pathway' : 'Conveyor Realms • Camino de aventura')}
+              Conveyor Realms • Adventure Pathway
             </p>
             <div className="flex items-center gap-2 mt-0.5">
               <h1 className="text-base sm:text-xl font-black tracking-tight text-white">
-                {fishOfFortuneMode ? (isEn ? 'Fish Journey' : 'Viaje de los peces') : (isEn ? 'World Frontier' : 'Frontera de mundos')}
+                World Frontier
               </h1>
               <span className="rounded-full bg-amber-400/20 border border-amber-300/40 px-2 py-0.5 text-[10px] font-black text-amber-300">
-                {isEn ? 'Up next: Level' : 'Por superar: nivel'} {activeFrontier}
+                Por Hacer: Nivel {activeFrontier}
               </span>
               {activeSelected < activeFrontier && (
                 <span className="rounded-full bg-emerald-500/20 border border-emerald-400/40 px-2 py-0.5 text-[10px] font-black text-emerald-300">
-                  {isEn ? 'Replaying: Level' : 'Repitiendo: nivel'} {activeSelected}
+                  Rejugando: Nivel {activeSelected}
                 </span>
               )}
             </div>
@@ -357,32 +322,32 @@ export const LevelMap: React.FC<LevelMapProps> = ({
           <button
             onClick={onClose}
             className="flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/10 px-3 py-1.5 text-xs sm:text-sm font-bold text-white shadow-lg backdrop-blur hover:bg-white/20 active:scale-95 cursor-pointer transition"
-            aria-label={isEn ? 'Resume Game' : 'Reanudar juego'}
+            aria-label="Resume Game"
           >
             <X className="h-4 w-4 sm:h-5 sm:w-5" />
-            <span className="hidden sm:inline">{isEn ? 'Close Map' : 'Cerrar mapa'}</span>
+            <span className="hidden sm:inline">Cerrar Mapa</span>
           </button>
         </div>
 
         {/* 2. Quick Action Toolbar: Regresar al 1 & Nivel Por Hacer */}
-        <div className="hidden flex-wrap items-center justify-between gap-2 px-3 sm:px-6 py-2 bg-slate-900/80 border-t border-white/5 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-6 py-2 bg-slate-900/80 border-t border-white/5 text-xs">
           {/* Quick Return to Level 1 Buttons */}
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => onSelectLevel(1)}
               className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 font-bold transition cursor-pointer active:scale-95 shadow-sm"
-              title={isEn ? 'Play Level 1 now without losing your progress' : 'Jugar el nivel 1 ahora sin perder tu progreso'}
+              title="Jugar Nivel 1 de inmediato sin perder tu progreso"
             >
               <RotateCcw className="h-3.5 w-3.5 text-emerald-300" />
-              <span>{isEn ? '⏪ Return to Level 1' : '⏪ Volver al nivel 1'}</span>
+              <span>⏪ Regresar al Nivel 1</span>
             </button>
             <button
               onClick={() => scrollToLevel(1)}
               className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[11px] font-medium transition cursor-pointer"
-              title={isEn ? 'Scroll to the start of the path (Level 1)' : 'Ir al inicio del camino (nivel 1)'}
+              title="Desplazarse a la base del camino (Nivel 1)"
             >
               <ArrowDown className="h-3 w-3 inline mr-0.5" />
-              {isEn ? 'View on map' : 'Ver en el mapa'}
+              Ver en mapa
             </button>
           </div>
 
@@ -391,18 +356,18 @@ export const LevelMap: React.FC<LevelMapProps> = ({
             <button
               onClick={() => onSelectLevel(activeFrontier)}
               className="flex items-center gap-1 px-3 py-1 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black transition cursor-pointer active:scale-95 shadow-md shadow-amber-500/20"
-              title={isEn ? `Play the next level (${activeFrontier})` : `Jugar el siguiente nivel (${activeFrontier})`}
+              title={`Jugar el nivel actual por hacer (Nivel ${activeFrontier})`}
             >
               <Zap className="h-3.5 w-3.5 fill-slate-950" />
-              <span>{isEn ? `⚡ Play Level ${activeFrontier} (Next)` : `⚡ Jugar nivel ${activeFrontier} (siguiente)`}</span>
+              <span>⚡ Jugar Nivel {activeFrontier} (Por Hacer)</span>
             </button>
             <button
               onClick={() => scrollToLevel(activeFrontier)}
               className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[11px] font-medium transition cursor-pointer"
-              title={isEn ? `Scroll to the next level (${activeFrontier})` : `Ir al siguiente nivel (${activeFrontier})`}
+              title={`Desplazarse al nivel por hacer (Nivel ${activeFrontier})`}
             >
               <ArrowUp className="h-3 w-3 inline mr-0.5" />
-              {isEn ? 'View current' : 'Ver actual'}
+              Ver actual
             </button>
           </div>
 
@@ -413,7 +378,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
               className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-cyan-300 border border-cyan-400/30 text-xs font-bold transition cursor-pointer ml-auto sm:ml-0"
             >
               <Compass className="h-3.5 w-3.5 text-cyan-300" />
-              <span>{isEn ? `Past Levels (${pastLevels.length})` : `Niveles anteriores (${pastLevels.length})`}</span>
+              <span>Niveles Pasados ({pastLevels.length})</span>
             </button>
           )}
         </div>
@@ -422,7 +387,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
         {pastLevels.length > 0 && showPastLevelsDrawer && (
           <div className="flex items-center gap-1.5 overflow-x-auto px-3 sm:px-6 py-2 bg-slate-950/95 border-t border-cyan-500/20 scrollbar-none animate-in slide-in-from-top-2 duration-200">
             <span className="text-[11px] font-bold text-slate-400 whitespace-nowrap mr-1">
-              {isEn ? 'Replay level:' : 'Repetir nivel:'}
+              Rejugar nivel:
             </span>
             {pastLevels.map((lvl) => {
               const isSel = lvl === activeSelected;
@@ -435,9 +400,9 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                       ? 'bg-cyan-500 text-slate-950 shadow-md ring-2 ring-cyan-300'
                       : 'bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-200'
                   }`}
-                  title={isEn ? `Replay Level ${lvl} (your progress at Level ${activeFrontier} will be kept)` : `Repetir el nivel ${lvl} (se conservará tu progreso en el nivel ${activeFrontier})`}
+                  title={`Rejugar Nivel ${lvl} (Conservarás tu progreso en el nivel ${activeFrontier})`}
                 >
-                  <span>{isEn ? 'Level' : 'Nivel'} {lvl}</span>
+                  <span>Nivel {lvl}</span>
                   <div className="flex text-amber-400">
                     <Star className="h-2.5 w-2.5 fill-amber-400" />
                   </div>
@@ -449,7 +414,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
       </header>
 
       {/* 4. Side Widget: Highscore & Highest Level Reached (A un costado del pathway) */}
-      <aside className={`hidden absolute z-30 transition-all duration-300 pointer-events-auto ${
+      <aside className={`absolute z-30 transition-all duration-300 pointer-events-auto ${
         isWidgetCollapsed
           ? 'left-3 sm:left-6 top-28 sm:top-28'
           : 'left-3 sm:left-6 top-28 sm:top-28 w-60 sm:w-72 max-w-[calc(100vw-1.5rem)]'
@@ -458,11 +423,11 @@ export const LevelMap: React.FC<LevelMapProps> = ({
           <button
             onClick={() => setIsWidgetCollapsed(false)}
             className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-900/95 hover:bg-slate-800 border border-amber-400/40 text-amber-300 shadow-2xl backdrop-blur-md cursor-pointer transition active:scale-95 text-xs font-black"
-            title={isEn ? 'Expand high score and highest level panel' : 'Expandir el panel de récord y nivel más alto'}
+            title="Expandir panel de Récord y Nivel Más Alto"
           >
             <Trophy className="w-4 h-4 text-amber-400" />
             <div className="flex flex-col text-left">
-              <span className="text-[9px] text-amber-400/80 font-bold uppercase tracking-wider">{isEn ? 'High Score' : 'Récord'}</span>
+              <span className="text-[9px] text-amber-400/80 font-bold uppercase tracking-wider">Highscore</span>
               <span className="text-xs font-black text-white">{Math.max(userProfile.best_score || 0, topScore).toLocaleString()}</span>
             </div>
             <span className="bg-amber-400/20 text-amber-300 border border-amber-400/40 px-1.5 py-0.5 rounded text-[10px] font-bold">
@@ -479,10 +444,10 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                 </div>
                 <div>
                   <span className="text-[10px] font-black uppercase tracking-wider text-amber-400">
-                    {isEn ? 'Pathway Stats' : 'Estadísticas del camino'}
+                    Estadísticas Pathway
                   </span>
                   <h3 className="text-xs sm:text-sm font-black text-white leading-tight">
-                    {isEn ? 'High Score & Frontier' : 'Récord y frontera'}
+                    Récord & Frontera
                   </h3>
                 </div>
               </div>
@@ -490,8 +455,8 @@ export const LevelMap: React.FC<LevelMapProps> = ({
               <button
                 onClick={() => setIsWidgetCollapsed(true)}
                 className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold"
-                title={isEn ? 'Minimize panel' : 'Minimizar panel'}
-                aria-label={isEn ? 'Minimize panel' : 'Minimizar panel'}
+                title="Minimizar panel"
+                aria-label="Minimizar panel"
               >
                 ✕
               </button>
@@ -502,14 +467,14 @@ export const LevelMap: React.FC<LevelMapProps> = ({
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1">
                   <Crown className="w-3 h-3 text-amber-400" />
-                  {isEn ? 'Best Score' : 'Récord máximo'}
+                  Máximo Récord
                 </span>
                 {onOpenLeaderboard && (
                   <button
                     onClick={onOpenLeaderboard}
                     className="text-[10px] text-cyan-300 hover:text-cyan-200 underline font-semibold cursor-pointer"
                   >
-                    {isEn ? 'View Top' : 'Ver mejores'}
+                    Ver Top
                   </button>
                 )}
               </div>
@@ -520,14 +485,14 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                 <span className="text-[10px] text-amber-400/80 font-bold">XP</span>
               </div>
               <div className="flex items-center justify-between text-[11px] text-slate-400 mt-1 pt-1 border-t border-white/5">
-                <span>{isEn ? 'Player:' : 'Jugador:'}</span>
+                <span>Jugador:</span>
                 <div className="flex items-center gap-1">
                   <span className="font-bold text-white tracking-wide">{userProfile.gamertag}</span>
                   {onOpenGamertag && (
                     <button
                       onClick={onOpenGamertag}
                       className="text-[10px] text-slate-400 hover:text-cyan-300 cursor-pointer ml-1"
-                      title={isEn ? 'Edit Gamertag' : 'Editar Gamertag'}
+                      title="Editar Gamertag"
                     >
                       ✏️
                     </button>
@@ -540,24 +505,24 @@ export const LevelMap: React.FC<LevelMapProps> = ({
             <div className="bg-gradient-to-r from-cyan-950/40 via-slate-900 to-slate-900 border border-cyan-500/30 rounded-xl p-2.5">
               <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-300 flex items-center gap-1">
                 <Zap className="w-3 h-3 text-cyan-400 fill-cyan-400" />
-                {isEn ? 'Highest Level Reached' : 'Nivel más alto alcanzado'}
+                Nivel Más Alto Alcanzado
               </span>
               <div className="flex items-center justify-between mt-1">
                 <span className="text-xl sm:text-2xl font-black text-white">
-                  {isEn ? 'Level' : 'Nivel'} {activeFrontier}
+                  Nivel {activeFrontier}
                 </span>
                 <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-cyan-400/20 text-cyan-300 border border-cyan-400/30">
-                  {isEn ? 'Frontier Peak' : 'Frontera actual'}
+                  Frontier Peak
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-1.5 mt-2 text-[10px] text-slate-300">
                 <div className="bg-slate-900/70 p-1.5 rounded-lg border border-white/5 flex items-center gap-1">
                   <Star className="w-3 h-3 text-amber-400 fill-amber-400 shrink-0" />
-                  <span>{(activeFrontier - 1) * 3} {isEn ? 'Stars' : 'Estrellas'}</span>
+                  <span>{(activeFrontier - 1) * 3} Estrellas</span>
                 </div>
                 <div className="bg-slate-900/70 p-1.5 rounded-lg border border-white/5 flex items-center gap-1">
                   <Sparkles className="w-3 h-3 text-cyan-400 shrink-0" />
-                  <span>{userProfile.total_tiles || (activeFrontier * 24)} {isEn ? 'Tiles' : 'Fichas'}</span>
+                  <span>{userProfile.total_tiles || (activeFrontier * 24)} Fichas</span>
                 </div>
               </div>
             </div>
@@ -569,7 +534,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                 className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs shadow-md transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
               >
                 <Zap className="w-3.5 h-3.5 fill-slate-950" />
-                <span>{isEn ? `Play Level ${activeFrontier} (Highest)` : `Jugar nivel ${activeFrontier} (más alto)`}</span>
+                <span>Jugar Nivel {activeFrontier} (Más Alto)</span>
               </button>
 
               {onOpenLeaderboard && (
@@ -578,7 +543,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                   className="w-full py-1.5 px-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white font-bold text-[11px] transition cursor-pointer flex items-center justify-center gap-1.5 border border-white/10"
                 >
                   <Trophy className="w-3 h-3 text-amber-400" />
-                  <span>{isEn ? 'Global Leaderboard' : 'Clasificación global'}</span>
+                  <span>Tabla de Líderes Global</span>
                 </button>
               )}
             </div>
@@ -589,7 +554,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
       {/* Main Full-Width Scrollable World Viewport */}
       <div
         ref={scrollRef}
-        className="absolute inset-0 overflow-y-auto overscroll-contain pt-16 sm:pt-16 pb-3"
+        className="absolute inset-0 overflow-y-auto overscroll-contain pt-28 sm:pt-28 pb-20"
         style={{ scrollbarColor: '#38bdf8 rgba(15,23,42,0.6)' }}
       >
         <div className="relative w-full overflow-hidden" style={{ height: mapHeight }}>
@@ -612,9 +577,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                 <div
                   className="absolute inset-0"
                   style={{
-                    backgroundImage: fishOfFortuneMode
-                      ? `linear-gradient(180deg, ${FISH_PATH_PALETTE[Math.floor(start / 10) % FISH_PATH_PALETTE.length].fill}66, ${FISH_PATH_PALETTE[Math.floor(start / 10) % FISH_PATH_PALETTE.length].light}22 42%, ${FISH_PATH_PALETTE[Math.floor(start / 10) % FISH_PATH_PALETTE.length].base}44), url(${def.texture})`
-                      : `url(${def.texture})`,
+                    backgroundImage: `url(${def.texture})`,
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
@@ -624,21 +587,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                 />
 
                 {/* Lateral Edge Vignettes */}
-                <div className={`absolute inset-0 ${fishOfFortuneMode
-                  ? 'bg-gradient-to-r from-cyan-950/10 via-transparent to-violet-950/10'
-                  : 'bg-gradient-to-r from-slate-950/85 via-transparent to-slate-950/85'}`} />
-
-                {fishOfFortuneMode && (
-                  <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                    {[{ left: '12%', top: '24%', size: 30 }, { left: '83%', top: '18%', size: 20 }, { left: '76%', top: '66%', size: 38 }, { left: '18%', top: '78%', size: 16 }].map((bubble, bubbleIdx) => (
-                      <span
-                        key={`bubble-${start}-${bubbleIdx}`}
-                        className="absolute rounded-full border border-white/35 bg-gradient-to-br from-white/65 via-cyan-200/25 to-sky-500/20 shadow-[inset_-4px_-5px_10px_rgba(14,116,144,.2),0_3px_12px_rgba(34,211,238,.2)]"
-                        style={{ left: bubble.left, top: bubble.top, width: bubble.size, height: bubble.size }}
-                      />
-                    ))}
-                  </div>
-                )}
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-transparent to-slate-950/85" />
 
                 {/* Seamless Dissolve between Worlds */}
                 <div
@@ -661,18 +610,12 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                   </div>
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      {isEn ? 'Levels' : 'Niveles'} {start} – {end}
+                      Levels {start} – {end}
                     </span>
                     <h2 className="text-sm sm:text-lg font-black tracking-tight text-white drop-shadow">
-                      {fishOfFortuneMode
-                        ? (isEn
-                          ? ['Reef Fish', 'Longnose Fish', 'Pufferfish', 'Lionfish', 'Butterflyfish'][Math.floor(start / 10) % 5]
-                          : ['Peces de arrecife', 'Peces hocicudos', 'Pez globo', 'Pez león', 'Pez mariposa'][Math.floor(start / 10) % 5])
-                        : worldName(def.theme)}
+                      {def.title}
                     </h2>
-                    <p className="text-[11px] text-slate-300">{fishOfFortuneMode
-                      ? (isEn ? 'New fish species unlocked every 10 levels' : 'Nueva especie de pez cada 10 niveles')
-                      : (isEn ? def.subtitle : ['Ciudadela clásica de mármol', 'Reino de los orígenes', 'Reino submarino iluminado por el sol', 'Hábitats de fauna terrestre', 'Cielos de aves migratorias', 'Reino de la humanidad', 'Autopistas de alta velocidad', 'Frontera de aviación'][['chess','primitive','fof','land','birds','humans','cars','aircraft'].indexOf(def.theme)])}</p>
+                    <p className="text-[11px] text-slate-300">{def.subtitle}</p>
                   </div>
                 </div>
               </div>
@@ -694,7 +637,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
               </defs>
 
               {/* Base universal shadow groove under all paths */}
-              {!fishOfFortuneMode && worldRegions.map(({ start, end, segmentPath }) => (
+              {worldRegions.map(({ start, end, segmentPath }) => (
                 <polyline
                   key={`shadow-${start}-${end}`}
                   points={segmentPath}
@@ -708,39 +651,57 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                 />
               ))}
 
-              {/* Fish route uses a bright candy-like dotted trail; the other mode keeps its road. */}
-              {worldRegions.map(({ start, end, def, segmentPath, segmentCurve }) => (
+              {/* World-specific themed path runners */}
+              {worldRegions.map(({ start, end, def, segmentPath }) => (
                 <g key={`road-${start}-${end}`}>
-                  {fishOfFortuneMode ? (
-                    <>
-                      <path d={segmentCurve} fill="none" stroke="rgba(15,23,42,.35)" strokeWidth="10" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d={segmentCurve} fill="none" stroke="rgba(255,255,255,.85)" strokeWidth="6" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
-                      <path
-                        d={segmentCurve}
-                        fill="none"
-                        stroke={FISH_PATH_PALETTE[Math.floor(start / 10) % FISH_PATH_PALETTE.length].fill}
-                        strokeWidth="4"
-                        strokeDasharray="1 13"
-                        vectorEffect="non-scaling-stroke"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <polyline points={segmentPath} fill="none" stroke={def.pathBase} strokeWidth="22" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
-                      <polyline points={segmentPath} fill="none" stroke={def.pathFill} strokeWidth="15" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
-                      <polyline points={segmentPath} fill="none" stroke={def.pathTrim} strokeWidth="3.5" strokeDasharray={def.pathDash} vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
-                      <polyline points={segmentPath} fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeDasharray="2 12" vectorEffect="non-scaling-stroke" strokeLinecap="round" />
-                    </>
-                  )}
+                  {/* Outer Road Kerb */}
+                  <polyline
+                    points={segmentPath}
+                    fill="none"
+                    stroke={def.pathBase}
+                    strokeWidth="22"
+                    vectorEffect="non-scaling-stroke"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  {/* Main Road Surface */}
+                  <polyline
+                    points={segmentPath}
+                    fill="none"
+                    stroke={def.pathFill}
+                    strokeWidth="15"
+                    vectorEffect="non-scaling-stroke"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  {/* Decorative Themed Edge Trims */}
+                  <polyline
+                    points={segmentPath}
+                    fill="none"
+                    stroke={def.pathTrim}
+                    strokeWidth="3.5"
+                    strokeDasharray={def.pathDash}
+                    vectorEffect="non-scaling-stroke"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  {/* Center Dash Highlight */}
+                  <polyline
+                    points={segmentPath}
+                    fill="none"
+                    stroke="rgba(255,255,255,0.7)"
+                    strokeWidth="1.5"
+                    strokeDasharray="2 12"
+                    vectorEffect="non-scaling-stroke"
+                    strokeLinecap="round"
+                  />
                 </g>
               ))}
             </svg>
           </div>
 
-          {/* Fish route keeps future numbered nodes visible; standard pathway retains fog. */}
-          {!fishOfFortuneMode && <div
+          {/* Fog of War on Unlocked Frontiers */}
+          <div
             className="pointer-events-none absolute inset-x-0 top-0 z-20 overflow-hidden"
             style={{ height: Math.max(0, frontierY - 45) }}
           >
@@ -755,10 +716,10 @@ export const LevelMap: React.FC<LevelMapProps> = ({
 
             <div className="absolute inset-x-0 bottom-6 text-center">
               <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-slate-950/80 px-4 py-1.5 text-xs font-black uppercase tracking-[0.25em] text-cyan-300 shadow-xl backdrop-blur-md">
-                {isEn ? '☁️ Unexplored Fog • Complete the next level to reveal the path' : '☁️ Niebla inexplorada • Completa el siguiente nivel para revelar el camino'}
+                ☁️ Niebla Inexplorada • Completa el nivel por hacer para revelar
               </span>
             </div>
-          </div>}
+          </div>
 
           {/* Level Nodes */}
           <div className="relative mx-auto w-full max-w-2xl h-full">
@@ -769,7 +730,6 @@ export const LevelMap: React.FC<LevelMapProps> = ({
               const isSelected = level === activeSelected;
               const theme = getThemeForLevel(level);
               const def = WORLD_DEFS[theme] || WORLD_DEFS.chess;
-              const fishNode = FISH_PATH_PALETTE[Math.floor(level / 10) % FISH_PATH_PALETTE.length];
 
               return (
                 <div
@@ -787,7 +747,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                     <div className="absolute -top-11 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap">
                       <span className="flex items-center gap-1 rounded-full border border-amber-300 bg-amber-500 px-3 py-0.5 text-[10px] font-black uppercase tracking-wider text-slate-950 shadow-lg animate-bounce">
                         <Zap className="h-3 w-3 fill-slate-950" />
-                        {isEn ? 'Next • Current Level' : 'Siguiente • Nivel actual'}
+                        Por Hacer • Nivel Actual
                       </span>
                     </div>
                   )}
@@ -797,7 +757,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap">
                       <span className="flex items-center gap-1 rounded-full border border-cyan-300 bg-cyan-500 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-slate-950 shadow-md">
                         <RotateCcw className="h-2.5 w-2.5" />
-                        {isEn ? 'Selected Level' : 'Nivel seleccionado'}
+                        Nivel Seleccionado
                       </span>
                     </div>
                   )}
@@ -806,53 +766,26 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                   <button
                     disabled={locked}
                     onClick={() => onSelectLevel(level)}
-                    className={fishOfFortuneMode
-                      ? `group relative flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full border-[3px] font-black text-white transition-transform active:scale-90 cursor-pointer before:absolute before:inset-x-2 before:top-1 before:h-2 before:rounded-full before:bg-white/60 before:blur-[1px] ${
-                          isFrontier
-                            ? 'z-30 scale-110 ring-4 ring-white/80 ring-offset-4 ring-offset-slate-950/40 shadow-2xl animate-pulse'
-                            : conquered
-                            ? isSelected
-                              ? 'z-25 scale-105 ring-4 ring-white/70 shadow-xl'
-                              : 'z-20 shadow-xl hover:scale-110'
-                            : 'z-10 opacity-85 grayscale-[0.35] shadow-md'
-                        }`
-                      : `group relative flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full border-4 font-black shadow-2xl transition-transform active:scale-90 cursor-pointer ${
-                          isFrontier
-                            ? `scale-115 border-amber-200 bg-gradient-to-br ${def.nodeBg} text-white ring-8 ${def.activeRing}/30 z-30`
-                            : conquered
-                            ? isSelected
-                              ? 'border-cyan-300 bg-gradient-to-br from-cyan-400 via-teal-500 to-emerald-600 text-white ring-4 ring-cyan-400/50 scale-105 z-25'
-                              : 'border-amber-300/80 bg-gradient-to-br from-emerald-400 via-teal-500 to-emerald-700 text-white hover:scale-110 z-20 shadow-emerald-900/60'
-                            : 'border-slate-500/50 bg-slate-800/80 text-slate-400 opacity-60 z-10 backdrop-blur-sm'
-                        }`}
-                    style={fishOfFortuneMode ? {
-                      backgroundImage: locked
-                        ? `linear-gradient(145deg, ${fishNode.light}cc, ${fishNode.fill}bb 52%, ${fishNode.deep})`
-                        : `linear-gradient(145deg, ${fishNode.light}, ${fishNode.fill} 52%, ${fishNode.deep})`,
-                      borderColor: isFrontier ? '#fff7ad' : conquered ? '#ffffff' : fishNode.light,
-                      boxShadow: isFrontier
-                        ? `0 0 0 3px ${fishNode.fill}80, 0 7px 0 ${fishNode.deep}, 0 12px 24px rgba(15,23,42,.55)`
+                    className={`group relative flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full border-4 font-black shadow-2xl transition-transform active:scale-90 cursor-pointer ${
+                      isFrontier
+                        ? `scale-115 border-amber-200 bg-gradient-to-br ${def.nodeBg} text-white ring-8 ${def.activeRing}/30 z-30`
                         : conquered
-                        ? `0 4px 0 ${fishNode.deep}, 0 8px 16px rgba(15,23,42,.45)`
-                        : `0 4px 0 ${fishNode.deep}, 0 7px 12px rgba(15,23,42,.4)`,
-                    } : undefined}
+                        ? isSelected
+                          ? 'border-cyan-300 bg-gradient-to-br from-cyan-400 via-teal-500 to-emerald-600 text-white ring-4 ring-cyan-400/50 scale-105 z-25'
+                          : 'border-amber-300/80 bg-gradient-to-br from-emerald-400 via-teal-500 to-emerald-700 text-white hover:scale-110 z-20 shadow-emerald-900/60'
+                        : 'border-slate-500/50 bg-slate-800/80 text-slate-400 opacity-60 z-10 backdrop-blur-sm'
+                    }`}
                     title={
                       isFrontier
-                        ? (isEn ? `Play Level ${level} (next)` : `Jugar nivel ${level} (siguiente)`)
+                        ? `Jugar Nivel ${level} (Por Hacer)`
                         : conquered
-                        ? (isEn ? `Replay Past Level ${level} (your current level ${activeFrontier} is kept)` : `Repetir el nivel anterior ${level} (se conserva tu nivel actual ${activeFrontier})`)
-                        : (isEn ? `Level ${level} Locked` : `Nivel ${level} bloqueado`)
+                        ? `Rejugar Nivel Pasado ${level} (Tu nivel actual ${activeFrontier} se conserva)`
+                        : `Nivel ${level} Bloqueado`
                     }
-                    aria-label={`${isEn ? 'Level' : 'Nivel'} ${level}`}
+                    aria-label={`Level ${level}`}
                   >
                     {/* Inner Icon */}
-                    {fishOfFortuneMode ? (
-                      <>
-                        <span className="relative z-10 text-lg sm:text-xl font-black drop-shadow-[0_2px_2px_rgba(15,23,42,.55)]">{level}</span>
-                        {isFrontier && <Play className="absolute -right-1 -top-1 z-20 h-5 w-5 rounded-full border-2 border-white bg-amber-400 p-0.5 fill-white text-white shadow-lg" />}
-                        {locked && <LockKeyhole className="absolute -bottom-1 -right-1 z-20 h-4 w-4 rounded-full border border-white/80 bg-slate-700 p-0.5 text-white shadow" />}
-                      </>
-                    ) : isFrontier ? (
+                    {isFrontier ? (
                       <Play className="ml-0.5 h-6 w-6 sm:h-7 sm:w-7 fill-white drop-shadow-md" />
                     ) : conquered ? (
                       <Check className="h-6 w-6 sm:h-7 sm:w-7 stroke-[3.5] text-white drop-shadow-md" />
@@ -861,7 +794,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                     )}
 
                     {/* Level Number Ribbon */}
-                    {!fishOfFortuneMode && <span
+                    <span
                       className={`absolute -bottom-2.5 rounded-full px-2 py-0.2 text-[10px] sm:text-[11px] font-black tracking-tight shadow-md border ${
                         isFrontier
                           ? 'border-amber-200 bg-amber-400 text-slate-950'
@@ -873,7 +806,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                       }`}
                     >
                       {level}
-                    </span>}
+                    </span>
                   </button>
 
                   {/* 3-Star Badge for Conquered Levels */}
@@ -892,14 +825,14 @@ export const LevelMap: React.FC<LevelMapProps> = ({
       </div>
 
       {/* Floating Bottom Quick-Action Dock */}
-      <div className="hidden absolute inset-x-0 bottom-12 z-30 pointer-events-none flex justify-center px-4">
+      <div className="absolute inset-x-0 bottom-12 z-30 pointer-events-none flex justify-center px-4">
         <div className="pointer-events-auto flex items-center gap-2 rounded-2xl border border-white/15 bg-slate-950/85 p-1.5 shadow-2xl backdrop-blur-md">
           <button
             onClick={() => onSelectLevel(1)}
             className="flex items-center gap-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-400/40 px-3 py-1.5 text-xs font-bold transition active:scale-95 cursor-pointer shadow-sm"
           >
             <RotateCcw className="h-3.5 w-3.5" />
-            <span>{isEn ? '⏪ Go to Level 1' : '⏪ Ir al nivel 1'}</span>
+            <span>⏪ Ir al Nivel 1</span>
           </button>
 
           <span className="h-4 w-px bg-white/10" />
@@ -909,22 +842,22 @@ export const LevelMap: React.FC<LevelMapProps> = ({
             className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 px-3.5 py-1.5 text-xs font-black shadow-md transition active:scale-95 cursor-pointer"
           >
             <Zap className="h-3.5 w-3.5 fill-slate-950" />
-            <span>{isEn ? `⚡ Level ${activeFrontier} (Next)` : `⚡ Nivel ${activeFrontier} (siguiente)`}</span>
+            <span>⚡ Nivel {activeFrontier} (Por Hacer)</span>
           </button>
         </div>
       </div>
 
       {/* Footer Instructions Bar */}
-      <footer className="hidden absolute inset-x-0 bottom-0 z-30 flex items-center justify-between border-t border-white/10 bg-slate-950/90 px-4 py-2 backdrop-blur-md text-[11px] text-slate-300">
+      <footer className="absolute inset-x-0 bottom-0 z-30 flex items-center justify-between border-t border-white/10 bg-slate-950/90 px-4 py-2 backdrop-blur-md text-[11px] text-slate-300">
         <span className="flex items-center gap-1.5">
           <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-300 inline" />
-          <span>{isEn ? 'Select any past level to replay it, or choose the next level to keep progressing!' : '¡Elige un nivel anterior para repetirlo o selecciona el siguiente para avanzar!'}</span>
+          <span>¡Toca cualquier nivel pasado para rejugarlo o presiona el nivel por hacer para avanzar!</span>
         </span>
         <button
           onClick={onClose}
           className="rounded-lg bg-amber-400 px-3 py-1 text-xs font-black text-slate-950 shadow hover:bg-amber-300 cursor-pointer transition active:scale-95"
         >
-          {isEn ? 'Back to Game' : 'Volver al juego'}
+          Volver al Juego
         </button>
       </footer>
     </section>

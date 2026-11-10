@@ -161,22 +161,22 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
       </section>
 
       {/* The Core Manifesto: Why Game Development? */}
-      <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 md:p-10 shadow-sm relative overflow-hidden">
+      <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 md:p-10 shadow-sm relative overflow-hidden">
         <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-sky-500 via-indigo-600 to-amber-500" />
 
         <div className="max-w-4xl space-y-5">
-          <div className="flex items-center gap-2 text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-xs font-bold text-sky-600 uppercase tracking-wider">
             <Flame className="w-4 h-4 text-amber-500" />
             <span>{isEn ? 'My Core Manifesto' : 'Mi Manifiesto Principal'}</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
             {isEn
               ? 'Why I Love Game Development & Virtual Environments'
               : '¿Por qué me apasiona el desarrollo de videojuegos y entornos virtuales?'}
           </h2>
 
-          <div className="prose prose-slate max-w-none text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed space-y-4">
+          <div className="prose prose-slate max-w-none text-slate-700 text-sm sm:text-base leading-relaxed space-y-4">
             <p>
               {isEn ? (
                 <>
@@ -190,7 +190,7 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
                 </>
               )}
             </p>
-            <p className="bg-slate-50 dark:bg-slate-800/80 p-4 sm:p-5 rounded-xl border-l-4 border-amber-500 italic text-slate-800 dark:text-slate-100 font-medium">
+            <p className="bg-slate-50 p-4 sm:p-5 rounded-xl border-l-4 border-amber-500 italic text-slate-800 font-medium">
               {isEn ? (
                 `"Game development is the one discipline in the universe where all my passions converge. When I build an interactive virtual environment, I am not just writing code—I am stepping inside the stadium, getting behind the wheel of a high-performance machine, and staging a high-octane cinematic action sequence. Game development lets me bring what I love to life."`
               ) : (
@@ -212,17 +212,17 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
       <section className="space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
               {isEn ? 'The 4 Fuel Pillars of My Work' : 'Los 4 Pilares Motores de Mi Trabajo'}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-500">
               {isEn
                 ? 'How my lifelong personal interests directly elevate my technical execution.'
                 : 'Cómo mis intereses personales de toda la vida potencian directamente mi ejecución técnica.'}
             </p>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl text-xs font-semibold border border-transparent dark:border-slate-800">
+          <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
             {[
               { id: 'all', label: isEn ? 'All Pillars' : 'Todos' },
               { id: 'games', label: isEn ? 'Games' : 'Juegos' },
@@ -236,8 +236,8 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
                 onClick={() => setSelectedPassion(tab.id as any)}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
                   selectedPassion === tab.id
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-bold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {tab.label}
@@ -252,33 +252,33 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
             return (
               <div
                 key={passion.id}
-                className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-7 shadow-xs hover:shadow-lg transition-all space-y-4 flex flex-col justify-between"
+                className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs hover:shadow-lg transition-all space-y-4 flex flex-col justify-between"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${passion.color} text-white flex items-center justify-center shadow-md`}>
                       <Icon className="w-6 h-6" />
                     </div>
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${passion.badgeColor} dark:bg-slate-800 dark:border-slate-700`}>
+                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${passion.badgeColor}`}>
                       {passion.title}
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-lg font-bold text-slate-900">
                     {passion.tagline}
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                     {passion.description}
                   </p>
                 </div>
 
-                <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                  <div className="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700">
-                    <span className="text-[11px] font-bold text-slate-900 dark:text-white uppercase tracking-wider block mb-1">
+                <div className="space-y-3 pt-3 border-t border-slate-100">
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80">
+                    <span className="text-[11px] font-bold text-slate-900 uppercase tracking-wider block mb-1">
                       {isEn ? 'Direct Game & Tech Application:' : 'Aplicación Directa en Tecnología & Juegos:'}
                     </span>
-                    <p className="text-xs text-slate-700 dark:text-slate-300 leading-normal">
+                    <p className="text-xs text-slate-700 leading-normal">
                       {passion.howItTranslates}
                     </p>
                   </div>
@@ -287,7 +287,7 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
                     {passion.keySkills.map((skill, sIdx) => (
                       <span
                         key={sIdx}
-                        className="text-[11px] bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium px-2 py-0.5 rounded-md border border-transparent dark:border-slate-700"
+                        className="text-[11px] bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded-md"
                       >
                         {skill}
                       </span>
@@ -301,17 +301,17 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
       </section>
 
       {/* Verified Shipped Games Feature */}
-      <section className="bg-gradient-to-br from-amber-500/15 via-white to-sky-500/10 dark:from-amber-500/10 dark:via-slate-900 dark:to-sky-950/40 rounded-2xl border border-amber-400/40 dark:border-amber-500/30 p-6 sm:p-8 md:p-10 shadow-sm space-y-6">
+      <section className="bg-gradient-to-br from-amber-500/15 via-white to-sky-500/10 rounded-2xl border border-amber-400/40 p-6 sm:p-8 md:p-10 shadow-sm space-y-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-bold uppercase tracking-wider shadow-xs">
               <Trophy className="w-3.5 h-3.5" />
               <span>{isEn ? 'Verified Industry Credits' : 'Créditos Verificados en la Industria'}</span>
             </div>
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white">
+            <h2 className="text-2xl font-black text-slate-900">
               {isEn ? 'Shipped AAA Sports Titles Verified on MobyGames' : 'Títulos Deportivos AAA Lanzados Verificados en MobyGames'}
             </h2>
-            <p className="text-sm text-slate-700 dark:text-slate-300 max-w-2xl">
+            <p className="text-sm text-slate-700 max-w-2xl">
               {isEn ? (
                 `Isaac Gómez Estrada's work is officially documented on the premier game developer database MobyGames. Credited for Quality Assurance and Technical Artist support on one of the world's most anticipated sports video game launches:`
               ) : (
@@ -332,22 +332,22 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
         </div>
 
         <div className="pt-2">
-          <div className="bg-white dark:bg-slate-900/90 p-6 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-white p-6 rounded-xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-600 to-indigo-700 text-white flex items-center justify-center font-black text-xl shrink-0 shadow-md">
                 25
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="font-bold text-slate-900 dark:text-white text-base">EA Sports College Football 25</h3>
-                  <span className="text-[11px] bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 font-bold px-2 py-0.5 rounded-full border border-amber-300 dark:border-amber-700/60">
+                  <h3 className="font-bold text-slate-900 text-base">EA Sports College Football 25</h3>
+                  <span className="text-[11px] bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded-full border border-amber-300">
                     {isEn ? 'Publicly Credited on MobyGames' : 'Crédito Público en MobyGames'}
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                <p className="text-xs text-slate-500 font-medium">
                   {isEn ? 'Released 2024 · PlayStation 5, Xbox Series X/S · Electronic Arts (EA Sports)' : 'Lanzamiento 2024 · PlayStation 5, Xbox Series X/S · Electronic Arts (EA Sports)'}
                 </p>
-                <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed max-w-2xl">
+                <p className="text-xs text-slate-700 leading-relaxed max-w-2xl">
                   {isEn ? (
                     'Engineered interactive UI/UX architecture, validated initial playable game builds, optimized 60+ FPS performance, and managed Perforce pipelines in Frostbite Engine via DEVBOT co-development.'
                   ) : (
@@ -358,7 +358,7 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+              <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
                 {isEn ? 'Quality Assurance & Tech Art Support' : 'Aseguramiento de Calidad & Soporte de Arte Técnico'}
               </span>
             </div>
@@ -367,33 +367,33 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
       </section>
 
       {/* Professional Journey & Timeline */}
-      <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 md:p-10 shadow-sm space-y-8">
+      <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 md:p-10 shadow-sm space-y-8">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h2 className="text-2xl font-bold text-slate-900">
             {isEn ? 'Education & Professional Journey' : 'Educación & Trayectoria Profesional'}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500">
             {isEn
               ? 'From university foundations in animation and interactive tech to AAA game titles and enterprise platforms.'
               : 'Desde las bases universitarias en tecnologías interactivas hasta títulos AAA y plataformas empresariales.'}
           </p>
         </div>
 
-        <div className="relative border-l-2 border-slate-200 dark:border-slate-800 ml-4 space-y-8 pl-6">
+        <div className="relative border-l-2 border-slate-200 ml-4 space-y-8 pl-6">
           {/* Milestone 1: Education */}
           <div className="relative group">
-            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-sky-600 border-4 border-white dark:border-slate-900 shadow-xs group-hover:scale-125 transition-transform" />
+            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-sky-600 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
             <div className="space-y-1">
-              <span className="text-[11px] font-bold text-sky-700 dark:text-sky-400 uppercase tracking-wider">
+              <span className="text-[11px] font-bold text-sky-700 uppercase tracking-wider">
                 {isEn ? '2013 - 2018 · Academic Degree' : '2013 - 2018 · Grado Universitario'}
               </span>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-base font-bold text-slate-900">
                 Ingeniería en Tecnologías Interactivas de Animación Digital
               </h3>
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+              <p className="text-xs font-semibold text-slate-600">
                 Universidad del Valle de México (UVM) · Zapopan / Guadalajara, Jalisco
               </p>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-1">
+              <p className="text-xs text-slate-600 leading-relaxed mt-1">
                 {isEn
                   ? 'Completed 5-year specialized engineering program centered on interactive virtual environments, real-time 3D graphics, procedural animation, computer graphics math, C++, and game engines.'
                   : 'Ingeniería especializada de 5 años enfocada en desarrollo de entornos virtuales interactivos, gráficos 3D en tiempo real, animación digital, matemáticas computacionales, C++ y motores de videojuegos.'}
@@ -403,20 +403,20 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
 
           {/* Milestone 2: 2018 Dedicated focus */}
           <div className="relative group">
-            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-indigo-600 border-4 border-white dark:border-slate-900 shadow-xs group-hover:scale-125 transition-transform" />
+            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-indigo-600 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
             <div className="space-y-1">
-              <span className="text-[11px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider">
+              <span className="text-[11px] font-bold text-indigo-700 uppercase tracking-wider">
                 {isEn ? '2018 - 2022 · Virtual Environments & Real-Time Simulation' : '2018 - 2022 · Entornos Virtuales & Simulación en Tiempo Real'}
               </span>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-base font-bold text-slate-900">
                 {isEn
                   ? 'Full Commitment to Interactive Virtual Environments (Unreal Engine)'
                   : 'Dedicación a Entornos Virtuales Interactivos (Unreal Engine)'}
               </h3>
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+              <p className="text-xs font-semibold text-slate-600">
                 {isEn ? 'Independent Projects, Navi 3D, Spinar Plus & Larva Game Studios' : 'Proyectos Independientes, Navi 3D, Spinar Plus & Larva Game Studios'}
               </p>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-1">
+              <p className="text-xs text-slate-600 leading-relaxed mt-1">
                 {isEn
                   ? 'Engineered classroom simulators (ClassSim), stylized NPR worlds (Acuarela), procedural terrain generators (RWGen), real estate showrooms, and interactive 3D simulations for government water conservation and education.'
                   : 'Desarrolló simuladores de aula (ClassSim), escenarios interactivos con shaders no fotorrealistas (Acuarela), generadores procedimentales de terreno (RWGen), recorridos 3D inmobiliarios y simulaciones interactivas para campañas de conservación de agua y educación.'}
@@ -426,18 +426,18 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
 
           {/* Milestone 3: AAA Co-Development */}
           <div className="relative group">
-            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-amber-500 border-4 border-white dark:border-slate-900 shadow-xs group-hover:scale-125 transition-transform" />
+            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-amber-500 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
             <div className="space-y-1">
-              <span className="text-[11px] font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider">
+              <span className="text-[11px] font-bold text-amber-800 uppercase tracking-wider">
                 {isEn ? '2022 - 2023 · AAA Co-Development' : '2022 - 2023 · Co-Desarrollo de Videojuegos AAA'}
               </span>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-base font-bold text-slate-900">
                 {isEn ? 'Technical Artist at DEVBOT (AAA Sports Games)' : 'Artista Técnico en DEVBOT (Videojuegos Deportivos AAA)'}
               </h3>
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+              <p className="text-xs font-semibold text-slate-600">
                 {isEn ? 'Shipped Credit on EA Sports College Football 25' : 'Crédito Lanzado en EA Sports College Football 25'}
               </p>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-1">
+              <p className="text-xs text-slate-600 leading-relaxed mt-1">
                 {isEn
                   ? 'Built and stabilized initial playable builds in Frostbite Engine, handled interactive UI/UX, and managed Perforce branches and Jenkins builds under strict enterprise confidentiality standards.'
                   : 'Construyó y estabilizó los primeros builds jugables en el motor Frostbite, implementó UI/UX interactiva y gestionó ramas en Perforce e integración continua con Jenkins bajo estrictos estándares de confidencialidad.'}
@@ -447,18 +447,18 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
 
           {/* Milestone 4: Flex Digital Twins */}
           <div className="relative group">
-            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-600 border-4 border-white dark:border-slate-900 shadow-xs group-hover:scale-125 transition-transform" />
+            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-600 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
             <div className="space-y-1">
-              <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider">
+              <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">
                 {isEn ? '2024 - 2026 · Industrial Simulation & Digital Twins' : '2024 - 2026 · Simulación Industrial & Gemelos Digitales'}
               </span>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-base font-bold text-slate-900">
                 {isEn ? 'Applications Developer & Unreal Engine Specialist at Flex' : 'Desarrollador de Aplicaciones & Unreal Engine Specialist en Flex'}
               </h3>
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+              <p className="text-xs font-semibold text-slate-600">
                 {isEn ? 'Zapopan, Jalisco · Manufacturing Digital Twins for Fortune 500 Clients' : 'Zapopan, Jalisco · Gemelos Digitales de Manufactura para Clientes Fortune 500'}
               </p>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-1">
+              <p className="text-xs text-slate-600 leading-relaxed mt-1">
                 {isEn
                   ? 'Built real-time assembly line Digital Twins with Unreal Engine 5 and FlexSim, simulated machine failures, optimized thermal spacing, and developed VR training modules for heavy industrial robotics.'
                   : 'Construyó Gemelos Digitales de líneas de ensamble en tiempo real con Unreal Engine 5 y FlexSim, simuló fallas de maquinaria, optimizó distanciamiento térmico y desarrolló módulos de capacitación en Realidad Virtual para robótica industrial pesada.'}
@@ -468,18 +468,18 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
 
           {/* Milestone 5: Orblite Automation & Platform Engineering */}
           <div className="relative group">
-            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-sky-500 border-4 border-white dark:border-slate-900 shadow-xs group-hover:scale-125 transition-transform" />
+            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-sky-500 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
             <div className="space-y-1">
-              <span className="text-[11px] font-bold text-sky-700 dark:text-sky-400 uppercase tracking-wider">
+              <span className="text-[11px] font-bold text-sky-700 uppercase tracking-wider">
                 {isEn ? '2026 - Present · AI Automation & Platform Engineering' : '2026 - Presente · Automatización con IA & Desarrollo de Plataformas'}
               </span>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-base font-bold text-slate-900">
                 Lead Automation Engineer & Platform Developer at Orblite
               </h3>
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+              <p className="text-xs font-semibold text-slate-600">
                 {isEn ? 'Vehicle Telematics SaaS & Proprietary ERP/CRM (orb-lite.com)' : 'SaaS de Telemática Vehicular & ERP/CRM Propietario (orb-lite.com)'}
               </p>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-1">
+              <p className="text-xs text-slate-600 leading-relaxed mt-1">
                 {isEn
                   ? 'Engineering AI workflow automation pipelines, architecting real-time vehicle telematics & data simulation infrastructure, and building custom internal ERP/CRM applications using TypeScript, React, RESTful APIs, SQL (Supabase), and Cloudflare.'
                   : 'Ingeniería de pipelines de automatización con IA, diseño de infraestructura telemática y simulación de datos en tiempo real, y desarrollo de aplicaciones internas ERP/CRM propietarios utilizando TypeScript, React, APIs REST, SQL (Supabase) y Cloudflare.'}

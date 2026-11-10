@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { ALL_COLORS, GameVersion } from "../../game/types";
-import { getLevelConfig, getThemeForLevel, getVisualThemeForLevel } from "../../game/experience";
+import { getLevelConfig, getThemeForLevel } from "../../game/experience";
 import { GameSceneManager } from "../../game/threeScene";
 import { HeaderBar } from "./HeaderBar";
 import { BottomQueue, QueueRunner } from "./BottomQueue";
@@ -32,24 +32,20 @@ import { GamertagModal } from "./GamertagModal";
 import { SupabaseConfigModal } from "./SupabaseConfigModal";
 import { WebAdViewerModal } from "./WebAdViewerModal";
 import { ComodinesModal } from "./ComodinesModal";
-import { GameMenuModal } from "./GameMenuModal";
 import { generateComodinesForLevel, ComodinDefinition } from "../../game/comodines";
 import { saveComodinSessionToCache, getComodinSessionFromCache } from "../../services/sessionCache";
 import { ArrowLeft, Sparkles, Gamepad2, Zap } from "lucide-react";
 
 interface TileAbsorberGameProps {
   language?: "en" | "es";
-  mode?: "pathway" | "fish_of_fortune";
-  onSwitchMode?: () => void;
   onBackToPortfolio?: () => void;
 }
 
 const savedProgress = getSavedProgress();
 const MAX_ACTIVE_RUNNERS = 5;
 
-export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMode, onBackToPortfolio }: TileAbsorberGameProps) {
+export function TileAbsorberGame({ language = "es", onBackToPortfolio }: TileAbsorberGameProps) {
   const isEn = language === "en";
-  const isFishOfFortune = mode === "fish_of_fortune";
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneManagerRef = useRef<GameSceneManager | null>(null);
   const stuckHandledRef = useRef(false);
@@ -58,16 +54,13 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
   const [playingLevel, setPlayingLevel] = useState<number>(savedProgress.level);
   const [experience, setExperience] = useState<number>(savedProgress.experience);
   const [experienceAtLevelStart, setExperienceAtLevelStart] = useState<number>(savedProgress.experience);
-  const currentLevelConfig = getLevelConfig(playingLevel, isFishOfFortune);
+  const currentLevelConfig = getLevelConfig(playingLevel);
   const totalTilesInLevel = currentLevelConfig.rows * currentLevelConfig.cols;
-  const [version, setVersion] = useState<GameVersion>(() => getVisualThemeForLevel(savedProgress.level, isFishOfFortune));
+  const [version, setVersion] = useState<GameVersion>(() => getThemeForLevel(savedProgress.level));
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [speed, setSpeed] = useState(() =>
-    isFishOfFortune && typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches ? 0.75 : 1
-  );
+  const [speed, setSpeed] = useState(1);
   const [activeSlotCount, setActiveSlotCount] = useState(0);
   const [showTutorialHand, setShowTutorialHand] = useState(true);
-  const [tutorialPointer, setTutorialPointer] = useState<{ x: number; y: number } | null>(null);
   const [hasWon, setHasWon] = useState(false);
   const [tilesAbsorbedCount, setTilesAbsorbedCount] = useState(0);
   const [startTime, setStartTime] = useState(Date.now());
@@ -81,7 +74,6 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
   const [adMessage, setAdMessage] = useState("");
   const [showMap, setShowMap] = useState(false);
   const [isExitConfirmOpen, setIsExitConfirmOpen] = useState(false);
-  const [isGameMenuOpen, setIsGameMenuOpen] = useState(false);
 
   const [userProfile, setUserProfile] = useState(() => getStoredUser());
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
@@ -91,7 +83,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
 
   // Comodines System: 1 Usable per Level of 3 Options, evolving across tiers
   const [comodinesOptions, setComodinesOptions] = useState<ComodinDefinition[]>(() =>
-    generateComodinesForLevel(savedProgress.level, getLevelConfig(savedProgress.level, isFishOfFortune).hasEncapsulations)
+    generateComodinesForLevel(savedProgress.level, getLevelConfig(savedProgress.level).hasEncapsulations)
   );
   const [selectedComodin, setSelectedComodin] = useState<ComodinDefinition | null>(null);
   const [hasUsedComodin, setHasUsedComodin] = useState<boolean>(false);
@@ -127,17 +119,15 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
   const handleActivateComodin = (comodinToUse?: ComodinDefinition) => {
     const comodin = comodinToUse || selectedComodin;
     if (!comodin || hasUsedComodin || !sceneManagerRef.current) return;
-    const notify = (esTitle: string, enTitle: string, esBody: string, enBody: string) =>
-      triggerComodinNotification(language === 'es' ? esTitle : enTitle, language === 'es' ? esBody : enBody);
 
     switch (comodin.id) {
       case 'iman_perimetro':
         sceneManagerRef.current.applyMagnetBoost(18, 1.4);
-        notify('¡IMÁN PERIMETRAL ACTIVADO!', 'PERIMETER MAGNET ACTIVATED!', 'Rango de absorción aumentado un +40% durante 18 segundos.', 'Absorption range increased by 40% for 18 seconds.');
+        triggerComodinNotification('¡IMÁN PERIMETRAL ACTIVADO!', 'Rango de absorción aumentado un +40% durante 18 segundos.');
         break;
       case 'rotacion_tactica': {
         const exposed = sceneManagerRef.current.getExposedColors();
-        const colors = exposed.length > 0 ? exposed : ALL_COLORS.slice(0, getLevelConfig(playingLevel, isFishOfFortune).colorsCount);
+        const colors = exposed.length > 0 ? exposed : ALL_COLORS.slice(0, getLevelConfig(playingLevel).colorsCount);
         setQueueColumns((prev) =>
           prev.map((col, cIdx) => {
             if (!col.length) return col;
@@ -148,30 +138,30 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
           })
         );
         soundManager.playComodinActivate();
-        notify('¡ROTACIÓN TÁCTICA!', 'TACTICAL SHUFFLE!', 'Fila frontal reorganizada con colores visibles en el tablero.', 'Front queue rearranged to match colors visible on the board.');
+        triggerComodinNotification('¡ROTACIÓN TÁCTICA!', 'Fila frontal reorganizada con colores visibles en el tablero.');
         break;
       }
       case 'corredor_titan':
         titanRunnerBoostRef.current = true;
         soundManager.playComodinActivate();
-        notify('¡CORREDOR TITÁN PREPARADO!', 'TITAN RUNNER READY!', 'El siguiente corredor lanzado tendrá +8 de capacidad.', 'The next runner launched gains +8 capacity.');
+        triggerComodinNotification('¡CORREDOR TITÁN PREPARADO!', 'El siguiente corredor lanzado tendrá +8 de capacidad.');
         break;
       case 'amortiguador_emergencia':
         safetyNetArmedRef.current = true;
         soundManager.playComodinActivate();
-        notify('¡RED DE SALVAMENTO ARMADA!', 'SAFETY NET ARMED!', 'Expulsará al corredor más ocioso si la cinta llega a 5/5.', 'It will remove the least active runner if the conveyor reaches 5/5.');
+        triggerComodinNotification('¡RED DE SALVAMENTO ARMADA!', 'Expulsará al corredor más ocioso si la cinta llega a 5/5.');
         break;
       case 'pulso_anticapsula': {
         const popped = sceneManagerRef.current.popRandomEncapsulations(4);
         triggerComodinNotification(
           '¡PULSO ROMPE-BURBUJAS!',
-          popped > 0 ? (language === 'es' ? `¡${popped} cápsulas estallaron y liberaron sus fichas!` : `${popped} capsules burst, freeing their tiles!`) : (language === 'es' ? 'No había cápsulas selladas en este nivel.' : 'There were no sealed capsules in this level.')
+          popped > 0 ? `¡${popped} cápsulas estallaron liberando sus fichas!` : 'No había cápsulas selladas en este nivel.'
         );
         break;
       }
       case 'impulso_conveyor':
         sceneManagerRef.current.applyConveyorSurge(12, 1.8);
-        notify('¡SOBRECARGA DE CINTA!', 'CONVEYOR SURGE!', 'Velocidad de cinta +80% durante 12 segundos.', 'Conveyor speed increased by 80% for 12 seconds.');
+        triggerComodinNotification('¡SOBRECARGA DE CINTA!', 'Velocidad de cinta +80% durante 12 segundos.');
         break;
       case 'transmutacion_borde': {
         const activeCols = sceneManagerRef.current.getActiveRunnerColors();
@@ -180,7 +170,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
         const converted = sceneManagerRef.current.convertPerimeterTiles(targetColor, 3);
         triggerComodinNotification(
           '¡TRANSMUTACIÓN CROMÁTICA!',
-          converted > 0 ? (language === 'es' ? `${converted} fichas del borde convertidas al color ${targetColor}.` : `${converted} edge tiles changed to ${targetColor}.`) : (language === 'es' ? 'No se encontraron fichas para convertir.' : 'No tiles were available to convert.')
+          converted > 0 ? `${converted} fichas del borde convertidas a color ${targetColor}.` : 'No se encontraron fichas para convertir.'
         );
         break;
       }
@@ -188,7 +178,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
         const ejected = sceneManagerRef.current.ejectMostIdleRunner();
         triggerComodinNotification(
           '¡PURGA TÁCTICA!',
-          ejected ? (language === 'es' ? 'Corredor ocioso retirado de la cinta sin perder una vida.' : 'Idle runner removed from the conveyor without losing a life.') : (language === 'es' ? 'No había corredores en la cinta para retirar.' : 'There were no runners to remove.')
+          ejected ? 'Corredor ocioso retirado de la cinta sin coste de vida.' : 'No había corredores en la cinta para retirar.'
         );
         break;
       }
@@ -196,7 +186,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
         const launched = sceneManagerRef.current.launchPrismaticRunner(12);
         triggerComodinNotification(
           '¡CORREDOR PRISMA DESPLEGADO!',
-          launched ? (language === 'es' ? 'Devorará hasta 12 fichas de cualquier color del borde.' : 'It will devour up to 12 tiles of any edge color.') : (language === 'es' ? 'Cinta llena a 5/5. Libera un espacio primero.' : 'Conveyor full at 5/5. Free a slot first.')
+          launched ? 'Devorará hasta 12 fichas de cualquier color en el borde.' : 'Cinta llena a 5/5. Libera un slot primero.'
         );
         break;
       }
@@ -204,13 +194,13 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
         const inverted = sceneManagerRef.current.invertBoardTiles(5);
         triggerComodinNotification(
           '¡COLAPSO GRAVITACIONAL!',
-          inverted > 0 ? (language === 'es' ? `${inverted} fichas del núcleo llevadas a los bordes exteriores.` : `${inverted} core tiles pushed to the outer edges.`) : (language === 'es' ? 'El tablero ya está despejado.' : 'The board is already clear.')
+          inverted > 0 ? `${inverted} fichas del núcleo empujadas a los bordes exteriores.` : 'Tablero ya despejado.'
         );
         break;
       }
       case 'paradoja_temporal':
         sceneManagerRef.current.applyChronoStasis(20);
-        notify('¡ESTASIS TEMPORAL!', 'TEMPORAL STASIS!', 'Tiempo de atasco congelado por 20 s y magnetismo potenciado.', 'Jam timer frozen for 20 seconds and magnetic pull increased.');
+        triggerComodinNotification('¡ESTASIS TEMPORAL!', 'Tiempo de atasco congelado por 20s y magnetismo potenciado.');
         break;
     }
 
@@ -219,7 +209,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
 
   const addExperience = useCallback((amount: number) => setExperience((prev) => prev + amount), []);
   const createQueueForLevel = useCallback((lvl: number): QueueRunner[][] => {
-    const config = getLevelConfig(lvl, isFishOfFortune);
+    const config = getLevelConfig(lvl);
     const availableColors = ALL_COLORS.slice(0, config.colorsCount);
     return [0, 1, 2, 3].map((c) =>
       Array.from({ length: 6 }, (_, r) => ({
@@ -228,7 +218,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
         capacity: config.runnerCapacity,
       }))
     );
-  }, [isFishOfFortune]);
+  }, []);
   const [queueColumns, setQueueColumns] = useState<QueueRunner[][]>(() => createQueueForLevel(savedProgress.level));
 
   useEffect(() => {
@@ -251,26 +241,8 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
   }, []);
 
   useEffect(() => {
-    if (sceneManagerRef.current) sceneManagerRef.current.paused = showMap || isStuck || isGameMenuOpen;
-  }, [showMap, isStuck, isGameMenuOpen]);
-
-  useEffect(() => {
-    const mobileQuery = window.matchMedia('(max-width: 639px)');
-    const syncResponsiveSpeed = () => {
-      if (!isFishOfFortune) return;
-      const nextSpeed = mobileQuery.matches ? 0.75 : 1;
-      setSpeed(nextSpeed);
-      if (sceneManagerRef.current) sceneManagerRef.current.speedMultiplier = nextSpeed;
-    };
-    syncResponsiveSpeed();
-    mobileQuery.addEventListener('change', syncResponsiveSpeed);
-    return () => mobileQuery.removeEventListener('change', syncResponsiveSpeed);
-  }, [isFishOfFortune]);
-
-  useEffect(() => {
-    soundManager.setLevelMusic(getVisualThemeForLevel(playingLevel, isFishOfFortune), playingLevel, isFishOfFortune);
-    return () => soundManager.stopLevelMusic();
-  }, [playingLevel, isFishOfFortune]);
+    if (sceneManagerRef.current) sceneManagerRef.current.paused = showMap || isStuck;
+  }, [showMap, isStuck]);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -319,7 +291,6 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
       "v3",
       savedProgress.level
     );
-    manager.speedMultiplier = speed;
     sceneManagerRef.current = manager;
     const handleResize = () => manager.handleResize();
     window.addEventListener("resize", handleResize);
@@ -341,8 +312,6 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
   };
 
   const handleLaunchRunner = (colIdx: number) => {
-    // The launch gesture unlocks Web Audio in browsers that block autoplay.
-    soundManager.setEnabled(soundEnabled);
     const col = queueColumns[colIdx];
     if (!col?.length || !sceneManagerRef.current || isStuck || showMap) return;
     const runner = col[0];
@@ -359,13 +328,13 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
           if (i !== colIdx) return items;
           const remaining = items.slice(1);
           while (remaining.length < 5) {
-            const colors = ALL_COLORS.slice(0, getLevelConfig(playingLevel, isFishOfFortune).colorsCount);
+            const colors = ALL_COLORS.slice(0, getLevelConfig(playingLevel).colorsCount);
             // Allow spawning any valid color for the current level for flexible player strategy
             const chosenColor = colors[Math.floor(Math.random() * colors.length)];
             remaining.push({
               id: `queue_replenish_${Date.now()}_${Math.random()}`,
               color: chosenColor,
-              capacity: getLevelConfig(playingLevel, isFishOfFortune).runnerCapacity,
+              capacity: getLevelConfig(playingLevel).runnerCapacity,
             });
           }
           return remaining;
@@ -397,7 +366,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
 
   const startLevel = (selected: number) => {
     if (selected > level || selected < 1 || lifeState.lives < 1) return;
-    const theme = getVisualThemeForLevel(selected, isFishOfFortune);
+    const theme = getThemeForLevel(selected);
     stuckHandledRef.current = false;
     setPlayingLevel(selected);
     setVersion(theme);
@@ -408,7 +377,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
     setSelectedComodin(null);
     titanRunnerBoostRef.current = false;
     safetyNetArmedRef.current = false;
-    setComodinesOptions(generateComodinesForLevel(selected, getLevelConfig(selected, isFishOfFortune).hasEncapsulations));
+    setComodinesOptions(generateComodinesForLevel(selected, getLevelConfig(selected).hasEncapsulations));
     setTilesAbsorbedCount(0);
     setStartTime(Date.now());
     setExperienceAtLevelStart(experience);
@@ -424,15 +393,15 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
       const nextFrontier = playingLevel + 1;
       setLevel(nextFrontier);
       setPlayingLevel(nextFrontier);
-      setVersion(getVisualThemeForLevel(nextFrontier, isFishOfFortune));
-      setComodinesOptions(generateComodinesForLevel(nextFrontier, getLevelConfig(nextFrontier, isFishOfFortune).hasEncapsulations));
+      setVersion(getThemeForLevel(nextFrontier));
+      setComodinesOptions(generateComodinesForLevel(nextFrontier, getLevelConfig(nextFrontier).hasEncapsulations));
       setSelectedComodin(null);
       setHasUsedComodin(false);
       titanRunnerBoostRef.current = false;
       safetyNetArmedRef.current = false;
       setQueueColumns(createQueueForLevel(nextFrontier));
       if (sceneManagerRef.current)
-        sceneManagerRef.current.setMode(getVisualThemeForLevel(nextFrontier, isFishOfFortune), "v3", nextFrontier);
+        sceneManagerRef.current.setMode(getThemeForLevel(nextFrontier), "v3", nextFrontier);
     }
     setExperienceAtLevelStart(experience);
     setHasWon(false);
@@ -462,7 +431,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
   const handleNextLevel = () => {
     const nextPlayableLevel = playingLevel + 1;
     const nextFrontier = playingLevel >= level ? playingLevel + 1 : level;
-    const nextTheme = getVisualThemeForLevel(nextPlayableLevel, isFishOfFortune);
+    const nextTheme = getThemeForLevel(nextPlayableLevel);
     setLevel(nextFrontier);
     setPlayingLevel(nextPlayableLevel);
     setVersion(nextTheme);
@@ -470,7 +439,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
     setSelectedComodin(null);
     titanRunnerBoostRef.current = false;
     safetyNetArmedRef.current = false;
-    setComodinesOptions(generateComodinesForLevel(nextPlayableLevel, getLevelConfig(nextPlayableLevel, isFishOfFortune).hasEncapsulations));
+    setComodinesOptions(generateComodinesForLevel(nextPlayableLevel, getLevelConfig(nextPlayableLevel).hasEncapsulations));
     setQueueColumns(createQueueForLevel(nextPlayableLevel));
     setExperienceAtLevelStart(experience);
     setTilesAbsorbedCount(0);
@@ -514,10 +483,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
         if (safetyNetArmedRef.current) {
           safetyNetArmedRef.current = false;
           sceneManagerRef.current.ejectMostIdleRunner();
-          triggerComodinNotification(
-            language === 'es' ? '¡RED DE SALVAMENTO ACTIVADA!' : 'SAFETY NET ACTIVATED!',
-            language === 'es' ? 'Corredor retirado automáticamente de la cinta.' : 'A runner was automatically removed from the conveyor.'
-          );
+          triggerComodinNotification("¡RED DE SALVAMENTO ACTIVADA!", "Corredor retirado automáticamente de la cinta.");
           return;
         }
         const timeout = window.setTimeout(handleStuck, 1500);
@@ -587,52 +553,28 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
   };
 
   return (
-    <div className={`flex flex-col ${isFishOfFortune ? 'gap-1' : 'gap-3'}`}>
+    <div className="flex flex-col gap-3">
       {/* Top action row with Back to Portfolio button */}
-      <div className={`flex items-center justify-between px-2 ${isFishOfFortune ? 'h-8' : ''}`}>
-        {isFishOfFortune && !showMap ? (
-          <button type="button" onClick={() => setIsGameMenuOpen(true)} className="inline-flex h-8 items-center gap-2 rounded-full border border-amber-200/50 bg-gradient-to-r from-amber-500 to-orange-500 px-3 text-xs font-black text-slate-950 shadow-lg shadow-amber-950/40 transition hover:scale-105" aria-label={isEn ? 'Open game menu' : 'Abrir menú del juego'}>
-            <Gamepad2 className="h-4 w-4" />
-            <span>{isEn ? 'MENU' : 'MENÚ'}</span>
-          </button>
-        ) : onBackToPortfolio && (
+      <div className="flex items-center justify-between px-2">
+        {onBackToPortfolio && (
           <button
             type="button"
             onClick={onBackToPortfolio}
-            className={`inline-flex items-center ${isFishOfFortune ? 'justify-center h-8 w-8 rounded-full p-0 bg-slate-900/55 border border-white/20 text-white/80' : 'gap-2 px-3.5 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-cyan-400 hover:text-cyan-300 border border-cyan-500/30 font-bold text-xs shadow-md transition-all hover:scale-105'}`}
-            title={isEn ? 'Back to Portfolio' : 'Regresar al Portafolio'}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-cyan-400 hover:text-cyan-300 border border-cyan-500/30 font-bold text-xs shadow-md transition-all hover:scale-105"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            {!isFishOfFortune && <span>{isEn ? "Back to Portfolio" : "Regresar al Portafolio"}</span>}
+            <span>{isEn ? "Back to Portfolio" : "Regresar al Portafolio"}</span>
           </button>
         )}
-        {onSwitchMode && !isFishOfFortune && (
-          <button type="button" onClick={onSwitchMode} className="ml-auto inline-flex items-center gap-2 rounded-xl border border-cyan-400/30 bg-slate-900/90 px-3 py-1.5 text-xs font-bold text-cyan-200 hover:bg-cyan-950/70 transition">
-            {isFishOfFortune ? <Gamepad2 className="w-4 h-4" /> : <span className="text-sm">🐟</span>}
-            <span>{isFishOfFortune ? (isEn ? 'Tile Absorber Pathway' : 'Camino Tile Absorber') : (isEn ? 'Fish Feeder' : 'Fish Feeder')}</span>
-          </button>
-        )}
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 ml-auto">
+          <Gamepad2 className="w-4 h-4 text-cyan-400" />
+          <span>Conveyor Realms 3D · Three.js Edition</span>
+        </div>
       </div>
 
       {/* Main 3D Game Container */}
-      <div
-        onPointerMove={isFishOfFortune ? (event) => {
-          const bounds = event.currentTarget.getBoundingClientRect();
-          setTutorialPointer({ x: event.clientX - bounds.left, y: event.clientY - bounds.top });
-        } : undefined}
-        className={`relative w-full ${isFishOfFortune ? 'h-[88dvh] min-h-[360px] max-h-[920px]' : 'h-[78vh] min-h-[420px] max-h-[880px]'} rounded-2xl overflow-hidden shadow-2xl border border-cyan-300/40 bg-[#062033] shadow-cyan-950/40 select-none`}
-      >
-        {isFishOfFortune && tutorialPointer && (
-          <div
-            aria-hidden="true"
-            className="absolute z-40 pointer-events-none text-3xl drop-shadow-[0_3px_4px_rgba(0,0,0,0.85)]"
-            style={{ left: tutorialPointer.x - 10, top: tutorialPointer.y - 28 }}
-          >
-            👆
-          </div>
-        )}
+      <div className="relative w-full h-[78vh] min-h-[600px] max-h-[880px] rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-slate-950 select-none">
         <HeaderBar
-          language={language}
           version={version}
           lives={lifeState.lives}
           maxLives={MAX_LIVES}
@@ -640,8 +582,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
           speed={speed}
           level={playingLevel}
           frontierLevel={level}
-          showLevelPathInfo={!isFishOfFortune}
-          simpleAdMode={isFishOfFortune}
+          experience={experience}
           tilesAbsorbed={tilesAbsorbedCount}
           totalTiles={totalTilesInLevel}
           gamertag={userProfile.gamertag}
@@ -650,7 +591,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
           onSpeedChange={handleSpeedChange}
           onReset={handleReset}
           onOpenDocs={() => setIsDocsOpen(true)}
-          onOpenMap={isFishOfFortune ? undefined : requestPathExit}
+          onOpenMap={requestPathExit}
           onOpenLeaderboard={() => setIsLeaderboardOpen(true)}
           onOpenGamertag={() => setIsGamertagModalOpen(true)}
           selectedComodin={selectedComodin}
@@ -674,20 +615,18 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
 
         {!showMap && (
           <BottomQueue
-            language={language}
             version={version}
             activeRunnersCount={activeSlotCount}
             maxCapacity={MAX_ACTIVE_RUNNERS}
             queueColumns={queueColumns}
             onLaunch={handleLaunchRunner}
-            showTutorialHand={showTutorialHand && !isFishOfFortune}
+            showTutorialHand={showTutorialHand}
             exposedColors={sceneManagerRef.current?.getExposedColors()}
           />
         )}
 
         {hasWon && (
           <WinModal
-            language={language}
             version={version}
             level={playingLevel}
             frontierLevel={level}
@@ -696,14 +635,13 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
             xpEarned={experience - experienceAtLevelStart}
             onBackToPath={handleBackToPath}
             onNextLevel={handleNextLevel}
-            onJumpToFrontier={!isFishOfFortune && playingLevel < level ? handleJumpToFrontier : undefined}
+            onJumpToFrontier={playingLevel < level ? handleJumpToFrontier : undefined}
             onRestart={handleReset}
           />
         )}
 
         {isStuck && (
           <LifeModal
-            language={language}
             level={playingLevel}
             lives={lifeState.lives}
             maxLives={MAX_LIVES}
@@ -721,7 +659,6 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
 
         {isExitConfirmOpen && (
           <ExitLevelModal
-            language={language}
             level={playingLevel}
             onStay={() => setIsExitConfirmOpen(false)}
             onExit={abandonRunForPath}
@@ -730,8 +667,6 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
 
         {showMap && (
           <LevelMap
-            language={language}
-            fishOfFortuneMode={isFishOfFortune}
             frontierLevel={level}
             selectedLevel={playingLevel}
             experience={experience}
@@ -742,22 +677,8 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
           />
         )}
 
-        {isFishOfFortune && isGameMenuOpen && (
-          <GameMenuModal
-            language={language}
-            level={playingLevel}
-            frontierLevel={level}
-            onResume={() => setIsGameMenuOpen(false)}
-            onOpenPathway={() => { setIsGameMenuOpen(false); requestPathExit(); }}
-            onOpenPowerUps={() => { setIsGameMenuOpen(false); setIsComodinesModalOpen(true); }}
-            onRestart={() => { setIsGameMenuOpen(false); handleReset(); }}
-            onBackToPortfolio={onBackToPortfolio ? () => { setIsGameMenuOpen(false); onBackToPortfolio(); } : undefined}
-          />
-        )}
-
         {/* 1 per Level Comodines Tactical Modal */}
         <ComodinesModal
-          language={language}
           isOpen={isComodinesModalOpen}
           onClose={() => setIsComodinesModalOpen(false)}
           options={comodinesOptions}
@@ -773,12 +694,11 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
           }}
         />
 
-        <DocModal language={language} isOpen={isDocsOpen} onClose={() => setIsDocsOpen(false)} />
+        <DocModal isOpen={isDocsOpen} onClose={() => setIsDocsOpen(false)} />
 
         {/* Modales de Supabase, Gamertag, Highscore y HTTPS Ad Viewer */}
         {isLeaderboardOpen && (
           <LeaderboardModal
-            language={language}
             onClose={() => setIsLeaderboardOpen(false)}
             onOpenGamertag={() => {
               setIsLeaderboardOpen(false);
@@ -788,8 +708,7 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
         )}
 
         {isGamertagModalOpen && (
-            <GamertagModal
-            language={language}
+          <GamertagModal
             onClose={() => setIsGamertagModalOpen(false)}
             onSave={(tag) => setUserProfile((prev) => ({ ...prev, gamertag: tag }))}
           />
@@ -799,7 +718,6 @@ export function TileAbsorberGame({ language = "es", mode = "pathway", onSwitchMo
 
         {isWebAdViewerOpen && (
           <WebAdViewerModal
-            language={language}
             onRewardEarned={handleWebAdRewardEarned}
             onClose={() => setIsWebAdViewerOpen(false)}
           />

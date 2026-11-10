@@ -93,16 +93,12 @@ export async function exportElementToPdf(
     // Clone the resume sheet into the sandbox
     const clonedSheet = originalElement.cloneNode(true) as HTMLElement;
     clonedSheet.id = 'pdf-render-sandbox-sheet';
-    clonedSheet.classList.remove('dark');
-    clonedSheet.querySelectorAll('.dark').forEach((el) => el.classList.remove('dark'));
     clonedSheet.style.width = `${targetPixelWidth}px`;
     clonedSheet.style.maxWidth = `${targetPixelWidth}px`;
     clonedSheet.style.transform = 'none';
     clonedSheet.style.boxShadow = 'none';
     clonedSheet.style.margin = '0';
     clonedSheet.style.borderRadius = '0';
-    clonedSheet.style.backgroundColor = '#ffffff';
-    clonedSheet.style.color = '#0f172a';
 
     sandboxContainer.appendChild(clonedSheet);
     document.body.appendChild(sandboxContainer);
@@ -112,21 +108,11 @@ export async function exportElementToPdf(
 
     const sanitizeClone = (clonedDoc: Document) => {
       try {
-        clonedDoc.documentElement.classList.remove('dark');
-        if (clonedDoc.body) {
-          clonedDoc.body.classList.remove('dark');
-          clonedDoc.body.style.backgroundColor = '#ffffff';
-          clonedDoc.body.style.color = '#0f172a';
-        }
         const sheet = clonedDoc.getElementById('pdf-render-sandbox-sheet');
         if (sheet) {
-          sheet.classList.remove('dark');
-          sheet.style.backgroundColor = '#ffffff';
-          sheet.style.color = '#0f172a';
           const allElements = [sheet, ...Array.from(sheet.querySelectorAll('*'))];
           for (const el of allElements) {
             const htmlEl = el as HTMLElement;
-            htmlEl.classList.remove('dark');
             const computed = window.getComputedStyle(htmlEl);
 
             // Normalize colors for html2canvas

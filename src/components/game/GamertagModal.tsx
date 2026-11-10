@@ -3,7 +3,6 @@ import { User, Sparkles, Check, X, Shield, Dices } from 'lucide-react';
 import { getStoredUser, saveStoredUser, getSupabaseClient } from '../../services/supabaseGame';
 
 interface GamertagModalProps {
-  language?: 'en' | 'es';
   onClose: () => void;
   onSave?: (newGamertag: string) => void;
 }
@@ -11,8 +10,7 @@ interface GamertagModalProps {
 const RANDOM_ADJECTIVES = ['CYBER', 'CHESS', 'TURBO', 'NEON', 'GOLDEN', 'REEF', 'TROPICAL', 'APEX', 'SWIFT', 'COSMIC'];
 const RANDOM_NOUNS = ['MASTER', 'RUNNER', 'KNIGHT', 'WARRIOR', 'KING', 'PILOT', 'CHAMPION', 'SURFER', 'ORB', 'HERO'];
 
-export const GamertagModal: React.FC<GamertagModalProps> = ({ onClose, onSave, language = 'en' }) => {
-  const isEn = language === 'en';
+export const GamertagModal: React.FC<GamertagModalProps> = ({ onClose, onSave }) => {
   const currentUser = getStoredUser();
   const [gamertag, setGamertag] = useState(currentUser.gamertag);
   const [error, setError] = useState('');
@@ -32,11 +30,11 @@ export const GamertagModal: React.FC<GamertagModalProps> = ({ onClose, onSave, l
     const clean = gamertag.toUpperCase().trim().replace(/[^A-Z0-9_]/g, '');
 
     if (clean.length < 3) {
-      setError(isEn ? 'Gamertag must be at least 3 characters.' : 'El Gamertag debe tener al menos 3 caracteres.');
+      setError('El Gamertag debe tener al menos 3 caracteres.');
       return;
     }
     if (clean.length > 16) {
-      setError(isEn ? 'Gamertag cannot be longer than 16 characters.' : 'El Gamertag no puede tener más de 16 caracteres.');
+      setError('El Gamertag no puede tener más de 16 caracteres.');
       return;
     }
 
@@ -76,7 +74,7 @@ export const GamertagModal: React.FC<GamertagModalProps> = ({ onClose, onSave, l
         onClose();
       }, 700);
     } catch {
-      setError(isEn ? 'Error saving profile. Please try again.' : 'Error al guardar el perfil. Inténtalo de nuevo.');
+      setError('Error guardando perfil. Inténtalo de nuevo.');
     } finally {
       setIsSaving(false);
     }
@@ -97,8 +95,8 @@ export const GamertagModal: React.FC<GamertagModalProps> = ({ onClose, onSave, l
             <User className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-black text-white">{isEn ? 'Player Profile' : 'Perfil de jugador'}</h3>
-            <p className="text-xs text-slate-400">{isEn ? 'Choose your Gamertag for the Hall of Fame' : 'Elige tu Gamertag para el Salón de la Fama'}</p>
+            <h3 className="text-lg font-black text-white">Perfil de Jugador</h3>
+            <p className="text-xs text-slate-400">Elige tu Gamertag para el Salón de la Fama</p>
           </div>
         </div>
 
@@ -116,26 +114,26 @@ export const GamertagModal: React.FC<GamertagModalProps> = ({ onClose, onSave, l
                   setError('');
                 }}
                 maxLength={16}
-                placeholder={isEn ? 'E.G. DIMPZ_ARTIST' : 'EJ.: DIMPZ_ARTIST'}
+                placeholder="EJ: DIMPZ_ARTIST"
                 className="w-full bg-slate-950 border border-slate-700 focus:border-cyan-400 rounded-xl px-4 py-3 font-mono font-black text-white tracking-wider text-base focus:outline-none focus:ring-2 focus:ring-cyan-400/30 transition uppercase"
               />
               <button
                 type="button"
                 onClick={generateRandom}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 transition cursor-pointer"
-                title={isEn ? 'Generate a random name' : 'Generar nombre aleatorio'}
+                title="Generar nombre aleatorio"
               >
                 <Dices className="h-4 w-4" />
               </button>
             </div>
             {error && <p className="text-xs text-rose-400 font-semibold mt-1.5">{error}</p>}
             <p className="text-[10px] text-slate-400 mt-1">
-              {isEn ? 'Letters, numbers and underscores (3–16 characters).' : 'Letras, números y guiones bajos (3–16 caracteres).'}
+              Letras, números y guiones bajos (3-16 caracteres).
             </p>
           </div>
 
           <div className="bg-slate-950/70 border border-slate-800 rounded-2xl p-3 flex justify-between items-center text-xs">
-            <span className="text-slate-400">{isEn ? 'Best Score:' : 'Puntaje máximo:'}</span>
+            <span className="text-slate-400">Puntaje Máximo:</span>
             <span className="font-mono font-black text-amber-300">{currentUser.best_score.toLocaleString()} XP</span>
           </div>
 
@@ -145,7 +143,7 @@ export const GamertagModal: React.FC<GamertagModalProps> = ({ onClose, onSave, l
               onClick={onClose}
               className="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition cursor-pointer"
             >
-              {isEn ? 'Cancel' : 'Cancelar'}
+              Cancelar
             </button>
             <button
               type="submit"
@@ -155,12 +153,12 @@ export const GamertagModal: React.FC<GamertagModalProps> = ({ onClose, onSave, l
               {success ? (
                 <>
                   <Check className="h-4 w-4" />
-                  <span>{isEn ? 'Saved!' : '¡Guardado!'}</span>
+                  <span>¡Guardado!</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="h-4 w-4" />
-                  <span>{isEn ? 'Save' : 'Guardar'}</span>
+                  <span>Guardar</span>
                 </>
               )}
             </button>

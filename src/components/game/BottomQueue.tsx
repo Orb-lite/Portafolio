@@ -8,7 +8,6 @@ export interface QueueRunner {
 }
 
 interface BottomQueueProps {
-  language?: 'en' | 'es';
   version: GameVersion;
   activeRunnersCount: number;
   maxCapacity: number;
@@ -19,7 +18,6 @@ interface BottomQueueProps {
 }
 
 export const BottomQueue: React.FC<BottomQueueProps> = ({
-  language = 'en',
   version,
   activeRunnersCount,
   maxCapacity = 5,
@@ -32,28 +30,26 @@ export const BottomQueue: React.FC<BottomQueueProps> = ({
   const availableSlots = Math.max(0, maxCapacity - activeRunnersCount);
 
   return (
-    <div className={`${isFoF
-      ? 'absolute bottom-1 left-1/2 z-20 flex w-[min(94vw,360px)] -translate-x-1/2 flex-col items-center gap-1 rounded-2xl border border-cyan-100/25 bg-slate-950/80 p-2 shadow-2xl shadow-slate-950/50 backdrop-blur-md pointer-events-none select-none sm:bottom-auto sm:left-auto sm:right-2 sm:top-1/2 sm:w-auto sm:-translate-x-0 sm:-translate-y-1/2 sm:gap-0 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-none'
-      : 'absolute right-2 top-1/2 z-20 flex -translate-y-1/2 flex-col items-center pointer-events-none select-none'}`}>
+    <div className="absolute bottom-2 sm:bottom-4 left-0 right-0 z-20 flex flex-col items-center pointer-events-none select-none">
       {/* Track Slots HUD */}
-      <div className={`mb-1.5 flex items-center gap-2 pointer-events-auto ${isFoF ? 'w-full justify-between px-1 sm:w-auto sm:flex-col sm:gap-1 sm:px-0' : 'flex-col'}`}>
+      <div className="flex items-center gap-3 sm:gap-4 mb-2 pointer-events-auto">
         {/* Counter indicator matching reference video: e.g. "5/5", "4/5" */}
-        <div className={`flex items-baseline gap-0.5 text-white font-black ${isFoF ? 'shrink-0 px-1 text-sm sm:text-base [text-shadow:0_2px_3px_rgba(0,0,0,0.9)]' : 'px-3 py-1 bg-slate-900/85 backdrop-blur-md rounded-xl border border-slate-700/60 shadow-lg text-sm sm:text-base'}`}>
-          <span className={isFoF ? 'text-white' : 'text-amber-400'}>{availableSlots}</span>
-          <span className="text-slate-300 font-semibold text-xs sm:text-sm">/{maxCapacity}</span>
+        <div className="flex items-baseline gap-0.5 px-3 py-1 bg-slate-900/85 backdrop-blur-md rounded-xl border border-slate-700/60 shadow-lg text-white font-black text-sm sm:text-base">
+          <span className="text-amber-400">{availableSlots}</span>
+          <span className="text-slate-400 font-semibold text-xs sm:text-sm">/{maxCapacity}</span>
         </div>
 
         {/* 5 slot boxes matching reference video */}
-        <div className={`flex items-center gap-1 ${isFoF ? 'flex-row sm:flex-col' : 'flex-col'}`}>
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {Array.from({ length: maxCapacity }).map((_, idx) => {
             const isFilled = idx < activeRunnersCount;
             return (
               <div
                 key={idx}
-                className={`h-5 w-8 rounded-md border flex items-center justify-center transition-all duration-300 ${isFoF ? 'sm:w-9' : 'w-9'} ${
+                className={`w-7 h-7 sm:w-9 sm:h-9 rounded-xl border-2 flex items-center justify-center transition-all duration-300 ${
                   isFilled
                     ? isFoF
-                      ? 'bg-indigo-400/25 border-indigo-200 shadow-[0_0_10px_rgba(165,180,252,0.35)]'
+                      ? 'bg-cyan-500/30 border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.5)]'
                       : 'bg-indigo-600/30 border-indigo-400 shadow-[0_0_10px_rgba(99,102,241,0.4)]'
                     : 'bg-slate-900/60 border-slate-700/60'
                 }`}
@@ -72,13 +68,13 @@ export const BottomQueue: React.FC<BottomQueueProps> = ({
       </div>
 
       {/* 4 Runner Columns matching reference video */}
-      <div className={`relative grid justify-center items-end gap-x-1 gap-y-0 pointer-events-auto bg-transparent p-0 rounded-none border-0 shadow-none ${isFoF ? 'w-full grid-cols-4 sm:w-auto sm:grid-cols-2' : 'grid-cols-2'}`}>
+      <div className="relative bg-slate-900/75 backdrop-blur-md px-3 sm:px-6 py-2.5 sm:py-3 rounded-3xl border border-slate-700/70 shadow-2xl pointer-events-auto flex gap-3 sm:gap-5 justify-center items-end">
         {queueColumns.map((col, colIdx) => {
           const frontRunner = col[0];
           const hasRunner = Boolean(frontRunner);
 
           return (
-            <div key={colIdx} className={`relative flex flex-col-reverse items-center gap-0 ${isFoF ? 'w-10 sm:w-9' : 'w-9'}`}>
+            <div key={colIdx} className="relative flex flex-col-reverse items-center gap-1 sm:gap-1.5 w-12 sm:w-14">
               {/* Remaining runners in column (stacked upward) */}
               {col.slice(0, 4).map((runner, rowIdx) => {
                 const isFront = rowIdx === 0;
@@ -89,7 +85,7 @@ export const BottomQueue: React.FC<BottomQueueProps> = ({
                     switch (color) {
                       case 'white':
                         return {
-                          card: 'fof-white-runner bg-gradient-to-b from-white via-slate-50 to-slate-200 text-slate-950 border-[3px] border-slate-600 shadow-[0_2px_0_#f59e0b,0_3px_10px_rgba(15,23,42,0.55)]',
+                          card: 'bg-gradient-to-b from-orange-50 to-amber-100 text-slate-900 border-2 border-orange-300 shadow-orange-500/20',
                           fin: 'bg-orange-500',
                           label: 'CLOWN',
                         };
@@ -146,7 +142,7 @@ export const BottomQueue: React.FC<BottomQueueProps> = ({
                     switch (color) {
                       case 'white':
                         return {
-                          card: 'fof-white-runner bg-slate-100 text-slate-900 border-2 border-slate-500 shadow-slate-950/40',
+                          card: 'bg-slate-100 text-slate-900 border-2 border-white shadow-slate-950/20',
                           fin: 'bg-slate-200',
                           label: 'WHITE',
                         };
@@ -205,21 +201,19 @@ export const BottomQueue: React.FC<BottomQueueProps> = ({
                 const theme = getColorTheme(runner.color);
 
                 const isReadyToAbsorb = isFront && (!exposedColors || exposedColors.length === 0 || exposedColors.includes(runner.color));
-                const isEnabledRunner = isFront && availableSlots > 0 && colIdx >= 2;
 
                 return (
                   <button
                     key={runner.id}
-                    disabled={!isEnabledRunner}
-                    onClick={() => isEnabledRunner && onLaunch(colIdx)}
-                    aria-label={`${theme.label} ${runner.capacity}`}
-                    className={`relative mb-[-8px] flex flex-col items-center justify-center transition-all ${isFoF ? 'h-10 w-10 rounded-xl duration-500 sm:h-9 sm:w-8 sm:rounded-lg sm:duration-200' : 'h-9 w-8 rounded-lg duration-200'} ${
+                    disabled={!isFront || availableSlots <= 0}
+                    onClick={() => isFront && onLaunch(colIdx)}
+                    className={`relative w-12 h-14 sm:w-14 sm:h-16 rounded-2xl flex flex-col items-center justify-center transition-all duration-200 ${
                       isFront
-                        ? isEnabledRunner
+                        ? availableSlots > 0
                           ? isReadyToAbsorb
-                              ? 'cursor-pointer hover:-translate-y-1 active:scale-95 shadow-xl ring-2 ring-amber-300 ring-offset-2 ring-offset-slate-900 scale-105'
-                              : 'cursor-pointer opacity-70 hover:opacity-100 hover:-translate-y-0.5'
-                          : 'opacity-35 grayscale cursor-not-allowed'
+                            ? 'cursor-pointer hover:-translate-y-1 active:scale-95 shadow-xl ring-2 ring-amber-300 ring-offset-2 ring-offset-slate-900 scale-105'
+                            : 'cursor-pointer opacity-70 hover:opacity-100 hover:-translate-y-0.5'
+                          : 'opacity-50 cursor-not-allowed'
                         : 'opacity-40 scale-90 -translate-y-1 pointer-events-none'
                     } ${theme.card}`}
                   >
@@ -241,22 +235,22 @@ export const BottomQueue: React.FC<BottomQueueProps> = ({
                     </span>
 
                     {/* Sub-label/icon */}
-                    <span className="hidden">
-                      {language === 'es' ? ({ WHITE: 'BLANCO', BLACK: 'NEGRO', BLUE: 'AZUL', YELLOW: 'AMARILLO', PINK: 'ROSA', GREEN: 'VERDE', PURPLE: 'MORADO', RED: 'ROJO', CYAN: 'CIAN', ORANGE: 'NARANJA', MAGENTA: 'MAGENTA', LIME: 'LIMA', CLOWN: 'PAYASO', ANGLER: 'RAPE', TANG: 'CIRUJANO', 'TANG JR': 'CIRUJANO JR.', AXOLOTL: 'AJOLOTE', TURTLE: 'TORTUGA', PUFFER: 'GLOBO', LIONFISH: 'LEÓN', BETTA: 'BETTA', FISH: 'PEZ', RUNNER: 'CORREDOR' } as Record<string, string>)[theme.label] || theme.label : theme.label}
+                    <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wider opacity-85">
+                      {theme.label}
                     </span>
                   </button>
                 );
               })}
 
-              {/* Pathway retains the anchored hint; Fish of Fortune follows the pointer at game level. */}
-              {!isFoF && showTutorialHand && colIdx === 2 && hasRunner && (
+              {/* Hand Tutorial Guide Cursor (points at the first available front runner) */}
+              {showTutorialHand && colIdx === 0 && hasRunner && (
                 <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-30 pointer-events-none animate-bounce">
                   <div className="flex flex-col items-center">
                     <span className="text-2xl filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)]">
                       👆
                     </span>
                     <span className="text-[10px] font-bold text-amber-300 bg-slate-900/90 px-2 py-0.5 rounded-full shadow-md whitespace-nowrap">
-                      {language === 'en' ? 'TAP TO RUN' : 'TOCA PARA LANZAR'}
+                      TAP TO RUN
                     </span>
                   </div>
                 </div>

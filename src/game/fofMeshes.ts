@@ -4,17 +4,76 @@ import { TrackPath } from './trackPath';
 import { getNumberTexture, createConveyorTexture } from './proceduralTextures';
 
 export function getFofPearlMaterial(color: TileColor): THREE.MeshPhysicalMaterial {
-  const fishColors = getFofFishColors(color);
-  return new THREE.MeshPhysicalMaterial({
-    color: fishColors.body,
-    roughness: 0.28,
-    metalness: color === 'black' ? 0.16 : 0.08,
-    clearcoat: 0.48,
-    sheen: 0.28,
-    sheenColor: new THREE.Color(fishColors.accent),
-    emissive: fishColors.body,
-    emissiveIntensity: color === 'white' ? 0.035 : 0.28,
-  });
+  switch (color) {
+    case 'white':
+      return new THREE.MeshPhysicalMaterial({
+        color: 0xfdf2f8,
+        roughness: 0.1,
+        metalness: 0.15,
+        clearcoat: 1.0,
+        sheen: 1.0,
+        sheenColor: new THREE.Color(0xfbcfe8),
+      });
+    case 'black':
+      return new THREE.MeshPhysicalMaterial({
+        color: 0x18181b,
+        roughness: 0.15,
+        metalness: 0.3,
+        clearcoat: 1.0,
+        sheen: 0.8,
+        sheenColor: new THREE.Color(0x818cf8),
+      });
+    case 'blue':
+      return new THREE.MeshPhysicalMaterial({
+        color: 0x0284c7,
+        roughness: 0.1,
+        metalness: 0.25,
+        clearcoat: 1.0,
+        sheen: 1.0,
+        sheenColor: new THREE.Color(0x38bdf8),
+      });
+    case 'yellow':
+      return new THREE.MeshPhysicalMaterial({
+        color: 0xf59e0b,
+        roughness: 0.1,
+        metalness: 0.3,
+        clearcoat: 1.0,
+        sheen: 1.0,
+        sheenColor: new THREE.Color(0xfef08a),
+      });
+    case 'pink':
+      return new THREE.MeshPhysicalMaterial({
+        color: 0xf43f5e,
+        roughness: 0.1,
+        metalness: 0.2,
+        clearcoat: 1.0,
+        sheen: 1.0,
+        sheenColor: new THREE.Color(0xfecdd3),
+      });
+    case 'green':
+      return new THREE.MeshPhysicalMaterial({
+        color: 0x059669,
+        roughness: 0.12,
+        metalness: 0.2,
+        clearcoat: 1.0,
+        sheen: 1.0,
+        sheenColor: new THREE.Color(0xa7f3d0),
+      });
+    case 'purple':
+      return new THREE.MeshPhysicalMaterial({ color: 0x7c3aed, roughness: 0.1, metalness: 0.2, clearcoat: 1, sheen: 1, sheenColor: new THREE.Color(0xc4b5fd) });
+    case 'red':
+      return new THREE.MeshPhysicalMaterial({ color: 0xdc2626, roughness: 0.1, metalness: 0.2, clearcoat: 1, sheen: 1, sheenColor: new THREE.Color(0xfca5a5) });
+    case 'cyan':
+      return new THREE.MeshPhysicalMaterial({ color: 0x0891b2, roughness: 0.1, metalness: 0.2, clearcoat: 1, sheen: 1, sheenColor: new THREE.Color(0xa5f3fc) });
+    case 'orange':
+      return new THREE.MeshPhysicalMaterial({ color: 0xea580c, roughness: 0.1, metalness: 0.2, clearcoat: 1, sheen: 1, sheenColor: new THREE.Color(0xfdba74) });
+    case 'magenta':
+      return new THREE.MeshPhysicalMaterial({ color: 0xc026d3, roughness: 0.1, metalness: 0.2, clearcoat: 1, sheen: 1, sheenColor: new THREE.Color(0xf0abfc) });
+    case 'lime':
+      return new THREE.MeshPhysicalMaterial({ color: 0x65a30d, roughness: 0.1, metalness: 0.2, clearcoat: 1, sheen: 1, sheenColor: new THREE.Color(0xd9f99d) });
+    default:
+      return new THREE.MeshPhysicalMaterial({ color: 0xffffff });
+  }
 }
 
 export function getFofFishColors(color: TileColor): { body: number; accent: number; badgeBg: string; text: string } {
@@ -38,7 +97,7 @@ export function getFofFishColors(color: TileColor): { body: number; accent: numb
 export class FofMeshFactory {
   private pearlGeo: THREE.SphereGeometry;
   private trayGeo: THREE.CylinderGeometry;
-  private trayMaterials = new Map<TileColor, THREE.MeshStandardMaterial>();
+  private trayMat: THREE.MeshStandardMaterial;
   private bubbleGeo: THREE.SphereGeometry;
   private bubbleMat: THREE.MeshPhysicalMaterial;
 
@@ -55,26 +114,19 @@ export class FofMeshFactory {
     });
 
     // Tiny shell pedestal underneath pearl
-    this.trayGeo = new THREE.CylinderGeometry(0.225, 0.245, 0.06, 16);
+    this.trayGeo = new THREE.CylinderGeometry(0.2, 0.22, 0.06, 16);
+    this.trayMat = new THREE.MeshStandardMaterial({
+      color: 0x38bdf8,
+      roughness: 0.3,
+      metalness: 0.4,
+    });
   }
 
-  public createPearlTile(color: TileColor, encapsulated = false, size = 0.44, encapsulationLayers = encapsulated ? 1 : 0): THREE.Group {
+  public createPearlTile(color: TileColor, encapsulated = false, size = 0.44): THREE.Group {
     const group = new THREE.Group();
     const s = size / 0.44;
 
-    let trayMat = this.trayMaterials.get(color);
-    if (!trayMat) {
-      const accent = getFofFishColors(color).accent;
-      trayMat = new THREE.MeshStandardMaterial({
-        color: accent,
-        emissive: accent,
-        emissiveIntensity: 0.45,
-        roughness: 0.28,
-        metalness: 0.08,
-      });
-      this.trayMaterials.set(color, trayMat);
-    }
-    const tray = new THREE.Mesh(this.trayGeo, trayMat);
+    const tray = new THREE.Mesh(this.trayGeo, this.trayMat);
     tray.position.y = 0.03 * s;
     tray.scale.set(s, s, s);
     tray.receiveShadow = true;
@@ -88,49 +140,12 @@ export class FofMeshFactory {
     group.add(pearl);
 
     if (encapsulated) {
-      // Concentric oyster & sea-glass shells for 1, 2, or 3 layers
-      const count = Math.max(1, encapsulationLayers);
-      for (let layer = 1; layer <= count; layer++) {
-        const bubbleMaterial = this.bubbleMat.clone();
-        if (layer === 1) {
-          bubbleMaterial.color.setHex(0x38bdf8); // Sky sea-glass
-          bubbleMaterial.opacity = 0.65;
-          bubbleMaterial.roughness = 0.05;
-        } else if (layer === 2) {
-          bubbleMaterial.color.setHex(0xc084fc); // Mother-of-pearl iridescent violet
-          bubbleMaterial.opacity = 0.72;
-          bubbleMaterial.roughness = 0.12;
-        } else {
-          bubbleMaterial.color.setHex(0xf59e0b); // Armored golden coral shell
-          bubbleMaterial.opacity = 0.82;
-          bubbleMaterial.roughness = 0.18;
-          bubbleMaterial.metalness = 0.35;
-        }
-
-        const bubble = new THREE.Mesh(this.bubbleGeo, bubbleMaterial);
-        bubble.position.y = 0.2 * s;
-        const shellScale = s * (1.0 + (layer - 1) * 0.14);
-        bubble.scale.set(shellScale, shellScale, shellScale);
-        bubble.name = `encapsulation-layer-${layer}`;
-        group.add(bubble);
-
-        // Add reinforced clam ridge for layer 3
-        if (layer === 3) {
-          const ridgeGeo = new THREE.TorusGeometry(0.24 * s * shellScale, 0.02 * s, 8, 24);
-          const ridgeMat = new THREE.MeshStandardMaterial({
-            color: 0xf59e0b,
-            emissive: 0xd97706,
-            emissiveIntensity: 0.5,
-            metalness: 0.5,
-            roughness: 0.2,
-          });
-          const ridge = new THREE.Mesh(ridgeGeo, ridgeMat);
-          ridge.rotation.x = Math.PI / 2;
-          ridge.position.y = 0.2 * s;
-          ridge.name = `encapsulation-layer-3-ridge`;
-          group.add(ridge);
-        }
-      }
+      // Sea bubble encapsulation
+      const bubble = new THREE.Mesh(this.bubbleGeo, this.bubbleMat);
+      bubble.position.y = 0.2 * s;
+      bubble.scale.set(s, s, s);
+      bubble.name = 'encapsulation';
+      group.add(bubble);
     }
 
     return group;
@@ -309,8 +324,7 @@ export class FofMeshFactory {
    */
   public createFishRunner(
     color: TileColor,
-    initialCount: number,
-    level: number = 1
+    initialCount: number
   ): {
     group: THREE.Group;
     tailMesh: THREE.Mesh;
@@ -321,9 +335,6 @@ export class FofMeshFactory {
     const group = new THREE.Group();
     const isWhite = color === 'white';
     const fishTheme = getFofFishColors(color);
-    // Each ten-level world introduces a new fish silhouette; later worlds cycle
-    // through the set while keeping the runner's selected color intact.
-    const species = Math.floor(Math.max(1, level) / 10) % 5;
 
     const fishMat = new THREE.MeshStandardMaterial({
       color: fishTheme.body,
@@ -338,51 +349,11 @@ export class FofMeshFactory {
 
     // Main fish body: streamlined ellipsoid / stretched sphere
     const bodyGeo = new THREE.SphereGeometry(0.26, 18, 18);
-    const bodyShapes = [
-      [1.25, 0.95, 0.8], // round reef fish
-      [1.55, 0.76, 0.7], // longnose fish
-      [1.05, 1.18, 0.98], // puffer fish
-      [1.3, 0.86, 0.8], // lionfish
-      [1.22, 0.72, 1.12], // wide tropical fish
-    ];
-    const bodyShape = bodyShapes[species];
-    bodyGeo.scale(bodyShape[0], bodyShape[1], bodyShape[2]);
+    bodyGeo.scale(1.25, 0.95, 0.8); // length, height, width
     const bodyMesh = new THREE.Mesh(bodyGeo, fishMat);
     bodyMesh.position.y = 0.32;
     bodyMesh.castShadow = true;
     group.add(bodyMesh);
-
-    if (species === 1) {
-      const snout = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.34, 10), accentMat);
-      snout.rotation.z = -Math.PI / 2;
-      snout.position.set(0.43, 0.31, 0);
-      group.add(snout);
-    } else if (species === 2) {
-      // Short, rounded spikes make the level 21+ puffer silhouette unmistakable.
-      for (let i = 0; i < 7; i++) {
-        const angle = (i / 7) * Math.PI * 2;
-        const spike = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.13, 6), accentMat);
-        spike.position.set(Math.cos(angle) * 0.24, 0.32 + Math.sin(angle) * 0.2, 0);
-        spike.rotation.z = -angle;
-        group.add(spike);
-      }
-    } else if (species === 3) {
-      const dorsal = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.38, 5), accentMat);
-      dorsal.position.set(-0.02, 0.59, 0);
-      dorsal.rotation.z = Math.PI;
-      group.add(dorsal);
-      for (const side of [-1, 1]) {
-        const ray = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.32, 5), accentMat);
-        ray.position.set(-0.18, 0.31, side * 0.25);
-        ray.rotation.z = -0.5;
-        group.add(ray);
-      }
-    } else if (species === 4) {
-      const dorsal = new THREE.Mesh(new THREE.SphereGeometry(0.15, 10, 8), accentMat);
-      dorsal.scale.set(0.8, 0.18, 1.8);
-      dorsal.position.set(-0.05, 0.53, 0);
-      group.add(dorsal);
-    }
 
     // Cute 3D Fish Mouth at the front (+X) so the mouth always points in swimming direction
     const mouthGeo = new THREE.TorusGeometry(0.065, 0.025, 8, 16);
@@ -447,10 +418,8 @@ export class FofMeshFactory {
     const tailPivot = new THREE.Group();
     tailPivot.position.set(-0.3, 0.32, 0);
 
-    const tailGeo = species === 3
-      ? new THREE.ConeGeometry(0.24, 0.42, 5)
-      : new THREE.ConeGeometry(species === 2 ? 0.22 : 0.18, species === 4 ? 0.42 : 0.32, species === 1 ? 3 : 4);
-    tailGeo.scale(0.3, 1.2, species === 4 ? 1.5 : 1.0); // flat fin
+    const tailGeo = new THREE.ConeGeometry(0.18, 0.32, 4);
+    tailGeo.scale(0.3, 1.2, 1.0); // flat fin
     const tailMesh = new THREE.Mesh(tailGeo, accentMat);
     tailMesh.position.set(-0.14, 0, 0);
     tailMesh.rotation.z = Math.PI / 2;

@@ -33,6 +33,7 @@ import {
   Skull,
   Activity,
 } from 'lucide-react';
+import realGameScreenshot from '../../assets/images/regenerated_image_1794206153590.png';
 
 export interface LocalizedString {
   en: string;
@@ -75,8 +76,8 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
   {
     id: 'tile-absorber-3d',
     title: {
-      en: 'Tile Absorber 3D: Cyber Frontier',
-      es: 'Tile Absorber 3D: Cyber Frontier',
+      en: 'Conveyor Realms (Tile Absorber 3D)',
+      es: 'Conveyor Realms (Tile Absorber 3D)',
     },
     subtitle: {
       en: 'Original Playable 3D Action-Puzzle Engine, Runners & Evolving Wildcard Architecture',
@@ -91,8 +92,8 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     year: '2026',
     engine: 'Three.js / WebGL / TypeScript / React',
     mediaType: 'image',
-    mediaSrc: '/portfolio_assets/tile-absorber-thumb.jpg',
-    thumbnailSrc: '/portfolio_assets/tile-absorber-thumb.jpg',
+    mediaSrc: realGameScreenshot,
+    thumbnailSrc: realGameScreenshot,
     mediaNote: {
       en: 'Fully playable original 3D web game engineered by Isaac Gómez Estrada directly in browser with Three.js, orthogonal conveyor tracks, queue state machines, 3-tier tactical wildcards, and real-time Supabase cloud leaderboards.',
       es: 'Videojuego 3D original 100% jugable en navegador desarrollado por Isaac Gómez Estrada con Three.js, bandas transportadoras ortogonales, máquinas de estados de cola, comodines tácticos de 3 tiers y tablas de clasificación en la nube con Supabase.',
@@ -447,12 +448,10 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     workClassification: 'personal-rnd',
     year: '2020',
     engine: 'Unreal Engine (Standalone NetMode)',
-    mediaType: 'video',
-    mediaSrc: '/portfolio_assets/class-sim-preview.mp4',
-    thumbnailSrc: '/portfolio_assets/class-sim-thumb.jpg',
+    mediaType: 'external',
     mediaNote: {
-      en: 'ClassSim interactive 3D virtual environment and spatial navigation recorded in Unreal Engine Standalone NetMode.',
-      es: 'Estudio y entorno virtual 3D interactivo ClassSim de navegación espacial grabado en Unreal Engine Standalone NetMode.',
+      en: 'Personal interactive 3D virtual environment and spatial navigation study built in Unreal Engine.',
+      es: 'Estudio y entorno virtual 3D interactivo personal de navegación espacial desarrollado en Unreal Engine.',
     },
     externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
     externalLabel: {
@@ -989,14 +988,14 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout, 
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900">
                 {isEn ? 'Shipped AAA Titles in Public Credits' : 'Títulos AAA Lanzados con Crédito Público'}
               </h2>
-              <span className="text-xs bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 font-semibold px-2 py-0.5 rounded-full border border-amber-300 dark:border-amber-700/60">
+              <span className="text-xs bg-amber-100 text-amber-900 font-semibold px-2 py-0.5 rounded-full border border-amber-300">
                 {isEn ? 'Verified on MobyGames' : 'Verificado en MobyGames'}
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl">
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
               {isEn ? (
                 <>
                   Isaac Gómez Estrada is officially credited on <strong>EA Sports College Football 25</strong> (PS5, Xbox
@@ -1079,7 +1078,7 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout, 
               </div>
 
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight flex items-center gap-3 flex-wrap">
-                <span>Tile Absorber 3D: Cyber Frontier</span>
+                <span>Conveyor Realms (Tile Absorber 3D)</span>
                 <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-mono">
                   {isEn ? '100% Playable in Browser' : '100% Jugable en Navegador'}
                 </span>
@@ -1126,9 +1125,9 @@ export function PortfolioView({ language = 'es', onSwitchToCv, onSwitchToAbout, 
                 className="group relative aspect-video rounded-2xl overflow-hidden border-2 border-cyan-500/40 shadow-2xl bg-slate-950 cursor-pointer transition-all duration-300 hover:border-cyan-400 hover:shadow-cyan-500/20"
               >
                 <img
-                  src="/portfolio_assets/tile-absorber-thumb.jpg"
-                  alt="Tile Absorber 3D: Cyber Frontier Game Thumbnail"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                  src={realGameScreenshot}
+                  alt={isEn ? "Conveyor Realms 3D Real Gameplay Screenshot" : "Captura Real del Juego Conveyor Realms en Acción"}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-95 group-hover:opacity-100"
                 />
 
                 {/* Cybernetic Grid Overlay & Play Prompt */}

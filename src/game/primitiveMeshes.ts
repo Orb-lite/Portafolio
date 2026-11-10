@@ -58,7 +58,7 @@ export class PrimitiveMeshFactory {
     });
   }
 
-  public createTile(color: TileColor, encapsulated = false, size = 0.44, encapsulationLayers = encapsulated ? 1 : 0): THREE.Group {
+  public createTile(color: TileColor, encapsulated = false, size = 0.44): THREE.Group {
     const group = new THREE.Group();
     const hex = getPrimitiveHexColor(color);
     const mat = new THREE.MeshStandardMaterial({
@@ -74,44 +74,11 @@ export class PrimitiveMeshFactory {
     group.add(tile);
 
     if (encapsulated) {
-      // Concentric cyber force fields & quantum barriers for 1, 2, or 3 layers
-      const count = Math.max(1, encapsulationLayers);
-      for (let layer = 1; layer <= count; layer++) {
-        const shieldMat = this.bubbleMat.clone();
-        if (layer === 1) {
-          shieldMat.color.setHex(0x38bdf8); // Cyan Cyber Shield
-          shieldMat.opacity = 0.65;
-        } else if (layer === 2) {
-          shieldMat.color.setHex(0xa855f7); // Violet Plasma Forcefield
-          shieldMat.opacity = 0.72;
-          shieldMat.roughness = 0.08;
-        } else {
-          shieldMat.color.setHex(0xf59e0b); // Armored Quantum Amber Barrier
-          shieldMat.opacity = 0.82;
-          shieldMat.roughness = 0.15;
-        }
-
-        const shell = new THREE.Mesh(this.bubbleGeo, shieldMat);
-        const shellScale = s * (1.0 + (layer - 1) * 0.14);
-        shell.scale.set(shellScale, shellScale, shellScale);
-        shell.name = `encapsulation-layer-${layer}`;
-        group.add(shell);
-
-        // Add corner barrier brackets for layer 3
-        if (layer === 3) {
-          const wireMat = new THREE.MeshStandardMaterial({
-            color: 0xfbbf24,
-            emissive: 0xd97706,
-            emissiveIntensity: 0.8,
-            metalness: 0.6,
-            roughness: 0.2,
-          });
-          const bracket = new THREE.Mesh(new THREE.BoxGeometry(0.52 * s * shellScale, 0.04 * s, 0.52 * s * shellScale), wireMat);
-          bracket.position.y = 0;
-          bracket.name = `encapsulation-layer-3-ridge`;
-          group.add(bracket);
-        }
-      }
+      // Ice/crystal cage encapsulation
+      const bubble = new THREE.Mesh(this.bubbleGeo, this.bubbleMat);
+      bubble.scale.set(s, s, s);
+      bubble.name = 'encapsulation';
+      group.add(bubble);
     }
     return group;
   }

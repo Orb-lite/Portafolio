@@ -9,6 +9,7 @@ const ACCENTS: Record<TileColor, number> = {
   white: 0xf97316, black: 0x38bdf8, blue: 0x7dd3fc, yellow: 0xfef08a,
   pink: 0xfda4af, green: 0x6ee7b7, purple: 0xc4b5fd, red: 0xfca5a5,
   cyan: 0xa5f3fc, orange: 0xfdba74, magenta: 0xf0abfc, lime: 0xd9f99d,
+  bomb: 0xef4444, rainbow: 0xec4899,
 };
 
 export class WorldMeshFactory {

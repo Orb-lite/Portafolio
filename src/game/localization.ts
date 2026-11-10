@@ -392,5 +392,7 @@ export function getLocalizedColorName(color: TileColor, isFoF: boolean, language
       default: return isFoF ? 'FISH' : 'RUNNER';
     }
   }
-  return dict[color] || color.toUpperCase();
+  if (color === 'bomb') return isFoF ? (language === 'es' ? 'PERLA BOMBA' : 'BOMB PEARL') : (language === 'es' ? 'FICHA BOMBA' : 'BOMB TILE');
+  if (color === 'rainbow') return isFoF ? (language === 'es' ? 'PERLA ARCOÍRIS' : 'RAINBOW PEARL') : (language === 'es' ? 'FICHA ARCOÍRIS' : 'RAINBOW TILE');
+  return (dict as Record<string, string>)[color] || color.toUpperCase();
 }

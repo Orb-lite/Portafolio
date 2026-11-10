@@ -239,8 +239,8 @@ class SoundManager {
     });
   }
 
-  // Bubble pop / encapsulation crack sound
-  public playBubblePop() {
+  // Bubble pop / encapsulation crack sound (heavier and deeper for layers 2 and 3)
+  public playBubblePop(layer = 1) {
     if (!this.enabled) return;
     this.initCtx();
     if (!this.ctx) return;
@@ -249,18 +249,36 @@ class SoundManager {
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
 
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(600, now);
-    osc.frequency.exponentialRampToValueAtTime(1400, now + 0.04);
-    osc.frequency.exponentialRampToValueAtTime(300, now + 0.08);
-
-    gain.gain.setValueAtTime(0.25, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+    if (layer >= 3) {
+      // Heavy armored crack sound
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(240, now);
+      osc.frequency.exponentialRampToValueAtTime(780, now + 0.05);
+      osc.frequency.exponentialRampToValueAtTime(120, now + 0.12);
+      gain.gain.setValueAtTime(0.4, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+    } else if (layer === 2) {
+      // Resonant crystal / shell crack
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(380, now);
+      osc.frequency.exponentialRampToValueAtTime(1100, now + 0.04);
+      osc.frequency.exponentialRampToValueAtTime(180, now + 0.1);
+      gain.gain.setValueAtTime(0.32, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+    } else {
+      // Standard glassy bubble pop
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, now);
+      osc.frequency.exponentialRampToValueAtTime(1400, now + 0.04);
+      osc.frequency.exponentialRampToValueAtTime(300, now + 0.08);
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+    }
 
     osc.connect(gain);
     gain.connect(this.ctx.destination);
     osc.start(now);
-    osc.stop(now + 0.1);
+    osc.stop(now + 0.15);
   }
 
   // Triumphant Level Up fanfare
@@ -376,6 +394,154 @@ class SoundManager {
       osc.stop(t + note.d + 0.03);
 
       t += note.d * 0.75;
+    });
+  }
+
+  // Cross Beam (X-Y Axis Slice) Explosion Sound
+  public playCrossBeamExplosion(isFish: boolean) {
+    if (!this.enabled) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    if (isFish) {
+      // Whistling oceanic high-speed water surge
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(450, now);
+      osc.frequency.exponentialRampToValueAtTime(1800, now + 0.08);
+      osc.frequency.exponentialRampToValueAtTime(320, now + 0.28);
+      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    } else {
+      // Sharp cyber laser beam blast
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(980, now);
+      osc.frequency.exponentialRampToValueAtTime(2400, now + 0.04);
+      osc.frequency.exponentialRampToValueAtTime(150, now + 0.25);
+      gain.gain.setValueAtTime(0.32, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+    }
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.32);
+  }
+
+  // Wrapped Candy ("Envolved Candy" exploding to Y and X axes + 3x3 double thump)
+  public playWrappedExplosion(isFish: boolean) {
+    if (!this.enabled) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+
+    // Pulse 1: Deep impact
+    const osc1 = this.ctx.createOscillator();
+    const gain1 = this.ctx.createGain();
+    osc1.type = isFish ? 'triangle' : 'square';
+    osc1.frequency.setValueAtTime(isFish ? 160 : 190, now);
+    osc1.frequency.exponentialRampToValueAtTime(40, now + 0.18);
+    gain1.gain.setValueAtTime(0.42, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    osc1.connect(gain1);
+    gain1.connect(this.ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.22);
+
+    // Pulse 2: Resonating second thump (signature Candy Crush wrapped candy double-pop)
+    const t2 = now + 0.12;
+    const osc2 = this.ctx.createOscillator();
+    const gain2 = this.ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(isFish ? 380 : 440, t2);
+    osc2.frequency.exponentialRampToValueAtTime(90, t2 + 0.22);
+    gain2.gain.setValueAtTime(0.38, t2);
+    gain2.gain.exponentialRampToValueAtTime(0.001, t2 + 0.25);
+    osc2.connect(gain2);
+    gain2.connect(this.ctx.destination);
+    osc2.start(t2);
+    osc2.stop(t2 + 0.26);
+  }
+
+  // The Exploding Pearl / Color Bomb (Rainbow cascade detonating matching color)
+  public playColorBombExplosion(isFish: boolean) {
+    if (!this.enabled) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    // Rapid ascending magical sparkle arpeggio
+    const freqs = isFish
+      ? [523.25, 659.25, 783.99, 1046.5, 1318.51, 1567.98]
+      : [440, 554.37, 659.25, 880, 1108.73, 1318.51];
+
+    let t = this.ctx.currentTime;
+    freqs.forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = idx === freqs.length - 1 ? 'triangle' : 'sine';
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(idx === freqs.length - 1 ? 0.35 : 0.22, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.15);
+      t += 0.04;
+    });
+  }
+
+  // Radial 3x3 Burst
+  public playBurstExplosion(isFish: boolean) {
+    if (!this.enabled) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = isFish ? 'sine' : 'sawtooth';
+    osc.frequency.setValueAtTime(320, now);
+    osc.frequency.exponentialRampToValueAtTime(70, now + 0.16);
+
+    gain.gain.setValueAtTime(0.32, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.2);
+  }
+
+  // Cascading Combo Fanfare (elevates with combo streak x2, x3, x4...)
+  public playComboSting(combo: number) {
+    if (!this.enabled) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const basePitch = Math.min(880, 440 * Math.pow(1.15, Math.min(6, combo - 1)));
+    const now = this.ctx.currentTime;
+    const notes = [basePitch, basePitch * 1.25, basePitch * 1.5];
+
+    let t = now;
+    notes.forEach((f) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(f, t);
+      gain.gain.setValueAtTime(0.24, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.12);
+      t += 0.055;
     });
   }
 }

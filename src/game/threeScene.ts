@@ -399,9 +399,10 @@ export class GameSceneManager {
       let mesh: THREE.Object3D;
       if (this.isFishMode) {
         mesh = this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize, tile.encapsulationLayers);
-        if (tile.special) this.addSpecialCandyMark(mesh, tileSize, tile.special);
+        if (tile.special) this.addSpecialCandyMark(mesh, tileSize, tile.special, true);
       } else {
         mesh = this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize, tile.encapsulationLayers);
+        if (tile.special) this.addSpecialCandyMark(mesh, tileSize, tile.special, false);
       }
 
       if (tile.worldPos) {
@@ -826,9 +827,10 @@ export class GameSceneManager {
       let newMesh: THREE.Object3D;
       if (this.isFishMode) {
         newMesh = this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize, tile.encapsulationLayers);
-        if (tile.special) this.addSpecialCandyMark(newMesh, tileSize, tile.special);
+        if (tile.special) this.addSpecialCandyMark(newMesh, tileSize, tile.special, true);
       } else {
         newMesh = this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize, tile.encapsulationLayers);
+        if (tile.special) this.addSpecialCandyMark(newMesh, tileSize, tile.special, false);
       }
       if (tile.worldPos) {
         newMesh.position.set(tile.worldPos[0], tile.worldPos[1], tile.worldPos[2]);
@@ -1289,15 +1291,19 @@ export class GameSceneManager {
   private popEncapsulation(tile: GridTile) {
     const layersBeforeHit = Math.max(1, tile.encapsulationLayers ?? 1);
     tile.encapsulationLayers = Math.max(0, layersBeforeHit - 1);
-    soundManager.playBubblePop();
+    soundManager.playBubblePop(layersBeforeHit);
     const mesh = this.tileMeshMap.get(tile.id);
     if (mesh) {
       const bubble = mesh.getObjectByName(`encapsulation-layer-${layersBeforeHit}`);
       if (bubble) {
         mesh.remove(bubble);
         if (bubble instanceof THREE.Mesh) {
-          if (this.isFishMode && bubble.material instanceof THREE.Material) bubble.material.dispose();
+          if (bubble.material instanceof THREE.Material) bubble.material.dispose();
         }
+      }
+      if (layersBeforeHit === 3) {
+        const ridge = mesh.getObjectByName(`encapsulation-layer-3-ridge`);
+        if (ridge) mesh.remove(ridge);
       }
     }
     if (tile.encapsulationLayers > 0) {
@@ -1308,7 +1314,7 @@ export class GameSceneManager {
     }
 
     tile.encapsulated = false;
-    tile.unlockAt = this.clock.getElapsedTime() + 3;
+    tile.unlockAt = this.clock.getElapsedTime() + 0.8;
     if (tile.worldPos) {
       const position = new THREE.Vector3(tile.worldPos[0], tile.worldPos[1] + 0.15, tile.worldPos[2]);
       this.spawnBubbleBurstParticles(position, this.isFishMode);
@@ -1430,111 +1436,381 @@ export class GameSceneManager {
     });
 
     const gridTile = this.gridManager.tiles.find((candidate) => candidate.id === tile.id);
-    if (!this.isFishMode || !gridTile?.special) return;
+    if (!gridTile?.special) return;
     const special = gridTile.special;
     gridTile.special = undefined;
-    const center = new THREE.Vector3(tile.worldPos[0], tile.worldPos[1], tile.worldPos[2]);
-
-    if (special === 'cross') {
-      this.collectedCrossCandyCount += 1;
-      if (this.collectedCrossCandyCount < 2) return;
-      this.collectedCrossCandyCount = 0;
-      const targets = this.gridManager.tiles.filter((candidate) =>
-        !candidate.collected && (candidate.row === gridTile.row || candidate.col === gridTile.col)
-      );
-      this.clearWithSpecialPearl(targets, runner);
-      this.spawnCrossCandyBeams(center);
-      this.spawnGroundShockwave(center, Math.max(this.gridManager.rows, this.gridManager.cols) * 0.62, 0x38e8ff, 0.95);
-      this.spawnGroundShockwave(center, Math.max(this.gridManager.rows, this.gridManager.cols) * 0.42, 0xffd44f, 0.55);
-    } else if (special === 'burst') {
-      const targets = this.gridManager.tiles.filter((candidate) =>
-        !candidate.collected && Math.abs(candidate.row - gridTile.row) <= 1 && Math.abs(candidate.col - gridTile.col) <= 1
-      );
-      this.clearWithSpecialPearl(targets, runner);
-      this.spawnGroundShockwave(center, 2.8, 0xff8a32, 0.85);
-      this.spawnCelebrationBurst(center, 'orange');
-    } else {
-      const targets = this.gridManager.tiles.filter((candidate) => !candidate.collected && candidate.color === gridTile.color);
-      this.clearWithSpecialPearl(targets, runner);
-      this.spawnGroundShockwave(center, Math.max(this.gridManager.rows, this.gridManager.cols) * 0.7, 0xf472ff, 0.9);
-      this.spawnCelebrationBurst(center, 'magenta');
-    }
-    soundManager.playBubblePop();
+    this.triggerSpecialExplosion(gridTile, special, runner, 1);
   }
 
-  private clearWithSpecialPearl(tiles: GridTile[], runner: { id: string }) {
+  private triggerSpecialExplosion(
+    gridTile: GridTile,
+    special: NonNullable<GridTile['special']>,
+    runner: { id: string },
+    combo = 1
+  ) {
+    if (!gridTile.worldPos) return;
+    const center = new THREE.Vector3(gridTile.worldPos[0], gridTile.worldPos[1], gridTile.worldPos[2]);
+    const isFish = this.isFishMode;
+
+    if (special === 'wrapped') {
+      // Candy Crush Wrapped Candy ("envolved candy") exploding along Y and X axes AND a 3x3 surrounding zone!
+      const targets = this.gridManager.tiles.filter(
+        (candidate) =>
+          !candidate.collected &&
+          (candidate.row === gridTile.row ||
+            candidate.col === gridTile.col ||
+            (Math.abs(candidate.row - gridTile.row) <= 1 && Math.abs(candidate.col - gridTile.col) <= 1))
+      );
+      this.clearWithSpecialPearl(targets, runner, combo);
+      this.spawnCrossCandyBeams(center, true);
+      this.spawnGroundShockwave(center, Math.max(this.gridManager.rows, this.gridManager.cols) * 0.72, 0xff9900, 1.1);
+      setTimeout(() => {
+        this.spawnGroundShockwave(center, Math.max(this.gridManager.rows, this.gridManager.cols) * 0.45, 0xff3366, 0.7);
+      }, 130);
+      this.spawnCelebrationBurst(center, 'orange');
+      soundManager.playWrappedExplosion(isFish);
+      this.spawnFloatingText(center, isFish ? '💥 ¡PERLA ENVUELTA X-Y!' : '💥 ¡MOSAICO ENVUELTO X-Y!', 0xffa500);
+      this.shakeIntensity = Math.min(0.35, this.shakeIntensity + 0.16);
+    } else if (special === 'cross') {
+      // Striped / Cross beam: fires along full X row and Y column!
+      const targets = this.gridManager.tiles.filter(
+        (candidate) =>
+          !candidate.collected && (candidate.row === gridTile.row || candidate.col === gridTile.col)
+      );
+      this.clearWithSpecialPearl(targets, runner, combo);
+      this.spawnCrossCandyBeams(center, false);
+      this.spawnGroundShockwave(center, Math.max(this.gridManager.rows, this.gridManager.cols) * 0.65, 0x38e8ff, 0.95);
+      this.spawnGroundShockwave(center, Math.max(this.gridManager.rows, this.gridManager.cols) * 0.4, 0xffd44f, 0.55);
+      soundManager.playCrossBeamExplosion(isFish);
+      this.spawnFloatingText(center, isFish ? '⚡ ¡RAYA CRUZADA X-Y!' : '⚡ ¡LÁSER CRUZADO X-Y!', 0x38bdf8);
+      this.shakeIntensity = Math.min(0.25, this.shakeIntensity + 0.11);
+    } else if (special === 'burst') {
+      // 3x3 blast area
+      const targets = this.gridManager.tiles.filter(
+        (candidate) =>
+          !candidate.collected &&
+          Math.abs(candidate.row - gridTile.row) <= 1 &&
+          Math.abs(candidate.col - gridTile.col) <= 1
+      );
+      this.clearWithSpecialPearl(targets, runner, combo);
+      this.spawnGroundShockwave(center, 3.2, 0xff8a32, 0.85);
+      this.spawnCelebrationBurst(center, 'orange');
+      soundManager.playBurstExplosion(isFish);
+      this.spawnFloatingText(center, '💣 ¡EXPLOSIÓN 3x3!', 0xf97316);
+      this.shakeIntensity = Math.min(0.2, this.shakeIntensity + 0.08);
+    } else {
+      // 'color' -> The Exploding Pearl / Color Bomb! Detonates all tiles of the same color!
+      let targets = this.gridManager.tiles.filter(
+        (candidate) => !candidate.collected && candidate.color === gridTile.color
+      );
+      if (targets.length === 0) {
+        targets = this.gridManager.tiles.filter((c) => !c.collected).slice(0, 8);
+      }
+      this.clearWithSpecialPearl(targets, runner, combo);
+      this.spawnGroundShockwave(center, Math.max(this.gridManager.rows, this.gridManager.cols) * 0.82, 0xf472ff, 1.05);
+      this.spawnCelebrationBurst(center, 'magenta');
+      this.spawnCelebrationBurst(center, 'cyan');
+      soundManager.playColorBombExplosion(isFish);
+      this.spawnFloatingText(center, isFish ? '🌈 ¡PERLA EXPLOSIVA ARCOÍRIS!' : '🌈 ¡BOMBA MULTICOLOR!', 0xf0abfc);
+      this.shakeIntensity = Math.min(0.3, this.shakeIntensity + 0.14);
+    }
+
+    if (combo >= 2) {
+      setTimeout(() => {
+        this.spawnFloatingText(
+          new THREE.Vector3(center.x, center.y + 0.45, center.z),
+          `🔥 ¡COMBO x${combo}!`,
+          0xfacc15
+        );
+        soundManager.playComboSting(combo);
+      }, 160);
+    }
+  }
+
+  private clearWithSpecialPearl(tiles: GridTile[], runner: { id: string }, combo = 1) {
     let clearableCount = 0;
+    const chainQueue: Array<{ tile: GridTile; special: NonNullable<GridTile['special']> }> = [];
+
     for (const tile of tiles) {
       if (tile.encapsulated) continue;
       clearableCount += 1;
     }
     const targetRunner = this.activeRunners.find((candidate) => candidate.id === runner.id);
     if (targetRunner) targetRunner.allocatedRemaining += clearableCount;
+
     for (const target of tiles) {
       if (target.encapsulated) {
-        this.popEncapsulation(target); // Each blast cracks one shell layer only.
+        // Blasts crack one shell layer (inclusive on exploding pearls/tiles!)
+        this.popEncapsulation(target);
+        // If cracked completely and it's a special:
+        if (!target.encapsulated && target.special) {
+          const kind = target.special;
+          target.special = undefined;
+          chainQueue.push({ tile: target, special: kind });
+        }
         continue;
       }
+
+      // If an unencapsulated target has a special pearl/tile, cascade chain explosion!
+      if (target.special) {
+        const kind = target.special;
+        target.special = undefined;
+        chainQueue.push({ tile: target, special: kind });
+      }
+
       target.encapsulationLayers = 0;
-      target.special = undefined; // Prevent accidental chain reactions from collateral hits.
       const obstacleTimer = this.obstacleTimers.get(target.id);
       if (obstacleTimer) this.removeObstacleTimer(target.id, obstacleTimer);
       this.absorbTile(target, runner);
     }
+
+    // Trigger cascading chain reactions with delicious stagger
+    if (chainQueue.length > 0) {
+      chainQueue.forEach((item, idx) => {
+        setTimeout(() => {
+          if (item.tile.worldPos) {
+            this.triggerSpecialExplosion(item.tile, item.special, runner, combo + 1 + idx);
+          }
+        }, 130 * (idx + 1));
+      });
+    }
   }
 
-  private addSpecialCandyMark(group: THREE.Object3D, size: number, kind: NonNullable<GridTile['special']>) {
+  private addSpecialCandyMark(
+    group: THREE.Object3D,
+    size: number,
+    kind: NonNullable<GridTile['special']>,
+    isFish = this.isFishMode
+  ) {
     const badge = new THREE.Group();
-    const material = (color: number) => new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 1.1, roughness: 0.2, metalness: 0.12 });
-    if (kind === 'cross') {
-      const gold = material(0xffc928);
-      const barLength = size * 0.58;
-      const barWidth = size * 0.105;
-      const horizontal = new THREE.Mesh(new THREE.BoxGeometry(barLength, barWidth, barWidth), gold);
-      const vertical = new THREE.Mesh(new THREE.BoxGeometry(barWidth, barWidth, barLength), gold);
-      horizontal.position.y = vertical.position.y = size * 0.49;
-      badge.add(horizontal, vertical);
-    } else if (kind === 'burst') {
-      const colors = [0xff654d, 0xffbe35, 0xff654d, 0xffbe35, 0xff654d, 0xffbe35, 0xff654d, 0xffbe35];
-      colors.forEach((color, index) => {
-        const angle = (index / colors.length) * Math.PI * 2;
-        const pearl = new THREE.Mesh(new THREE.SphereGeometry(size * 0.07, 8, 8), material(color));
-        pearl.position.set(Math.cos(angle) * size * 0.22, size * 0.53, Math.sin(angle) * size * 0.22);
-        badge.add(pearl);
+    const material = (color: number, emissiveIntensity = 1.1) =>
+      new THREE.MeshStandardMaterial({
+        color,
+        emissive: color,
+        emissiveIntensity,
+        roughness: 0.2,
+        metalness: 0.15,
       });
+
+    if (isFish) {
+      // ==================== FISH OF FORTUNE: PEARLS ====================
+      if (kind === 'wrapped') {
+        // Wrapped Sea Pearl ("Perla Envuelta"): Golden & coral ribbon wrapping around pearl with glowing emerald gem
+        const goldMat = material(0xffd700, 1.2);
+        const coralMat = material(0xf43f5e, 1.3);
+        const emeraldMat = material(0x10b981, 1.5);
+
+        // Double ribbon loops
+        const loop1 = new THREE.Mesh(new THREE.TorusGeometry(size * 0.23, size * 0.045, 8, 24), goldMat);
+        loop1.rotation.x = Math.PI / 4;
+        loop1.position.y = size * 0.46;
+
+        const loop2 = new THREE.Mesh(new THREE.TorusGeometry(size * 0.23, size * 0.045, 8, 24), coralMat);
+        loop2.rotation.y = Math.PI / 4;
+        loop2.position.y = size * 0.46;
+
+        const centerGem = new THREE.Mesh(new THREE.OctahedronGeometry(size * 0.09), emeraldMat);
+        centerGem.position.y = size * 0.56;
+
+        badge.add(loop1, loop2, centerGem);
+      } else if (kind === 'cross') {
+        // Cross Starfish Pearl: 4-pointed golden starfish with glowing turquoise tips along X and Y axes
+        const gold = material(0xffc928, 1.3);
+        const cyan = material(0x38bdf8, 1.6);
+        const barLength = size * 0.62;
+        const barWidth = size * 0.095;
+        const horizontal = new THREE.Mesh(new THREE.BoxGeometry(barLength, barWidth, barWidth), gold);
+        const vertical = new THREE.Mesh(new THREE.BoxGeometry(barWidth, barWidth, barLength), gold);
+        horizontal.position.y = vertical.position.y = size * 0.49;
+
+        // 4 glowing cardinal tips along X and Y
+        const d = barLength * 0.48;
+        const tipGeo = new THREE.SphereGeometry(size * 0.065, 8, 8);
+        const t1 = new THREE.Mesh(tipGeo, cyan); t1.position.set(d, size * 0.49, 0);
+        const t2 = new THREE.Mesh(tipGeo, cyan); t2.position.set(-d, size * 0.49, 0);
+        const t3 = new THREE.Mesh(tipGeo, cyan); t3.position.set(0, size * 0.49, d);
+        const t4 = new THREE.Mesh(tipGeo, cyan); t4.position.set(0, size * 0.49, -d);
+
+        badge.add(horizontal, vertical, t1, t2, t3, t4);
+      } else if (kind === 'burst') {
+        // Sea-mine pearl: Spiked golden urchin shell ring with amber core
+        const colors = [0xff654d, 0xffbe35, 0xff654d, 0xffbe35, 0xff654d, 0xffbe35, 0xff654d, 0xffbe35];
+        colors.forEach((color, index) => {
+          const angle = (index / colors.length) * Math.PI * 2;
+          const pearl = new THREE.Mesh(new THREE.SphereGeometry(size * 0.07, 8, 8), material(color, 1.2));
+          pearl.position.set(Math.cos(angle) * size * 0.22, size * 0.52, Math.sin(angle) * size * 0.22);
+          badge.add(pearl);
+        });
+        const core = new THREE.Mesh(new THREE.SphereGeometry(size * 0.1, 10, 10), material(0xf97316, 1.4));
+        core.position.y = size * 0.52;
+        badge.add(core);
+      } else {
+        // The Exploding Pearl / Color Bomb: Iridescent rainbow torus ring with mini orbiting bubbles
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(size * 0.22, size * 0.055, 8, 24), material(0xef58ff, 1.4));
+        ring.rotation.x = -Math.PI / 2;
+        ring.position.y = size * 0.48;
+
+        const core = new THREE.Mesh(new THREE.SphereGeometry(size * 0.09, 12, 12), material(0x43ecff, 1.6));
+        core.position.y = size * 0.55;
+
+        // 6 orbiting micro-pearls in rainbow hues
+        const rainbowColors = [0xff0055, 0xff9900, 0xffea00, 0x00ff88, 0x00ccff, 0xaa00ff];
+        rainbowColors.forEach((rc, idx) => {
+          const ang = (idx / rainbowColors.length) * Math.PI * 2;
+          const orb = new THREE.Mesh(new THREE.SphereGeometry(size * 0.045, 6, 6), material(rc, 1.5));
+          orb.position.set(Math.cos(ang) * size * 0.22, size * 0.48, Math.sin(ang) * size * 0.22);
+          badge.add(orb);
+        });
+
+        badge.add(ring, core);
+      }
     } else {
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(size * 0.21, size * 0.055, 6, 20), material(0xef58ff));
-      ring.rotation.x = -Math.PI / 2;
-      ring.position.y = size * 0.48;
-      const core = new THREE.Mesh(new THREE.SphereGeometry(size * 0.08, 10, 10), material(0x43ecff));
-      core.position.y = size * 0.55;
-      badge.add(ring, core);
+      // ==================== TILE ABSORBER: HIGH-TECH CYBER TILES ====================
+      if (kind === 'wrapped') {
+        // Quantum Wrapped Power Tile: Criss-crossing diagonal neon straps wrapped around cube + radioactive hazard core
+        const amberMat = material(0xf59e0b, 1.4);
+        const magentaMat = material(0xd946ef, 1.5);
+        const neonCyanMat = material(0x06b6d4, 1.7);
+
+        // Diagonal cyber energy straps
+        const strap1 = new THREE.Mesh(new THREE.BoxGeometry(size * 0.72, size * 0.055, size * 0.1), amberMat);
+        strap1.rotation.y = Math.PI / 4;
+        strap1.position.y = size * 0.42;
+
+        const strap2 = new THREE.Mesh(new THREE.BoxGeometry(size * 0.72, size * 0.055, size * 0.1), magentaMat);
+        strap2.rotation.y = -Math.PI / 4;
+        strap2.position.y = size * 0.42;
+
+        // Pulsing quantum power core
+        const core = new THREE.Mesh(new THREE.CylinderGeometry(size * 0.12, size * 0.12, size * 0.1, 8), neonCyanMat);
+        core.position.y = size * 0.48;
+
+        badge.add(strap1, strap2, core);
+      } else if (kind === 'cross') {
+        // Cyber Cross Laser Tile: Orthogonal neon laser bars along X and Y axes + corner brackets
+        const laserMat = material(0x00f0ff, 1.7);
+        const barLength = size * 0.72;
+        const barWidth = size * 0.085;
+        const horizontal = new THREE.Mesh(new THREE.BoxGeometry(barLength, barWidth, barWidth), laserMat);
+        const vertical = new THREE.Mesh(new THREE.BoxGeometry(barWidth, barWidth, barLength), laserMat);
+        horizontal.position.y = vertical.position.y = size * 0.38;
+
+        const centerDiode = new THREE.Mesh(new THREE.BoxGeometry(size * 0.18, size * 0.12, size * 0.18), material(0xffffff, 2.0));
+        centerDiode.position.y = size * 0.44;
+
+        badge.add(horizontal, vertical, centerDiode);
+      } else if (kind === 'burst') {
+        // Seismic Blast Block: Industrial hazard detonator with warning beacon
+        const hazardMat = material(0xf97316, 1.5);
+        const coreMat = material(0xffffff, 1.8);
+        const block = new THREE.Mesh(new THREE.BoxGeometry(size * 0.42, size * 0.14, size * 0.42), hazardMat);
+        block.position.y = size * 0.42;
+        const beacon = new THREE.Mesh(new THREE.SphereGeometry(size * 0.09, 8, 8), coreMat);
+        beacon.position.y = size * 0.52;
+        badge.add(block, beacon);
+      } else {
+        // Prismatic Super-Core Nova Tile: Holographic diamond surrounded by spinning gyro-rings
+        const prismMat = material(0xa855f7, 1.6);
+        const ringMat = material(0x06b6d4, 1.5);
+
+        const diamond = new THREE.Mesh(new THREE.OctahedronGeometry(size * 0.16), prismMat);
+        diamond.position.y = size * 0.48;
+
+        const ring1 = new THREE.Mesh(new THREE.TorusGeometry(size * 0.26, size * 0.035, 6, 20), ringMat);
+        ring1.rotation.x = Math.PI / 3;
+        ring1.position.y = size * 0.48;
+
+        badge.add(diamond, ring1);
+      }
     }
+
     badge.name = 'cross-candy-mark';
     group.add(badge);
   }
 
-  private spawnCrossCandyBeams(center: THREE.Vector3) {
+  private spawnCrossCandyBeams(center: THREE.Vector3, isWide = false) {
     const width = this.gridManager.cols * (this.gridManager.tileSize + this.gridManager.tileSpacing);
     const depth = this.gridManager.rows * (this.gridManager.tileSize + this.gridManager.tileSpacing);
+    const beamThickness = isWide ? 0.55 : 0.28;
+    const beamHeight = isWide ? 0.08 : 0.055;
+
     for (const [beamWidth, beamDepth, color] of [
-      [width, 0.28, 0x43eaff],
-      [0.28, depth, 0xffdf58],
+      [width, beamThickness, this.isFishMode ? 0x38bdf8 : 0x06b6d4],
+      [beamThickness, depth, this.isFishMode ? 0xfbbf24 : 0xec4899],
     ] as const) {
-      const material = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.92 });
-      const beam = new THREE.Mesh(new THREE.BoxGeometry(beamWidth, 0.055, beamDepth), material);
+      const material = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.94 });
+      const beam = new THREE.Mesh(new THREE.BoxGeometry(beamWidth, beamHeight, beamDepth), material);
       beam.position.set(center.x, 0.28, center.z);
       this.vfxGroup.add(beam);
       this.activeParticles.push({
         mesh: beam,
         vel: new THREE.Vector3(),
         life: 0,
-        maxLife: 0.42,
+        maxLife: isWide ? 0.52 : 0.42,
         rotSpeed: new THREE.Vector3(),
         gravity: 0,
         initialScale: 1,
       });
     }
+  }
+
+  // Floating Candy Crush Announcement Badge above board
+  private spawnFloatingText(pos: THREE.Vector3, text: string, colorHex: number) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.font = '900 42px "Inter", "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 3;
+    ctx.shadowOffsetY = 3;
+
+    ctx.strokeStyle = '#020617';
+    ctx.lineWidth = 8;
+    ctx.strokeText(text, 256, 64);
+
+    ctx.fillStyle = '#' + colorHex.toString(16).padStart(6, '0');
+    ctx.fillText(text, 256, 64);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    const material = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      depthTest: false,
+      depthWrite: false,
+    });
+    const sprite = new THREE.Sprite(material);
+    sprite.position.set(pos.x, pos.y + 0.65, pos.z);
+    sprite.scale.set(1.5, 0.38, 1);
+    this.vfxGroup.add(sprite);
+
+    const startTime = performance.now();
+    const duration = 950;
+    const startY = sprite.position.y;
+
+    const animateSprite = () => {
+      const elapsed = performance.now() - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      sprite.position.y = startY + progress * 0.7;
+      sprite.scale.set(1.5 * (1 + progress * 0.2), 0.38 * (1 + progress * 0.2), 1);
+      material.opacity = Math.max(0, 1 - Math.pow(progress, 1.8));
+
+      if (progress < 1) {
+        requestAnimationFrame(animateSprite);
+      } else {
+        this.vfxGroup.remove(sprite);
+        texture.dispose();
+        material.dispose();
+      }
+    };
+    requestAnimationFrame(animateSprite);
   }
 
   private spawnAbsorbParticles(pos: THREE.Vector3, color: TileColor) {

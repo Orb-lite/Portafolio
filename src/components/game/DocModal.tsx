@@ -51,12 +51,47 @@ export const DocModal: React.FC<DocModalProps> = ({ isOpen, onClose, language = 
           </section>
 
           <section className="rounded-2xl border border-cyan-500/25 bg-cyan-950/20 p-4">
-            <h3 className="mb-2 text-sm font-bold text-cyan-200">{isEn ? 'Explosive pearls · Fish of Fortune' : 'Perlas explosivas · Fish of Fortune'}</h3>
-            <ul className="space-y-1.5 leading-relaxed text-slate-300">
-              <li>• {isEn ? 'From level 2, pair two golden cross pearls to clear their full row and column.' : 'Desde el nivel 2, combina dos perlas con cruz dorada para despejar toda su fila y columna.'}</li>
-              <li>• {isEn ? 'From level 5, orange burst pearls clear a 3×3 area.' : 'Desde el nivel 5, las perlas naranjas despejan un área de 3×3.'}</li>
-              <li>• {isEn ? 'From level 10, rainbow pearls clear every remaining tile of their color. More specials appear as levels rise.' : 'Desde el nivel 10, las perlas arcoíris despejan todas las fichas restantes de su color. Aparecen más perlas especiales al subir de nivel.'}</li>
-              <li>• {isEn ? 'Explosions crack one capsule layer per hit; higher levels add tougher shells.' : 'Cada explosión rompe una capa de cápsula; los niveles altos añaden más capas resistentes.'}</li>
+            <h3 className="mb-2 text-sm font-bold text-cyan-200">
+              {isEn ? 'Candy Crush Specials · Explosive Pearls & Cyber Tiles' : 'Especiales Candy Crush · Perlas Explosivas & Mosaicos Cyber'}
+            </h3>
+            <p className="mb-3 text-xs text-slate-300 leading-relaxed">
+              {isEn
+                ? 'Both games feature Candy Crush-style power items: aquatic pearls in Fish of Fortune and high-tech quantum tiles in Conveyor Realms!'
+                : '¡Ambos juegos cuentan con poderes estilo Candy Crush: perlas marinas en Fish of Fortune y mosaicos cuánticos en Conveyor Realms!'}
+            </p>
+            <ul className="space-y-2 leading-relaxed text-slate-300 text-xs sm:text-sm">
+              <li className="flex items-start gap-2">
+                <span className="text-amber-400 font-bold shrink-0">💥 {isEn ? 'Wrapped (Envolved X-Y):' : 'Envuelto (X-Y):'}</span>
+                <span>{isEn ? 'Explodes along BOTH the entire row (X) and column (Y) with laser beams, PLUS a 3×3 radial blast with a signature double shockwave!' : '¡Estalla a lo largo de TODA la fila (X) y columna (Y) con rayos láser, MÁS un área radial de 3×3 con doble onda expansiva!'}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-cyan-400 font-bold shrink-0">⚡ {isEn ? 'Cross-Axis (Striped):' : 'Raya Cruzada (X-Y):'}</span>
+                <span>{isEn ? 'Fires high-intensity beams through its complete row and column, instantly clearing the entire crosshair.' : 'Dispara haces de alta energía a lo largo de su fila y columna completas, barriendo toda la cruz.'}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-pink-400 font-bold shrink-0">🌈 {isEn ? 'Exploding Pearl / Color Bomb:' : 'Perla Explosiva / Bomba Arcoíris:'}</span>
+                <span>{isEn ? 'Detonates every matching colored pearl/tile across the entire grid with a rainbow particle nova.' : 'Detona cada perla o mosaico de su mismo color en todo el tablero con una lluvia de partículas arcoíris.'}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-orange-400 font-bold shrink-0">💣 {isEn ? '3×3 Burst Bomb:' : 'Bomba Sísmica 3×3:'}</span>
+                <span>{isEn ? 'Clears a 3×3 cluster with ground shockwaves, cracking all surrounding shells.' : 'Despeja un área de 3×3 con ondas expansivas, quebrando todas las corazas circundantes.'}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-yellow-300 font-bold shrink-0">🔥 {isEn ? 'Chain Reactions:' : 'Reacciones en Cadena:'}</span>
+                <span>{isEn ? 'If an explosion hits another special item, it cascades into combo chain explosions (Combo x2, x3...)!' : '¡Si una explosión alcanza a otro especial, detona en cascada con multiplicador de combo (Combo x2, x3...)!'}</span>
+              </li>
+            </ul>
+          </section>
+
+          <section className="rounded-2xl border border-amber-500/30 bg-amber-950/20 p-4">
+            <h3 className="mb-2 text-sm font-bold text-amber-200">
+              {isEn ? '🛡️ Higher Levels · 1, 2, & 3 Armored Shells (Inclusive on Explosives!)' : '🛡️ Niveles Altos · 1, 2 y 3 Capas de Coraza (¡Incluso en Explosivos!)'}
+            </h3>
+            <ul className="space-y-1.5 leading-relaxed text-slate-300 text-xs sm:text-sm">
+              <li>• <strong className="text-sky-300">{isEn ? '1 Shell (Layer 1):' : '1 Concha (Capa 1):'}</strong> {isEn ? 'Sea-glass / Cyan cyber-barrier (Level 3+). One crack frees the item.' : 'Burbuja de cristal marino / barrera cyber cian (Nivel 3+). Un impacto la libera.'}</li>
+              <li>• <strong className="text-purple-300">{isEn ? '2 Shells (Layer 2):' : '2 Conchas (Capa 2):'}</strong> {isEn ? 'Mother-of-pearl / Violet plasma shield (Level 6+). Requires 2 consecutive hits or blasts.' : 'Concha nacarada / escudo de plasma violeta (Nivel 6+). Requiere 2 impactos o explosiones.'}</li>
+              <li>• <strong className="text-amber-400">{isEn ? '3 Shells (Layer 3):' : '3 Conchas (Capa 3):'}</strong> {isEn ? 'Armored golden coral clam / Quantum fortress barrier (Level 10+). Heaviest protection requiring 3 hits!' : 'Almeja de coral dorado / barrera de fortaleza cuántica (Nivel 10+). ¡Máxima resistencia de 3 impactos!'}</li>
+              <li>• <strong className="text-emerald-300">{isEn ? 'Armored Explosives:' : 'Explosivos Acorazados:'}</strong> {isEn ? 'At higher levels, explosive pearls and tiles themselves can be trapped inside 1, 2, or 3 shells! Crack the final shell to unleash their explosion in massive cascades!' : '¡En niveles altos, las perlas y mosaicos explosivos también pueden tener 1, 2 o 3 conchas! ¡Rompe la última capa para desatar su explosión en cascadas masivas!'}</li>
             </ul>
           </section>
 

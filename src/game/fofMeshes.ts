@@ -88,17 +88,48 @@ export class FofMeshFactory {
     group.add(pearl);
 
     if (encapsulated) {
-      // Concentric sea-glass shells make late-game capsules visibly layered.
-      for (let layer = 1; layer <= Math.max(1, encapsulationLayers); layer++) {
+      // Concentric oyster & sea-glass shells for 1, 2, or 3 layers
+      const count = Math.max(1, encapsulationLayers);
+      for (let layer = 1; layer <= count; layer++) {
         const bubbleMaterial = this.bubbleMat.clone();
-        bubbleMaterial.color.setHex(layer === 1 ? 0x7dd3fc : layer === 2 ? 0xc4b5fd : 0xfcd34d);
-        bubbleMaterial.opacity = Math.max(0.34, 0.72 - (layer - 1) * 0.12);
+        if (layer === 1) {
+          bubbleMaterial.color.setHex(0x38bdf8); // Sky sea-glass
+          bubbleMaterial.opacity = 0.65;
+          bubbleMaterial.roughness = 0.05;
+        } else if (layer === 2) {
+          bubbleMaterial.color.setHex(0xc084fc); // Mother-of-pearl iridescent violet
+          bubbleMaterial.opacity = 0.72;
+          bubbleMaterial.roughness = 0.12;
+        } else {
+          bubbleMaterial.color.setHex(0xf59e0b); // Armored golden coral shell
+          bubbleMaterial.opacity = 0.82;
+          bubbleMaterial.roughness = 0.18;
+          bubbleMaterial.metalness = 0.35;
+        }
+
         const bubble = new THREE.Mesh(this.bubbleGeo, bubbleMaterial);
         bubble.position.y = 0.2 * s;
-        const shellScale = s * (1 + (layer - 1) * 0.1);
+        const shellScale = s * (1.0 + (layer - 1) * 0.14);
         bubble.scale.set(shellScale, shellScale, shellScale);
         bubble.name = `encapsulation-layer-${layer}`;
         group.add(bubble);
+
+        // Add reinforced clam ridge for layer 3
+        if (layer === 3) {
+          const ridgeGeo = new THREE.TorusGeometry(0.24 * s * shellScale, 0.02 * s, 8, 24);
+          const ridgeMat = new THREE.MeshStandardMaterial({
+            color: 0xf59e0b,
+            emissive: 0xd97706,
+            emissiveIntensity: 0.5,
+            metalness: 0.5,
+            roughness: 0.2,
+          });
+          const ridge = new THREE.Mesh(ridgeGeo, ridgeMat);
+          ridge.rotation.x = Math.PI / 2;
+          ridge.position.y = 0.2 * s;
+          ridge.name = `encapsulation-layer-3-ridge`;
+          group.add(ridge);
+        }
       }
     }
 

@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Zap,
   Sparkles,
-  Lock,
   CheckCircle2,
   Magnet,
   Shuffle,
@@ -12,9 +11,9 @@ import {
   Clock,
   Flame,
   Compass,
-  Check,
 } from 'lucide-react';
 import { ComodinDefinition } from '../../game/comodines';
+import { GameLanguage, GAME_TEXT, localizeComodin } from '../../game/localization';
 
 interface ComodinesHUDProps {
   selectedComodin: ComodinDefinition | null;
@@ -22,6 +21,7 @@ interface ComodinesHUDProps {
   onOpenModal: () => void;
   onActivate: () => void;
   level: number;
+  language?: GameLanguage;
 }
 
 export const ComodinesHUD: React.FC<ComodinesHUDProps> = ({
@@ -30,7 +30,11 @@ export const ComodinesHUD: React.FC<ComodinesHUDProps> = ({
   onOpenModal,
   onActivate,
   level,
+  language = 'es',
 }) => {
+  const t = GAME_TEXT[language];
+  const localized = selectedComodin ? localizeComodin(selectedComodin, language) : null;
+
   const renderIcon = (iconName?: string) => {
     switch (iconName) {
       case 'magnet':
@@ -61,20 +65,20 @@ export const ComodinesHUD: React.FC<ComodinesHUDProps> = ({
       {hasUsedComodin ? (
         <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-900/80 border border-slate-700/60 text-slate-400 text-xs font-semibold backdrop-blur-md shadow-sm">
           <CheckCircle2 className="w-3.5 h-3.5 text-slate-500" />
-          <span>Comodín Usado (1/1)</span>
+          <span>{t.used}</span>
         </div>
-      ) : selectedComodin ? (
+      ) : localized ? (
         <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-900/90 border border-amber-400/40 backdrop-blur-md shadow-lg shadow-amber-500/10">
           <button
             type="button"
             onClick={onOpenModal}
             className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl hover:bg-slate-800 text-xs font-bold text-slate-200 transition cursor-pointer"
-            title="Cambiar comodín de este nivel"
+            title={t.change}
           >
-            {renderIcon(selectedComodin.iconName)}
-            <span className="max-w-[110px] sm:max-w-[140px] truncate">{selectedComodin.name}</span>
+            {renderIcon(localized.iconName)}
+            <span className="max-w-[110px] sm:max-w-[140px] truncate">{localized.name}</span>
             <span className="text-[10px] font-black text-amber-400 bg-amber-400/20 px-1.5 py-0.2 rounded-md">
-              T{selectedComodin.tier}
+              T{localized.tier}
             </span>
           </button>
 
@@ -82,10 +86,10 @@ export const ComodinesHUD: React.FC<ComodinesHUDProps> = ({
             type="button"
             onClick={onActivate}
             className="flex items-center gap-1 px-3 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs shadow-md transition active:scale-95 cursor-pointer animate-pulse"
-            title="Activar poder táctico"
+            title={t.activate}
           >
             <Zap className="w-3.5 h-3.5 fill-slate-950" />
-            <span>¡ACTIVAR!</span>
+            <span>{t.activateNow}</span>
           </button>
         </div>
       ) : (
@@ -93,10 +97,10 @@ export const ComodinesHUD: React.FC<ComodinesHUDProps> = ({
           type="button"
           onClick={onOpenModal}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-gradient-to-r from-indigo-900/80 to-purple-900/80 hover:from-indigo-800 hover:to-purple-800 text-amber-300 hover:text-amber-200 border border-amber-400/40 font-black text-xs shadow-lg backdrop-blur-md transition active:scale-95 cursor-pointer"
-          title={`Elegir 1 de 3 comodines tácticos para el Nivel ${level}`}
+          title={`${t.choosePower} (${t.level} ${level})`}
         >
           <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span>Comodín de Nivel (3 Opciones)</span>
+          <span>{t.powerTitle} ({t.options})</span>
         </button>
       )}
     </div>

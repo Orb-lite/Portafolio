@@ -814,7 +814,7 @@ export default function App() {
       {(mainTab === 'game' || mainTab === 'fish_of_fortune') && (
         <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6">
           <TileAbsorberGame
-            key={mainTab}
+            key={`${mainTab}_${language}`}
             language={language}
             mode={mainTab === 'fish_of_fortune' ? 'fish_of_fortune' : 'pathway'}
             onSwitchMode={() => setMainTab(mainTab === 'game' ? 'fish_of_fortune' : 'game')}

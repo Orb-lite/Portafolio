@@ -1,10 +1,95 @@
-// Procedural Web Audio API sound generator (Zero external dependencies)
+import { GameVersion } from './types';
+
+export interface MusicTrackInfo {
+  path: string;
+  title: string;
+  artist: string;
+  bpm: number;
+}
+
+export function getMusicTrackForLevel(level: number, version: GameVersion): MusicTrackInfo {
+  if (version === 'fof') {
+    if (level >= 10) {
+      return {
+        path: '/audio/golden_vault_theme.mp3',
+        title: 'Golden Sunken Vault',
+        artist: 'Isaac Gómez · Sunken Sanctuary',
+        bpm: 126,
+      };
+    }
+    if (level >= 7) {
+      return {
+        path: '/audio/sixty_frames_conveyor.mp3',
+        title: 'Sixty Frames (Bioluminescent Abyss)',
+        artist: 'Tile Absorber 3D Official Track',
+        bpm: 128,
+      };
+    }
+    return {
+      path: '/audio/fish_of_fortune_theme.mp3',
+      title: 'Fish of Fortune (Coral Reef 124 BPM)',
+      artist: 'Isaac Gómez · Subaquatic Synth',
+      bpm: 124,
+    };
+  }
+
+  // Conveyor Realms worlds by block level:
+  if (level <= 3) {
+    return {
+      path: '/audio/chess_kingdom_theme.mp3',
+      title: 'Chess Kingdom (Baroque Synthwave)',
+      artist: 'Isaac Gómez · Royal Parquet',
+      bpm: 118,
+    };
+  }
+  if (level <= 6) {
+    return {
+      path: '/audio/fish_of_fortune_theme.mp3',
+      title: 'Coral Cove (Aquatic Synthwave)',
+      artist: 'Isaac Gómez · Subaquatic Synth',
+      bpm: 124,
+    };
+  }
+  if (level <= 9) {
+    return {
+      path: '/audio/sixty_frames_conveyor.mp3',
+      title: 'Sixty Frames (Zero Latency Synthwave)',
+      artist: 'Tile Absorber 3D Official Track',
+      bpm: 128,
+    };
+  }
+  return {
+    path: '/audio/golden_vault_theme.mp3',
+    title: 'Golden Vault (Emperor Anthem)',
+    artist: 'Isaac Gómez · Imperial Synth',
+    bpm: 126,
+  };
+}
+
+// Procedural Web Audio API sound generator + HTML5 Background Music Manager
 class SoundManager {
   private ctx: AudioContext | null = null;
   private enabled: boolean = true;
+  private musicAudio: HTMLAudioElement | null = null;
+  private currentTrackPath: string | null = null;
+  private currentTrackInfo: MusicTrackInfo | null = null;
+  private musicVolume: number = 0.35;
+  private hasUserInteracted: boolean = false;
 
   constructor() {
-    // Lazily initialize audio context on first user interaction
+    if (typeof window !== 'undefined') {
+      const unlockAudio = () => {
+        this.hasUserInteracted = true;
+        this.initCtx();
+        if (this.musicAudio && this.enabled && this.musicAudio.paused) {
+          this.musicAudio.play().catch(() => {});
+        }
+        window.removeEventListener('pointerdown', unlockAudio);
+        window.removeEventListener('keydown', unlockAudio);
+      };
+      window.addEventListener('pointerdown', unlockAudio, { once: true });
+      window.addEventListener('keydown', unlockAudio, { once: true });
+    }
   }
 
   private initCtx() {
@@ -21,10 +106,74 @@ class SoundManager {
 
   public setEnabled(enabled: boolean) {
     this.enabled = enabled;
+    if (!enabled) {
+      if (this.musicAudio) {
+        this.musicAudio.pause();
+      }
+    } else {
+      if (this.musicAudio && this.currentTrackPath) {
+        this.musicAudio.play().catch(() => {});
+      }
+    }
   }
 
   public isEnabled(): boolean {
     return this.enabled;
+  }
+
+  public getCurrentTrack(): MusicTrackInfo | null {
+    return this.currentTrackInfo;
+  }
+
+  // Dynamic Background Music depending on block levels
+  public playMusicForLevel(level: number, version: GameVersion) {
+    if (typeof window === 'undefined') return;
+
+    const track = getMusicTrackForLevel(level, version);
+    this.currentTrackInfo = track;
+
+    if (this.currentTrackPath === track.path && this.musicAudio) {
+      if (this.enabled && this.musicAudio.paused && this.hasUserInteracted) {
+        this.musicAudio.play().catch(() => {});
+      }
+      return;
+    }
+
+    // Stop current track
+    if (this.musicAudio) {
+      try {
+        this.musicAudio.pause();
+        this.musicAudio.src = '';
+      } catch {
+        // ignore
+      }
+    }
+
+    try {
+      this.musicAudio = new Audio(track.path);
+      this.musicAudio.loop = true;
+      this.musicAudio.volume = this.musicVolume;
+      this.musicAudio.preload = 'auto';
+      this.currentTrackPath = track.path;
+
+      if (this.enabled) {
+        const playPromise = this.musicAudio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            // Browser autoplay restrictions require user interaction first
+            console.log('[SoundManager] Autoplay waiting for interaction:', err?.message || 'blocked');
+          });
+        }
+      }
+    } catch (err) {
+      console.warn('[SoundManager] Could not start music:', err);
+    }
+  }
+
+  public stopMusic() {
+    if (this.musicAudio) {
+      this.musicAudio.pause();
+    }
   }
 
   // Tap / Launch whoosh
@@ -38,14 +187,12 @@ class SoundManager {
     const gain = this.ctx.createGain();
 
     if (isFish) {
-      // Water splash / bubble swoosh
       osc.type = 'sine';
       osc.frequency.setValueAtTime(320, now);
       osc.frequency.exponentialRampToValueAtTime(740, now + 0.12);
       gain.gain.setValueAtTime(0.2, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
     } else {
-      // Mechanical slide / hop
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(220, now);
       osc.frequency.exponentialRampToValueAtTime(480, now + 0.09);
@@ -74,7 +221,6 @@ class SoundManager {
     const targetFreq = baseFreq * pitchMultiplier;
 
     if (isFish) {
-      // Bubbly pop
       osc.type = 'sine';
       osc.frequency.setValueAtTime(targetFreq * 0.8, now);
       osc.frequency.exponentialRampToValueAtTime(targetFreq * 1.5, now + 0.04);
@@ -82,7 +228,6 @@ class SoundManager {
       gain.gain.setValueAtTime(0.18, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
     } else {
-      // Crisp arcade blip / click
       osc.type = 'square';
       osc.frequency.setValueAtTime(targetFreq, now);
       osc.frequency.exponentialRampToValueAtTime(targetFreq * 1.8, now + 0.05);
@@ -130,12 +275,12 @@ class SoundManager {
     if (!this.ctx) return;
 
     const notes = [
-      { f: 523.25, d: 0.15 }, // C5
-      { f: 659.25, d: 0.15 }, // E5
-      { f: 783.99, d: 0.15 }, // G5
-      { f: 1046.5, d: 0.35 }, // C6
-      { f: 880.0, d: 0.15 },  // A5
-      { f: 1046.5, d: 0.5 },  // C6
+      { f: 523.25, d: 0.15 },
+      { f: 659.25, d: 0.15 },
+      { f: 783.99, d: 0.15 },
+      { f: 1046.5, d: 0.35 },
+      { f: 880.0, d: 0.15 },
+      { f: 1046.5, d: 0.5 },
     ];
 
     let t = this.ctx.currentTime;
@@ -190,10 +335,10 @@ class SoundManager {
     if (!this.ctx) return;
 
     const chords = [
-      { f: 523.25, d: 0.12 }, // C5
-      { f: 659.25, d: 0.12 }, // E5
-      { f: 783.99, d: 0.12 }, // G5
-      { f: 1046.5, d: 0.35 }, // C6
+      { f: 523.25, d: 0.12 },
+      { f: 659.25, d: 0.12 },
+      { f: 783.99, d: 0.12 },
+      { f: 1046.5, d: 0.35 },
     ];
 
     let t = this.ctx.currentTime;

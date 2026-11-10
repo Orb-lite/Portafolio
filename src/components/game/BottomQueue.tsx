@@ -1,5 +1,6 @@
 import React from 'react';
 import { GameVersion, TileColor } from '../../game/types';
+import { GameLanguage, getLocalizedColorName } from '../../game/localization';
 
 export interface QueueRunner {
   id: string;
@@ -15,6 +16,7 @@ interface BottomQueueProps {
   onLaunch: (colIdx: number) => void;
   showTutorialHand: boolean;
   exposedColors?: TileColor[];
+  language?: GameLanguage;
 }
 
 export const BottomQueue: React.FC<BottomQueueProps> = ({
@@ -25,6 +27,7 @@ export const BottomQueue: React.FC<BottomQueueProps> = ({
   onLaunch,
   showTutorialHand,
   exposedColors,
+  language = 'es',
 }) => {
   const isFoF = version === 'fof';
   const availableSlots = Math.max(0, maxCapacity - activeRunnersCount);
@@ -199,6 +202,7 @@ export const BottomQueue: React.FC<BottomQueueProps> = ({
                 };
 
                 const theme = getColorTheme(runner.color);
+                theme.label = getLocalizedColorName(runner.color, isFoF, language);
 
                 const isReadyToAbsorb = isFront && (!exposedColors || exposedColors.length === 0 || exposedColors.includes(runner.color));
 

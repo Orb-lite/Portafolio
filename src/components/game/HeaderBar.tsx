@@ -1,6 +1,7 @@
 import React from 'react';
 import { GameVersion } from '../../game/types';
 import { getThemeName } from '../../game/experience';
+import { GameLanguage, GAME_TEXT } from '../../game/localization';
 import { Volume2, VolumeX, RotateCcw, BookOpen, Sparkles, Heart, Map, Trophy, Database, User, Gamepad2, Fish, Crown, Box } from 'lucide-react';
 import { ComodinesHUD } from './ComodinesHUD';
 
@@ -17,6 +18,7 @@ interface HeaderBarProps {
   totalTiles: number;
   gamertag?: string;
   isSupabaseOnline?: boolean;
+  language?: GameLanguage;
   onToggleSound: () => void;
   onSpeedChange: (s: number) => void;
   onReset: () => void;
@@ -44,6 +46,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   totalTiles,
   gamertag,
   isSupabaseOnline,
+  language = 'es',
   onToggleSound,
   onSpeedChange,
   onReset,
@@ -59,6 +62,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
 }) => {
   const isFoF = version === 'fof';
   const isChess = version === 'chess';
+  const t = GAME_TEXT[language];
   const progressPct = Math.min(100, Math.round((tilesAbsorbed / Math.max(1, totalTiles)) * 100));
 
   return (
@@ -76,7 +80,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
         </div>
         <div>
           <h1 className="text-xs sm:text-sm font-bold text-white tracking-tight flex items-center gap-1.5">
-            Conveyor Realms
+            {isFoF ? 'Fish of Fortune' : 'Conveyor Realms'}
             <span
               className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
                 isFoF
@@ -84,7 +88,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
                   : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
               }`}
             >
-              {isFoF ? 'Fish Feeder' : getThemeName(version)}
+              {isFoF ? t.fishFeederMode : getThemeName(version, language)}
             </span>
           </h1>
           <div className="flex items-center gap-1.5 text-[10px]">
@@ -106,18 +110,18 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
         <div className="flex flex-col min-w-[110px] sm:min-w-[140px]">
           <div className="flex justify-between items-center text-[10px] font-bold">
             <div className="flex items-center gap-1">
-              <span className="text-amber-400 tracking-wide">LEVEL {level}</span>
+              <span className="text-amber-400 tracking-wide">{t.level} {level}</span>
               {frontierLevel && level < frontierLevel && (
                 <span className="text-[8px] font-black text-emerald-300 bg-emerald-500/20 px-1 py-0.2 rounded border border-emerald-400/40 uppercase">
-                  Replay
+                  {t.replay}
                 </span>
               )}
             </div>
-            <span className="text-slate-300 font-mono text-[9px]">{experience.toLocaleString()} TOTAL XP</span>
+            <span className="text-slate-300 font-mono text-[9px]">{experience.toLocaleString()} {t.totalXp}</span>
           </div>
           <div className="flex justify-between items-center text-[9px] font-semibold text-slate-400 mt-1">
-            <span>BOARD</span>
-            <span>{tilesAbsorbed} / {totalTiles} TILES</span>
+            <span>{t.board}</span>
+            <span>{tilesAbsorbed} / {totalTiles} {isFoF ? t.pearls : t.tiles}</span>
           </div>
           <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700/60 mt-0.5">
             <div
@@ -126,7 +130,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             />
           </div>
         </div>
-        <div className="flex items-center gap-1 rounded-lg bg-slate-800/80 px-2 py-1 text-xs font-bold" title="Lives">
+        <div className="flex items-center gap-1 rounded-lg bg-slate-800/80 px-2 py-1 text-xs font-bold" title={t.lives}>
           <Heart className={`h-3.5 w-3.5 ${lives > 0 ? 'fill-rose-500 text-rose-400' : 'text-slate-500'}`} />
           <span className={lives > 0 ? 'text-rose-200' : 'text-slate-400'}>{lives}/{maxLives}</span>
         </div>
@@ -188,7 +192,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
         <button
           onClick={onToggleSound}
           className="p-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition"
-          title={soundEnabled ? 'Mute Sound' : 'Unmute Sound'}
+          title={soundEnabled ? t.mute : t.unmute}
         >
           {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4 text-rose-400" />}
         </button>
@@ -197,24 +201,24 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
         <button
           onClick={onReset}
           className="p-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition"
-          title="Reset Level"
+          title={t.reset}
         >
           <RotateCcw className="w-4 h-4" />
         </button>
 
-        <button onClick={onOpenMap} className="flex items-center gap-1.5 rounded-xl bg-emerald-500/10 px-2.5 py-1.5 text-xs font-bold text-emerald-200 hover:bg-emerald-500/20 transition" title="Back to level path">
+        <button onClick={onOpenMap} className="flex items-center gap-1.5 rounded-xl bg-emerald-500/10 px-2.5 py-1.5 text-xs font-bold text-emerald-200 hover:bg-emerald-500/20 transition cursor-pointer" title={t.pathway}>
           <Map className="w-4 h-4 text-emerald-300" />
-          <span>Path</span>
+          <span>{t.pathway}</span>
         </button>
 
         {/* Documentation / Changelog */}
         <button
           onClick={onOpenDocs}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition"
-          title="Open Game Guide"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition cursor-pointer"
+          title={t.gameInfo}
         >
           <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Game Info</span>
+          <span>{t.gameInfo}</span>
         </button>
       </div>
     </header>

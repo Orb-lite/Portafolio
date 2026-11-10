@@ -169,11 +169,14 @@ const WORLD_DEFS: Record<GameVersion, WorldDefinition> = {
   },
 };
 
+import { GameLanguage, GAME_TEXT } from '../../game/localization';
+
 interface LevelMapProps {
   frontierLevel?: number;
   currentLevel?: number;
   selectedLevel?: number;
   experience?: number;
+  language?: GameLanguage;
   onSelectLevel: (level: number) => void;
   onClose: () => void;
   onOpenLeaderboard?: () => void;
@@ -185,11 +188,14 @@ export const LevelMap: React.FC<LevelMapProps> = ({
   currentLevel,
   selectedLevel,
   experience,
+  language = 'es',
   onSelectLevel,
   onClose,
   onOpenLeaderboard,
   onOpenGamertag,
 }) => {
+  const isEn = language === 'en';
+  const t = GAME_TEXT[language];
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showPastLevelsDrawer, setShowPastLevelsDrawer] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile>(() => getStoredUser());
@@ -309,11 +315,11 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                 World Frontier
               </h1>
               <span className="rounded-full bg-amber-400/20 border border-amber-300/40 px-2 py-0.5 text-[10px] font-black text-amber-300">
-                Por Hacer: Nivel {activeFrontier}
+                {isEn ? `Frontier: Level ${activeFrontier}` : `Por Hacer: Nivel ${activeFrontier}`}
               </span>
               {activeSelected < activeFrontier && (
                 <span className="rounded-full bg-emerald-500/20 border border-emerald-400/40 px-2 py-0.5 text-[10px] font-black text-emerald-300">
-                  Rejugando: Nivel {activeSelected}
+                  {isEn ? `Replaying: Level ${activeSelected}` : `Rejugando: Nivel ${activeSelected}`}
                 </span>
               )}
             </div>
@@ -325,7 +331,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
             aria-label="Resume Game"
           >
             <X className="h-4 w-4 sm:h-5 sm:w-5" />
-            <span className="hidden sm:inline">Cerrar Mapa</span>
+            <span className="hidden sm:inline">{isEn ? 'Close Map' : 'Cerrar Mapa'}</span>
           </button>
         </div>
 
@@ -336,18 +342,18 @@ export const LevelMap: React.FC<LevelMapProps> = ({
             <button
               onClick={() => onSelectLevel(1)}
               className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 font-bold transition cursor-pointer active:scale-95 shadow-sm"
-              title="Jugar Nivel 1 de inmediato sin perder tu progreso"
+              title={isEn ? "Play Level 1 without losing your frontier progress" : "Jugar Nivel 1 de inmediato sin perder tu progreso"}
             >
               <RotateCcw className="h-3.5 w-3.5 text-emerald-300" />
-              <span>⏪ Regresar al Nivel 1</span>
+              <span>{isEn ? "⏪ Return to Level 1" : "⏪ Regresar al Nivel 1"}</span>
             </button>
             <button
               onClick={() => scrollToLevel(1)}
               className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[11px] font-medium transition cursor-pointer"
-              title="Desplazarse a la base del camino (Nivel 1)"
+              title={isEn ? "Scroll to map base (Level 1)" : "Desplazarse a la base del camino (Nivel 1)"}
             >
               <ArrowDown className="h-3 w-3 inline mr-0.5" />
-              Ver en mapa
+              {isEn ? "View bottom" : "Ver en mapa"}
             </button>
           </div>
 
@@ -356,18 +362,18 @@ export const LevelMap: React.FC<LevelMapProps> = ({
             <button
               onClick={() => onSelectLevel(activeFrontier)}
               className="flex items-center gap-1 px-3 py-1 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black transition cursor-pointer active:scale-95 shadow-md shadow-amber-500/20"
-              title={`Jugar el nivel actual por hacer (Nivel ${activeFrontier})`}
+              title={isEn ? `Play current frontier level (Level ${activeFrontier})` : `Jugar el nivel actual por hacer (Nivel ${activeFrontier})`}
             >
               <Zap className="h-3.5 w-3.5 fill-slate-950" />
-              <span>⚡ Jugar Nivel {activeFrontier} (Por Hacer)</span>
+              <span>{isEn ? `⚡ Play Level ${activeFrontier} (Frontier)` : `⚡ Jugar Nivel ${activeFrontier} (Por Hacer)`}</span>
             </button>
             <button
               onClick={() => scrollToLevel(activeFrontier)}
               className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[11px] font-medium transition cursor-pointer"
-              title={`Desplazarse al nivel por hacer (Nivel ${activeFrontier})`}
+              title={isEn ? `Scroll to frontier (Level ${activeFrontier})` : `Desplazarse al nivel por hacer (Nivel ${activeFrontier})`}
             >
               <ArrowUp className="h-3 w-3 inline mr-0.5" />
-              Ver actual
+              {isEn ? "View frontier" : "Ver actual"}
             </button>
           </div>
 
@@ -378,7 +384,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
               className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-cyan-300 border border-cyan-400/30 text-xs font-bold transition cursor-pointer ml-auto sm:ml-0"
             >
               <Compass className="h-3.5 w-3.5 text-cyan-300" />
-              <span>Niveles Pasados ({pastLevels.length})</span>
+              <span>{isEn ? `Past Levels (${pastLevels.length})` : `Niveles Pasados (${pastLevels.length})`}</span>
             </button>
           )}
         </div>
@@ -387,7 +393,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
         {pastLevels.length > 0 && showPastLevelsDrawer && (
           <div className="flex items-center gap-1.5 overflow-x-auto px-3 sm:px-6 py-2 bg-slate-950/95 border-t border-cyan-500/20 scrollbar-none animate-in slide-in-from-top-2 duration-200">
             <span className="text-[11px] font-bold text-slate-400 whitespace-nowrap mr-1">
-              Rejugar nivel:
+              {isEn ? "Replay level:" : "Rejugar nivel:"}
             </span>
             {pastLevels.map((lvl) => {
               const isSel = lvl === activeSelected;
@@ -400,9 +406,9 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                       ? 'bg-cyan-500 text-slate-950 shadow-md ring-2 ring-cyan-300'
                       : 'bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-200'
                   }`}
-                  title={`Rejugar Nivel ${lvl} (Conservarás tu progreso en el nivel ${activeFrontier})`}
+                  title={isEn ? `Replay Level ${lvl} (Keeps your frontier at Level ${activeFrontier})` : `Rejugar Nivel ${lvl} (Conservarás tu progreso en el nivel ${activeFrontier})`}
                 >
-                  <span>Nivel {lvl}</span>
+                  <span>{isEn ? `Level ${lvl}` : `Nivel ${lvl}`}</span>
                   <div className="flex text-amber-400">
                     <Star className="h-2.5 w-2.5 fill-amber-400" />
                   </div>
@@ -423,15 +429,15 @@ export const LevelMap: React.FC<LevelMapProps> = ({
           <button
             onClick={() => setIsWidgetCollapsed(false)}
             className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-900/95 hover:bg-slate-800 border border-amber-400/40 text-amber-300 shadow-2xl backdrop-blur-md cursor-pointer transition active:scale-95 text-xs font-black"
-            title="Expandir panel de Récord y Nivel Más Alto"
+            title={isEn ? "Expand Highscore & Highest Level panel" : "Expandir panel de Récord y Nivel Más Alto"}
           >
             <Trophy className="w-4 h-4 text-amber-400" />
             <div className="flex flex-col text-left">
-              <span className="text-[9px] text-amber-400/80 font-bold uppercase tracking-wider">Highscore</span>
+              <span className="text-[9px] text-amber-400/80 font-bold uppercase tracking-wider">{isEn ? "Highscore" : "Récord"}</span>
               <span className="text-xs font-black text-white">{Math.max(userProfile.best_score || 0, topScore).toLocaleString()}</span>
             </div>
             <span className="bg-amber-400/20 text-amber-300 border border-amber-400/40 px-1.5 py-0.5 rounded text-[10px] font-bold">
-              Nv.{activeFrontier}
+              {isEn ? `Lv.${activeFrontier}` : `Nv.${activeFrontier}`}
             </span>
           </button>
         ) : (
@@ -444,10 +450,10 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                 </div>
                 <div>
                   <span className="text-[10px] font-black uppercase tracking-wider text-amber-400">
-                    Estadísticas Pathway
+                    {isEn ? "Pathway Stats" : "Estadísticas Pathway"}
                   </span>
                   <h3 className="text-xs sm:text-sm font-black text-white leading-tight">
-                    Récord & Frontera
+                    {isEn ? "Highscore & Frontier" : "Récord & Frontera"}
                   </h3>
                 </div>
               </div>
@@ -455,8 +461,8 @@ export const LevelMap: React.FC<LevelMapProps> = ({
               <button
                 onClick={() => setIsWidgetCollapsed(true)}
                 className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer text-xs font-bold"
-                title="Minimizar panel"
-                aria-label="Minimizar panel"
+                title={isEn ? "Minimize panel" : "Minimizar panel"}
+                aria-label={isEn ? "Minimize panel" : "Minimizar panel"}
               >
                 ✕
               </button>
@@ -467,14 +473,14 @@ export const LevelMap: React.FC<LevelMapProps> = ({
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1">
                   <Crown className="w-3 h-3 text-amber-400" />
-                  Máximo Récord
+                  {isEn ? "Highest Score" : "Máximo Récord"}
                 </span>
                 {onOpenLeaderboard && (
                   <button
                     onClick={onOpenLeaderboard}
                     className="text-[10px] text-cyan-300 hover:text-cyan-200 underline font-semibold cursor-pointer"
                   >
-                    Ver Top
+                    {isEn ? "View Top" : "Ver Top"}
                   </button>
                 )}
               </div>
@@ -485,14 +491,14 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                 <span className="text-[10px] text-amber-400/80 font-bold">XP</span>
               </div>
               <div className="flex items-center justify-between text-[11px] text-slate-400 mt-1 pt-1 border-t border-white/5">
-                <span>Jugador:</span>
+                <span>{isEn ? "Player:" : "Jugador:"}</span>
                 <div className="flex items-center gap-1">
                   <span className="font-bold text-white tracking-wide">{userProfile.gamertag}</span>
                   {onOpenGamertag && (
                     <button
                       onClick={onOpenGamertag}
                       className="text-[10px] text-slate-400 hover:text-cyan-300 cursor-pointer ml-1"
-                      title="Editar Gamertag"
+                      title={isEn ? "Edit Gamertag" : "Editar Gamertag"}
                     >
                       ✏️
                     </button>
@@ -505,11 +511,11 @@ export const LevelMap: React.FC<LevelMapProps> = ({
             <div className="bg-gradient-to-r from-cyan-950/40 via-slate-900 to-slate-900 border border-cyan-500/30 rounded-xl p-2.5">
               <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-300 flex items-center gap-1">
                 <Zap className="w-3 h-3 text-cyan-400 fill-cyan-400" />
-                Nivel Más Alto Alcanzado
+                {isEn ? "Highest Level Reached" : "Nivel Más Alto Alcanzado"}
               </span>
               <div className="flex items-center justify-between mt-1">
                 <span className="text-xl sm:text-2xl font-black text-white">
-                  Nivel {activeFrontier}
+                  {isEn ? `Level ${activeFrontier}` : `Nivel ${activeFrontier}`}
                 </span>
                 <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-cyan-400/20 text-cyan-300 border border-cyan-400/30">
                   Frontier Peak
@@ -518,11 +524,11 @@ export const LevelMap: React.FC<LevelMapProps> = ({
               <div className="grid grid-cols-2 gap-1.5 mt-2 text-[10px] text-slate-300">
                 <div className="bg-slate-900/70 p-1.5 rounded-lg border border-white/5 flex items-center gap-1">
                   <Star className="w-3 h-3 text-amber-400 fill-amber-400 shrink-0" />
-                  <span>{(activeFrontier - 1) * 3} Estrellas</span>
+                  <span>{isEn ? `${(activeFrontier - 1) * 3} Stars` : `${(activeFrontier - 1) * 3} Estrellas`}</span>
                 </div>
                 <div className="bg-slate-900/70 p-1.5 rounded-lg border border-white/5 flex items-center gap-1">
                   <Sparkles className="w-3 h-3 text-cyan-400 shrink-0" />
-                  <span>{userProfile.total_tiles || (activeFrontier * 24)} Fichas</span>
+                  <span>{userProfile.total_tiles || (activeFrontier * 24)} {isEn ? "Tiles" : "Fichas"}</span>
                 </div>
               </div>
             </div>
@@ -534,7 +540,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                 className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs shadow-md transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
               >
                 <Zap className="w-3.5 h-3.5 fill-slate-950" />
-                <span>Jugar Nivel {activeFrontier} (Más Alto)</span>
+                <span>{isEn ? `Play Level ${activeFrontier} (Highest)` : `Jugar Nivel ${activeFrontier} (Más Alto)`}</span>
               </button>
 
               {onOpenLeaderboard && (
@@ -543,7 +549,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                   className="w-full py-1.5 px-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white font-bold text-[11px] transition cursor-pointer flex items-center justify-center gap-1.5 border border-white/10"
                 >
                   <Trophy className="w-3 h-3 text-amber-400" />
-                  <span>Tabla de Líderes Global</span>
+                  <span>{isEn ? "Global Leaderboard" : "Tabla de Líderes Global"}</span>
                 </button>
               )}
             </div>
@@ -716,7 +722,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
 
             <div className="absolute inset-x-0 bottom-6 text-center">
               <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-slate-950/80 px-4 py-1.5 text-xs font-black uppercase tracking-[0.25em] text-cyan-300 shadow-xl backdrop-blur-md">
-                ☁️ Niebla Inexplorada • Completa el nivel por hacer para revelar
+                {isEn ? "☁️ Unexplored Fog • Complete frontier level to reveal" : "☁️ Niebla Inexplorada • Completa el nivel por hacer para revelar"}
               </span>
             </div>
           </div>
@@ -747,7 +753,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                     <div className="absolute -top-11 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap">
                       <span className="flex items-center gap-1 rounded-full border border-amber-300 bg-amber-500 px-3 py-0.5 text-[10px] font-black uppercase tracking-wider text-slate-950 shadow-lg animate-bounce">
                         <Zap className="h-3 w-3 fill-slate-950" />
-                        Por Hacer • Nivel Actual
+                        {isEn ? "To Do • Current Level" : "Por Hacer • Nivel Actual"}
                       </span>
                     </div>
                   )}
@@ -757,7 +763,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap">
                       <span className="flex items-center gap-1 rounded-full border border-cyan-300 bg-cyan-500 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-slate-950 shadow-md">
                         <RotateCcw className="h-2.5 w-2.5" />
-                        Nivel Seleccionado
+                        {isEn ? "Selected Level" : "Nivel Seleccionado"}
                       </span>
                     </div>
                   )}
@@ -777,10 +783,10 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                     }`}
                     title={
                       isFrontier
-                        ? `Jugar Nivel ${level} (Por Hacer)`
+                        ? (isEn ? `Play Level ${level} (To Do)` : `Jugar Nivel ${level} (Por Hacer)`)
                         : conquered
-                        ? `Rejugar Nivel Pasado ${level} (Tu nivel actual ${activeFrontier} se conserva)`
-                        : `Nivel ${level} Bloqueado`
+                        ? (isEn ? `Replay Past Level ${level} (Your frontier level ${activeFrontier} is kept)` : `Rejugar Nivel Pasado ${level} (Tu nivel actual ${activeFrontier} se conserva)`)
+                        : (isEn ? `Level ${level} Locked` : `Nivel ${level} Bloqueado`)
                     }
                     aria-label={`Level ${level}`}
                   >
@@ -832,7 +838,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
             className="flex items-center gap-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-400/40 px-3 py-1.5 text-xs font-bold transition active:scale-95 cursor-pointer shadow-sm"
           >
             <RotateCcw className="h-3.5 w-3.5" />
-            <span>⏪ Ir al Nivel 1</span>
+            <span>{isEn ? "⏪ Jump to Level 1" : "⏪ Ir al Nivel 1"}</span>
           </button>
 
           <span className="h-4 w-px bg-white/10" />
@@ -842,7 +848,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
             className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 px-3.5 py-1.5 text-xs font-black shadow-md transition active:scale-95 cursor-pointer"
           >
             <Zap className="h-3.5 w-3.5 fill-slate-950" />
-            <span>⚡ Nivel {activeFrontier} (Por Hacer)</span>
+            <span>{isEn ? `⚡ Level ${activeFrontier} (Current)` : `⚡ Nivel ${activeFrontier} (Por Hacer)`}</span>
           </button>
         </div>
       </div>
@@ -851,13 +857,13 @@ export const LevelMap: React.FC<LevelMapProps> = ({
       <footer className="absolute inset-x-0 bottom-0 z-30 flex items-center justify-between border-t border-white/10 bg-slate-950/90 px-4 py-2 backdrop-blur-md text-[11px] text-slate-300">
         <span className="flex items-center gap-1.5">
           <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-300 inline" />
-          <span>¡Toca cualquier nivel pasado para rejugarlo o presiona el nivel por hacer para avanzar!</span>
+          <span>{isEn ? "Tap any past level to replay, or tap your frontier level to advance!" : "¡Toca cualquier nivel pasado para rejugarlo o presiona el nivel por hacer para avanzar!"}</span>
         </span>
         <button
           onClick={onClose}
           className="rounded-lg bg-amber-400 px-3 py-1 text-xs font-black text-slate-950 shadow hover:bg-amber-300 cursor-pointer transition active:scale-95"
         >
-          Volver al Juego
+          {isEn ? "Back to Game" : "Volver al Juego"}
         </button>
       </footer>
     </section>

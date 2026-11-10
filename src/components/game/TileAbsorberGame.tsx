@@ -9,7 +9,7 @@ import { DocModal } from "./DocModal";
 import { LifeModal } from "./LifeModal";
 import { LevelMap } from "./LevelMap";
 import { ExitLevelModal } from "./ExitLevelModal";
-import { soundManager } from "../../game/sound";
+import { soundManager, getMusicTrackForLevel } from "../../game/sound";
 import {
   getInitialLifeState,
   getSavedProgress,
@@ -35,10 +35,11 @@ import { ComodinesModal } from "./ComodinesModal";
 import { GameMenuModal } from "./GameMenuModal";
 import { generateComodinesForLevel, ComodinDefinition } from "../../game/comodines";
 import { saveComodinSessionToCache, getComodinSessionFromCache } from "../../services/sessionCache";
-import { ArrowLeft, Sparkles, Gamepad2, Zap, Fish, Menu } from "lucide-react";
+import { ArrowLeft, Sparkles, Gamepad2, Zap, Fish, Menu, Music } from "lucide-react";
+import { GameLanguage, GAME_TEXT } from "../../game/localization";
 
 interface TileAbsorberGameProps {
-  language?: "en" | "es";
+  language?: GameLanguage;
   mode?: "pathway" | "fish_of_fortune";
   onSwitchMode?: () => void;
   onBackToPortfolio?: () => void;
@@ -127,6 +128,14 @@ export function TileAbsorberGame({
   useEffect(() => {
     saveComodinSessionToCache(playingLevel, selectedComodin?.id || null, hasUsedComodin);
   }, [playingLevel, selectedComodin, hasUsedComodin]);
+
+  // Adaptively play electronic soundtrack depending on the block levels and version
+  useEffect(() => {
+    soundManager.playMusicForLevel(playingLevel, version);
+    return () => {
+      soundManager.stopMusic();
+    };
+  }, [playingLevel, version]);
 
   const handleActivateComodin = (comodinToUse?: ComodinDefinition) => {
     const comodin = comodinToUse || selectedComodin;
@@ -618,17 +627,26 @@ export function TileAbsorberGame({
           )}
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 ml-auto">
+        <div className="flex items-center gap-2.5 text-xs font-semibold text-slate-400 ml-auto flex-wrap">
+          <div
+            className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900/80 border border-cyan-500/20 text-cyan-300 text-[11px]"
+            title={getMusicTrackForLevel(playingLevel, version).artist}
+          >
+            <Music className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+            <span className="font-bold">{getMusicTrackForLevel(playingLevel, version).title}</span>
+            <span className="text-[10px] text-slate-400">({getMusicTrackForLevel(playingLevel, version).bpm} BPM)</span>
+          </div>
+
           {isFishOfFortune ? (
-            <>
+            <div className="flex items-center gap-1.5">
               <Fish className="w-4 h-4 text-teal-400 animate-pulse" />
               <span className="text-teal-300 font-bold">Fish Feeder · Aquatic 3D Edition</span>
-            </>
+            </div>
           ) : (
-            <>
+            <div className="flex items-center gap-1.5">
               <Gamepad2 className="w-4 h-4 text-cyan-400" />
               <span>Conveyor Realms 3D · Three.js Edition</span>
-            </>
+            </div>
           )}
         </div>
       </div>
@@ -637,6 +655,7 @@ export function TileAbsorberGame({
       <div className="relative w-full h-[78vh] min-h-[600px] max-h-[880px] rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-slate-950 select-none">
         <HeaderBar
           version={version}
+          language={language}
           lives={lifeState.lives}
           maxLives={MAX_LIVES}
           soundEnabled={soundEnabled}
@@ -677,6 +696,7 @@ export function TileAbsorberGame({
         {!showMap && (
           <BottomQueue
             version={version}
+            language={language}
             activeRunnersCount={activeSlotCount}
             maxCapacity={MAX_ACTIVE_RUNNERS}
             queueColumns={queueColumns}
@@ -689,6 +709,7 @@ export function TileAbsorberGame({
         {hasWon && (
           <WinModal
             version={version}
+            language={language}
             level={playingLevel}
             frontierLevel={level}
             timeElapsed={elapsedTime}
@@ -703,6 +724,8 @@ export function TileAbsorberGame({
 
         {isStuck && (
           <LifeModal
+            version={version}
+            language={language}
             level={playingLevel}
             lives={lifeState.lives}
             maxLives={MAX_LIVES}
@@ -720,6 +743,7 @@ export function TileAbsorberGame({
 
         {isExitConfirmOpen && (
           <ExitLevelModal
+            language={language}
             level={playingLevel}
             onStay={() => setIsExitConfirmOpen(false)}
             onExit={abandonRunForPath}
@@ -728,6 +752,7 @@ export function TileAbsorberGame({
 
         {showMap && (
           <LevelMap
+            language={language}
             frontierLevel={level}
             selectedLevel={playingLevel}
             experience={experience}
@@ -740,6 +765,7 @@ export function TileAbsorberGame({
 
         {/* 1 per Level Comodines Tactical Modal */}
         <ComodinesModal
+          language={language}
           isOpen={isComodinesModalOpen}
           onClose={() => setIsComodinesModalOpen(false)}
           options={comodinesOptions}
@@ -755,11 +781,12 @@ export function TileAbsorberGame({
           }}
         />
 
-        <DocModal isOpen={isDocsOpen} onClose={() => setIsDocsOpen(false)} />
+        <DocModal language={language} isOpen={isDocsOpen} onClose={() => setIsDocsOpen(false)} />
 
         {/* Modales de Supabase, Gamertag, Highscore y HTTPS Ad Viewer */}
         {isLeaderboardOpen && (
           <LeaderboardModal
+            language={language}
             onClose={() => setIsLeaderboardOpen(false)}
             onOpenGamertag={() => {
               setIsLeaderboardOpen(false);
@@ -770,6 +797,7 @@ export function TileAbsorberGame({
 
         {isGamertagModalOpen && (
           <GamertagModal
+            language={language}
             onClose={() => setIsGamertagModalOpen(false)}
             onSave={(tag) => setUserProfile((prev) => ({ ...prev, gamertag: tag }))}
           />

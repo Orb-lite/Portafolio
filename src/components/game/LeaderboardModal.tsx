@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, Medal, Sparkles, RefreshCw, Database, User, X, CheckCircle2, AlertCircle, ArrowUpRight } from 'lucide-react';
 import { fetchLeaderboard, HighscoreEntry, getStoredUser, getSupabaseConfig } from '../../services/supabaseGame';
+import { GameLanguage } from '../../game/localization';
 
 interface LeaderboardModalProps {
+  language?: GameLanguage;
   onClose: () => void;
   onOpenGamertag: () => void;
   onOpenSupabaseConfig?: () => void;
 }
 
 export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
+  language = 'es',
   onClose,
   onOpenGamertag,
 }) => {
+  const isEn = language === 'en';
   const [scores, setScores] = useState<HighscoreEntry[]>([]);
   const [isOnline, setIsOnline] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -45,13 +49,13 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
               <Trophy className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-black text-white">Salón de la Fama</h2>
+              <h2 className="text-lg sm:text-xl font-black text-white">{isEn ? "Hall of Fame" : "Salón de la Fama"}</h2>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className={`inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full ${isOnline ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30' : 'bg-amber-500/20 text-amber-300 border border-amber-400/30'}`}>
-                  {isOnline ? '🟢 Ranking Global' : '🟡 Modo Arcade'}
+                  {isOnline ? (isEn ? '🟢 Global Ranking' : '🟢 Ranking Global') : (isEn ? '🟡 Arcade Mode' : '🟡 Modo Arcade')}
                 </span>
                 <span className="text-[10px] text-slate-400">
-                  Tu Gamertag: <strong className="text-cyan-300">{currentUser.gamertag}</strong>
+                  {isEn ? "Your Gamertag: " : "Tu Gamertag: "}<strong className="text-cyan-300">{currentUser.gamertag}</strong>
                 </span>
               </div>
             </div>
@@ -72,17 +76,17 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-400/30 font-bold transition cursor-pointer"
           >
             <User className="h-3.5 w-3.5" />
-            <span>Editar Gamertag</span>
+            <span>{isEn ? "Edit Gamertag" : "Editar Gamertag"}</span>
           </button>
 
           <button
             onClick={loadScores}
             disabled={loading}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-semibold transition cursor-pointer"
-            title="Actualizar tabla"
+            title={isEn ? "Refresh table" : "Actualizar tabla"}
           >
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin text-amber-400' : 'text-slate-400'}`} />
-            <span>Actualizar</span>
+            <span>{isEn ? "Refresh" : "Actualizar"}</span>
           </button>
         </div>
 
@@ -90,7 +94,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
         <div className="flex-1 overflow-y-auto space-y-2 pr-1 my-2 scrollbar-thin">
           {scores.length === 0 ? (
             <div className="p-8 text-center text-slate-400 text-xs">
-              No hay puntuaciones registradas aún. ¡Sé el primero en jugar!
+              {isEn ? "No scores recorded yet. Be the first to play!" : "No hay puntuaciones registradas aún. ¡Sé el primero en jugar!"}
             </div>
           ) : (
             scores.map((entry, idx) => {
@@ -134,14 +138,14 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
                         </span>
                         {isMe && (
                           <span className="text-[9px] font-black bg-cyan-500 text-slate-950 px-1.5 py-0.2 rounded-full uppercase">
-                            Tú
+                            {isEn ? "You" : "Tú"}
                           </span>
                         )}
                       </div>
                       <div className="flex items-center gap-2 text-[10px] text-slate-400">
-                        <span>Nivel {entry.wave}</span>
+                        <span>{isEn ? `Level ${entry.wave}` : `Nivel ${entry.wave}`}</span>
                         <span>•</span>
-                        <span>{entry.tiles_absorbed} baldosas</span>
+                        <span>{entry.tiles_absorbed} {isEn ? "tiles" : "baldosas"}</span>
                       </div>
                     </div>
                   </div>
@@ -159,12 +163,12 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
 
         {/* Footer */}
         <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
-          <span>Tus victorias en cada nivel envían tus puntos automáticamente.</span>
+          <span>{isEn ? "Level victories automatically submit your score." : "Tus victorias en cada nivel envían tus puntos automáticamente."}</span>
           <button
             onClick={onClose}
             className="px-4 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black transition cursor-pointer"
           >
-            Cerrar
+            {isEn ? "Close" : "Cerrar"}
           </button>
         </div>
       </div>

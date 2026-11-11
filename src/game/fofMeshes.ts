@@ -1,4 +1,4 @@
-﻿import * as THREE from 'three';
+import * as THREE from 'three';
 import { TileColor, SpecialTileType } from './types';
 import { TrackPath } from './trackPath';
 import { getNumberTexture, createConveyorTexture } from './proceduralTextures';
@@ -138,18 +138,75 @@ export class FofMeshFactory {
     group.add(tray);
 
     // 1. Modelado según Mecánica Especial
-    if (specialType === 'coral_bomb') {
+    if (specialType === 'coral_bomb' || specialType === 'bomb') {
+      const bombGroup = new THREE.Group();
+      bombGroup.name = 'bomb_unit';
+
       const coralGeo = new THREE.DodecahedronGeometry(0.19 * s);
       const coralMat = new THREE.MeshStandardMaterial({
-        color: 0xff0055,
-        roughness: 0.3,
-        emissive: 0x990033,
-        emissiveIntensity: 0.6,
+        color: 0xef4444,
+        roughness: 0.25,
+        metalness: 0.2,
+        emissive: 0xdc2626,
+        emissiveIntensity: 0.85,
       });
       const coralMesh = new THREE.Mesh(coralGeo, coralMat);
       coralMesh.position.y = 0.2 * s;
       coralMesh.castShadow = true;
-      group.add(coralMesh);
+      bombGroup.add(coralMesh);
+
+      // Spikes / fuse on bomb pearl
+      for (let sp = 0; sp < 4; sp++) {
+        const ang = (sp * Math.PI) / 2;
+        const spikeGeo = new THREE.ConeGeometry(0.045 * s, 0.12 * s, 5);
+        const spikeMat = new THREE.MeshStandardMaterial({
+          color: 0xfbbf24,
+          emissive: 0xf59e0b,
+          emissiveIntensity: 0.7,
+        });
+        const spike = new THREE.Mesh(spikeGeo, spikeMat);
+        spike.position.set(Math.cos(ang) * 0.17 * s, 0.2 * s, Math.sin(ang) * 0.17 * s);
+        spike.rotation.z = -Math.cos(ang) * 0.7;
+        spike.rotation.x = Math.sin(ang) * 0.7;
+        bombGroup.add(spike);
+      }
+
+      // Spark on top
+      const sparkGeo = new THREE.OctahedronGeometry(0.05 * s);
+      const sparkMat = new THREE.MeshBasicMaterial({ color: 0xffea00 });
+      const spark = new THREE.Mesh(sparkGeo, sparkMat);
+      spark.position.set(0, 0.36 * s, 0);
+      spark.name = 'spark';
+      bombGroup.add(spark);
+
+      group.add(bombGroup);
+    } else if (specialType === 'rainbow') {
+      const rainbowGroup = new THREE.Group();
+      rainbowGroup.name = 'rainbow_unit';
+
+      const rainbowMat = new THREE.MeshPhysicalMaterial({
+        color: 0xff00aa,
+        roughness: 0.1,
+        metalness: 0.8,
+        emissive: 0xaa00ff,
+        emissiveIntensity: 0.5,
+        clearcoat: 1.0,
+      });
+      const pearl = new THREE.Mesh(this.pearlGeo, rainbowMat);
+      pearl.position.y = 0.2 * s;
+      pearl.scale.set(s * 1.08, s * 1.08, s * 1.08);
+      pearl.castShadow = true;
+      rainbowGroup.add(pearl);
+
+      // Orbiting rainbow halo ring
+      const ringGeo = new THREE.TorusGeometry(0.24 * s, 0.02 * s, 8, 24);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.position.y = 0.22 * s;
+      ring.rotation.x = Math.PI / 3;
+      rainbowGroup.add(ring);
+
+      group.add(rainbowGroup);
     } else if (specialType === 'clam_trap') {
       const clamGeo = new THREE.ConeGeometry(0.22 * s, 0.22 * s, 5);
       const clamMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.7 });

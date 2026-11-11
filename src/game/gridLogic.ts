@@ -92,6 +92,17 @@ export class GridManager {
           !isBorder &&
           Math.random() < config.encapsulationChance;
 
+        // Special Tile assignment (Bombs and Rainbow pearls) starting at level 2
+        let specialType: import('./types').SpecialTileType | undefined = undefined;
+        if (level >= 2 && !shouldEncapsulate) {
+          const rand = Math.random();
+          if (rand < 0.06) {
+            specialType = 'bomb';
+          } else if (rand < 0.09) {
+            specialType = 'rainbow';
+          }
+        }
+
         const posX = startX + c * (this.tileSize + this.tileSpacing);
         const posZ = startZ + r * (this.tileSize + this.tileSpacing);
 
@@ -102,12 +113,25 @@ export class GridManager {
           color,
           collected: false,
           encapsulated: shouldEncapsulate,
+          specialType,
           absorbedProgress: 0,
           worldPos: [posX, 0.2, posZ],
         };
 
         this.tiles.push(tile);
         this.grid[r][c] = tile;
+      }
+    }
+
+    // Guarantee at least 2-3 special tiles per level from level 2 onwards
+    const minSpecial = level >= 4 ? 3 : level >= 2 ? 2 : 0;
+    const currentSpecial = this.tiles.filter((t) => t.specialType).length;
+    if (currentSpecial < minSpecial) {
+      const candidates = this.tiles.filter((t) => !t.specialType && !t.encapsulated);
+      for (let i = 0; i < minSpecial - currentSpecial && candidates.length > 0; i++) {
+        const idx = Math.floor(Math.random() * candidates.length);
+        const picked = candidates.splice(idx, 1)[0];
+        picked.specialType = i % 2 === 0 ? 'bomb' : 'rainbow';
       }
     }
   }
@@ -123,6 +147,13 @@ export class GridManager {
     distanceThreshold = Math.max(0.48, this.tileSize * 1.15),
     isPrismatic: boolean = false
   ): GridTile | null {
+    const tileMatches = (tile: GridTile) =>
+      isPrismatic ||
+      tile.color === color ||
+      tile.specialType === 'rainbow' ||
+      tile.specialType === 'bomb' ||
+      tile.specialType === 'coral_bomb';
+
     if (side === 'bottom') {
       // Facing bottom track: scan from bottom row upwards for each col
       let closestTile: GridTile | null = null;
@@ -133,7 +164,7 @@ export class GridManager {
           const tile = this.grid[r][c];
           if (tile && !tile.collected) {
             // First uncollected tile in column c from the bottom
-            if ((isPrismatic || tile.color === color) && tile.worldPos) {
+            if (tileMatches(tile) && tile.worldPos) {
               const diffX = Math.abs(tile.worldPos[0] - runnerX);
               if (diffX < distanceThreshold && diffX < minDiff) {
                 minDiff = diffX;
@@ -154,7 +185,7 @@ export class GridManager {
         for (let c = this.cols - 1; c >= 0; c--) {
           const tile = this.grid[r][c];
           if (tile && !tile.collected) {
-            if ((isPrismatic || tile.color === color) && tile.worldPos) {
+            if (tileMatches(tile) && tile.worldPos) {
               const diffZ = Math.abs(tile.worldPos[2] - runnerZ);
               if (diffZ < distanceThreshold && diffZ < minDiff) {
                 minDiff = diffZ;
@@ -175,7 +206,7 @@ export class GridManager {
         for (let r = 0; r < this.rows; r++) {
           const tile = this.grid[r][c];
           if (tile && !tile.collected) {
-            if ((isPrismatic || tile.color === color) && tile.worldPos) {
+            if (tileMatches(tile) && tile.worldPos) {
               const diffX = Math.abs(tile.worldPos[0] - runnerX);
               if (diffX < distanceThreshold && diffX < minDiff) {
                 minDiff = diffX;
@@ -196,7 +227,7 @@ export class GridManager {
         for (let c = 0; c < this.cols; c++) {
           const tile = this.grid[r][c];
           if (tile && !tile.collected) {
-            if ((isPrismatic || tile.color === color) && tile.worldPos) {
+            if (tileMatches(tile) && tile.worldPos) {
               const diffZ = Math.abs(tile.worldPos[2] - runnerZ);
               if (diffZ < distanceThreshold && diffZ < minDiff) {
                 minDiff = diffZ;

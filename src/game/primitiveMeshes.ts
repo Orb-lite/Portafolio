@@ -58,20 +58,70 @@ export class PrimitiveMeshFactory {
     });
   }
 
-  public createTile(color: TileColor, encapsulated = false, size = 0.44): THREE.Group {
+  public createTile(
+    color: TileColor,
+    encapsulated = false,
+    size = 0.44,
+    specialType?: import('./types').SpecialTileType
+  ): THREE.Group {
     const group = new THREE.Group();
-    const hex = getPrimitiveHexColor(color);
-    const mat = new THREE.MeshStandardMaterial({
-      color: hex,
-      roughness: color === 'white' ? 0.2 : 0.35,
-      metalness: 0.15,
-    });
     const s = size / 0.42;
-    const tile = new THREE.Mesh(this.tileGeo, mat);
-    tile.scale.set(s, s, s);
-    tile.castShadow = true;
-    tile.receiveShadow = true;
-    group.add(tile);
+
+    if (specialType === 'bomb' || specialType === 'coral_bomb') {
+      const bombMat = new THREE.MeshStandardMaterial({
+        color: 0xef4444,
+        roughness: 0.2,
+        metalness: 0.8,
+        emissive: 0xdc2626,
+        emissiveIntensity: 0.8,
+      });
+      const bombMesh = new THREE.Mesh(new THREE.DodecahedronGeometry(0.2 * s), bombMat);
+      bombMesh.position.y = 0.2 * s;
+      bombMesh.castShadow = true;
+      group.add(bombMesh);
+
+      const fuseMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
+      const fuse = new THREE.Mesh(new THREE.CylinderGeometry(0.03 * s, 0.03 * s, 0.12 * s, 6), fuseMat);
+      fuse.position.y = 0.36 * s;
+      group.add(fuse);
+
+      const sparkMat = new THREE.MeshBasicMaterial({ color: 0xffea00 });
+      const spark = new THREE.Mesh(new THREE.OctahedronGeometry(0.045 * s), sparkMat);
+      spark.position.y = 0.43 * s;
+      group.add(spark);
+    } else if (specialType === 'rainbow') {
+      const rainbowMat = new THREE.MeshPhysicalMaterial({
+        color: 0xff00aa,
+        roughness: 0.1,
+        metalness: 0.85,
+        emissive: 0xaa00ff,
+        emissiveIntensity: 0.5,
+      });
+      const prismMesh = new THREE.Mesh(new THREE.OctahedronGeometry(0.22 * s), rainbowMat);
+      prismMesh.position.y = 0.2 * s;
+      prismMesh.castShadow = true;
+      group.add(prismMesh);
+
+      const halo = new THREE.Mesh(
+        new THREE.TorusGeometry(0.24 * s, 0.02 * s, 8, 20),
+        new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+      );
+      halo.position.y = 0.22 * s;
+      halo.rotation.x = Math.PI / 3;
+      group.add(halo);
+    } else {
+      const hex = getPrimitiveHexColor(color);
+      const mat = new THREE.MeshStandardMaterial({
+        color: hex,
+        roughness: color === 'white' ? 0.2 : 0.35,
+        metalness: 0.15,
+      });
+      const tile = new THREE.Mesh(this.tileGeo, mat);
+      tile.scale.set(s, s, s);
+      tile.castShadow = true;
+      tile.receiveShadow = true;
+      group.add(tile);
+    }
 
     if (encapsulated) {
       // Ice/crystal cage encapsulation

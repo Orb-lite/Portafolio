@@ -419,9 +419,9 @@ export class GameSceneManager {
     for (const tile of this.gridManager.tiles) {
       let mesh: THREE.Object3D;
       if (this.isFishMode) {
-        mesh = this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize);
+        mesh = this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize, tile.shieldLayers || 0, tile.specialType);
       } else {
-        mesh = this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize);
+        mesh = this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize, tile.specialType);
       }
 
       if (tile.worldPos) {
@@ -811,9 +811,9 @@ export class GameSceneManager {
       }
       let newMesh: THREE.Object3D;
       if (this.isFishMode) {
-        newMesh = this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize);
+        newMesh = this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize, tile.shieldLayers || 0, tile.specialType);
       } else {
-        newMesh = this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize);
+        newMesh = this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize, tile.specialType);
       }
       if (tile.worldPos) {
         newMesh.position.set(tile.worldPos[0], tile.worldPos[1], tile.worldPos[2]);
@@ -1220,6 +1220,19 @@ export class GameSceneManager {
       }
     }
 
+    // Animate idle special items (pulsating bomb sparks and rotating rainbow rings)
+    this.gridGroup.children.forEach((child) => {
+      const spark = child.getObjectByName('spark');
+      if (spark) {
+        const pulse = 1.0 + Math.sin(time * 12) * 0.25;
+        spark.scale.set(pulse, pulse, pulse);
+      }
+      const rainbowUnit = child.getObjectByName('rainbow_unit');
+      if (rainbowUnit) {
+        rainbowUnit.rotation.y = time * 1.5;
+      }
+    });
+
     if (this.shakeIntensity > 0) {
       this.shakeIntensity = Math.max(0, this.shakeIntensity - dt * 3.0);
       const rx = (Math.random() - 0.5) * this.shakeIntensity * 0.15;
@@ -1352,10 +1365,105 @@ export class GameSceneManager {
     }
   }
 
-  private absorbTile(tile: { id: string; collected: boolean; color: TileColor; worldPos?: [number, number, number] }, runner: { id: string }) {
+  private detonateBombTile(bombTile: GridTile, runner: { id: string; color: TileColor; remaining: number }) {
+    if (!bombTile.worldPos) return;
+    const centerPos = new THREE.Vector3(...bombTile.worldPos);
+
+    soundManager.playExplosion();
+    this.shakeIntensity = Math.min(0.7, this.shakeIntensity + 0.45);
+
+    this.spawnGroundShockwave(centerPos, 3.2, 0xff3b30, 0.8);
+    this.spawnExplosionBurst(centerPos, 42, 4.6, 3.2, {
+      palette: [0xff2200, 0xff7700, 0xffbb00, 0xffffff, 0xf43f5e],
+      maxLife: 1.4,
+    });
+
+    const r0 = Math.max(0, bombTile.row - 1);
+    const r1 = Math.min(this.gridManager.rows - 1, bombTile.row + 1);
+    const c0 = Math.max(0, bombTile.col - 1);
+    const c1 = Math.min(this.gridManager.cols - 1, bombTile.col + 1);
+
+    const secondaryBombs: GridTile[] = [];
+
+    for (let r = r0; r <= r1; r++) {
+      for (let c = c0; c <= c1; c++) {
+        if (r === bombTile.row && c === bombTile.col) continue;
+        const neighbor = this.gridManager.grid[r][c];
+        if (!neighbor || neighbor.collected) continue;
+
+        if (neighbor.encapsulated) {
+          this.popEncapsulation(neighbor);
+          continue;
+        }
+
+        if (neighbor.specialType === 'bomb' || neighbor.specialType === 'coral_bomb') {
+          secondaryBombs.push(neighbor);
+          continue;
+        }
+
+        neighbor.collected = true;
+        const mesh = this.tileMeshMap.get(neighbor.id);
+        if (mesh && neighbor.worldPos) {
+          const nPos = new THREE.Vector3(...neighbor.worldPos);
+          this.spawnAbsorbParticles(nPos, neighbor.color);
+          this.gridGroup.remove(mesh);
+          this.tileMeshMap.delete(neighbor.id);
+        }
+
+        const remainingBoardCount = this.gridManager.tiles.filter((t) => !t.collected).length;
+        this.callbacks.onTileAbsorbed?.(neighbor.id, neighbor.color, runner.remaining);
+        this.callbacks.onTileCollected?.(neighbor.id, neighbor.color, remainingBoardCount);
+      }
+    }
+
+    secondaryBombs.forEach((secBomb, idx) => {
+      window.setTimeout(() => {
+        if (!secBomb.collected) {
+          secBomb.collected = true;
+          const mesh = this.tileMeshMap.get(secBomb.id);
+          if (mesh) {
+            this.gridGroup.remove(mesh);
+            this.tileMeshMap.delete(secBomb.id);
+          }
+          this.detonateBombTile(secBomb, runner);
+        }
+      }, 120 * (idx + 1));
+    });
+  }
+
+  private triggerRainbowCascade(rainbowTile: GridTile, runner: { id: string; color: TileColor; remaining: number }) {
+    if (!rainbowTile.worldPos) return;
+    const centerPos = new THREE.Vector3(...rainbowTile.worldPos);
+
+    soundManager.playRainbowShatter();
+    this.spawnGroundShockwave(centerPos, 3.6, 0x38bdf8, 0.9);
+    this.spawnCelebrationBurst(centerPos, 'magenta');
+
+    const uncollectedMatching = this.gridManager.tiles.filter(
+      (t) => !t.collected && t.id !== rainbowTile.id && t.color === runner.color
+    );
+
+    const bonusCount = Math.min(4, uncollectedMatching.length);
+    for (let i = 0; i < bonusCount; i++) {
+      const extraTile = uncollectedMatching[i];
+      if (extraTile.encapsulated) {
+        this.popEncapsulation(extraTile);
+      } else {
+        this.absorbTile(extraTile, runner);
+      }
+    }
+  }
+
+  private absorbTile(tile: GridTile, runner: { id: string; color: TileColor; remaining: number }) {
     tile.collected = true;
     const mesh = this.tileMeshMap.get(tile.id);
     if (!mesh || !tile.worldPos) return;
+
+    if (tile.specialType === 'bomb' || tile.specialType === 'coral_bomb') {
+      this.detonateBombTile(tile, runner);
+    } else if (tile.specialType === 'rainbow') {
+      this.triggerRainbowCascade(tile, runner);
+    }
 
     this.flyingTiles.push({
       mesh,

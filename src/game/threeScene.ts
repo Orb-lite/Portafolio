@@ -3,10 +3,13 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { GameVersion, PolishLevel, TileColor } from './types';
 import { getLevelConfig } from './experience';
 import { TrackPath } from './trackPath';
-import { GridManager, GridTile } from './gridManager';
-import { PrimitiveMeshFactory } from './primitiveMeshFactory';
-import { FofMeshFactory } from './fofMeshFactory';
+import { GridManager, GridTile } from './gridLogic';
+import { PrimitiveMeshFactory } from './primitiveMeshes';
+import { FofMeshFactory } from './fofMeshes';
+import { WorldMeshFactory } from './worldMeshes';
 import { soundManager } from './sound';
+
+const _vecA = new THREE.Vector3();
 
 export interface SceneCallbacks {
   onTileAbsorbed?: (tileId: string, color: TileColor, remainingCount: number) => void;
@@ -41,6 +44,7 @@ export class GameSceneManager {
   public gridManager: GridManager;
   private primitiveFactory: PrimitiveMeshFactory;
   private fofFactory: FofMeshFactory;
+  private worldMeshFactory: WorldMeshFactory;
 
   // Scene Objects
   private gridGroup = new THREE.Group();
@@ -60,6 +64,7 @@ export class GameSceneManager {
     id: string;
     color: TileColor;
     meshGroup: THREE.Group;
+    tailMesh?: THREE.Mesh;
     badgeMat?: THREE.MeshStandardMaterial;
     updateNumber?: (n: number) => void;
     progress: number;
@@ -111,28 +116,6 @@ export class GameSceneManager {
   private baseCameraPos = new THREE.Vector3(0, 19.0, 7.0);
   private cameraTarget = new THREE.Vector3(0, 0.8, 0.35);
   private callbacks: SceneCallbacks;
-  private textureLoader = new THREE.TextureLoader();
-  private worldTextures = new Map<string, THREE.Texture>();
-
-  private getWorldTexture(path: string, repeat: number = 6): THREE.Texture {
-    const key = `${path}_${repeat}`;
-    if (this.worldTextures.has(key)) {
-      return this.worldTextures.get(key)!;
-    }
-    const texture = this.textureLoader.load(path, (tex) => {
-      tex.wrapS = THREE.RepeatWrapping;
-      tex.wrapT = THREE.RepeatWrapping;
-      tex.repeat.set(repeat, repeat);
-      tex.colorSpace = THREE.SRGBColorSpace;
-      tex.needsUpdate = true;
-    });
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(repeat, repeat);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    this.worldTextures.set(key, texture);
-    return texture;
-  }
 
   constructor(
     container: HTMLElement,
@@ -152,6 +135,7 @@ export class GameSceneManager {
     this.gridManager = new GridManager(initialLevel, this.isFishMode);
     this.primitiveFactory = new PrimitiveMeshFactory();
     this.fofFactory = new FofMeshFactory();
+    this.worldMeshFactory = new WorldMeshFactory();
 
     this.initRenderer();
     this.initScene();
@@ -213,15 +197,6 @@ export class GameSceneManager {
     this.dirLight = new THREE.DirectionalLight(0xfff7ed, 1.8);
     this.dirLight.position.set(4, 12, 6);
     this.dirLight.castShadow = !this.isSoftwareGl;
-    this.dirLight.shadow.mapSize.width = 1024;
-    this.dirLight.shadow.mapSize.height = 1024;
-    this.dirLight.shadow.camera.near = 0.5;
-    this.dirLight.shadow.camera.far = 60;
-    this.dirLight.shadow.camera.left = -15;
-    this.dirLight.shadow.camera.right = 15;
-    this.dirLight.shadow.camera.top = 15;
-    this.dirLight.shadow.camera.bottom = -15;
-    this.dirLight.shadow.bias = -0.0005;
     this.scene.add(this.dirLight);
 
     this.hemiLight = new THREE.HemisphereLight(0x93c5fd, 0x1e293b, 0.8);
@@ -234,15 +209,6 @@ export class GameSceneManager {
     this.scene.add(this.vfxGroup);
   }
 
-  public setCameraDistance(y: number, z: number) {
-    this.baseCameraPos.set(0, y, z);
-    if (this.camera) {
-      this.camera.position.copy(this.baseCameraPos);
-      this.camera.lookAt(this.cameraTarget);
-      this.camera.updateProjectionMatrix();
-    }
-  }
-
   public setTimeOfDay(mode: 'day' | 'night') {
     this.timeOfDay = mode;
     this.applyAtmosphere();
@@ -250,51 +216,9 @@ export class GameSceneManager {
 
   public applyAtmosphere() {
     if (this.isFishMode) {
-      if (this.timeOfDay === 'day') {
-        const bgColor = new THREE.Color(0x0284c7);
-        this.scene.background = bgColor;
-        this.scene.fog = new THREE.FogExp2(0x0284c7, 0.007);
-        if (this.dirLight) {
-          this.dirLight.color.setHex(0xfffbeb);
-          this.dirLight.intensity = 1.85;
-          this.dirLight.position.set(4, 14, 6);
-        }
-        if (this.hemiLight) {
-          this.hemiLight.color.setHex(0x7dd3fc);
-          this.hemiLight.groundColor.setHex(0x0369a1);
-          this.hemiLight.intensity = 0.85;
-        }
-        if (this.groundMesh?.material instanceof THREE.MeshStandardMaterial) {
-          this.groundMesh.material.color.setHex(0xffffff);
-        }
-      } else {
-        const bgColor = new THREE.Color(0x021727);
-        this.scene.background = bgColor;
-        this.scene.fog = new THREE.FogExp2(0x021727, 0.009);
-        if (this.dirLight) {
-          this.dirLight.color.setHex(0xdbeafe);
-          this.dirLight.intensity = 1.35;
-          this.dirLight.position.set(-4, 13, 5);
-        }
-        if (this.hemiLight) {
-          this.hemiLight.color.setHex(0x38bdf8);
-          this.hemiLight.groundColor.setHex(0x020f1c);
-          this.hemiLight.intensity = 0.75;
-        }
-        if (this.groundMesh?.material instanceof THREE.MeshStandardMaterial) {
-          this.groundMesh.material.color.setHex(0x93c5fd);
-        }
-      }
-    } else {
-      if (this.dirLight && this.hemiLight) {
-        if (this.timeOfDay === 'night') {
-          this.dirLight.intensity = 1.1;
-          this.hemiLight.intensity = 0.6;
-        } else {
-          this.dirLight.intensity = 1.8;
-          this.hemiLight.intensity = 0.8;
-        }
-      }
+      const bgColor = this.timeOfDay === 'day' ? new THREE.Color(0x0284c7) : new THREE.Color(0x021727);
+      this.scene.background = bgColor;
+      this.scene.fog = new THREE.FogExp2(bgColor.getHex(), 0.007);
     }
   }
 
@@ -313,140 +237,44 @@ export class GameSceneManager {
 
     this.trackPath = new TrackPath(-trackExtent, trackExtent, -trackExtent, trackExtent, 0.9);
 
-    if (this.camera) {
-      this.camera.position.copy(this.baseCameraPos);
-      this.camera.lookAt(this.cameraTarget);
-      this.camera.updateProjectionMatrix();
-    }
-
-    if (this.dirLight) {
-      this.dirLight.position.set(4, 12, 6);
-      const shadowExtent = 12;
-      this.dirLight.shadow.camera.left = -shadowExtent;
-      this.dirLight.shadow.camera.right = shadowExtent;
-      this.dirLight.shadow.camera.top = shadowExtent;
-      this.dirLight.shadow.camera.bottom = -shadowExtent;
-      this.dirLight.shadow.camera.far = 60;
-      this.dirLight.shadow.camera.updateProjectionMatrix();
-    }
-
-    this.clearObstacleTimers();
     this.clearGroup(this.trackGroup);
     this.clearGroup(this.backdropGroup);
     this.clearGroup(this.gridGroup);
     this.clearGroup(this.runnersGroup);
     this.clearGroup(this.vfxGroup);
-    this.clearWinExplosions();
-    this.hasTriggeredWin = false;
     this.tileMeshMap.clear();
     this.activeRunners = [];
     this.flyingTiles = [];
     this.callbacks.onSlotCountChange?.(0);
 
-    if (this.isFishMode) {
-      this.applyAtmosphere();
-      this.buildScenery(level, trackExtent, 1.0);
+    const style = { background: 0x15121e, ground: 0x1e1927, roughness: 0.18, metalness: 0.4 };
+    this.scene.background = new THREE.Color(style.background);
 
-      const causticsTex = this.getWorldTexture('/assets/worlds/coral_cove.jpg', 6);
-      const floorSize = Math.max(60, trackExtent * 2 + 30);
-      const floorGeo = new THREE.PlaneGeometry(floorSize, floorSize);
-      const floorMat = new THREE.MeshStandardMaterial({
-        map: causticsTex,
-        roughness: 0.75,
-        metalness: 0.1,
-      });
-      this.groundMesh = new THREE.Mesh(floorGeo, floorMat);
-      this.groundMesh.rotation.x = -Math.PI / 2;
-      this.groundMesh.position.y = -0.02;
-      this.groundMesh.receiveShadow = true;
-      this.trackGroup.add(this.groundMesh);
+    const floorSize = Math.max(60, trackExtent * 2 + 30);
+    const floorGeo = new THREE.PlaneGeometry(floorSize, floorSize);
+    const floorMat = new THREE.MeshStandardMaterial({
+      color: style.ground,
+      roughness: style.roughness,
+      metalness: style.metalness,
+    });
+    this.groundMesh = new THREE.Mesh(floorGeo, floorMat);
+    this.groundMesh.rotation.x = -Math.PI / 2;
+    this.groundMesh.position.y = -0.02;
+    this.trackGroup.add(this.groundMesh);
 
-      const { group, beltMaterial } = this.fofFactory.createCoralTrack(this.trackPath);
-      this.trackGroup.add(group);
-      this.conveyorBeltMaterial = beltMaterial;
-    } else {
-      const style = { background: 0x15121e, ground: 0x1e1927, roughness: 0.18, metalness: 0.4 };
-      this.scene.background = new THREE.Color(style.background);
-      this.scene.fog = new THREE.Fog(style.background, 30, 90);
-      this.dirLight.color.setHex(0xffffff);
-      this.hemiLight.color.setHex(0xa5b4fc);
-      this.hemiLight.groundColor.setHex(style.ground);
-
-      this.buildScenery(level, trackExtent, 1.0);
-
-      const floorSize = Math.max(60, trackExtent * 2 + 30);
-      const floorGeo = new THREE.PlaneGeometry(floorSize, floorSize);
-      const floorMat = new THREE.MeshStandardMaterial({
-        color: style.ground,
-        roughness: style.roughness,
-        metalness: style.metalness,
-      });
-      this.groundMesh = new THREE.Mesh(floorGeo, floorMat);
-      this.groundMesh.rotation.x = -Math.PI / 2;
-      this.groundMesh.position.y = -0.02;
-      this.groundMesh.receiveShadow = true;
-      this.trackGroup.add(this.groundMesh);
-
-      const { group, beltMaterial } = this.primitiveFactory.createConveyorTrack(this.trackPath);
-      this.trackGroup.add(group);
-      this.conveyorBeltMaterial = beltMaterial;
-    }
+    const { group, beltMaterial } = this.primitiveFactory.createConveyorTrack(this.trackPath);
+    this.trackGroup.add(group);
+    this.conveyorBeltMaterial = beltMaterial;
 
     this.gridManager.initGrid(this.currentLevel, this.isFishMode);
     const tileSize = this.gridManager.tileSize;
     for (const tile of this.gridManager.tiles) {
-      let mesh: THREE.Object3D;
-      if (this.isFishMode) {
-        mesh = this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize, tile.shieldLayers || 0, tile.specialType);
-      } else {
-        mesh = this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize);
-      }
-
+      const mesh = this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize);
       if (tile.worldPos) {
         mesh.position.set(tile.worldPos[0], tile.worldPos[1], tile.worldPos[2]);
       }
       this.gridGroup.add(mesh);
       this.tileMeshMap.set(tile.id, mesh);
-    }
-  }
-
-  private buildScenery(level: number, extent: number, zoom: number) {
-    const group = this.backdropGroup;
-    const scale = Math.max(0.78, Math.min(zoom, 4.5));
-    const palette = this.isFishMode
-      ? { far: 0x075985, near: 0x0e7490, accent: 0x2dd4bf, glow: 0xf0abfc }
-      : { far: 0x29264a, near: 0x49436e, accent: 0xa78bfa, glow: 0x67e8f9 };
-
-    const mat = (color: number, emissive = false) => new THREE.MeshStandardMaterial({
-      color,
-      roughness: emissive ? 0.45 : 0.8,
-      metalness: emissive ? 0.12 : 0.02,
-      emissive: emissive ? color : 0x000000,
-      emissiveIntensity: emissive ? 0.22 : 0,
-      flatShading: true,
-    });
-    const add = (geometry: THREE.BufferGeometry, material: THREE.Material, x: number, y: number, z: number, sx = 1, sy = 1, sz = 1) => {
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.set(x, y, z);
-      mesh.scale.set(sx, sy, sz);
-      mesh.receiveShadow = true;
-      group.add(mesh);
-      return mesh;
-    };
-    const accentMat = mat(palette.accent, true);
-    const glowMat = mat(palette.glow, true);
-    const unit = scale;
-    const sideX = extent + 0.95 * unit;
-
-    for (const side of [-1, 1]) {
-      const pillar = add(
-        new THREE.CylinderGeometry(0.12 * unit, 0.17 * unit, (0.55 + (level % 4) * 0.08) * unit, 8),
-        side < 0 ? accentMat : glowMat,
-        side * sideX,
-        0.26 * unit,
-        -extent * 0.66
-      );
-      pillar.rotation.z = side * -0.08;
     }
   }
 
@@ -461,22 +289,14 @@ export class GameSceneManager {
     const runnerId = `runner_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     const spawnPathPos = this.trackPath.getLanePoint(0.0, safeLane);
 
-    let meshGroup: THREE.Group;
-    let badgeMat: THREE.MeshStandardMaterial | undefined;
-    let updateNumberFn: ((n: number) => void) | undefined;
-
+    let created;
     if (this.isFishMode) {
-      const created = this.fofFactory.createFishMesh(color, safeCapacity);
-      meshGroup = created.group;
-      badgeMat = created.badgeMat;
-      updateNumberFn = created.updateNumber;
+      created = this.fofFactory.createFishMesh(color, safeCapacity);
     } else {
-      const created = this.primitiveFactory.createRunnerMesh(color, safeCapacity);
-      meshGroup = created.group;
-      badgeMat = created.badgeMat;
-      updateNumberFn = created.updateNumber;
+      created = this.primitiveFactory.createRunnerMesh(color, safeCapacity);
     }
 
+    const meshGroup = created.group;
     meshGroup.position.copy(spawnPathPos);
     meshGroup.scale.set(1, 1, 1);
     meshGroup.visible = true;
@@ -486,8 +306,8 @@ export class GameSceneManager {
       id: runnerId,
       color: color,
       meshGroup: meshGroup,
-      badgeMat: badgeMat,
-      updateNumber: updateNumberFn,
+      badgeMat: created.badgeMat,
+      updateNumber: created.updateNumber,
       progress: 0.0,
       speed: 0.28 * this.speedMultiplier,
       remaining: safeCapacity,
@@ -526,11 +346,6 @@ export class GameSceneManager {
 
   public resetLevel(level: number = this.currentLevel) {
     this.currentLevel = level;
-    this.magnetMultiplier = 1.0;
-    this.magnetTimer = 0;
-    this.conveyorSurgeMultiplier = 1.0;
-    this.conveyorSurgeTimer = 0;
-    this.chronoStasisTimer = 0;
     this.buildWorld(this.currentLevel);
   }
 
@@ -539,7 +354,7 @@ export class GameSceneManager {
     if (trapped.length === 0) return 0;
     const toPop = trapped.slice(0, count);
     toPop.forEach((tile) => {
-      this.popEncapsulation(tile);
+      tile.encapsulated = false;
     });
     soundManager.playBubblePop();
     return toPop.length;
@@ -559,8 +374,6 @@ export class GameSceneManager {
 
   public applyChronoStasis(durationSeconds: number = 20) {
     this.chronoStasisTimer = durationSeconds;
-    this.magnetMultiplier = 1.5;
-    this.magnetTimer = durationSeconds;
     soundManager.playComodinActivate();
   }
 
@@ -579,11 +392,7 @@ export class GameSceneManager {
   public convertPerimeterTiles(targetColor: TileColor, count: number = 3): number {
     const uncollected = this.gridManager.tiles.filter((t) => !t.collected && t.color !== targetColor);
     if (uncollected.length === 0) return 0;
-    const borderTiles = uncollected.filter(
-      (t) => t.row === 0 || t.row === this.gridManager.rows - 1 || t.col === 0 || t.col === this.gridManager.cols - 1
-    );
-    const pool = borderTiles.length > 0 ? borderTiles : uncollected;
-    const toConvert = pool.slice(0, count);
+    const toConvert = uncollected.slice(0, count);
     toConvert.forEach((tile) => {
       tile.color = targetColor;
     });
@@ -599,19 +408,15 @@ export class GameSceneManager {
     const ok = this.launchRunner('purple', capacity, 1);
     if (ok) {
       const last = this.activeRunners[this.activeRunners.length - 1];
-      if (last) {
-        last.isPrismatic = true;
-      }
+      if (last) last.isPrismatic = true;
       soundManager.playComodinActivate();
     }
     return ok;
   }
 
   public invertBoardTiles(count: number = 5): number {
-    const uncollected = this.gridManager.tiles.filter((t) => !t.collected);
-    if (uncollected.length <= 4) return 0;
     soundManager.playComodinActivate();
-    return Math.min(count, uncollected.length);
+    return count;
   }
 
   private clearGroup(group: THREE.Group) {
@@ -648,25 +453,9 @@ export class GameSceneManager {
   }
 
   private render() {
-    if (this.shakeIntensity > 0) {
-      this.shakeIntensity = Math.max(0, this.shakeIntensity - 0.015);
-      const rx = (Math.random() - 0.5) * this.shakeIntensity;
-      const ry = (Math.random() - 0.5) * this.shakeIntensity;
-      this.camera.position.set(
-        this.baseCameraPos.x + rx,
-        this.baseCameraPos.y + ry,
-        this.baseCameraPos.z
-      );
-    } else {
-      this.camera.position.copy(this.baseCameraPos);
-    }
+    this.camera.position.copy(this.baseCameraPos);
     this.camera.lookAt(this.cameraTarget);
     this.renderer.render(this.scene, this.camera);
-  }
-
-  private popEncapsulation(tile: GridTile) {
-    tile.encapsulated = false;
-    this.callbacks.onEncapsulationPopped?.(tile.id);
   }
 
   private update(delta: number) {

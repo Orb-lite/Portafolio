@@ -123,6 +123,9 @@ export const GAME_TEXT = {
     editGamertag: 'Edit Gamertag',
     databaseConfig: 'Database Config',
     musicNowPlaying: 'Music Track',
+    dayMode: 'Day Mode',
+    nightMode: 'Night Mode',
+    toggleDayNight: 'Toggle Day/Night Mode',
 
     // Bottom Queue
     availableSlots: 'Slots Available',
@@ -262,6 +265,9 @@ export const GAME_TEXT = {
     editGamertag: 'Editar Gamertag',
     databaseConfig: 'Configurar Base de Datos',
     musicNowPlaying: 'Música de Fondo',
+    dayMode: 'Modo Día',
+    nightMode: 'Modo Noche',
+    toggleDayNight: 'Alternar Modo Día/Noche',
 
     // Bottom Queue
     availableSlots: 'Espacios Disponibles',

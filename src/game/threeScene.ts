@@ -60,6 +60,7 @@ export class GameSceneManager {
   private groundMesh: THREE.Mesh | null = null;
   private dirLight!: THREE.DirectionalLight;
   private hemiLight!: THREE.HemisphereLight;
+  public timeOfDay: 'day' | 'night' = 'day';
 
   // Active Game State
   private activeRunners: Array<{
@@ -274,6 +275,61 @@ export class GameSceneManager {
     console.log(`🎥 Posición actual -> Elevación Y: ${y}, Alejamiento Z: ${z}`);
   }
 
+  public setTimeOfDay(mode: 'day' | 'night') {
+    this.timeOfDay = mode;
+    this.applyAtmosphere();
+  }
+
+  public applyAtmosphere() {
+    if (this.isFishMode) {
+      if (this.timeOfDay === 'day') {
+        const bgColor = new THREE.Color(0x0284c7); // Tropical bright cyan sea
+        this.scene.background = bgColor;
+        this.scene.fog = new THREE.FogExp2(0x0284c7, 0.007);
+        if (this.dirLight) {
+          this.dirLight.color.setHex(0xfffbeb); // Warm sunlight
+          this.dirLight.intensity = 1.85;
+          this.dirLight.position.set(4, 14, 6);
+        }
+        if (this.hemiLight) {
+          this.hemiLight.color.setHex(0x7dd3fc); // Sky cyan
+          this.hemiLight.groundColor.setHex(0x0369a1); // Deep lagoon ground
+          this.hemiLight.intensity = 0.85;
+        }
+        if (this.groundMesh?.material instanceof THREE.MeshStandardMaterial) {
+          this.groundMesh.material.color.setHex(0xffffff);
+        }
+      } else {
+        const bgColor = new THREE.Color(0x021727); // Deep nocturnal bioluminescent sea
+        this.scene.background = bgColor;
+        this.scene.fog = new THREE.FogExp2(0x021727, 0.009);
+        if (this.dirLight) {
+          this.dirLight.color.setHex(0xdbeafe); // Silvery moonlight
+          this.dirLight.intensity = 1.35;
+          this.dirLight.position.set(-4, 13, 5);
+        }
+        if (this.hemiLight) {
+          this.hemiLight.color.setHex(0x38bdf8); // Bioluminescent glow
+          this.hemiLight.groundColor.setHex(0x020f1c);
+          this.hemiLight.intensity = 0.75;
+        }
+        if (this.groundMesh?.material instanceof THREE.MeshStandardMaterial) {
+          this.groundMesh.material.color.setHex(0x93c5fd);
+        }
+      }
+    } else {
+      if (this.dirLight && this.hemiLight) {
+        if (this.timeOfDay === 'night') {
+          this.dirLight.intensity = 1.1;
+          this.hemiLight.intensity = 0.6;
+        } else {
+          this.dirLight.intensity = 1.8;
+          this.hemiLight.intensity = 0.8;
+        }
+      }
+    }
+  }
+
   public setMode(version: GameVersion, polish: PolishLevel, level: number = this.currentLevel) {
     this.version = version;
     this.polish = polish;
@@ -321,12 +377,7 @@ export class GameSceneManager {
     this.callbacks.onSlotCountChange?.(0);
 
     if (this.isFishMode) {
-      const bgColor = new THREE.Color(0x062033);
-      this.scene.background = bgColor;
-      this.scene.fog = new THREE.FogExp2(0x062033, 0.008);
-      this.dirLight.color.setHex(0xe0f2fe);
-      this.hemiLight.color.setHex(0x38bdf8);
-      this.hemiLight.groundColor.setHex(0x082f49);
+      this.applyAtmosphere();
 
       this.buildScenery(level, trackExtent, 1.0);
 

@@ -48,25 +48,25 @@ interface TileAbsorberGameProps {
 const savedProgress = getSavedProgress();
 const MAX_ACTIVE_RUNNERS = 5;
 
-// Mapeador universal de colores para sincronizar la UI lateral con las fichas y peces del mapa 3D
+// Mapeador universal de colores para sincronizar la UI lateral con las perlas y peces del mapa 3D
+// Mantiene contrastes máximos e idéntica apariencia tanto en versión día como en versión noche
 const getTileColorBg = (color: string) => {
   switch (color?.toLowerCase()) {
-    case 'blue': return 'bg-blue-600 border-blue-400 text-white';
-    case 'yellow': return 'bg-amber-400 border-amber-200 text-slate-950';
-    case 'pink':
-    case 'magenta':
-      return 'bg-pink-500 border-pink-300 text-white';
-    case 'cyan': return 'bg-cyan-400 border-cyan-200 text-slate-950';
-    case 'green': return 'bg-emerald-500 border-emerald-300 text-slate-950';
-    case 'orange': return 'bg-orange-500 border-orange-300 text-slate-950';
-    case 'purple': return 'bg-purple-600 border-purple-300 text-white';
-    case 'red': return 'bg-rose-500 border-rose-300 text-white';
-    case 'white': return 'bg-slate-100 border-slate-300 text-slate-950';
-    case 'lime': return 'bg-lime-400 border-lime-200 text-slate-950';
-    case 'black': return 'bg-slate-900 border-slate-600 text-white';
-    case 'rainbow': return 'bg-gradient-to-tr from-pink-500 via-amber-300 to-cyan-400 border-white text-white shadow-cyan-500/50';
-    case 'bomb': return 'bg-gradient-to-tr from-rose-600 to-amber-500 border-amber-300 text-white animate-pulse shadow-rose-500/50';
-    default: return 'bg-sky-500 border-sky-300 text-white';
+    case 'blue': return 'bg-blue-600 border-2 border-blue-300 text-white font-black';
+    case 'yellow': return 'bg-yellow-400 border-2 border-yellow-100 text-slate-950 font-black';
+    case 'pink': return 'bg-pink-500 border-2 border-pink-200 text-white font-black';
+    case 'magenta': return 'bg-fuchsia-600 border-2 border-fuchsia-300 text-white font-black';
+    case 'cyan': return 'bg-cyan-400 border-2 border-cyan-100 text-slate-950 font-black';
+    case 'green': return 'bg-emerald-600 border-2 border-emerald-300 text-white font-black';
+    case 'orange': return 'bg-orange-500 border-2 border-orange-200 text-white font-black';
+    case 'purple': return 'bg-purple-600 border-2 border-purple-300 text-white font-black';
+    case 'red': return 'bg-rose-600 border-2 border-rose-300 text-white font-black';
+    case 'white': return 'bg-slate-100 border-2 border-white text-slate-950 font-black';
+    case 'lime': return 'bg-lime-400 border-2 border-lime-100 text-slate-950 font-black';
+    case 'black': return 'bg-slate-950 border-2 border-slate-600 text-white font-black';
+    case 'rainbow': return 'bg-gradient-to-tr from-pink-500 via-amber-300 to-cyan-400 border-2 border-white text-white shadow-cyan-500/50 font-black';
+    case 'bomb': return 'bg-gradient-to-tr from-rose-600 to-amber-500 border-2 border-amber-300 text-white animate-pulse shadow-rose-500/50 font-black';
+    default: return 'bg-sky-500 border-2 border-sky-300 text-white font-black';
   }
 };
 
@@ -82,6 +82,20 @@ export function TileAbsorberGame({
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneManagerRef = useRef<GameSceneManager | null>(null);
   const stuckHandledRef = useRef(false);
+
+  // Versión Día / Noche (Day / Night cycle & toggle)
+  const [timeOfDay, setTimeOfDay] = useState<'day' | 'night'>(() => {
+    return (localStorage.getItem('fish_feeder_time_of_day') as 'day' | 'night') || 'day';
+  });
+
+  const handleToggleTimeOfDay = useCallback(() => {
+    setTimeOfDay((prev) => {
+      const next = prev === 'day' ? 'night' : 'day';
+      localStorage.setItem('fish_feeder_time_of_day', next);
+      sceneManagerRef.current?.setTimeOfDay(next);
+      return next;
+    });
+  }, []);
 
   const [level, setLevel] = useState<number>(savedProgress.level);
   const [playingLevel, setPlayingLevel] = useState<number>(savedProgress.level);
@@ -256,19 +270,23 @@ export function TileAbsorberGame({
     const exposed = (exposedHint && exposedHint.length > 0)
       ? exposedHint
       : (sceneManagerRef.current?.getExposedColors() || []);
+    const remaining = sceneManagerRef.current?.getRemainingColors() || [];
 
-    // Filtra colores expuestos válidos para asegurar que los lanzadores iniciales siempre puedan absorber perlas
-    const validExposed = exposed.filter((c) => levelColors.includes(c));
-    const activePool = validExposed.length > 0 ? validExposed : levelColors;
+    // Prioridad 1: Colores de perlas expuestas en el perímetro (absorbibles de inmediato)
+    // Prioridad 2: Colores presentes en el tablero
+    // Prioridad 3: Colores base del nivel
+    const validColors = exposed.length > 0
+      ? exposed
+      : (remaining.length > 0 ? remaining : levelColors);
 
     return [0, 1].map((colIdx) => {
       // Color garantizado para el lanzador activo (tarjeta inferior col[5])
-      const bottomColor = activePool[colIdx % activePool.length];
+      const bottomColor = validColors[colIdx % validColors.length];
 
       const colItems: QueueRunner[] = [];
-      // Las 5 tarjetas en cola superior rotan armónicamente entre los colores del nivel
+      // Todas las tarjetas en cola superior se obtienen exclusivamente de perlas válidas presentes en el mapa
       for (let r = 0; r < 5; r++) {
-        const poolColor = levelColors[(colIdx * 3 + r) % levelColors.length];
+        const poolColor = validColors[(colIdx * 2 + r) % validColors.length];
         colItems.push({
           id: `queue_${lvl}_${colIdx}_${r}_${Date.now()}_${Math.random()}`,
           color: poolColor,
@@ -357,6 +375,7 @@ export function TileAbsorberGame({
       playingLevel
     );
     sceneManagerRef.current = manager;
+    manager.setTimeOfDay(timeOfDay);
     // Sincroniza inmediatamente las tarjetas del selector con las perlas expuestas en el mapa 3D
     setQueueColumns(createQueueForLevel(playingLevel, manager.getExposedColors()));
     const handleResize = () => manager.handleResize();
@@ -367,6 +386,34 @@ export function TileAbsorberGame({
       sceneManagerRef.current = null;
     };
   }, []);
+
+  // Sincroniza dinámicamente las tarjetas activas del selector cuando cambia el perímetro de perlas
+  useEffect(() => {
+    if (!sceneManagerRef.current || isStuck || hasWon || showMap) return;
+    const exposed = sceneManagerRef.current.getExposedColors();
+    const remaining = sceneManagerRef.current.getRemainingColors();
+    const validColors = exposed.length > 0 ? exposed : remaining;
+    if (validColors.length === 0) return;
+
+    setQueueColumns((prev) => {
+      let needsUpdate = false;
+      const nextCols = prev.map((col, idx) => {
+        if (!col.length) return col;
+        const active = col[col.length - 1];
+        if (!validColors.includes(active.color)) {
+          needsUpdate = true;
+          const updated = [...col];
+          updated[updated.length - 1] = {
+            ...active,
+            color: validColors[idx % validColors.length],
+          };
+          return updated;
+        }
+        return col;
+      });
+      return needsUpdate ? nextCols : prev;
+    });
+  }, [tilesAbsorbedCount, isStuck, hasWon, showMap]);
 
   const handleSpeedChange = (newSpeed: number) => {
     setSpeed(newSpeed);
@@ -405,12 +452,22 @@ export function TileAbsorberGame({
           // 1. Colores de perlas expuestas en el perímetro (inmediatamente útiles)
           // 2. Colores restantes en el tablero (evita dar colores extintos)
           // 3. Colores base del nivel
-          let pool = exposedColors.length > 0 ? exposedColors : remainingColors;
-          if (!pool || pool.length === 0) {
-            pool = levelColors;
+          const validPool = exposedColors.length > 0
+            ? exposedColors
+            : (remainingColors.length > 0 ? remainingColors : levelColors);
+
+          // Verifica que la nueva tarjeta activa que baja al lanzador coincida con perlas disponibles
+          if (updated.length > 0) {
+            const nextActiveIdx = updated.length - 1;
+            if (!validPool.includes(updated[nextActiveIdx].color)) {
+              updated[nextActiveIdx] = {
+                ...updated[nextActiveIdx],
+                color: validPool[i % validPool.length],
+              };
+            }
           }
 
-          const chosenColor = pool[Math.floor(Math.random() * pool.length)];
+          const chosenColor = validPool[Math.floor(Math.random() * validPool.length)];
 
           updated.unshift({
             id: `queue_replenish_${Date.now()}_${Math.random()}`,
@@ -575,19 +632,29 @@ export function TileAbsorberGame({
           triggerComodinNotification("¡RED DE SALVAMENTO ACTIVADA!", "Corredor retirado automáticamente de la cinta.");
           return;
         }
-        const timeout = window.setTimeout(handleStuck, 1500);
+        const timeout = window.setTimeout(handleStuck, 4500);
         return () => window.clearTimeout(timeout);
       }
     }
 
-    if (activeSlotCount === 0 && exposed.length > 0) {
+    if (exposed.length > 0) {
       const canLaunchValidRunner = queueColumns.some((col) => {
         const bottomCard = col[col.length - 1];
         return bottomCard && exposed.includes(bottomCard.color);
       });
       if (!canLaunchValidRunner) {
-        const timeout = window.setTimeout(handleStuck, 1200);
-        return () => window.clearTimeout(timeout);
+        // Asegura que el selector siempre ofrezca colores de perlas que existen en el borde
+        setQueueColumns((prev) =>
+          prev.map((col, idx) => {
+            if (!col.length) return col;
+            const updated = [...col];
+            updated[updated.length - 1] = {
+              ...updated[updated.length - 1],
+              color: exposed[idx % exposed.length],
+            };
+            return updated;
+          })
+        );
       }
     }
 
@@ -727,6 +794,8 @@ export function TileAbsorberGame({
           maxLives={MAX_LIVES}
           soundEnabled={soundEnabled}
           speed={speed}
+          timeOfDay={timeOfDay}
+          onToggleTimeOfDay={handleToggleTimeOfDay}
           level={playingLevel}
           frontierLevel={level}
           experience={experience}
@@ -759,7 +828,7 @@ export function TileAbsorberGame({
 
         <div ref={mountRef} className="absolute inset-0 z-0 h-full w-full cursor-grab active:cursor-grabbing" />
 
-        {/* CONTROLES LATERALES (Slots en cinta arriba + Matriz con colores vinculados al mapa y opacidad al 80%) */}
+        {/* CONTROLES LATERALES (Slots en cinta arriba + Matriz con colores vinculados al mapa) */}
         {!showMap && (
           <div className="absolute right-4 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center select-none">
             
@@ -773,29 +842,29 @@ export function TileAbsorberGame({
                     key={i}
                     className={`w-9 h-6 rounded-lg transition-all border ${
                       i < activeSlotCount
-                        ? 'bg-cyan-500 border-cyan-300 shadow-sm shadow-cyan-500/50'
-                        : 'bg-slate-900/60 border-slate-700/60'
+                        ? 'bg-cyan-400 border-cyan-200 shadow-sm shadow-cyan-400/50'
+                        : 'bg-slate-900/80 border-slate-700/80'
                     }`}
                   />
                 ))}
               </div>
             </div>
 
-            <div className="bg-slate-900/40 backdrop-blur-md p-2 rounded-2xl border border-white/30 shadow-2xl flex gap-2">
+            <div className="bg-slate-900/80 backdrop-blur-md p-2.5 rounded-2xl border-2 border-white/40 shadow-2xl flex gap-2.5">
               {queueColumns.map((col, colIdx) => {
                 const activeCard = col[col.length - 1];
 
                 return (
                   <div key={colIdx} className="flex flex-col gap-1.5 items-center">
                     
-                    {/* Tarjetas superiores por venir (Al 80% de opacidad para mantener nitidez visual) */}
+                    {/* Tarjetas superiores por venir (Al 85% de opacidad para mantener nitidez visual y contraste) */}
                     {col.slice(0, col.length - 1).map((item, idx) => {
                       const colorClasses = getTileColorBg(item.color);
                       
                       return (
                         <div
                           key={item.id || idx}
-                          className={`w-10 h-10 rounded-xl ${colorClasses} border opacity-80 flex flex-col items-center justify-center shadow-inner pointer-events-none transition-all`}
+                          className={`w-10 h-10 rounded-xl ${colorClasses} opacity-85 flex flex-col items-center justify-center shadow-md pointer-events-none transition-all`}
                         >
                           <span className="text-[11px] font-black leading-none drop-shadow-xs">
                             {item.capacity}
@@ -809,7 +878,8 @@ export function TileAbsorberGame({
                       <button
                         type="button"
                         onClick={() => handleLaunchRunner(colIdx)}
-                        className={`w-11 h-12 rounded-xl ${getTileColorBg(activeCard.color)} border-2 border-slate-950 flex flex-col items-center justify-center shadow-xl active:scale-95 transition-all transform hover:scale-105 ring-2 ring-white/90 cursor-pointer mt-1`}
+                        className={`w-12 h-13 rounded-xl ${getTileColorBg(activeCard.color)} flex flex-col items-center justify-center shadow-2xl active:scale-95 transition-all transform hover:scale-105 ring-3 ring-white cursor-pointer mt-1`}
+                        title={`Lanzar corredor ${activeCard.color}`}
                       >
                         <span className="text-xs font-black leading-none drop-shadow-xs">
                           {activeCard.capacity}

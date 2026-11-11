@@ -2,7 +2,7 @@ import React from 'react';
 import { GameVersion } from '../../game/types';
 import { getThemeName } from '../../game/experience';
 import { GameLanguage, GAME_TEXT } from '../../game/localization';
-import { Volume2, VolumeX, RotateCcw, BookOpen, Sparkles, Heart, Map, Trophy, User, Fish, Crown, Box, Zap } from 'lucide-react';
+import { Volume2, VolumeX, RotateCcw, BookOpen, Sparkles, Heart, Map, Trophy, User, Fish, Crown, Box, Zap, Sun, Moon } from 'lucide-react';
 import { ComodinesHUD } from './ComodinesHUD';
 
 interface HeaderBarProps {
@@ -19,6 +19,8 @@ interface HeaderBarProps {
   gamertag?: string;
   isSupabaseOnline?: boolean;
   language?: GameLanguage;
+  timeOfDay?: 'day' | 'night';
+  onToggleTimeOfDay?: () => void;
   onToggleSound: () => void;
   onSpeedChange: (s: number) => void;
   onReset: () => void;
@@ -47,6 +49,8 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   gamertag,
   isSupabaseOnline,
   language = 'es',
+  timeOfDay = 'day',
+  onToggleTimeOfDay,
   onToggleSound,
   onSpeedChange,
   onReset,
@@ -158,6 +162,22 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             title="Leaderboard"
           >
             <Trophy className="w-4 h-4" />
+          </button>
+        )}
+
+        {onToggleTimeOfDay && (
+          <button
+            type="button"
+            onClick={onToggleTimeOfDay}
+            className="p-1.5 rounded-xl text-white hover:bg-white/10 transition cursor-pointer"
+            title={timeOfDay === 'day' ? t.nightMode : t.dayMode}
+            aria-label={timeOfDay === 'day' ? t.nightMode : t.dayMode}
+          >
+            {timeOfDay === 'day' ? (
+              <Sun className="w-4 h-4 text-amber-300 drop-shadow-sm" />
+            ) : (
+              <Moon className="w-4 h-4 text-cyan-300 drop-shadow-sm" />
+            )}
           </button>
         )}
 

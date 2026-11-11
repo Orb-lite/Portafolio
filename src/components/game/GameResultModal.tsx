@@ -365,8 +365,8 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
               <GlossyStar size={54} rotate={14} scale={0.92} />
             </div>
           ) : (
-            <div className="mt-45 -mb-80 flex justify-center relative z-40">
-              <SadFishMascot size={190} />
+            <div className="flex justify-center -mb-3 sm:-mb-4">
+              <SadFishMascot size={130} />
             </div>
           )}
         </div>

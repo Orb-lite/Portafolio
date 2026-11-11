@@ -81,7 +81,7 @@ export function TileAbsorberGame({
   const sceneManagerRef = useRef<GameSceneManager | null>(null);
   const stuckHandledRef = useRef(false);
 
-  // Versión Día / Noche (Day / Night cycle & toggle)
+  // Versión Día / Noche
   const [timeOfDay, setTimeOfDay] = useState<'day' | 'night'>(() => {
     return (localStorage.getItem('fish_feeder_time_of_day') as 'day' | 'night') || 'day';
   });
@@ -122,7 +122,6 @@ export function TileAbsorberGame({
   const [showMap, setShowMap] = useState(false);
   const [isExitConfirmOpen, setIsExitConfirmOpen] = useState(false);
 
-  // Synced state for map exposed colors
   const [exposedColors, setExposedColors] = useState<TileColor[]>([]);
 
   const [userProfile, setUserProfile] = useState(() => getStoredUser());
@@ -270,6 +269,7 @@ export function TileAbsorberGame({
 
   const addExperience = useCallback((amount: number) => setExperience((prev) => prev + amount), []);
 
+  // Generación exacta de 2 columnas para la barra lateral
   const createQueueForLevel = useCallback((lvl: number, exposedHint?: TileColor[]): QueueRunner[][] => {
     const config = getLevelConfig(lvl, isFishOfFortune);
     const levelColors = getColorsForLevel(lvl, isFishOfFortune);
@@ -282,7 +282,7 @@ export function TileAbsorberGame({
       ? exposed
       : (remaining.length > 0 ? remaining : levelColors);
 
-    return [0, 1, 2, 3].map((colIdx) => {
+    return [0, 1].map((colIdx) => {
       const bottomColor = validColors[colIdx % validColors.length];
 
       const colItems: QueueRunner[] = [];
@@ -829,6 +829,7 @@ export function TileAbsorberGame({
 
         <div ref={mountRef} className="absolute inset-0 z-0 h-full w-full cursor-grab active:cursor-grabbing" />
 
+        {/* CONTROLES LATERALES (2 columnas para el selector auxiliar) */}
         {!showMap && (
           <div className="absolute right-4 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center select-none">
             <div className="flex flex-col items-center mb-2">
@@ -850,7 +851,7 @@ export function TileAbsorberGame({
             </div>
 
             <div className="bg-slate-900/80 backdrop-blur-md p-2.5 rounded-2xl border-2 border-white/40 shadow-2xl flex gap-2.5">
-              {queueColumns.map((col, colIdx) => {
+              {queueColumns.slice(0, 2).map((col, colIdx) => {
                 const activeCard = col[col.length - 1];
 
                 return (
@@ -889,6 +890,7 @@ export function TileAbsorberGame({
           </div>
         )}
 
+        {/* SELECTOR PRINCIPAL INFERIOR */}
         {!showMap && (
           <BottomQueue
             version={version}

@@ -1,15 +1,12 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { ALL_COLORS, GameVersion, PolishLevel, TileColor } from './types';
+import { GameVersion, PolishLevel, TileColor } from './types';
 import { getLevelConfig } from './experience';
 import { TrackPath } from './trackPath';
 import { GridManager, GridTile } from './gridManager';
 import { PrimitiveMeshFactory } from './primitiveMeshFactory';
 import { FofMeshFactory } from './fofMeshFactory';
-import { WorldMeshFactory } from './worldMeshFactory';
 import { soundManager } from './sound';
-
-const _vecA = new THREE.Vector3();
 
 export interface SceneCallbacks {
   onTileAbsorbed?: (tileId: string, color: TileColor, remainingCount: number) => void;
@@ -44,7 +41,6 @@ export class GameSceneManager {
   public gridManager: GridManager;
   private primitiveFactory: PrimitiveMeshFactory;
   private fofFactory: FofMeshFactory;
-  private worldMeshFactory: WorldMeshFactory;
 
   // Scene Objects
   private gridGroup = new THREE.Group();
@@ -64,9 +60,8 @@ export class GameSceneManager {
     id: string;
     color: TileColor;
     meshGroup: THREE.Group;
-    tailMesh?: THREE.Mesh;
-    badgeMat: THREE.MeshStandardMaterial;
-    updateNumber: (n: number) => void;
+    badgeMat?: THREE.MeshStandardMaterial;
+    updateNumber?: (n: number) => void;
     progress: number;
     speed: number;
     remaining: number;
@@ -99,27 +94,6 @@ export class GameSceneManager {
     progress: number;
     arcHeight: number;
     rotAxis: THREE.Vector3;
-  }> = [];
-
-  private activeParticles: Array<{
-    mesh: THREE.Mesh;
-    vel: THREE.Vector3;
-    life: number;
-    maxLife: number;
-    rotSpeed: THREE.Vector3;
-    gravity?: number;
-    drag?: number;
-    initialScale?: number;
-    flutter?: { freq: number; amp: number; offset: number };
-  }> = [];
-
-  private activeShockwaves: Array<{
-    mesh: THREE.Mesh;
-    currentRadius: number;
-    maxRadius: number;
-    life: number;
-    maxLife: number;
-    initialOpacity: number;
   }> = [];
 
   private winExplosionTimeouts: number[] = [];
@@ -178,7 +152,6 @@ export class GameSceneManager {
     this.gridManager = new GridManager(initialLevel, this.isFishMode);
     this.primitiveFactory = new PrimitiveMeshFactory();
     this.fofFactory = new FofMeshFactory();
-    this.worldMeshFactory = new WorldMeshFactory();
 
     this.initRenderer();
     this.initScene();
@@ -368,7 +341,6 @@ export class GameSceneManager {
     this.tileMeshMap.clear();
     this.activeRunners = [];
     this.flyingTiles = [];
-    this.activeParticles = [];
     this.callbacks.onSlotCountChange?.(0);
 
     if (this.isFishMode) {
@@ -393,16 +365,7 @@ export class GameSceneManager {
       this.trackGroup.add(group);
       this.conveyorBeltMaterial = beltMaterial;
     } else {
-      const worldStyle: Record<Exclude<GameVersion, 'fof'>, { background: number; ground: number; roughness?: number; metalness?: number }> = {
-        chess: { background: 0x15121e, ground: 0x1e1927, roughness: 0.18, metalness: 0.4 },
-        primitive: { background: 0x15121e, ground: 0x1e1927, roughness: 0.18, metalness: 0.4 },
-        land: { background: 0x0f2a20, ground: 0x1e3a2b, roughness: 0.7, metalness: 0.05 },
-        birds: { background: 0x0c4a6e, ground: 0x075985, roughness: 0.5, metalness: 0.1 },
-        humans: { background: 0x121324, ground: 0x1a1c36, roughness: 0.25, metalness: 0.5 },
-        cars: { background: 0x1a1618, ground: 0x242022, roughness: 0.6, metalness: 0.1 },
-        aircraft: { background: 0x081f38, ground: 0x0e3256, roughness: 0.3, metalness: 0.3 },
-      };
-      const style = worldStyle[this.version as Exclude<GameVersion, 'fof'>];
+      const style = { background: 0x15121e, ground: 0x1e1927, roughness: 0.18, metalness: 0.4 };
       this.scene.background = new THREE.Color(style.background);
       this.scene.fog = new THREE.Fog(style.background, 30, 90);
       this.dirLight.color.setHex(0xffffff);
@@ -415,8 +378,8 @@ export class GameSceneManager {
       const floorGeo = new THREE.PlaneGeometry(floorSize, floorSize);
       const floorMat = new THREE.MeshStandardMaterial({
         color: style.ground,
-        roughness: style.roughness ?? 0.35,
-        metalness: style.metalness ?? 0.2,
+        roughness: style.roughness,
+        metalness: style.metalness,
       });
       this.groundMesh = new THREE.Mesh(floorGeo, floorMat);
       this.groundMesh.rotation.x = -Math.PI / 2;
@@ -470,8 +433,6 @@ export class GameSceneManager {
       group.add(mesh);
       return mesh;
     };
-    const farMat = mat(palette.far);
-    const nearMat = mat(palette.near);
     const accentMat = mat(palette.accent, true);
     const glowMat = mat(palette.glow, true);
     const unit = scale;
@@ -501,8 +462,8 @@ export class GameSceneManager {
     const spawnPathPos = this.trackPath.getLanePoint(0.0, safeLane);
 
     let meshGroup: THREE.Group;
-    let badgeMat: THREE.MeshStandardMaterial;
-    let updateNumberFn: (n: number) => void;
+    let badgeMat: THREE.MeshStandardMaterial | undefined;
+    let updateNumberFn: ((n: number) => void) | undefined;
 
     if (this.isFishMode) {
       const created = this.fofFactory.createFishMesh(color, safeCapacity);

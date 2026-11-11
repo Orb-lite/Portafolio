@@ -3,7 +3,7 @@ import { ALL_COLORS, GameVersion, TileColor } from "../../game/types";
 import { getLevelConfig, getVisualThemeForLevel, getColorsForLevel } from "../../game/experience";
 import { GameSceneManager } from "../../game/threeScene";
 import { HeaderBar } from "./HeaderBar";
-import { BottomQueue, QueueRunner } from "./BottomQueue";
+import { QueueRunner } from "./BottomQueue";
 import { WinModal } from "./WinModal";
 import { DocModal } from "./DocModal";
 import { LifeModal } from "./LifeModal";
@@ -107,7 +107,6 @@ export function TileAbsorberGame({
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [speed, setSpeed] = useState(1);
   const [activeSlotCount, setActiveSlotCount] = useState(0);
-  const [showTutorialHand, setShowTutorialHand] = useState(true);
   const [hasWon, setHasWon] = useState(false);
   const [tilesAbsorbedCount, setTilesAbsorbedCount] = useState(0);
   const [startTime, setStartTime] = useState(Date.now());
@@ -269,7 +268,6 @@ export function TileAbsorberGame({
 
   const addExperience = useCallback((amount: number) => setExperience((prev) => prev + amount), []);
 
-  // Generación exacta de 2 columnas para la barra lateral
   const createQueueForLevel = useCallback((lvl: number, exposedHint?: TileColor[]): QueueRunner[][] => {
     const config = getLevelConfig(lvl, isFishOfFortune);
     const levelColors = getColorsForLevel(lvl, isFishOfFortune);
@@ -440,7 +438,6 @@ export function TileAbsorberGame({
     const finalCapacity = activeRunner.capacity + capacityBoost;
 
     if (sceneManagerRef.current.launchRunner(activeRunner.color, finalCapacity, colIdx)) {
-      setShowTutorialHand(false);
       refreshExposedColors();
 
       setQueueColumns((prev) =>
@@ -570,7 +567,6 @@ export function TileAbsorberGame({
     setExperience(experienceAtLevelStart);
     setTilesAbsorbedCount(0);
     setStartTime(Date.now());
-    setShowTutorialHand(true);
     setHasWon(false);
     setIsStuck(false);
     setHasUsedComodin(false);
@@ -596,7 +592,6 @@ export function TileAbsorberGame({
     setExperienceAtLevelStart(experience);
     setTilesAbsorbedCount(0);
     setStartTime(Date.now());
-    setShowTutorialHand(true);
     setHasWon(false);
     setShowMap(false);
     stuckHandledRef.current = false;
@@ -829,7 +824,7 @@ export function TileAbsorberGame({
 
         <div ref={mountRef} className="absolute inset-0 z-0 h-full w-full cursor-grab active:cursor-grabbing" />
 
-        {/* CONTROLES LATERALES (2 columnas para el selector auxiliar) */}
+        {/* CONTROLES LATERALES ÚNICOS (2 columnas) */}
         {!showMap && (
           <div className="absolute right-4 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center select-none">
             <div className="flex flex-col items-center mb-2">
@@ -888,20 +883,6 @@ export function TileAbsorberGame({
               })}
             </div>
           </div>
-        )}
-
-        {/* SELECTOR PRINCIPAL INFERIOR */}
-        {!showMap && (
-          <BottomQueue
-            version={version}
-            activeRunnersCount={activeSlotCount}
-            maxCapacity={MAX_ACTIVE_RUNNERS}
-            queueColumns={queueColumns}
-            onLaunch={handleLaunchRunner}
-            showTutorialHand={showTutorialHand}
-            exposedColors={exposedColors}
-            language={language}
-          />
         )}
 
         {hasWon && (

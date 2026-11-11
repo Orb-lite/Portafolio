@@ -169,139 +169,39 @@ const WORLD_DEFS: Record<GameVersion, WorldDefinition> = {
   },
 };
 
-const FOF_WORLD_DEFS: WorldDefinition[] = [
-  {
-    theme: 'fof',
-    title: 'Coral Cove',
-    subtitle: 'Sunlit Pearl Reef & Coral Shallows',
-    badgeIcon: Fish,
-    texture: '/assets/worlds/coral_cove.jpg',
-    themeColor: '#22d3ee',
-    pathBase: '#083344',
-    pathFill: '#0e7490',
-    pathTrim: '#67e8f9',
-    pathDash: '5 7',
-    blendColor: '#082f49',
-    nodeBg: 'from-cyan-400 via-teal-500 to-blue-600',
-    activeRing: 'ring-cyan-300',
-  },
-  {
-    theme: 'fof',
-    title: 'Bioluminescent Trench',
-    subtitle: 'Deep Glow & Angler Sanctuary',
-    badgeIcon: Sparkles,
-    texture: '/assets/worlds/coral_cove.jpg',
-    themeColor: '#a855f7',
-    pathBase: '#2e1065',
-    pathFill: '#581c87',
-    pathTrim: '#c084fc',
-    pathDash: '4 6',
-    blendColor: '#1e1b4b',
-    nodeBg: 'from-fuchsia-400 via-purple-500 to-indigo-600',
-    activeRing: 'ring-purple-300',
-  },
-  {
-    theme: 'fof',
-    title: 'Turtle Atoll',
-    subtitle: 'Emerald Seaweed & Coral Gardens',
-    badgeIcon: Trees,
-    texture: '/assets/worlds/coral_cove.jpg',
-    themeColor: '#34d399',
-    pathBase: '#064e3b',
-    pathFill: '#047857',
-    pathTrim: '#6ee7b7',
-    pathDash: '6 6',
-    blendColor: '#022c22',
-    nodeBg: 'from-emerald-400 via-teal-500 to-cyan-600',
-    activeRing: 'ring-emerald-300',
-  },
-  {
-    theme: 'fof',
-    title: 'Sunken Galleon Trench',
-    subtitle: 'Ancient Golden Reef & Pearl Flora',
-    badgeIcon: Trophy,
-    texture: '/assets/worlds/coral_cove.jpg',
-    themeColor: '#fbbf24',
-    pathBase: '#451a03',
-    pathFill: '#78350f',
-    pathTrim: '#fde68a',
-    pathDash: '4 8',
-    blendColor: '#292524',
-    nodeBg: 'from-amber-400 via-yellow-500 to-orange-600',
-    activeRing: 'ring-amber-300',
-  },
-  {
-    theme: 'fof',
-    title: 'Clownfish Haven',
-    subtitle: 'Warm Anemone Meadows & Coral Gardens',
-    badgeIcon: Flame,
-    texture: '/assets/worlds/coral_cove.jpg',
-    themeColor: '#f97316',
-    pathBase: '#431407',
-    pathFill: '#9a3412',
-    pathTrim: '#fed7aa',
-    pathDash: '5 5',
-    blendColor: '#1c1917',
-    nodeBg: 'from-orange-400 via-rose-500 to-amber-600',
-    activeRing: 'ring-orange-300',
-  },
-  {
-    theme: 'fof',
-    title: 'Manta Horizon',
-    subtitle: 'Crystal Clear Ocean Waters',
-    badgeIcon: Crown,
-    texture: '/assets/worlds/coral_cove.jpg',
-    themeColor: '#38bdf8',
-    pathBase: '#0c4a6e',
-    pathFill: '#0369a1',
-    pathTrim: '#bae6fd',
-    pathDash: '6 6',
-    blendColor: '#082f49',
-    nodeBg: 'from-sky-400 via-blue-500 to-cyan-600',
-    activeRing: 'ring-sky-300',
-  },
-  {
-    theme: 'fof',
-    title: 'Atlantis Coral Citadel',
-    subtitle: 'Mythic Pearl Throne & Ancient Ruins',
-    badgeIcon: Crown,
-    texture: '/assets/worlds/coral_cove.jpg',
-    themeColor: '#facc15',
-    pathBase: '#14532d',
-    pathFill: '#15803d',
-    pathTrim: '#fef08a',
-    pathDash: '4 8',
-    blendColor: '#064e3b',
-    nodeBg: 'from-yellow-300 via-emerald-400 to-cyan-500',
-    activeRing: 'ring-yellow-300',
-  },
-];
+const WORLD_TITLES_ES: Record<GameVersion, { title: string; subtitle: string }> = {
+  chess: { title: 'Reino de Ajedrez', subtitle: 'Ciudadela Clásica de Mármol' },
+  fof: { title: 'Fish Feeder', subtitle: 'Santuario de Coral y Arrecife de Perlas' },
+  land: { title: 'Tierras Tropicales', subtitle: 'Paraíso de Selva y Bananos' },
+  birds: { title: 'Islas Celestiales', subtitle: 'Santuario de Nubes y Rocas Flotantes' },
+  humans: { title: 'Metrópolis Neón', subtitle: 'Red Cibernética Synthwave' },
+  cars: { title: 'Circuito Turbo', subtitle: 'Autopista de Asfalto Neón' },
+  aircraft: { title: 'Bóveda Dorada', subtitle: 'Frontera Imperial Esmeralda' },
+  primitive: { title: 'Orígenes', subtitle: 'Reino Clásico' },
+};
 
-const FOF_WORLD_TITLES_ES = [
-  { title: 'Ensenada de Coral', subtitle: 'Aguas Poco Profundas y Arrecife de Perlas' },
-  { title: 'Abismo Bioluminiscente', subtitle: 'Resplandor Profundo y Santuario de Peces' },
-  { title: 'Atolón de Tortugas', subtitle: 'Jardines de Algas Esmeralda y Coral Dorado' },
-  { title: 'Fosa del Galeón Hundido', subtitle: 'Galeón Dorado Ancestral y Flora de Perlas' },
-  { title: 'Refugio del Pez Payaso', subtitle: 'Praderas Cálidas de Anémonas y Coral' },
-  { title: 'Horizonte de Mantarrayas', subtitle: 'Aguas Cristalinas de Mar Abierto' },
-  { title: 'Ciudadela de Coral de Atlántida', subtitle: 'Trono Mítico de Perlas Ancestrales' },
-];
-
-function getWorldDefForLevel(lvl: number, isFishMode: boolean, isEn: boolean): WorldDefinition {
+function getWorldDefForLevel(lvl: number, isEn: boolean, isFishMode = false): WorldDefinition {
   if (isFishMode) {
-    const idx = Math.min(FOF_WORLD_DEFS.length - 1, Math.floor((lvl - 1) / 10));
-    const base = FOF_WORLD_DEFS[idx];
-    if (!isEn && FOF_WORLD_TITLES_ES[idx]) {
+    const baseDef = WORLD_DEFS.fof;
+    if (!isEn && WORLD_TITLES_ES.fof) {
       return {
-        ...base,
-        title: FOF_WORLD_TITLES_ES[idx].title,
-        subtitle: FOF_WORLD_TITLES_ES[idx].subtitle,
+        ...baseDef,
+        title: WORLD_TITLES_ES.fof.title,
+        subtitle: WORLD_TITLES_ES.fof.subtitle,
       };
     }
-    return base;
+    return baseDef;
   }
   const theme = getThemeForLevel(lvl);
-  return WORLD_DEFS[theme] || WORLD_DEFS.chess;
+  const baseDef = WORLD_DEFS[theme] || WORLD_DEFS.chess;
+  if (!isEn && WORLD_TITLES_ES[theme]) {
+    return {
+      ...baseDef,
+      title: WORLD_TITLES_ES[theme].title,
+      subtitle: WORLD_TITLES_ES[theme].subtitle,
+    };
+  }
+  return baseDef;
 }
 
 import { GameLanguage, GAME_TEXT } from '../../game/localization';
@@ -383,7 +283,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
       const end = Math.min(endLevel, mapLevelCount);
       const startY = mapHeight - 160 - (start - 1) * STEP;
       const endY = mapHeight - 160 - (end - 1) * STEP;
-      const def = getWorldDefForLevel(start, isFishMode, isEn);
+      const def = getWorldDefForLevel(start, isEn, isFishMode);
 
       const sliceStart = Math.max(0, start - 2);
       const sliceEnd = Math.min(points.length, end + 1);
@@ -887,7 +787,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
               const isFrontier = level === activeFrontier;
               const locked = level > activeFrontier;
               const isSelected = level === activeSelected;
-              const def = getWorldDefForLevel(level, isFishMode, isEn);
+              const def = getWorldDefForLevel(level, isEn, isFishMode);
 
               return (
                 <div

@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { TrackSide } from './types';
 
 export interface TrackPoint {
@@ -187,6 +188,11 @@ export class TrackPath {
       tangentX: tanX,
       tangentZ: tanZ,
     };
+  }
+
+  public getPointOnPath(t: number): THREE.Vector3 {
+    const pt = this.getPointAt(t);
+    return new THREE.Vector3(pt.x, 0.18, pt.z);
   }
 
   /**

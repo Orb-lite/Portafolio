@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { GameVersion, TileColor } from "../../game/types";
-import { getLevelConfig, getVisualThemeForLevel, getColorsForLevel } from "../../game/experience";
+import { ALL_COLORS, GameVersion, TileColor } from "../../game/types";
+import { getLevelConfig, getThemeForLevel, getVisualThemeForLevel, getColorsForLevel } from "../../game/experience";
 import { GameSceneManager } from "../../game/threeScene";
 import { HeaderBar } from "./HeaderBar";
+import { QueueRunner } from "./BottomQueue";
 import { WinModal } from "./WinModal";
 import { DocModal } from "./DocModal";
 import { LifeModal } from "./LifeModal";
@@ -28,19 +29,14 @@ import {
 } from "../../services/supabaseGame";
 import { LeaderboardModal } from "./LeaderboardModal";
 import { GamertagModal } from "./GamertagModal";
+import { SupabaseConfigModal } from "./SupabaseConfigModal";
 import { WebAdViewerModal } from "./WebAdViewerModal";
 import { ComodinesModal } from "./ComodinesModal";
 import { GameMenuModal } from "./GameMenuModal";
 import { generateComodinesForLevel, ComodinDefinition } from "../../game/comodines";
 import { saveComodinSessionToCache, getComodinSessionFromCache } from "../../services/sessionCache";
-import { ArrowLeft, Gamepad2, Zap, Fish, Menu, Music } from "lucide-react";
-import { GameLanguage } from "../../game/localization";
-
-export interface QueueRunner {
-  id: string;
-  color: TileColor;
-  capacity: number;
-}
+import { ArrowLeft, Sparkles, Gamepad2, Zap, Fish, Menu, Music } from "lucide-react";
+import { GameLanguage, GAME_TEXT } from "../../game/localization";
 
 interface TileAbsorberGameProps {
   language?: GameLanguage;
@@ -52,21 +48,25 @@ interface TileAbsorberGameProps {
 const savedProgress = getSavedProgress();
 const MAX_ACTIVE_RUNNERS = 5;
 
+// Mapeador universal de colores para sincronizar la UI lateral con las fichas y peces del mapa 3D
 const getTileColorBg = (color: string) => {
   switch (color?.toLowerCase()) {
-    case 'blue': return 'bg-blue-600 border-2 border-blue-300 text-white font-black';
-    case 'yellow': return 'bg-yellow-400 border-2 border-yellow-100 text-slate-950 font-black';
-    case 'pink': return 'bg-pink-500 border-2 border-pink-200 text-white font-black';
-    case 'magenta': return 'bg-fuchsia-600 border-2 border-fuchsia-300 text-white font-black';
-    case 'cyan': return 'bg-cyan-400 border-2 border-cyan-100 text-slate-950 font-black';
-    case 'green': return 'bg-emerald-600 border-2 border-emerald-300 text-white font-black';
-    case 'orange': return 'bg-orange-500 border-2 border-orange-200 text-white font-black';
-    case 'purple': return 'bg-purple-600 border-2 border-purple-300 text-white font-black';
-    case 'red': return 'bg-rose-600 border-2 border-rose-300 text-white font-black';
-    case 'white': return 'bg-slate-100 border-2 border-white text-slate-950 font-black';
-    case 'lime': return 'bg-lime-400 border-2 border-lime-100 text-slate-950 font-black';
-    case 'black': return 'bg-slate-950 border-2 border-slate-600 text-white font-black';
-    default: return 'bg-sky-500 border-2 border-sky-300 text-white font-black';
+    case 'blue': return 'bg-blue-600 border-blue-400 text-white';
+    case 'yellow': return 'bg-amber-400 border-amber-200 text-slate-950';
+    case 'pink':
+    case 'magenta':
+      return 'bg-pink-500 border-pink-300 text-white';
+    case 'cyan': return 'bg-cyan-400 border-cyan-200 text-slate-950';
+    case 'green': return 'bg-emerald-500 border-emerald-300 text-slate-950';
+    case 'orange': return 'bg-orange-500 border-orange-300 text-slate-950';
+    case 'purple': return 'bg-purple-600 border-purple-300 text-white';
+    case 'red': return 'bg-rose-500 border-rose-300 text-white';
+    case 'white': return 'bg-slate-100 border-slate-300 text-slate-950';
+    case 'lime': return 'bg-lime-400 border-lime-200 text-slate-950';
+    case 'black': return 'bg-slate-900 border-slate-600 text-white';
+    case 'rainbow': return 'bg-gradient-to-tr from-pink-500 via-amber-300 to-cyan-400 border-white text-white shadow-cyan-500/50';
+    case 'bomb': return 'bg-gradient-to-tr from-rose-600 to-amber-500 border-amber-300 text-white animate-pulse shadow-rose-500/50';
+    default: return 'bg-sky-500 border-sky-300 text-white';
   }
 };
 
@@ -83,19 +83,6 @@ export function TileAbsorberGame({
   const sceneManagerRef = useRef<GameSceneManager | null>(null);
   const stuckHandledRef = useRef(false);
 
-  const [timeOfDay, setTimeOfDay] = useState<'day' | 'night'>(() => {
-    return (localStorage.getItem('fish_feeder_time_of_day') as 'day' | 'night') || 'day';
-  });
-
-  const handleToggleTimeOfDay = useCallback(() => {
-    setTimeOfDay((prev) => {
-      const next = prev === 'day' ? 'night' : 'day';
-      localStorage.setItem('fish_feeder_time_of_day', next);
-      sceneManagerRef.current?.setTimeOfDay(next);
-      return next;
-    });
-  }, []);
-
   const [level, setLevel] = useState<number>(savedProgress.level);
   const [playingLevel, setPlayingLevel] = useState<number>(savedProgress.level);
   const [experience, setExperience] = useState<number>(savedProgress.experience);
@@ -108,6 +95,7 @@ export function TileAbsorberGame({
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [speed, setSpeed] = useState(1);
   const [activeSlotCount, setActiveSlotCount] = useState(0);
+  const [showTutorialHand, setShowTutorialHand] = useState(true);
   const [hasWon, setHasWon] = useState(false);
   const [tilesAbsorbedCount, setTilesAbsorbedCount] = useState(0);
   const [startTime, setStartTime] = useState(Date.now());
@@ -125,6 +113,7 @@ export function TileAbsorberGame({
   const [userProfile, setUserProfile] = useState(() => getStoredUser());
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [isGamertagModalOpen, setIsGamertagModalOpen] = useState(false);
+  const [isSupabaseConfigOpen, setIsSupabaseConfigOpen] = useState(false);
   const [isWebAdViewerOpen, setIsWebAdViewerOpen] = useState(false);
 
   const [comodinesOptions, setComodinesOptions] = useState<ComodinDefinition[]>(() =>
@@ -136,12 +125,6 @@ export function TileAbsorberGame({
   const [comodinNotification, setComodinNotification] = useState<{ text: string; subtext: string } | null>(null);
   const titanRunnerBoostRef = useRef<boolean>(false);
   const safetyNetArmedRef = useRef<boolean>(false);
-
-  const refreshExposedColors = useCallback(() => {
-    if (sceneManagerRef.current) {
-      const activeColors = sceneManagerRef.current.getExposedColors();
-    }
-  }, []);
 
   const triggerComodinNotification = (text: string, subtext: string) => {
     setComodinNotification({ text, subtext });
@@ -190,6 +173,7 @@ export function TileAbsorberGame({
             if (!col.length) return col;
             const newBottomColor = colors[cIdx % colors.length];
             const updated = [...col];
+            // Actualizar la tarjeta lanzadora activa (al fondo de la columna)
             updated[updated.length - 1] = { ...updated[updated.length - 1], color: newBottomColor };
             return updated;
           })
@@ -272,23 +256,26 @@ export function TileAbsorberGame({
     const exposed = (exposedHint && exposedHint.length > 0)
       ? exposedHint
       : (sceneManagerRef.current?.getExposedColors() || []);
-    const remaining = sceneManagerRef.current?.getRemainingColors() || [];
 
-    const validColors = exposed.length > 0
-      ? exposed
-      : (remaining.length > 0 ? remaining : levelColors);
+    // Filtra colores expuestos válidos para asegurar que los lanzadores iniciales siempre puedan absorber perlas
+    const validExposed = exposed.filter((c) => levelColors.includes(c));
+    const activePool = validExposed.length > 0 ? validExposed : levelColors;
 
     return [0, 1].map((colIdx) => {
-      const bottomColor = validColors[colIdx % validColors.length];
+      // Color garantizado para el lanzador activo (tarjeta inferior col[5])
+      const bottomColor = activePool[colIdx % activePool.length];
+
       const colItems: QueueRunner[] = [];
+      // Las 5 tarjetas en cola superior rotan armónicamente entre los colores del nivel
       for (let r = 0; r < 5; r++) {
-        const poolColor = validColors[(colIdx * 2 + r) % validColors.length];
+        const poolColor = levelColors[(colIdx * 3 + r) % levelColors.length];
         colItems.push({
           id: `queue_${lvl}_${colIdx}_${r}_${Date.now()}_${Math.random()}`,
           color: poolColor,
           capacity: config.runnerCapacity,
         });
       }
+      // Tarjeta activa lanzadora inferior
       colItems.push({
         id: `queue_${lvl}_${colIdx}_active_${Date.now()}_${Math.random()}`,
         color: bottomColor,
@@ -325,6 +312,15 @@ export function TileAbsorberGame({
   }, [showMap, isStuck]);
 
   useEffect(() => {
+    const nextTheme = getVisualThemeForLevel(playingLevel, isFishOfFortune);
+    setVersion(nextTheme);
+    if (sceneManagerRef.current) {
+      sceneManagerRef.current.setMode(nextTheme, "v3", playingLevel);
+      setQueueColumns(createQueueForLevel(playingLevel, sceneManagerRef.current.getExposedColors()));
+    }
+  }, [mode, isFishOfFortune]);
+
+  useEffect(() => {
     if (!mountRef.current) return;
     const manager = new GameSceneManager(
       mountRef.current,
@@ -332,12 +328,9 @@ export function TileAbsorberGame({
         onTileAbsorbed: () => {
           setTilesAbsorbedCount((prev) => prev + 1);
           addExperience(15);
-          refreshExposedColors();
         },
         onEncapsulationPopped: () => addExperience(15),
-        onRunnerCleared: () => {
-          refreshExposedColors();
-        },
+        onRunnerCleared: () => {},
         onWinState: (_clearedLevel?: number) => {
           setTimeout(() => {
             setHasWon(true);
@@ -373,10 +366,8 @@ export function TileAbsorberGame({
       playingLevel
     );
     sceneManagerRef.current = manager;
-    manager.setTimeOfDay(timeOfDay);
+    // Sincroniza inmediatamente las tarjetas del selector con las perlas expuestas en el mapa 3D
     setQueueColumns(createQueueForLevel(playingLevel, manager.getExposedColors()));
-    refreshExposedColors();
-
     const handleResize = () => manager.handleResize();
     window.addEventListener("resize", handleResize);
     return () => {
@@ -384,7 +375,7 @@ export function TileAbsorberGame({
       manager.dispose();
       sceneManagerRef.current = null;
     };
-  }, [refreshExposedColors, startTime, experience, playingLevel, userProfile.gamertag, tilesAbsorbedCount, version]);
+  }, []);
 
   const handleSpeedChange = (newSpeed: number) => {
     setSpeed(newSpeed);
@@ -408,8 +399,7 @@ export function TileAbsorberGame({
     const finalCapacity = activeRunner.capacity + capacityBoost;
 
     if (sceneManagerRef.current.launchRunner(activeRunner.color, finalCapacity, colIdx)) {
-      refreshExposedColors();
-
+      setShowTutorialHand(false);
       setQueueColumns((prev) =>
         prev.map((items, i) => {
           if (i !== colIdx) return items;
@@ -420,21 +410,16 @@ export function TileAbsorberGame({
           const remainingColors = sceneManagerRef.current?.getRemainingColors() || [];
           const levelColors = getColorsForLevel(playingLevel, isFishOfFortune);
 
-          const validPool = exposedColors.length > 0
-            ? exposedColors
-            : (remainingColors.length > 0 ? remainingColors : levelColors);
-
-          if (updated.length > 0) {
-            const nextActiveIdx = updated.length - 1;
-            if (!validPool.includes(updated[nextActiveIdx].color)) {
-              updated[nextActiveIdx] = {
-                ...updated[nextActiveIdx],
-                color: validPool[i % validPool.length],
-              };
-            }
+          // Prioridad de reposición:
+          // 1. Colores de perlas expuestas en el perímetro (inmediatamente útiles)
+          // 2. Colores restantes en el tablero (evita dar colores extintos)
+          // 3. Colores base del nivel
+          let pool = exposedColors.length > 0 ? exposedColors : remainingColors;
+          if (!pool || pool.length === 0) {
+            pool = levelColors;
           }
 
-          const chosenColor = validPool[Math.floor(Math.random() * validPool.length)];
+          const chosenColor = pool[Math.floor(Math.random() * pool.length)];
 
           updated.unshift({
             id: `queue_replenish_${Date.now()}_${Math.random()}`,
@@ -463,7 +448,6 @@ export function TileAbsorberGame({
       setQueueColumns(createQueueForLevel(playingLevel, sceneManagerRef.current.getExposedColors()));
     } else {
       setQueueColumns(createQueueForLevel(playingLevel));
-      refreshExposedColors();
     }
   };
   const handleReset = () => {
@@ -494,7 +478,6 @@ export function TileAbsorberGame({
       setQueueColumns(createQueueForLevel(selected, sceneManagerRef.current.getExposedColors()));
     } else {
       setQueueColumns(createQueueForLevel(selected));
-      refreshExposedColors();
     }
   };
 
@@ -531,6 +514,7 @@ export function TileAbsorberGame({
     setExperience(experienceAtLevelStart);
     setTilesAbsorbedCount(0);
     setStartTime(Date.now());
+    setShowTutorialHand(true);
     setHasWon(false);
     setIsStuck(false);
     setHasUsedComodin(false);
@@ -556,6 +540,7 @@ export function TileAbsorberGame({
     setExperienceAtLevelStart(experience);
     setTilesAbsorbedCount(0);
     setStartTime(Date.now());
+    setShowTutorialHand(true);
     setHasWon(false);
     setShowMap(false);
     stuckHandledRef.current = false;
@@ -565,7 +550,6 @@ export function TileAbsorberGame({
       setQueueColumns(createQueueForLevel(nextPlayableLevel, sceneManagerRef.current.getExposedColors()));
     } else {
       setQueueColumns(createQueueForLevel(nextPlayableLevel));
-      refreshExposedColors();
     }
   };
 
@@ -600,33 +584,31 @@ export function TileAbsorberGame({
           triggerComodinNotification("¡RED DE SALVAMENTO ACTIVADA!", "Corredor retirado automáticamente de la cinta.");
           return;
         }
-        const timeout = window.setTimeout(handleStuck, 4500);
+        const timeout = window.setTimeout(handleStuck, 1500);
         return () => window.clearTimeout(timeout);
       }
     }
 
-    if (exposed.length > 0) {
+    if (activeSlotCount === 0 && exposed.length > 0) {
       const canLaunchValidRunner = queueColumns.some((col) => {
         const bottomCard = col[col.length - 1];
         return bottomCard && exposed.includes(bottomCard.color);
       });
       if (!canLaunchValidRunner) {
-        setQueueColumns((prev) =>
-          prev.map((col, idx) => {
-            if (!col.length) return col;
-            const updated = [...col];
-            updated[updated.length - 1] = {
-              ...updated[updated.length - 1],
-              color: exposed[idx % exposed.length],
-            };
-            return updated;
-          })
-        );
+        const timeout = window.setTimeout(handleStuck, 1200);
+        return () => window.clearTimeout(timeout);
       }
     }
 
     return undefined;
   }, [activeSlotCount, tilesAbsorbedCount, queueColumns, hasWon, isStuck, showMap, handleStuck]);
+
+  useEffect(() => {
+    if (activeSlotCount < MAX_ACTIVE_RUNNERS || hasWon || isStuck || showMap || !sceneManagerRef.current) return;
+    if (sceneManagerRef.current.chronoStasisTimer > 0) return;
+    const timeout = window.setTimeout(handleStuck, 8000);
+    return () => window.clearTimeout(timeout);
+  }, [tilesAbsorbedCount, activeSlotCount, hasWon, isStuck, showMap, handleStuck]);
 
   const adsPerLife = playingLevel <= 30 ? 1 : 2;
   const handleWatchAd = async () => {
@@ -754,8 +736,6 @@ export function TileAbsorberGame({
           maxLives={MAX_LIVES}
           soundEnabled={soundEnabled}
           speed={speed}
-          timeOfDay={timeOfDay}
-          onToggleTimeOfDay={handleToggleTimeOfDay}
           level={playingLevel}
           frontierLevel={level}
           experience={experience}
@@ -788,8 +768,10 @@ export function TileAbsorberGame({
 
         <div ref={mountRef} className="absolute inset-0 z-0 h-full w-full cursor-grab active:cursor-grabbing" />
 
+        {/* CONTROLES LATERALES (Slots en cinta arriba + Matriz con colores vinculados al mapa y opacidad al 80%) */}
         {!showMap && (
           <div className="absolute right-4 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center select-none">
+            
             <div className="flex flex-col items-center mb-2">
               <span className="text-[11px] font-black text-white drop-shadow-md tracking-wider mb-1">
                 {activeSlotCount}/5
@@ -800,26 +782,29 @@ export function TileAbsorberGame({
                     key={i}
                     className={`w-9 h-6 rounded-lg transition-all border ${
                       i < activeSlotCount
-                        ? 'bg-cyan-400 border-cyan-200 shadow-sm shadow-cyan-400/50'
-                        : 'bg-slate-900/80 border-slate-700/80'
+                        ? 'bg-cyan-500 border-cyan-300 shadow-sm shadow-cyan-500/50'
+                        : 'bg-slate-900/60 border-slate-700/60'
                     }`}
                   />
                 ))}
               </div>
             </div>
 
-            <div className="bg-slate-900/80 backdrop-blur-md p-2.5 rounded-2xl border-2 border-white/40 shadow-2xl flex gap-2.5">
+            <div className="bg-slate-900/40 backdrop-blur-md p-2 rounded-2xl border border-white/30 shadow-2xl flex gap-2">
               {queueColumns.map((col, colIdx) => {
                 const activeCard = col[col.length - 1];
 
                 return (
                   <div key={colIdx} className="flex flex-col gap-1.5 items-center">
+                    
+                    {/* Tarjetas superiores por venir (Al 80% de opacidad para mantener nitidez visual) */}
                     {col.slice(0, col.length - 1).map((item, idx) => {
                       const colorClasses = getTileColorBg(item.color);
+                      
                       return (
                         <div
                           key={item.id || idx}
-                          className={`w-10 h-10 rounded-xl ${colorClasses} opacity-85 flex flex-col items-center justify-center shadow-md pointer-events-none transition-all`}
+                          className={`w-10 h-10 rounded-xl ${colorClasses} border opacity-80 flex flex-col items-center justify-center shadow-inner pointer-events-none transition-all`}
                         >
                           <span className="text-[11px] font-black leading-none drop-shadow-xs">
                             {item.capacity}
@@ -828,12 +813,12 @@ export function TileAbsorberGame({
                       );
                     })}
 
+                    {/* Única tarjeta activa lanzadora (Color 100% brillante + Anillo de selección) */}
                     {activeCard && (
                       <button
                         type="button"
                         onClick={() => handleLaunchRunner(colIdx)}
-                        className={`w-12 h-13 rounded-xl ${getTileColorBg(activeCard.color)} flex flex-col items-center justify-center shadow-2xl active:scale-95 transition-all transform hover:scale-105 ring-3 ring-white cursor-pointer mt-1`}
-                        title={`Lanzar corredor ${activeCard.color}`}
+                        className={`w-11 h-12 rounded-xl ${getTileColorBg(activeCard.color)} border-2 border-slate-950 flex flex-col items-center justify-center shadow-xl active:scale-95 transition-all transform hover:scale-105 ring-2 ring-white/90 cursor-pointer mt-1`}
                       >
                         <span className="text-xs font-black leading-none drop-shadow-xs">
                           {activeCard.capacity}
@@ -844,6 +829,7 @@ export function TileAbsorberGame({
                 );
               })}
             </div>
+
           </div>
         )}
 

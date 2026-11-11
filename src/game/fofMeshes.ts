@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+﻿import * as THREE from 'three';
 import { TileColor, SpecialTileType } from './types';
 import { TrackPath } from './trackPath';
 import { getNumberTexture, createConveyorTexture } from './proceduralTextures';
@@ -8,11 +8,11 @@ export function getFofPearlMaterial(color: TileColor): THREE.MeshPhysicalMateria
 
   return new THREE.MeshPhysicalMaterial({
     color: fishColors.body,
-    roughness: 0.18,
-    metalness: 0.12,
-    clearcoat: 0.65,
+    roughness: 0.15,
+    metalness: 0.2,
+    clearcoat: 1.0,
     clearcoatRoughness: 0.1,
-    sheen: 0.35,
+    sheen: 0.8,
     sheenColor: new THREE.Color(fishColors.accent),
   });
 }
@@ -31,49 +31,44 @@ export function getFofFishColors(color: TileColor | string): { body: number; acc
       return { body: 0xff4500, accent: 0xffd700, badgeBg: '#ef4444', text: '#ffffff' };
 
     case 'pink':
+    case 'magenta':
     case 'axolotl':
       return { body: 0xec4899, accent: 0xfbcfe8, badgeBg: '#ec4899', text: '#ffffff' };
 
-    case 'magenta':
-      return { body: 0xd946ef, accent: 0xf5d0fe, badgeBg: '#d946ef', text: '#ffffff' };
-
     case 'yellow':
     case 'clown':
-      return { body: 0xfacc15, accent: 0xfef08a, badgeBg: '#facc15', text: '#0f172a' };
+      return { body: 0xeab308, accent: 0xfef08a, badgeBg: '#eab308', text: '#0f172a' };
 
     case 'blue':
     case 'tang':
-      return { body: 0x2563eb, accent: 0x93c5fd, badgeBg: '#2563eb', text: '#ffffff' };
+      return { body: 0x3b82f6, accent: 0x93c5fd, badgeBg: '#3b82f6', text: '#ffffff' };
 
     case 'cyan':
     case 'tang jr':
     case 'tang_jr':
-      return { body: 0x06b6d4, accent: 0xa5f3fc, badgeBg: '#06b6d4', text: '#0f172a' };
+      return { body: 0x06b6d4, accent: 0xa5f3fc, badgeBg: '#06b6d4', text: '#ffffff' };
 
     case 'purple':
     case 'angler':
-      return { body: 0x9333ea, accent: 0xd8b4fe, badgeBg: '#9333ea', text: '#ffffff' };
+      return { body: 0x8b5cf6, accent: 0xddd6fe, badgeBg: '#8b5cf6', text: '#ffffff' };
 
     case 'black':
     case 'obsidian':
     case 'dark':
-      return { body: 0x0f172a, accent: 0x38bdf8, badgeBg: '#0f172a', text: '#38bdf8' };
+      return { body: 0x1e293b, accent: 0x38bdf8, badgeBg: '#0f172a', text: '#38bdf8' };
 
     case 'green':
     case 'turtle':
-      return { body: 0x16a34a, accent: 0x86efac, badgeBg: '#16a34a', text: '#ffffff' };
+      return { body: 0x22c55e, accent: 0xbbf7d0, badgeBg: '#22c55e', text: '#ffffff' };
 
     case 'red':
-      return { body: 0xe11d48, accent: 0xfca5a5, badgeBg: '#e11d48', text: '#ffffff' };
+      return { body: 0xef4444, accent: 0xfca5a5, badgeBg: '#ef4444', text: '#ffffff' };
 
     case 'orange':
       return { body: 0xf97316, accent: 0xffedd5, badgeBg: '#f97316', text: '#ffffff' };
 
-    case 'lime':
-      return { body: 0x84cc16, accent: 0xd9f99d, badgeBg: '#84cc16', text: '#0f172a' };
-
     case 'white':
-      return { body: 0xf8fafc, accent: 0xffffff, badgeBg: '#f8fafc', text: '#0f172a' };
+      return { body: 0xf8fafc, accent: 0xf97316, badgeBg: '#f97316', text: '#ffffff' };
 
     default: {
       const threeColor = new THREE.Color();

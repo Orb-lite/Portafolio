@@ -92,48 +92,37 @@ const GlossyStar: React.FC<{
         transform: `rotate(${rotate}deg) scale(${scale})`,
       }}
       className={`relative inline-flex items-center justify-center transition-transform pointer-events-none select-none ${
-        glow
-          ? 'filter drop-shadow-[0_0_24px_rgba(251,191,36,0.95)] drop-shadow-[0_6px_12px_rgba(0,0,0,0.4)]'
-          : 'filter drop-shadow-[0_6px_14px_rgba(0,0,0,0.45)]'
+        glow ? 'filter drop-shadow-[0_0_22px_rgba(251,191,36,0.85)]' : 'filter drop-shadow-[0_6px_14px_rgba(0,0,0,0.35)]'
       }`}
     >
-      <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible">
-        {/* Outer Bevel / Dark Gold Border */}
+      <svg viewBox="0 0 100 100" className="w-full h-full">
+        <defs>
+          <linearGradient id="starGradFront" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffea75" />
+            <stop offset="45%" stopColor="#f59e0b" />
+            <stop offset="100%" stopColor="#d97706" />
+          </linearGradient>
+          <linearGradient id="starGradBorder" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="50%" stopColor="#fde047" />
+            <stop offset="100%" stopColor="#b45309" />
+          </linearGradient>
+          <radialGradient id="starGloss" cx="35%" cy="30%" r="50%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+            <stop offset="50%" stopColor="#ffffff" stopOpacity="0" />
+          </radialGradient>
+        </defs>
         <polygon
-          points="50,4 64,35 98,37 72,61 80,95 50,76 20,95 28,61 2,37 36,35"
-          fill="#d97706"
-          stroke="#b45309"
+          points="50,5 64,36 98,38 72,62 80,95 50,77 20,95 28,62 2,38 36,36"
+          fill="url(#starGradFront)"
+          stroke="url(#starGradBorder)"
           strokeWidth="3.5"
           strokeLinejoin="round"
         />
-
-        {/* Main Golden Star Face */}
         <polygon
-          points="50,7 63,35 95,37 70,60 78,92 50,74 22,92 30,60 5,37 37,35"
-          fill="#f59e0b"
-          stroke="#fde047"
-          strokeWidth="2"
-          strokeLinejoin="round"
+          points="50,14 60,38 86,40 66,58 72,83 50,69 28,83 34,58 14,40 40,38"
+          fill="url(#starGloss)"
         />
-
-        {/* 3D Highlight Facets */}
-        <polygon points="50,7 63,35 50,74" fill="#fbbf24" opacity="0.95" />
-        <polygon points="50,74 63,35 95,37" fill="#f59e0b" opacity="0.9" />
-        <polygon points="50,74 70,60 78,92" fill="#d97706" opacity="0.9" />
-        <polygon points="50,74 22,92 30,60" fill="#b45309" opacity="0.8" />
-        <polygon points="50,7 37,35 50,74" fill="#fde047" opacity="0.9" />
-        <polygon points="50,74 37,35 5,37" fill="#f59e0b" opacity="0.85" />
-
-        {/* Inner Star Bevel Glow */}
-        <polygon
-          points="50,14 59,35 84,37 65,55 50,68 35,55 16,37 41,35"
-          fill="#fef08a"
-          opacity="0.85"
-        />
-
-        {/* Glossy Curved Highlight */}
-        <ellipse cx="50" cy="32" rx="14" ry="7" fill="#ffffff" opacity="0.8" />
-        <circle cx="44" cy="27" r="3" fill="#ffffff" opacity="0.95" />
       </svg>
     </div>
   );
@@ -346,49 +335,53 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
       aria-labelledby="game-result-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-300 select-none overflow-y-auto"
     >
-      {/* POP-UP CARD CONTAINER */}
-      <div className="relative w-full max-w-lg my-auto mt-16 sm:mt-20 mb-6">
-        {/* 3 GOLDEN STARS - Positioned a few cm directly above the top edge of the pop-up */}
-        <div className="absolute -top-12 sm:-top-14 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center pointer-events-none">
+      <div className="relative w-full max-w-xl my-auto pt-16 sm:pt-20 pb-4">
+        <Pearl size={24} tint="lavender" className="absolute top-12 -left-2 sm:-left-4 z-20 animate-pulse" />
+        <Pearl size={16} tint="cyan" className="absolute top-20 left-6 z-20 opacity-80" />
+        <Pearl size={28} tint="white" className="absolute top-1/2 -left-4 sm:-left-6 z-20 shadow-cyan-500/50" />
+        <Pearl size={18} tint="pink" className="absolute bottom-16 -left-1 sm:-left-3 z-20" />
+        <Pearl size={22} tint="cyan" className="absolute bottom-6 left-10 z-20" />
+
+        <Pearl size={22} tint="lavender" className="absolute top-14 -right-1 sm:-right-3 z-20" />
+        <Pearl size={26} tint="cyan" className="absolute top-24 -right-4 sm:-right-5 z-20" />
+        <Pearl size={28} tint="white" className="absolute top-2/3 -right-4 sm:-right-6 z-20" />
+        <Pearl size={18} tint="pink" className="absolute bottom-20 right-6 z-20" />
+        <Pearl size={16} tint="lavender" className="absolute bottom-8 -right-1 z-20" />
+
+        {isWin && (
+          <>
+            <StarCoin size={30} className="absolute top-10 right-16 sm:right-24 z-20 rotate-12" />
+            <StarCoin size={26} className="absolute bottom-24 -left-3 sm:-left-5 z-20 -rotate-12" />
+            <StarCoin size={32} className="absolute bottom-10 -right-2 sm:-right-4 z-20 rotate-6" />
+          </>
+        )}
+
+        {/* Mascot / Stars Header */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center pointer-events-none">
           {isWin ? (
-            <div className="flex items-end justify-center gap-1.5 sm:gap-3 filter drop-shadow-[0_8px_18px_rgba(0,0,0,0.4)]">
-              <GlossyStar size={64} rotate={-14} scale={0.92} />
-              <GlossyStar size={90} rotate={0} scale={1.05} glow={true} />
-              <GlossyStar size={64} rotate={14} scale={0.92} />
+            <div className="flex items-end justify-center gap-1 sm:gap-3">
+              <GlossyStar size={54} rotate={-14} scale={0.92} />
+              <GlossyStar size={78} rotate={0} scale={1.05} glow={true} />
+              <GlossyStar size={54} rotate={14} scale={0.92} />
             </div>
           ) : (
-            <div className="flex justify-center -mb-2 filter drop-shadow-[0_8px_18px_rgba(0,0,0,0.4)]">
-              <SadFishMascot size={135} />
+            <div className="mt-45 -mb-80 flex justify-center relative z-40">
+              <SadFishMascot size={190} />
             </div>
           )}
         </div>
 
-        {/* FLOATING BUBBLES & COINS SNUGLY ATTACHED TO THE CARD SIDES */}
-        <Pearl size={26} tint="lavender" className="absolute -top-4 -left-3 sm:-left-5 z-20 animate-pulse" />
-        <Pearl size={18} tint="cyan" className="absolute top-12 left-2 sm:left-3 z-20 opacity-90" />
-        <Pearl size={30} tint="white" className="absolute top-1/2 -left-4 sm:-left-6 z-20 shadow-cyan-400/50" />
-        <Pearl size={20} tint="pink" className="absolute bottom-20 -left-2 sm:-left-4 z-20" />
-        <Pearl size={24} tint="cyan" className="absolute -bottom-3 left-8 z-20" />
-
-        <Pearl size={24} tint="lavender" className="absolute -top-3 -right-2 sm:-right-4 z-20" />
-        <Pearl size={28} tint="cyan" className="absolute top-14 -right-4 sm:-right-6 z-20" />
-        <Pearl size={30} tint="white" className="absolute top-2/3 -right-4 sm:-right-6 z-20" />
-        <Pearl size={20} tint="pink" className="absolute bottom-20 right-4 z-20" />
-        <Pearl size={18} tint="lavender" className="absolute -bottom-3 -right-1 z-20" />
-
-        {isWin && (
-          <>
-            <StarCoin size={32} className="absolute -top-5 right-8 sm:right-14 z-20 rotate-12" />
-            <StarCoin size={26} className="absolute bottom-24 -left-3 sm:-left-5 z-20 -rotate-12" />
-            <StarCoin size={34} className="absolute -bottom-4 -right-2 sm:-right-4 z-20 rotate-6" />
-          </>
-        )}
-
         {/* FROSTED GLASS CAPSULE */}
         <div
-          className="relative w-full rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-9 pt-12 sm:pt-14 text-center text-white border-2 border-white/75 shadow-[0_25px_65px_rgba(8,145,178,0.35),0_0_40px_rgba(255,255,255,0.25)_inset] backdrop-blur-2xl transition-all overflow-hidden"
+          className={`relative w-full rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-9 pt-16 sm:pt-20 text-center text-white border-2 border-white/70 shadow-[0_25px_65px_rgba(8,145,178,0.35),0_0_40px_rgba(255,255,255,0.25)_inset] transition-all overflow-hidden ${
+            isFoF
+              ? 'backdrop-blur-2xl bg-white/20 sm:bg-white/25'
+              : 'backdrop-blur-2xl bg-slate-900/60 sm:bg-slate-900/70 border-cyan-300/60'
+          }`}
           style={{
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(200, 240, 255, 0.16) 50%, rgba(255, 255, 255, 0.24) 100%)',
+            background: isFoF
+              ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(200, 240, 255, 0.18) 50%, rgba(255, 255, 255, 0.28) 100%)'
+              : undefined,
           }}
         >
           <div className="absolute top-1.5 left-10 right-10 h-3 rounded-full bg-gradient-to-b from-white/60 to-transparent pointer-events-none" />

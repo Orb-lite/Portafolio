@@ -98,10 +98,7 @@ export class GameSceneManager {
     rotAxis: THREE.Vector3;
   }> = [];
 
-  private winExplosionTimeouts: number[] = [];
   private hasTriggeredWin: boolean = false;
-
-  private shakeIntensity: number = 0;
   private baseCameraPos = new THREE.Vector3(0, 19.0, 7.0);
   private cameraTarget = new THREE.Vector3(0, 0.8, 0.35);
   private callbacks: SceneCallbacks;
@@ -135,33 +132,16 @@ export class GameSceneManager {
   }
 
   private initRenderer() {
-    this.isSoftwareGl = (() => {
-      try {
-        const gl = document.createElement('canvas').getContext('webgl2');
-        if (!gl) return true;
-        const ext = gl.getExtension('WEBGL_debug_renderer_info');
-        const param = ext ? ext.UNMASKED_RENDERER_WEBGL : gl.RENDERER;
-        const gpu = String(gl.getParameter(param));
-        gl.getExtension('WEBGL_lose_context')?.loseContext();
-        return /SwiftShader|llvmpipe|softpipe|Software|Basic Render/i.test(gpu);
-      } catch {
-        return true;
-      }
-    })();
-
+    this.isSoftwareGl = false;
     this.renderer = new THREE.WebGLRenderer({
-      antialias: !this.isSoftwareGl,
+      antialias: true,
       powerPreference: 'high-performance',
       alpha: false,
     });
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.15;
-    this.renderer.setPixelRatio(
-      this.isSoftwareGl ? 1 : Math.min(window.devicePixelRatio, 2)
-    );
-    this.renderer.shadowMap.enabled = !this.isSoftwareGl;
-    this.renderer.shadowMap.type = THREE.PCFShadowMap;
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
     this.container.appendChild(this.renderer.domElement);
@@ -170,14 +150,6 @@ export class GameSceneManager {
   private initScene() {
     this.scene = new THREE.Scene();
 
-    try {
-      const pmrem = new THREE.PMREMGenerator(this.renderer);
-      this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-      pmrem.dispose();
-    } catch {
-      // fallback
-    }
-
     const aspect = this.container.clientWidth / this.container.clientHeight;
     this.camera = new THREE.PerspectiveCamera(46, aspect, 0.1, 1000);
     this.camera.position.copy(this.baseCameraPos);
@@ -185,14 +157,13 @@ export class GameSceneManager {
 
     this.dirLight = new THREE.DirectionalLight(0xfff7ed, 1.8);
     this.dirLight.position.set(4, 12, 6);
-    this.dirLight.castShadow = !this.isSoftwareGl;
     this.scene.add(this.dirLight);
 
     this.hemiLight = new THREE.HemisphereLight(0x93c5fd, 0x1e293b, 0.8);
     this.scene.add(this.hemiLight);
 
-    this.scene.add(this.trackGroup);
     this.scene.add(this.backdropGroup);
+    this.scene.add(this.trackGroup);
     this.scene.add(this.gridGroup);
     this.scene.add(this.runnersGroup);
     this.scene.add(this.vfxGroup);
@@ -253,6 +224,9 @@ export class GameSceneManager {
     this.groundMesh.position.y = -0.02;
     this.trackGroup.add(this.groundMesh);
 
+    // CONSTRUCCIÓN DEL FONDO Y SCENERY
+    this.buildScenery(level, trackExtent);
+
     if (this.isFishMode) {
       const { group, beltMaterial } = this.fofFactory.createCoralTrack(this.trackPath);
       this.trackGroup.add(group);
@@ -281,17 +255,30 @@ export class GameSceneManager {
     }
   }
 
-  public launchRunner(color: TileColor, capacity: number = 12, laneIndex: number = 0): boolean {
-    if (this.paused || this.activeRunners.length >= 5) {
-      return false;
+  private buildScenery(level: number, extent: number) {
+    const group = this.backdropGroup;
+    const palette = this.isFishMode
+      ? { coral: 0xf472b6, cyan: 0x38bdf8, yellow: 0xfacc15, deep: 0x0369a1 }
+      : { coral: 0xa855f7, cyan: 0x6366f1, yellow: 0xeab308, deep: 0x1e1b4b };
+
+    const mat = (color: number) => new THREE.MeshStandardMaterial({ color, roughness: 0.6, flatShading: true });
+    
+    // Genera coral/arrecifes alrededor del escenario
+    for (let i = -6; i <= 6; i += 2) {
+      const coralGeo = new THREE.ConeGeometry(0.6, 1.8 + Math.abs(i) * 0.1, 6);
+      const coralMesh = new THREE.Mesh(coralGeo, mat(i % 4 === 0 ? palette.coral : palette.cyan));
+      coralMesh.position.set(i * (extent * 0.35), 0.8, -extent - 1.5);
+      group.add(coralMesh);
     }
+  }
+
+  public launchRunner(color: TileColor, capacity: number = 12, laneIndex: number = 0): boolean {
+    if (this.paused || this.activeRunners.length >= 5) return false;
 
     const safeCapacity = capacity && capacity > 0 ? capacity : 12;
     const safeLane = Math.abs(Math.floor(laneIndex)) % 4;
 
     const runnerId = `runner_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    
-    // Obtiene el punto exacto según la posición en la cinta
     const initialProgress = safeLane * 0.25;
     const spawnPathPos = this.trackPath.getPointOnPath(initialProgress);
 
@@ -306,7 +293,6 @@ export class GameSceneManager {
 
     const meshGroup = created.group;
     meshGroup.position.copy(spawnPathPos);
-    meshGroup.scale.set(1, 1, 1);
     meshGroup.visible = true;
     this.runnersGroup.add(meshGroup);
 
@@ -317,11 +303,11 @@ export class GameSceneManager {
       badgeMat: created.badgeMat,
       updateNumber: created.updateNumber,
       progress: initialProgress,
-      speed: 0.35 * this.speedMultiplier, // Velocidad acelerada
+      speed: 0.35 * this.speedMultiplier,
       remaining: safeCapacity,
       allocatedRemaining: safeCapacity,
       squish: 0,
-      state: 'running', // Nace activado para evitar quedar congelado
+      state: 'running',
       clearingTimer: 0,
       initialProgress: initialProgress,
       spawnTimer: 0,
@@ -412,10 +398,7 @@ export class GameSceneManager {
   }
 
   public launchPrismaticRunner(capacity: number = 12): boolean {
-    if (this.activeRunners.length >= 5) {
-      soundManager.playBlocked();
-      return false;
-    }
+    if (this.activeRunners.length >= 5) return false;
     const ok = this.launchRunner('purple', capacity, 1);
     if (ok) {
       const last = this.activeRunners[this.activeRunners.length - 1];
@@ -451,9 +434,7 @@ export class GameSceneManager {
     while (group.children.length > 0) {
       const child = group.children[0];
       group.remove(child);
-      if (child instanceof THREE.Mesh) {
-        child.geometry?.dispose();
-      }
+      if (child instanceof THREE.Mesh) child.geometry?.dispose();
     }
   }
 
@@ -477,13 +458,11 @@ export class GameSceneManager {
     if (this.paused) return;
     const dt = Math.min(delta, 0.1);
 
-    // VELOCIDAD ACELERADA DE LA CINTA TRANSPORTADORA
     if (this.conveyorBeltMaterial && this.conveyorBeltMaterial.map) {
       const surgeMultiplier = this.conveyorSurgeTimer > 0 ? this.conveyorSurgeMultiplier : 1.0;
       this.conveyorBeltMaterial.map.offset.x -= dt * 1.4 * this.speedMultiplier * surgeMultiplier;
     }
 
-    // Actualización del bucle principal de movimiento y colisiones de peces
     for (let i = this.activeRunners.length - 1; i >= 0; i--) {
       const runner = this.activeRunners[i];
 
@@ -502,7 +481,6 @@ export class GameSceneManager {
         runner.meshGroup.position.copy(currentPos);
         runner.meshGroup.lookAt(nextPos);
 
-        // Absorción de perlas en los bordes
         const exposedTiles = this.gridManager.tiles.filter((t) => !t.collected && t.color === runner.color);
         for (const tile of exposedTiles) {
           if (!tile.worldPos) continue;
@@ -555,11 +533,9 @@ export class GameSceneManager {
 
   public handleResize() {
     if (!this.container || !this.renderer || !this.camera) return;
-    const width = this.container.clientWidth;
-    const height = this.container.clientHeight;
-    this.camera.aspect = width / height;
+    this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(width, height);
+    this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
   }
 
   public dispose() {

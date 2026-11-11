@@ -80,8 +80,8 @@ export class GameSceneManager {
 
   private flyingTiles: Array<{ mesh: THREE.Object3D }> = [];
   private hasTriggeredWin: boolean = false;
-  private baseCameraPos = new THREE.Vector3(0, 18.0, 7.5);
-  private cameraTarget = new THREE.Vector3(0, 0, 0);
+  private baseCameraPos = new THREE.Vector3(0, 17.5, 8.5);
+  private cameraTarget = new THREE.Vector3(0, 0, 0.2);
   private callbacks: SceneCallbacks;
 
   constructor(
@@ -116,7 +116,7 @@ export class GameSceneManager {
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.2;
+    this.renderer.toneMappingExposure = 1.25;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
@@ -131,7 +131,7 @@ export class GameSceneManager {
     this.camera.position.copy(this.baseCameraPos);
     this.camera.lookAt(this.cameraTarget);
 
-    this.dirLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    this.dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
     this.dirLight.position.set(5, 15, 8);
     this.scene.add(this.dirLight);
 
@@ -154,10 +154,10 @@ export class GameSceneManager {
     if (this.isFishMode) {
       const bgColor = this.timeOfDay === 'day' ? new THREE.Color(0x0284c7) : new THREE.Color(0x021727);
       this.scene.background = bgColor;
-      this.scene.fog = new THREE.FogExp2(bgColor.getHex(), 0.008);
+      this.scene.fog = new THREE.FogExp2(bgColor.getHex(), 0.005);
     } else {
       this.scene.background = new THREE.Color(0x0f172a);
-      this.scene.fog = new THREE.Fog(0x0f172a, 20, 80);
+      this.scene.fog = new THREE.Fog(0x0f172a, 25, 90);
     }
   }
 
@@ -200,7 +200,7 @@ export class GameSceneManager {
     this.groundMesh.position.y = -0.1;
     this.trackGroup.add(this.groundMesh);
 
-    // DIBUJA EL FONDO DE CORALES Y ELEMENTOS
+    // DIBUJA EL ESCENARIO VISIBLE
     this.buildScenery(level, trackExtent);
 
     if (this.isFishMode) {
@@ -243,14 +243,14 @@ export class GameSceneManager {
         flatShading: true,
       });
 
-      const geo = new THREE.ConeGeometry(0.8, 2.8 + Math.abs(i) * 0.2, 5);
+      const geo = new THREE.ConeGeometry(0.9, 3.2 + Math.abs(i) * 0.2, 5);
       const mesh = new THREE.Mesh(geo, mat);
-      mesh.position.set(i * (extent * 0.4), 1.2, -extent - 2.5);
+      mesh.position.set(i * (extent * 0.4), 1.4, -extent - 2.0);
       group.add(mesh);
 
-      const sideGeo = new THREE.DodecahedronGeometry(0.7, 1);
+      const sideGeo = new THREE.DodecahedronGeometry(0.8, 1);
       const sideMesh = new THREE.Mesh(sideGeo, mat);
-      sideMesh.position.set(i % 2 === 0 ? extent + 2.5 : -extent - 2.5, 0.6, i * 1.5);
+      sideMesh.position.set(i % 2 === 0 ? extent + 2.2 : -extent - 2.2, 0.7, i * 1.5);
       group.add(sideMesh);
     }
   }
@@ -261,10 +261,9 @@ export class GameSceneManager {
     const safeCapacity = capacity && capacity > 0 ? capacity : 12;
     const runnerId = `runner_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     
-    // Asigna carril de salida (0, 1) según la columna lateral
-    const initialProgress = (laneIndex * 0.5) % 1.0;
+    // Calcula la posición en la cinta perimetral de 0.0 a 1.0 según la selección
+    const initialProgress = ((laneIndex % 4) * 0.25) % 1.0;
     const spawnPathPos = this.trackPath.getPointOnPath(initialProgress);
-    const startSpawnPos = spawnPathPos.clone().add(new THREE.Vector3(0, 1.5, 0));
 
     let created: any;
     if (this.isFishMode) {
@@ -274,7 +273,7 @@ export class GameSceneManager {
     }
 
     const meshGroup = created.group;
-    meshGroup.position.copy(startSpawnPos);
+    meshGroup.position.copy(spawnPathPos);
     meshGroup.scale.set(1.4, 1.4, 1.4);
     meshGroup.visible = true;
 
@@ -291,13 +290,13 @@ export class GameSceneManager {
       badgeMat: created.badgeMat,
       updateNumber: created.updateNumber,
       progress: initialProgress,
-      speed: 0.35 * this.speedMultiplier,
+      speed: 0.38 * this.speedMultiplier,
       remaining: safeCapacity,
       allocatedRemaining: safeCapacity,
-      state: 'spawning',
+      state: 'running',
       clearingTimer: 0,
-      spawnTimer: 0,
-      spawnStartPos: startSpawnPos,
+      spawnTimer: 1.0,
+      spawnStartPos: spawnPathPos,
       spawnTargetPos: spawnPathPos,
       idleTimer: 0,
     });
@@ -444,26 +443,11 @@ export class GameSceneManager {
 
     if (this.conveyorBeltMaterial && this.conveyorBeltMaterial.map) {
       const surgeMultiplier = this.conveyorSurgeTimer > 0 ? this.conveyorSurgeMultiplier : 1.0;
-      this.conveyorBeltMaterial.map.offset.x -= dt * 1.6 * this.speedMultiplier * surgeMultiplier;
+      this.conveyorBeltMaterial.map.offset.x -= dt * 1.8 * this.speedMultiplier * surgeMultiplier;
     }
 
     for (let i = this.activeRunners.length - 1; i >= 0; i--) {
       const runner = this.activeRunners[i];
-
-      if (runner.state === 'spawning') {
-        runner.spawnTimer += dt * 4.0;
-        if (runner.spawnTimer >= 1.0) {
-          runner.state = 'running';
-          runner.meshGroup.position.copy(runner.spawnTargetPos);
-        } else {
-          runner.meshGroup.position.lerpVectors(
-            runner.spawnStartPos,
-            runner.spawnTargetPos,
-            runner.spawnTimer
-          );
-        }
-        continue;
-      }
 
       if (runner.state === 'running') {
         const surgeMultiplier = this.conveyorSurgeTimer > 0 ? this.conveyorSurgeMultiplier : 1.0;
@@ -479,7 +463,7 @@ export class GameSceneManager {
         for (const tile of exposedTiles) {
           if (!tile.worldPos) continue;
           const dist = currentPos.distanceTo(new THREE.Vector3(...tile.worldPos));
-          if (dist < 1.8 * this.magnetMultiplier && runner.remaining > 0) {
+          if (dist < 2.2 * this.magnetMultiplier && runner.remaining > 0) {
             if (tile.encapsulated) {
               tile.encapsulated = false;
               this.updateTileMesh(tile);

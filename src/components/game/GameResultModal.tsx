@@ -346,29 +346,10 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
       aria-labelledby="game-result-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-300 select-none overflow-y-auto"
     >
-      <div className="relative w-full max-w-xl my-auto pt-10 sm:pt-14 pb-4">
-        <Pearl size={26} tint="lavender" className="absolute top-6 -left-2 sm:-left-4 z-20 animate-pulse" />
-        <Pearl size={18} tint="cyan" className="absolute top-16 left-3 sm:left-4 z-20 opacity-90" />
-        <Pearl size={30} tint="white" className="absolute top-1/2 -left-3 sm:-left-5 z-20 shadow-cyan-400/50" />
-        <Pearl size={20} tint="pink" className="absolute bottom-20 -left-1 sm:-left-3 z-20" />
-        <Pearl size={24} tint="cyan" className="absolute bottom-6 left-8 z-20" />
-
-        <Pearl size={24} tint="lavender" className="absolute top-8 -right-2 sm:-right-4 z-20" />
-        <Pearl size={28} tint="cyan" className="absolute top-18 -right-3 sm:-right-5 z-20" />
-        <Pearl size={30} tint="white" className="absolute top-2/3 -right-3 sm:-right-5 z-20" />
-        <Pearl size={20} tint="pink" className="absolute bottom-24 right-5 z-20" />
-        <Pearl size={18} tint="lavender" className="absolute bottom-6 -right-1 z-20" />
-
-        {isWin && (
-          <>
-            <StarCoin size={32} className="absolute top-5 right-10 sm:right-16 z-20 rotate-12" />
-            <StarCoin size={26} className="absolute bottom-24 -left-2 sm:-left-4 z-20 -rotate-12" />
-            <StarCoin size={34} className="absolute bottom-10 -right-2 sm:-right-4 z-20 rotate-6" />
-          </>
-        )}
-
-        {/* Mascot / Stars Header - Crowned right on the top rim at the height of the top bubbles */}
-        <div className="absolute top-0 sm:top-1 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center pointer-events-none">
+      {/* POP-UP CARD CONTAINER */}
+      <div className="relative w-full max-w-lg my-auto mt-16 sm:mt-20 mb-6">
+        {/* 3 GOLDEN STARS - Positioned a few cm directly above the top edge of the pop-up */}
+        <div className="absolute -top-12 sm:-top-14 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center pointer-events-none">
           {isWin ? (
             <div className="flex items-end justify-center gap-1.5 sm:gap-3 filter drop-shadow-[0_8px_18px_rgba(0,0,0,0.4)]">
               <GlossyStar size={64} rotate={-14} scale={0.92} />
@@ -382,9 +363,30 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
           )}
         </div>
 
+        {/* FLOATING BUBBLES & COINS SNUGLY ATTACHED TO THE CARD SIDES */}
+        <Pearl size={26} tint="lavender" className="absolute -top-4 -left-3 sm:-left-5 z-20 animate-pulse" />
+        <Pearl size={18} tint="cyan" className="absolute top-12 left-2 sm:left-3 z-20 opacity-90" />
+        <Pearl size={30} tint="white" className="absolute top-1/2 -left-4 sm:-left-6 z-20 shadow-cyan-400/50" />
+        <Pearl size={20} tint="pink" className="absolute bottom-20 -left-2 sm:-left-4 z-20" />
+        <Pearl size={24} tint="cyan" className="absolute -bottom-3 left-8 z-20" />
+
+        <Pearl size={24} tint="lavender" className="absolute -top-3 -right-2 sm:-right-4 z-20" />
+        <Pearl size={28} tint="cyan" className="absolute top-14 -right-4 sm:-right-6 z-20" />
+        <Pearl size={30} tint="white" className="absolute top-2/3 -right-4 sm:-right-6 z-20" />
+        <Pearl size={20} tint="pink" className="absolute bottom-20 right-4 z-20" />
+        <Pearl size={18} tint="lavender" className="absolute -bottom-3 -right-1 z-20" />
+
+        {isWin && (
+          <>
+            <StarCoin size={32} className="absolute -top-5 right-8 sm:right-14 z-20 rotate-12" />
+            <StarCoin size={26} className="absolute bottom-24 -left-3 sm:-left-5 z-20 -rotate-12" />
+            <StarCoin size={34} className="absolute -bottom-4 -right-2 sm:-right-4 z-20 rotate-6" />
+          </>
+        )}
+
         {/* FROSTED GLASS CAPSULE */}
         <div
-          className="relative w-full rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-9 pt-14 sm:pt-16 text-center text-white border-2 border-white/75 shadow-[0_25px_65px_rgba(8,145,178,0.35),0_0_40px_rgba(255,255,255,0.25)_inset] backdrop-blur-2xl transition-all overflow-hidden"
+          className="relative w-full rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-9 pt-12 sm:pt-14 text-center text-white border-2 border-white/75 shadow-[0_25px_65px_rgba(8,145,178,0.35),0_0_40px_rgba(255,255,255,0.25)_inset] backdrop-blur-2xl transition-all overflow-hidden"
           style={{
             background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(200, 240, 255, 0.16) 50%, rgba(255, 255, 255, 0.24) 100%)',
           }}

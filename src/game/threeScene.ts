@@ -456,7 +456,7 @@ export class GameSceneManager {
     for (const tile of this.gridManager.tiles) {
       let mesh: THREE.Object3D;
       if (this.isFishMode) {
-        mesh = this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize);
+        mesh = this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize, tile.shieldLayers || 0, tile.specialType);
       } else {
         mesh = this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize);
       }
@@ -851,7 +851,7 @@ export class GameSceneManager {
       }
       let newMesh: THREE.Object3D;
       if (this.isFishMode) {
-        newMesh = this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize);
+        newMesh = this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize, tile.shieldLayers || 0, tile.specialType);
       } else {
         newMesh = this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize);
       }
@@ -1105,6 +1105,34 @@ export class GameSceneManager {
           if (exposedTile.encapsulated) {
             this.popEncapsulation(exposedTile);
             runner.squish = 0.6;
+          } else if (exposedTile.shieldLayers && exposedTile.shieldLayers > 0) {
+            // Crack one shield layer
+            exposedTile.shieldLayers--;
+            this.updateTileMesh(exposedTile);
+            if (exposedTile.worldPos) {
+              this.spawnAbsorbParticles(new THREE.Vector3(exposedTile.worldPos[0], 0.3, exposedTile.worldPos[2]), 'cyan');
+              this.spawnGroundShockwave(new THREE.Vector3(exposedTile.worldPos[0], 0.2, exposedTile.worldPos[2]), 2.2, 0x38bdf8, 0.4);
+            }
+            runner.squish = 0.7;
+            soundManager.playAbsorb(2, this.isFishMode);
+          } else if (exposedTile.specialType === 'frozen_pearl') {
+            // Shatter ice block
+            exposedTile.specialType = undefined;
+            this.updateTileMesh(exposedTile);
+            if (exposedTile.worldPos) {
+              this.spawnAbsorbParticles(new THREE.Vector3(exposedTile.worldPos[0], 0.3, exposedTile.worldPos[2]), 'white');
+            }
+            runner.squish = 0.7;
+            soundManager.playAbsorb(3, this.isFishMode);
+          } else if (exposedTile.specialType === 'clam_trap') {
+            // Open clam trap
+            exposedTile.specialType = undefined;
+            this.updateTileMesh(exposedTile);
+            if (exposedTile.worldPos) {
+              this.spawnAbsorbParticles(new THREE.Vector3(exposedTile.worldPos[0], 0.3, exposedTile.worldPos[2]), 'pink');
+            }
+            runner.squish = 0.7;
+            soundManager.playAbsorb(4, this.isFishMode);
           } else if (exposedTile.unlockAt !== undefined && time < exposedTile.unlockAt) {
           } else {
             exposedTile.unlockAt = undefined;
@@ -1112,6 +1140,11 @@ export class GameSceneManager {
             runner.absorbedCount = (runner.absorbedCount || 0) + 1;
             runner.idleTimer = 0;
             this.absorbTile(exposedTile, runner);
+
+            // Detonate Bomb or Coral Bomb
+            if (exposedTile.color === 'bomb' || exposedTile.specialType === 'coral_bomb') {
+              this.detonateBomb(exposedTile, runner);
+            }
           }
         }
       }
@@ -1291,6 +1324,53 @@ export class GameSceneManager {
       if (mesh) this.addObstacleTimer(tile, mesh, tile.unlockAt);
     }
     this.callbacks.onEncapsulationPopped?.(tile.id);
+  }
+
+  public updateTileMesh(tile: GridTile) {
+    const oldMesh = this.tileMeshMap.get(tile.id);
+    if (oldMesh) {
+      this.gridGroup.remove(oldMesh);
+    }
+    const tileSize = this.gridManager.tileSize;
+    const newMesh = this.isFishMode
+      ? this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize, tile.shieldLayers || 0, tile.specialType)
+      : this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize);
+    if (tile.worldPos) {
+      newMesh.position.set(tile.worldPos[0], tile.worldPos[1], tile.worldPos[2]);
+    }
+    this.gridGroup.add(newMesh);
+    this.tileMeshMap.set(tile.id, newMesh);
+  }
+
+  private detonateBomb(centerTile: GridTile, runner: { id: string }) {
+    this.shakeIntensity = Math.min(0.4, this.shakeIntensity + 0.25);
+    if (!centerTile.worldPos) return;
+    const cx = centerTile.worldPos[0];
+    const cz = centerTile.worldPos[2];
+    const radius = 1.5 * (this.gridManager.tileSize + this.gridManager.tileSpacing);
+
+    this.spawnGroundShockwave(new THREE.Vector3(cx, 0.2, cz), 4.5, 0xff4500, 0.6);
+
+    for (const t of this.gridManager.tiles) {
+      if (!t.collected && t.id !== centerTile.id && t.worldPos) {
+        const dx = t.worldPos[0] - cx;
+        const dz = t.worldPos[2] - cz;
+        const dist = Math.hypot(dx, dz);
+        if (dist <= radius) {
+          if (t.shieldLayers && t.shieldLayers > 0) {
+            t.shieldLayers--;
+            this.updateTileMesh(t);
+          } else if (t.specialType === 'frozen_pearl' || t.specialType === 'clam_trap') {
+            t.specialType = undefined;
+            this.updateTileMesh(t);
+          } else if (t.encapsulated) {
+            this.popEncapsulation(t);
+          } else {
+            this.absorbTile(t, runner);
+          }
+        }
+      }
+    }
   }
 
   private addObstacleTimer(tile: GridTile, parent: THREE.Object3D, unlockAt: number) {

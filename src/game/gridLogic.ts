@@ -1,4 +1,4 @@
-import { GridTile, TileColor, TrackSide } from './types';
+import { GridTile, TileColor, TrackSide, SpecialTileType } from './types';
 import { getLevelConfig, getColorsForLevel } from './experience';
 
 export class GridManager {
@@ -92,6 +92,30 @@ export class GridManager {
           !isBorder &&
           Math.random() < config.encapsulationChance;
 
+        // Special mechanics spawn based on level (Fish Feeder Mode)
+        let specialType: SpecialTileType | undefined = undefined;
+        let shieldLayers = 0;
+        let finalColor = color;
+
+        if (this.isFishMode && level >= 2) {
+          const rand = Math.random();
+          if (level >= 3 && rand < 0.05) {
+            specialType = 'rainbow';
+            finalColor = 'rainbow';
+          } else if (level >= 3 && rand < 0.10) {
+            specialType = 'bomb';
+            finalColor = 'bomb';
+          } else if (level >= 3 && rand < 0.15) {
+            specialType = 'coral_bomb';
+          } else if (rand < 0.22) {
+            specialType = 'frozen_pearl';
+          } else if (level >= 4 && rand < 0.28) {
+            specialType = 'clam_trap';
+          } else if (level >= 2 && rand < 0.35) {
+            shieldLayers = Math.min(3, 1 + Math.floor((level - 2) / 3));
+          }
+        }
+
         const posX = startX + c * (this.tileSize + this.tileSpacing);
         const posZ = startZ + r * (this.tileSize + this.tileSpacing);
 
@@ -99,9 +123,11 @@ export class GridManager {
           id: `tile_${r}_${c}`,
           row: r,
           col: c,
-          color,
+          color: finalColor,
           collected: false,
           encapsulated: shouldEncapsulate,
+          specialType,
+          shieldLayers,
           absorbedProgress: 0,
           worldPos: [posX, 0.2, posZ],
         };
@@ -133,7 +159,7 @@ export class GridManager {
           const tile = this.grid[r][c];
           if (tile && !tile.collected) {
             // First uncollected tile in column c from the bottom
-            if ((isPrismatic || tile.color === color) && tile.worldPos) {
+            if ((isPrismatic || color === 'rainbow' || tile.color === 'rainbow' || tile.color === color) && tile.worldPos) {
               const diffX = Math.abs(tile.worldPos[0] - runnerX);
               if (diffX < distanceThreshold && diffX < minDiff) {
                 minDiff = diffX;
@@ -154,7 +180,7 @@ export class GridManager {
         for (let c = this.cols - 1; c >= 0; c--) {
           const tile = this.grid[r][c];
           if (tile && !tile.collected) {
-            if ((isPrismatic || tile.color === color) && tile.worldPos) {
+            if ((isPrismatic || color === 'rainbow' || tile.color === 'rainbow' || tile.color === color) && tile.worldPos) {
               const diffZ = Math.abs(tile.worldPos[2] - runnerZ);
               if (diffZ < distanceThreshold && diffZ < minDiff) {
                 minDiff = diffZ;
@@ -175,7 +201,7 @@ export class GridManager {
         for (let r = 0; r < this.rows; r++) {
           const tile = this.grid[r][c];
           if (tile && !tile.collected) {
-            if ((isPrismatic || tile.color === color) && tile.worldPos) {
+            if ((isPrismatic || color === 'rainbow' || tile.color === 'rainbow' || tile.color === color) && tile.worldPos) {
               const diffX = Math.abs(tile.worldPos[0] - runnerX);
               if (diffX < distanceThreshold && diffX < minDiff) {
                 minDiff = diffX;
@@ -196,7 +222,7 @@ export class GridManager {
         for (let c = 0; c < this.cols; c++) {
           const tile = this.grid[r][c];
           if (tile && !tile.collected) {
-            if ((isPrismatic || tile.color === color) && tile.worldPos) {
+            if ((isPrismatic || color === 'rainbow' || tile.color === 'rainbow' || tile.color === color) && tile.worldPos) {
               const diffZ = Math.abs(tile.worldPos[2] - runnerZ);
               if (diffZ < distanceThreshold && diffZ < minDiff) {
                 minDiff = diffZ;

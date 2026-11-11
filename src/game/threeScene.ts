@@ -9,8 +9,6 @@ import { FofMeshFactory } from './fofMeshes';
 import { WorldMeshFactory } from './worldMeshes';
 import { soundManager } from './sound';
 
-const _vecA = new THREE.Vector3();
-
 export interface SceneCallbacks {
   onTileAbsorbed?: (tileId: string, color: TileColor, remainingCount: number) => void;
   onTileCollected?: (tileId: string, color: TileColor, remainingCount: number) => void;
@@ -34,7 +32,7 @@ export class GameSceneManager {
   // Settings
   public version: GameVersion = 'fof';
   public polish: PolishLevel = 'v3';
-  public isFishMode: boolean = false;
+  public isFishMode: boolean = true;
   public speedMultiplier: number = 1.0;
   public currentLevel: number = 1;
   public paused: boolean = false;
@@ -64,7 +62,6 @@ export class GameSceneManager {
     id: string;
     color: TileColor;
     meshGroup: THREE.Group;
-    tailMesh?: THREE.Mesh;
     badgeMat?: THREE.MeshStandardMaterial;
     updateNumber?: (n: number) => void;
     progress: number;
@@ -120,7 +117,7 @@ export class GameSceneManager {
   constructor(
     container: HTMLElement,
     callbacks: SceneCallbacks,
-    initialVersion: GameVersion = 'primitive',
+    initialVersion: GameVersion = 'fof',
     initialPolish: PolishLevel = 'v3',
     initialLevel: number = 1
   ) {
@@ -247,8 +244,12 @@ export class GameSceneManager {
     this.flyingTiles = [];
     this.callbacks.onSlotCountChange?.(0);
 
-    const style = { background: 0x15121e, ground: 0x1e1927, roughness: 0.18, metalness: 0.4 };
+    const style = this.isFishMode
+      ? { background: 0x0284c7, ground: 0x0369a1, roughness: 0.75, metalness: 0.1 }
+      : { background: 0x15121e, ground: 0x1e1927, roughness: 0.18, metalness: 0.4 };
+
     this.scene.background = new THREE.Color(style.background);
+    this.applyAtmosphere();
 
     const floorSize = Math.max(60, trackExtent * 2 + 30);
     const floorGeo = new THREE.PlaneGeometry(floorSize, floorSize);
@@ -262,14 +263,26 @@ export class GameSceneManager {
     this.groundMesh.position.y = -0.02;
     this.trackGroup.add(this.groundMesh);
 
-    const { group, beltMaterial } = this.primitiveFactory.createConveyorTrack(this.trackPath);
-    this.trackGroup.add(group);
-    this.conveyorBeltMaterial = beltMaterial;
+    if (this.isFishMode) {
+      const { group, beltMaterial } = this.fofFactory.createCoralTrack(this.trackPath);
+      this.trackGroup.add(group);
+      this.conveyorBeltMaterial = beltMaterial;
+    } else {
+      const { group, beltMaterial } = this.primitiveFactory.createConveyorTrack(this.trackPath);
+      this.trackGroup.add(group);
+      this.conveyorBeltMaterial = beltMaterial;
+    }
 
     this.gridManager.initGrid(this.currentLevel, this.isFishMode);
     const tileSize = this.gridManager.tileSize;
     for (const tile of this.gridManager.tiles) {
-      const mesh = this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize);
+      let mesh: THREE.Object3D;
+      if (this.isFishMode) {
+        mesh = this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize, tile.shieldLayers || 0, tile.specialType);
+      } else {
+        mesh = this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize);
+      }
+
       if (tile.worldPos) {
         mesh.position.set(tile.worldPos[0], tile.worldPos[1], tile.worldPos[2]);
       }
@@ -289,7 +302,7 @@ export class GameSceneManager {
     const runnerId = `runner_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     const spawnPathPos = this.trackPath.getLanePoint(0.0, safeLane);
 
-    let created;
+    let created: any;
     if (this.isFishMode) {
       created = this.fofFactory.createFishMesh(color, safeCapacity);
     } else {

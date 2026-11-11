@@ -357,7 +357,11 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
         )}
 
         {/* Mascot / Stars Header */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center pointer-events-none">
+        <div
+          className={`absolute left-1/2 -translate-x-1/2 z-30 flex items-center justify-center pointer-events-none transition-all ${
+            isWin ? 'top-10 sm:top-12' : 'top-8 sm:top-10'
+          }`}
+        >
           {isWin ? (
             <div className="flex items-end justify-center gap-1 sm:gap-3">
               <GlossyStar size={54} rotate={-14} scale={0.92} />
@@ -365,8 +369,8 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
               <GlossyStar size={54} rotate={14} scale={0.92} />
             </div>
           ) : (
-            <div className="flex justify-center -mb-3 sm:-mb-4">
-              <SadFishMascot size={130} />
+            <div className="flex justify-center -mb-2">
+              <SadFishMascot size={125} />
             </div>
           )}
         </div>

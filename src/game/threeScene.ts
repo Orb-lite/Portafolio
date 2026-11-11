@@ -25,11 +25,9 @@ export class GameSceneManager {
   private renderer!: THREE.WebGLRenderer;
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
-  private isSoftwareGl: boolean = false;
   private frameId: number = 0;
   private clock = new THREE.Clock();
 
-  // Settings
   public version: GameVersion = 'fof';
   public polish: PolishLevel = 'v3';
   public isFishMode: boolean = true;
@@ -37,14 +35,12 @@ export class GameSceneManager {
   public currentLevel: number = 1;
   public paused: boolean = false;
 
-  // Domain Managers
   public trackPath: TrackPath;
   public gridManager: GridManager;
   private primitiveFactory: PrimitiveMeshFactory;
   private fofFactory: FofMeshFactory;
   private worldMeshFactory: WorldMeshFactory;
 
-  // Scene Objects
   private gridGroup = new THREE.Group();
   private trackGroup = new THREE.Group();
   private backdropGroup = new THREE.Group();
@@ -57,7 +53,6 @@ export class GameSceneManager {
   private hemiLight!: THREE.HemisphereLight;
   public timeOfDay: 'day' | 'night' = 'day';
 
-  // Active Game State
   private activeRunners: Array<{
     id: string;
     color: TileColor;
@@ -68,39 +63,25 @@ export class GameSceneManager {
     speed: number;
     remaining: number;
     allocatedRemaining: number;
-    squish: number;
     state: 'spawning' | 'running' | 'clearing';
     clearingTimer: number;
-    initialProgress: number;
     spawnTimer: number;
     spawnStartPos: THREE.Vector3;
     spawnTargetPos: THREE.Vector3;
     idleTimer: number;
-    absorbedCount: number;
     isPrismatic?: boolean;
-    spawnFrameProtection?: number;
   }> = [];
 
-  // Comodines Active Tactical States
   public magnetMultiplier: number = 1.0;
   public magnetTimer: number = 0;
   public conveyorSurgeMultiplier: number = 1.0;
   public conveyorSurgeTimer: number = 0;
   public chronoStasisTimer: number = 0;
 
-  private flyingTiles: Array<{
-    mesh: THREE.Object3D;
-    color: TileColor;
-    startPos: THREE.Vector3;
-    targetRunnerId: string;
-    progress: number;
-    arcHeight: number;
-    rotAxis: THREE.Vector3;
-  }> = [];
-
+  private flyingTiles: Array<{ mesh: THREE.Object3D }> = [];
   private hasTriggeredWin: boolean = false;
-  private baseCameraPos = new THREE.Vector3(0, 19.0, 7.0);
-  private cameraTarget = new THREE.Vector3(0, 0.8, 0.35);
+  private baseCameraPos = new THREE.Vector3(0, 18.0, 7.5);
+  private cameraTarget = new THREE.Vector3(0, 0, 0);
   private callbacks: SceneCallbacks;
 
   constructor(
@@ -132,14 +113,10 @@ export class GameSceneManager {
   }
 
   private initRenderer() {
-    this.renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      powerPreference: 'high-performance',
-      alpha: false,
-    });
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.15;
+    this.renderer.toneMappingExposure = 1.2;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
@@ -154,11 +131,11 @@ export class GameSceneManager {
     this.camera.position.copy(this.baseCameraPos);
     this.camera.lookAt(this.cameraTarget);
 
-    this.dirLight = new THREE.DirectionalLight(0xfff7ed, 1.8);
-    this.dirLight.position.set(4, 12, 6);
+    this.dirLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    this.dirLight.position.set(5, 15, 8);
     this.scene.add(this.dirLight);
 
-    this.hemiLight = new THREE.HemisphereLight(0x93c5fd, 0x1e293b, 0.8);
+    this.hemiLight = new THREE.HemisphereLight(0x38bdf8, 0x0369a1, 1.2);
     this.scene.add(this.hemiLight);
 
     this.scene.add(this.backdropGroup);
@@ -177,10 +154,10 @@ export class GameSceneManager {
     if (this.isFishMode) {
       const bgColor = this.timeOfDay === 'day' ? new THREE.Color(0x0284c7) : new THREE.Color(0x021727);
       this.scene.background = bgColor;
-      this.scene.fog = new THREE.FogExp2(bgColor.getHex(), 0.007);
+      this.scene.fog = new THREE.FogExp2(bgColor.getHex(), 0.008);
     } else {
-      this.scene.background = new THREE.Color(0x15121e);
-      this.scene.fog = new THREE.Fog(0x15121e, 30, 90);
+      this.scene.background = new THREE.Color(0x0f172a);
+      this.scene.fog = new THREE.Fog(0x0f172a, 20, 80);
     }
   }
 
@@ -211,18 +188,19 @@ export class GameSceneManager {
 
     this.applyAtmosphere();
 
-    const floorSize = Math.max(60, trackExtent * 2 + 30);
+    const floorSize = Math.max(80, trackExtent * 2 + 40);
     const floorGeo = new THREE.PlaneGeometry(floorSize, floorSize);
     const floorMat = new THREE.MeshStandardMaterial({
-      color: this.isFishMode ? 0x0369a1 : 0x1e1927,
-      roughness: 0.5,
-      metalness: 0.2,
+      color: this.isFishMode ? 0x0284c7 : 0x1e293b,
+      roughness: 0.6,
+      metalness: 0.1,
     });
     this.groundMesh = new THREE.Mesh(floorGeo, floorMat);
     this.groundMesh.rotation.x = -Math.PI / 2;
-    this.groundMesh.position.y = -0.02;
+    this.groundMesh.position.y = -0.1;
     this.trackGroup.add(this.groundMesh);
 
+    // DIBUJA EL FONDO DE CORALES Y ELEMENTOS
     this.buildScenery(level, trackExtent);
 
     if (this.isFishMode) {
@@ -255,17 +233,25 @@ export class GameSceneManager {
 
   private buildScenery(level: number, extent: number) {
     const group = this.backdropGroup;
-    const palette = this.isFishMode
-      ? { coral: 0xf472b6, cyan: 0x38bdf8, yellow: 0xfacc15, deep: 0x0369a1 }
-      : { coral: 0xa855f7, cyan: 0x6366f1, yellow: 0xeab308, deep: 0x1e1b4b };
+    const colors = [0xf472b6, 0x38bdf8, 0xfacc15, 0x34d399, 0xa78bfa];
 
-    const mat = (color: number) => new THREE.MeshStandardMaterial({ color, roughness: 0.6, flatShading: true });
+    for (let i = -8; i <= 8; i += 2) {
+      const mat = new THREE.MeshStandardMaterial({
+        color: colors[Math.abs(i) % colors.length],
+        roughness: 0.4,
+        metalness: 0.1,
+        flatShading: true,
+      });
 
-    for (let i = -6; i <= 6; i += 2) {
-      const coralGeo = new THREE.ConeGeometry(0.6, 1.8 + Math.abs(i) * 0.1, 6);
-      const coralMesh = new THREE.Mesh(coralGeo, mat(i % 4 === 0 ? palette.coral : palette.cyan));
-      coralMesh.position.set(i * (extent * 0.35), 0.8, -extent - 1.5);
-      group.add(coralMesh);
+      const geo = new THREE.ConeGeometry(0.8, 2.8 + Math.abs(i) * 0.2, 5);
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(i * (extent * 0.4), 1.2, -extent - 2.5);
+      group.add(mesh);
+
+      const sideGeo = new THREE.DodecahedronGeometry(0.7, 1);
+      const sideMesh = new THREE.Mesh(sideGeo, mat);
+      sideMesh.position.set(i % 2 === 0 ? extent + 2.5 : -extent - 2.5, 0.6, i * 1.5);
+      group.add(sideMesh);
     }
   }
 
@@ -273,25 +259,23 @@ export class GameSceneManager {
     if (this.paused || this.activeRunners.length >= 5) return false;
 
     const safeCapacity = capacity && capacity > 0 ? capacity : 12;
-    const safeLane = Math.abs(Math.floor(laneIndex)) % 4;
-
     const runnerId = `runner_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    const initialProgress = safeLane * 0.25;
+    
+    // Asigna carril de salida (0, 1) según la columna lateral
+    const initialProgress = (laneIndex * 0.5) % 1.0;
     const spawnPathPos = this.trackPath.getPointOnPath(initialProgress);
     const startSpawnPos = spawnPathPos.clone().add(new THREE.Vector3(0, 1.5, 0));
 
     let created: any;
     if (this.isFishMode) {
       created = this.fofFactory.createFishMesh(color, safeCapacity);
-    } else if (this.version === 'primitive') {
-      created = this.primitiveFactory.createRunnerMesh(color, safeCapacity);
     } else {
-      created = this.worldMeshFactory.createRunner(this.version as any, color, safeCapacity);
+      created = this.primitiveFactory.createRunnerMesh(color, safeCapacity);
     }
 
     const meshGroup = created.group;
     meshGroup.position.copy(startSpawnPos);
-    meshGroup.scale.set(1, 1, 1);
+    meshGroup.scale.set(1.4, 1.4, 1.4);
     meshGroup.visible = true;
 
     if (created.updateNumber) {
@@ -307,19 +291,15 @@ export class GameSceneManager {
       badgeMat: created.badgeMat,
       updateNumber: created.updateNumber,
       progress: initialProgress,
-      speed: 0.32 * this.speedMultiplier,
+      speed: 0.35 * this.speedMultiplier,
       remaining: safeCapacity,
       allocatedRemaining: safeCapacity,
-      squish: 0,
       state: 'spawning',
       clearingTimer: 0,
-      initialProgress: initialProgress,
       spawnTimer: 0,
       spawnStartPos: startSpawnPos,
       spawnTargetPos: spawnPathPos,
       idleTimer: 0,
-      absorbedCount: 0,
-      spawnFrameProtection: 2,
     });
 
     soundManager.playLaunch(this.isFishMode);
@@ -464,15 +444,11 @@ export class GameSceneManager {
 
     if (this.conveyorBeltMaterial && this.conveyorBeltMaterial.map) {
       const surgeMultiplier = this.conveyorSurgeTimer > 0 ? this.conveyorSurgeMultiplier : 1.0;
-      this.conveyorBeltMaterial.map.offset.x -= dt * 1.4 * this.speedMultiplier * surgeMultiplier;
+      this.conveyorBeltMaterial.map.offset.x -= dt * 1.6 * this.speedMultiplier * surgeMultiplier;
     }
 
     for (let i = this.activeRunners.length - 1; i >= 0; i--) {
       const runner = this.activeRunners[i];
-
-      if (runner.spawnFrameProtection && runner.spawnFrameProtection > 0) {
-        runner.spawnFrameProtection--;
-      }
 
       if (runner.state === 'spawning') {
         runner.spawnTimer += dt * 4.0;
@@ -499,11 +475,11 @@ export class GameSceneManager {
         runner.meshGroup.position.copy(currentPos);
         runner.meshGroup.lookAt(nextPos);
 
-        const exposedTiles = this.gridManager.tiles.filter((t) => !t.collected && t.color === runner.color);
+        const exposedTiles = this.gridManager.tiles.filter((t) => !t.collected && (t.color === runner.color || runner.isPrismatic));
         for (const tile of exposedTiles) {
           if (!tile.worldPos) continue;
           const dist = currentPos.distanceTo(new THREE.Vector3(...tile.worldPos));
-          if (dist < 1.6 && runner.remaining > 0) {
+          if (dist < 1.8 * this.magnetMultiplier && runner.remaining > 0) {
             if (tile.encapsulated) {
               tile.encapsulated = false;
               this.updateTileMesh(tile);
@@ -529,9 +505,9 @@ export class GameSceneManager {
       }
 
       if (runner.state === 'clearing') {
-        runner.clearingTimer += dt * 3.0;
+        runner.clearingTimer += dt * 3.5;
         const scaleProgress = Math.max(0, 1 - runner.clearingTimer);
-        runner.meshGroup.scale.setScalar(scaleProgress);
+        runner.meshGroup.scale.setScalar(scaleProgress * 1.4);
 
         if (runner.clearingTimer >= 1.0) {
           this.runnersGroup.remove(runner.meshGroup);

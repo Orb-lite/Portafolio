@@ -9,8 +9,6 @@ import { FofMeshFactory } from './fofMeshes';
 import { WorldMeshFactory } from './worldMeshes';
 import { soundManager } from './sound';
 
-const _vecA = new THREE.Vector3();
-
 export interface SceneCallbacks {
   onTileAbsorbed?: (tileId: string, color: TileColor, remainingCount: number) => void;
   onTileCollected?: (tileId: string, color: TileColor, remainingCount: number) => void;
@@ -292,7 +290,10 @@ export class GameSceneManager {
     const safeLane = Math.abs(Math.floor(laneIndex)) % 4;
 
     const runnerId = `runner_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    const spawnPathPos = this.trackPath.getLanePoint(0.0, safeLane);
+    
+    // Obtiene el punto exacto según la posición en la cinta
+    const initialProgress = safeLane * 0.25;
+    const spawnPathPos = this.trackPath.getPointOnPath(initialProgress);
 
     let created: any;
     if (this.isFishMode) {
@@ -315,14 +316,14 @@ export class GameSceneManager {
       meshGroup: meshGroup,
       badgeMat: created.badgeMat,
       updateNumber: created.updateNumber,
-      progress: 0.0,
-      speed: 0.28 * this.speedMultiplier,
+      progress: initialProgress,
+      speed: 0.35 * this.speedMultiplier, // Velocidad acelerada
       remaining: safeCapacity,
       allocatedRemaining: safeCapacity,
       squish: 0,
-      state: 'spawning',
+      state: 'running', // Nace activado para evitar quedar congelado
       clearingTimer: 0,
-      initialProgress: 0.0,
+      initialProgress: initialProgress,
       spawnTimer: 0,
       spawnStartPos: spawnPathPos.clone().add(new THREE.Vector3(0, 0.4, 0)),
       spawnTargetPos: spawnPathPos.clone(),
@@ -331,6 +332,7 @@ export class GameSceneManager {
       spawnFrameProtection: 2,
     });
 
+    soundManager.playLaunch(this.isFishMode);
     this.callbacks.onSlotCountChange?.(this.activeRunners.length);
     return true;
   }
@@ -475,12 +477,13 @@ export class GameSceneManager {
     if (this.paused) return;
     const dt = Math.min(delta, 0.1);
 
-    // Animación de la cinta transportadora
+    // VELOCIDAD ACELERADA DE LA CINTA TRANSPORTADORA
     if (this.conveyorBeltMaterial && this.conveyorBeltMaterial.map) {
-      this.conveyorBeltMaterial.map.offset.x -= dt * 0.4 * this.speedMultiplier;
+      const surgeMultiplier = this.conveyorSurgeTimer > 0 ? this.conveyorSurgeMultiplier : 1.0;
+      this.conveyorBeltMaterial.map.offset.x -= dt * 1.4 * this.speedMultiplier * surgeMultiplier;
     }
 
-    // Actualización de los corredores
+    // Actualización del bucle principal de movimiento y colisiones de peces
     for (let i = this.activeRunners.length - 1; i >= 0; i--) {
       const runner = this.activeRunners[i];
 
@@ -489,57 +492,37 @@ export class GameSceneManager {
         continue;
       }
 
-      if (runner.state === 'spawning') {
-        runner.spawnTimer += dt * 3.5;
-        if (runner.spawnTimer >= 1.0) {
-          runner.state = 'running';
-          runner.meshGroup.position.copy(runner.spawnTargetPos);
-        } else {
-          runner.meshGroup.position.lerpVectors(
-            runner.spawnStartPos,
-            runner.spawnTargetPos,
-            runner.spawnTimer
-          );
-        }
-        continue;
-      }
-
       if (runner.state === 'running') {
-        runner.progress = (runner.progress + runner.speed * dt * this.speedMultiplier) % 1.0;
+        const surgeMultiplier = this.conveyorSurgeTimer > 0 ? this.conveyorSurgeMultiplier : 1.0;
+        runner.progress = (runner.progress + runner.speed * dt * surgeMultiplier) % 1.0;
+
         const currentPos = this.trackPath.getPointOnPath(runner.progress);
         const nextPos = this.trackPath.getPointOnPath((runner.progress + 0.01) % 1.0);
 
         runner.meshGroup.position.copy(currentPos);
         runner.meshGroup.lookAt(nextPos);
 
-        // Absorción en el perímetro
-        const distThreshold = Math.max(0.48, this.gridManager.tileSize * 1.15) * this.magnetMultiplier;
-        const exposedTile = this.gridManager.findExposedTile(
-          runner.progress,
-          currentPos.x,
-          currentPos.z,
-          runner.color,
-          distThreshold,
-          runner.isPrismatic
-        );
+        // Absorción de perlas en los bordes
+        const exposedTiles = this.gridManager.tiles.filter((t) => !t.collected && t.color === runner.color);
+        for (const tile of exposedTiles) {
+          if (!tile.worldPos) continue;
+          const dist = currentPos.distanceTo(new THREE.Vector3(...tile.worldPos));
+          if (dist < 1.6 && runner.remaining > 0) {
+            if (tile.encapsulated) {
+              tile.encapsulated = false;
+              this.updateTileMesh(tile);
+            } else {
+              tile.collected = true;
+              runner.remaining--;
+              if (runner.updateNumber) runner.updateNumber(runner.remaining);
 
-        if (exposedTile && !exposedTile.collected && runner.allocatedRemaining > 0) {
-          if (exposedTile.encapsulated) {
-            exposedTile.encapsulated = false;
-            this.updateTileMesh(exposedTile);
-          } else {
-            exposedTile.collected = true;
-            runner.allocatedRemaining--;
-            runner.remaining--;
-            if (runner.updateNumber) runner.updateNumber(runner.remaining);
-
-            const oldMesh = this.tileMeshMap.get(exposedTile.id);
-            if (oldMesh) {
-              this.gridGroup.remove(oldMesh);
-              this.tileMeshMap.delete(exposedTile.id);
+              const oldMesh = this.tileMeshMap.get(tile.id);
+              if (oldMesh) {
+                this.gridGroup.remove(oldMesh);
+                this.tileMeshMap.delete(tile.id);
+              }
+              this.callbacks.onTileAbsorbed?.(tile.id, tile.color, runner.remaining);
             }
-
-            this.callbacks.onTileAbsorbed?.(exposedTile.id, exposedTile.color, runner.remaining);
           }
         }
 
@@ -550,7 +533,7 @@ export class GameSceneManager {
       }
 
       if (runner.state === 'clearing') {
-        runner.clearingTimer += dt * 2.5;
+        runner.clearingTimer += dt * 3.0;
         const scaleProgress = Math.max(0, 1 - runner.clearingTimer);
         runner.meshGroup.scale.setScalar(scaleProgress);
 
@@ -563,7 +546,6 @@ export class GameSceneManager {
       }
     }
 
-    // Verificación de victoria
     const uncollectedCount = this.gridManager.tiles.filter((t) => !t.collected).length;
     if (uncollectedCount === 0 && !this.hasTriggeredWin) {
       this.hasTriggeredWin = true;

@@ -132,7 +132,6 @@ export class GameSceneManager {
   }
 
   private initRenderer() {
-    this.isSoftwareGl = false;
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
       powerPreference: 'high-performance',
@@ -224,7 +223,6 @@ export class GameSceneManager {
     this.groundMesh.position.y = -0.02;
     this.trackGroup.add(this.groundMesh);
 
-    // CONSTRUCCIÓN DEL FONDO Y SCENERY
     this.buildScenery(level, trackExtent);
 
     if (this.isFishMode) {
@@ -262,8 +260,7 @@ export class GameSceneManager {
       : { coral: 0xa855f7, cyan: 0x6366f1, yellow: 0xeab308, deep: 0x1e1b4b };
 
     const mat = (color: number) => new THREE.MeshStandardMaterial({ color, roughness: 0.6, flatShading: true });
-    
-    // Genera coral/arrecifes alrededor del escenario
+
     for (let i = -6; i <= 6; i += 2) {
       const coralGeo = new THREE.ConeGeometry(0.6, 1.8 + Math.abs(i) * 0.1, 6);
       const coralMesh = new THREE.Mesh(coralGeo, mat(i % 4 === 0 ? palette.coral : palette.cyan));
@@ -281,6 +278,7 @@ export class GameSceneManager {
     const runnerId = `runner_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     const initialProgress = safeLane * 0.25;
     const spawnPathPos = this.trackPath.getPointOnPath(initialProgress);
+    const startSpawnPos = spawnPathPos.clone().add(new THREE.Vector3(0, 1.5, 0));
 
     let created: any;
     if (this.isFishMode) {
@@ -292,8 +290,14 @@ export class GameSceneManager {
     }
 
     const meshGroup = created.group;
-    meshGroup.position.copy(spawnPathPos);
+    meshGroup.position.copy(startSpawnPos);
+    meshGroup.scale.set(1, 1, 1);
     meshGroup.visible = true;
+
+    if (created.updateNumber) {
+      created.updateNumber(safeCapacity);
+    }
+
     this.runnersGroup.add(meshGroup);
 
     this.activeRunners.push({
@@ -303,16 +307,16 @@ export class GameSceneManager {
       badgeMat: created.badgeMat,
       updateNumber: created.updateNumber,
       progress: initialProgress,
-      speed: 0.35 * this.speedMultiplier,
+      speed: 0.32 * this.speedMultiplier,
       remaining: safeCapacity,
       allocatedRemaining: safeCapacity,
       squish: 0,
-      state: 'running',
+      state: 'spawning',
       clearingTimer: 0,
       initialProgress: initialProgress,
       spawnTimer: 0,
-      spawnStartPos: spawnPathPos.clone().add(new THREE.Vector3(0, 0.4, 0)),
-      spawnTargetPos: spawnPathPos.clone(),
+      spawnStartPos: startSpawnPos,
+      spawnTargetPos: spawnPathPos,
       idleTimer: 0,
       absorbedCount: 0,
       spawnFrameProtection: 2,
@@ -468,6 +472,20 @@ export class GameSceneManager {
 
       if (runner.spawnFrameProtection && runner.spawnFrameProtection > 0) {
         runner.spawnFrameProtection--;
+      }
+
+      if (runner.state === 'spawning') {
+        runner.spawnTimer += dt * 4.0;
+        if (runner.spawnTimer >= 1.0) {
+          runner.state = 'running';
+          runner.meshGroup.position.copy(runner.spawnTargetPos);
+        } else {
+          runner.meshGroup.position.lerpVectors(
+            runner.spawnStartPos,
+            runner.spawnTargetPos,
+            runner.spawnTimer
+          );
+        }
         continue;
       }
 

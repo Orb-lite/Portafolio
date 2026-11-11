@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { ALL_COLORS, GameVersion, TileColor } from "../../game/types";
+import { GameVersion, TileColor } from "../../game/types";
 import { getLevelConfig, getVisualThemeForLevel, getColorsForLevel } from "../../game/experience";
 import { GameSceneManager } from "../../game/threeScene";
 import { HeaderBar } from "./HeaderBar";
@@ -437,7 +437,10 @@ export function TileAbsorberGame({
     }
     const finalCapacity = activeRunner.capacity + capacityBoost;
 
-    if (sceneManagerRef.current.launchRunner(activeRunner.color, finalCapacity, colIdx)) {
+    // Mapea la columna seleccionada (0 o 1) a un carril válido en la escena 3D (0 a 3)
+    const laneIndex = colIdx % 4;
+
+    if (sceneManagerRef.current.launchRunner(activeRunner.color, finalCapacity, laneIndex)) {
       refreshExposedColors();
 
       setQueueColumns((prev) =>

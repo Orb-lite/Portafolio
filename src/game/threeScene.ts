@@ -200,7 +200,6 @@ export class GameSceneManager {
     this.groundMesh.position.y = -0.1;
     this.trackGroup.add(this.groundMesh);
 
-    // DIBUJA EL FONDO DE CORALES Y ELEMENTOS
     this.buildScenery(level, trackExtent);
 
     if (this.isFishMode) {
@@ -261,10 +260,9 @@ export class GameSceneManager {
     const safeCapacity = capacity && capacity > 0 ? capacity : 12;
     const runnerId = `runner_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     
-    // Asigna carril de salida (0, 1) según la columna lateral
+    // Asignación directa de posición perimetral
     const initialProgress = (laneIndex * 0.5) % 1.0;
     const spawnPathPos = this.trackPath.getPointOnPath(initialProgress);
-    const startSpawnPos = spawnPathPos.clone().add(new THREE.Vector3(0, 1.5, 0));
 
     let created: any;
     if (this.isFishMode) {
@@ -274,7 +272,7 @@ export class GameSceneManager {
     }
 
     const meshGroup = created.group;
-    meshGroup.position.copy(startSpawnPos);
+    meshGroup.position.copy(spawnPathPos);
     meshGroup.scale.set(1.4, 1.4, 1.4);
     meshGroup.visible = true;
 
@@ -291,13 +289,13 @@ export class GameSceneManager {
       badgeMat: created.badgeMat,
       updateNumber: created.updateNumber,
       progress: initialProgress,
-      speed: 0.35 * this.speedMultiplier,
+      speed: 0.38 * this.speedMultiplier,
       remaining: safeCapacity,
       allocatedRemaining: safeCapacity,
-      state: 'spawning',
+      state: 'running',
       clearingTimer: 0,
-      spawnTimer: 0,
-      spawnStartPos: startSpawnPos,
+      spawnTimer: 1.0,
+      spawnStartPos: spawnPathPos,
       spawnTargetPos: spawnPathPos,
       idleTimer: 0,
     });
@@ -444,26 +442,11 @@ export class GameSceneManager {
 
     if (this.conveyorBeltMaterial && this.conveyorBeltMaterial.map) {
       const surgeMultiplier = this.conveyorSurgeTimer > 0 ? this.conveyorSurgeMultiplier : 1.0;
-      this.conveyorBeltMaterial.map.offset.x -= dt * 1.6 * this.speedMultiplier * surgeMultiplier;
+      this.conveyorBeltMaterial.map.offset.x -= dt * 1.8 * this.speedMultiplier * surgeMultiplier;
     }
 
     for (let i = this.activeRunners.length - 1; i >= 0; i--) {
       const runner = this.activeRunners[i];
-
-      if (runner.state === 'spawning') {
-        runner.spawnTimer += dt * 4.0;
-        if (runner.spawnTimer >= 1.0) {
-          runner.state = 'running';
-          runner.meshGroup.position.copy(runner.spawnTargetPos);
-        } else {
-          runner.meshGroup.position.lerpVectors(
-            runner.spawnStartPos,
-            runner.spawnTargetPos,
-            runner.spawnTimer
-          );
-        }
-        continue;
-      }
 
       if (runner.state === 'running') {
         const surgeMultiplier = this.conveyorSurgeTimer > 0 ? this.conveyorSurgeMultiplier : 1.0;
@@ -475,11 +458,12 @@ export class GameSceneManager {
         runner.meshGroup.position.copy(currentPos);
         runner.meshGroup.lookAt(nextPos);
 
+        // Absorción garantizada al pasar cerca de perlas expuestas
         const exposedTiles = this.gridManager.tiles.filter((t) => !t.collected && (t.color === runner.color || runner.isPrismatic));
         for (const tile of exposedTiles) {
           if (!tile.worldPos) continue;
           const dist = currentPos.distanceTo(new THREE.Vector3(...tile.worldPos));
-          if (dist < 1.8 * this.magnetMultiplier && runner.remaining > 0) {
+          if (dist < 2.0 * this.magnetMultiplier && runner.remaining > 0) {
             if (tile.encapsulated) {
               tile.encapsulated = false;
               this.updateTileMesh(tile);

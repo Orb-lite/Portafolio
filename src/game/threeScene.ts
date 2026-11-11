@@ -406,4 +406,118 @@ export class GameSceneManager {
     if (tile.worldPos) {
       newMesh.position.set(tile.worldPos[0], tile.worldPos[1], tile.worldPos[2]);
     }
-    this
+    this.gridGroup.add(newMesh);
+    this.tileMeshMap.set(tile.id, newMesh);
+  }
+
+  private clearGroup(group: THREE.Group) {
+    while (group.children.length > 0) {
+      const child = group.children[0];
+      group.remove(child);
+      if (child instanceof THREE.Mesh) child.geometry?.dispose();
+    }
+  }
+
+  private startLoop() {
+    const loop = () => {
+      this.frameId = requestAnimationFrame(loop);
+      const delta = this.clock.getDelta();
+      this.update(delta);
+      this.render();
+    };
+    loop();
+  }
+
+  private render() {
+    this.camera.position.copy(this.baseCameraPos);
+    this.camera.lookAt(this.cameraTarget);
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  private update(delta: number) {
+    if (this.paused) return;
+    const dt = Math.min(delta, 0.1);
+
+    if (this.conveyorBeltMaterial && this.conveyorBeltMaterial.map) {
+      const surgeMultiplier = this.conveyorSurgeTimer > 0 ? this.conveyorSurgeMultiplier : 1.0;
+      this.conveyorBeltMaterial.map.offset.x -= dt * 1.6 * this.speedMultiplier * surgeMultiplier;
+    }
+
+    for (let i = this.activeRunners.length - 1; i >= 0; i--) {
+      const runner = this.activeRunners[i];
+
+      if (runner.state === 'running') {
+        const surgeMultiplier = this.conveyorSurgeTimer > 0 ? this.conveyorSurgeMultiplier : 1.0;
+        runner.progress = (runner.progress + runner.speed * dt * surgeMultiplier) % 1.0;
+
+        const currentPos = this.trackPath.getPointOnPath(runner.progress);
+        const nextPos = this.trackPath.getPointOnPath((runner.progress + 0.01) % 1.0);
+
+        runner.meshGroup.position.copy(currentPos);
+        runner.meshGroup.lookAt(nextPos);
+
+        const exposedTiles = this.gridManager.tiles.filter((t) => !t.collected && (t.color === runner.color || runner.isPrismatic));
+        for (const tile of exposedTiles) {
+          if (!tile.worldPos) continue;
+          const dist = currentPos.distanceTo(new THREE.Vector3(...tile.worldPos));
+          if (dist < 2.0 * this.magnetMultiplier && runner.remaining > 0) {
+            if (tile.encapsulated) {
+              tile.encapsulated = false;
+              this.updateTileMesh(tile);
+            } else {
+              tile.collected = true;
+              runner.remaining--;
+              if (runner.updateNumber) runner.updateNumber(runner.remaining);
+
+              const oldMesh = this.tileMeshMap.get(tile.id);
+              if (oldMesh) {
+                this.gridGroup.remove(oldMesh);
+                this.tileMeshMap.delete(tile.id);
+              }
+              this.callbacks.onTileAbsorbed?.(tile.id, tile.color, runner.remaining);
+            }
+          }
+        }
+
+        if (runner.remaining <= 0) {
+          runner.state = 'clearing';
+          runner.clearingTimer = 0;
+        }
+      }
+
+      if (runner.state === 'clearing') {
+        runner.clearingTimer += dt * 3.5;
+        const scaleProgress = Math.max(0, 1 - runner.clearingTimer);
+        runner.meshGroup.scale.setScalar(scaleProgress * 1.4);
+
+        if (runner.clearingTimer >= 1.0) {
+          this.runnersGroup.remove(runner.meshGroup);
+          this.activeRunners.splice(i, 1);
+          this.callbacks.onRunnerCleared?.(runner.id, runner.color);
+          this.callbacks.onSlotCountChange?.(this.activeRunners.length);
+        }
+      }
+    }
+
+    const uncollectedCount = this.gridManager.tiles.filter((t) => !t.collected).length;
+    if (uncollectedCount === 0 && !this.hasTriggeredWin) {
+      this.hasTriggeredWin = true;
+      this.callbacks.onWinState?.(this.currentLevel);
+    }
+  }
+
+  public handleResize() {
+    if (!this.container || !this.renderer || !this.camera) return;
+    this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+  }
+
+  public dispose() {
+    cancelAnimationFrame(this.frameId);
+    this.renderer.dispose();
+    if (this.container.contains(this.renderer.domElement)) {
+      this.container.removeChild(this.renderer.domElement);
+    }
+  }
+}

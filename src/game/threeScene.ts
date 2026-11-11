@@ -9,6 +9,8 @@ import { FofMeshFactory } from './fofMeshes';
 import { WorldMeshFactory } from './worldMeshes';
 import { soundManager } from './sound';
 
+const _vecA = new THREE.Vector3();
+
 export interface SceneCallbacks {
   onTileAbsorbed?: (tileId: string, color: TileColor, remainingCount: number) => void;
   onTileCollected?: (tileId: string, color: TileColor, remainingCount: number) => void;
@@ -100,14 +102,6 @@ export class GameSceneManager {
 
   private winExplosionTimeouts: number[] = [];
   private hasTriggeredWin: boolean = false;
-  private obstacleTimers = new Map<string, {
-    tile: GridTile;
-    sprite: THREE.Sprite;
-    texture: THREE.CanvasTexture;
-    context: CanvasRenderingContext2D;
-    unlockAt: number;
-    lastLabel: string;
-  }>();
 
   private shakeIntensity: number = 0;
   private baseCameraPos = new THREE.Vector3(0, 19.0, 7.0);
@@ -216,6 +210,9 @@ export class GameSceneManager {
       const bgColor = this.timeOfDay === 'day' ? new THREE.Color(0x0284c7) : new THREE.Color(0x021727);
       this.scene.background = bgColor;
       this.scene.fog = new THREE.FogExp2(bgColor.getHex(), 0.007);
+    } else {
+      this.scene.background = new THREE.Color(0x15121e);
+      this.scene.fog = new THREE.Fog(0x15121e, 30, 90);
     }
   }
 
@@ -244,19 +241,14 @@ export class GameSceneManager {
     this.flyingTiles = [];
     this.callbacks.onSlotCountChange?.(0);
 
-    const style = this.isFishMode
-      ? { background: 0x0284c7, ground: 0x0369a1, roughness: 0.75, metalness: 0.1 }
-      : { background: 0x15121e, ground: 0x1e1927, roughness: 0.18, metalness: 0.4 };
-
-    this.scene.background = new THREE.Color(style.background);
     this.applyAtmosphere();
 
     const floorSize = Math.max(60, trackExtent * 2 + 30);
     const floorGeo = new THREE.PlaneGeometry(floorSize, floorSize);
     const floorMat = new THREE.MeshStandardMaterial({
-      color: style.ground,
-      roughness: style.roughness,
-      metalness: style.metalness,
+      color: this.isFishMode ? 0x0369a1 : 0x1e1927,
+      roughness: 0.5,
+      metalness: 0.2,
     });
     this.groundMesh = new THREE.Mesh(floorGeo, floorMat);
     this.groundMesh.rotation.x = -Math.PI / 2;
@@ -305,8 +297,10 @@ export class GameSceneManager {
     let created: any;
     if (this.isFishMode) {
       created = this.fofFactory.createFishMesh(color, safeCapacity);
-    } else {
+    } else if (this.version === 'primitive') {
       created = this.primitiveFactory.createRunnerMesh(color, safeCapacity);
+    } else {
+      created = this.worldMeshFactory.createRunner(this.version as any, color, safeCapacity);
     }
 
     const meshGroup = created.group;
@@ -368,6 +362,7 @@ export class GameSceneManager {
     const toPop = trapped.slice(0, count);
     toPop.forEach((tile) => {
       tile.encapsulated = false;
+      this.updateTileMesh(tile);
     });
     soundManager.playBubblePop();
     return toPop.length;
@@ -408,6 +403,7 @@ export class GameSceneManager {
     const toConvert = uncollected.slice(0, count);
     toConvert.forEach((tile) => {
       tile.color = targetColor;
+      this.updateTileMesh(tile);
     });
     soundManager.playComodinActivate();
     return toConvert.length;
@@ -432,6 +428,23 @@ export class GameSceneManager {
     return count;
   }
 
+  private updateTileMesh(tile: GridTile) {
+    const oldMesh = this.tileMeshMap.get(tile.id);
+    if (oldMesh) this.gridGroup.remove(oldMesh);
+    const tileSize = this.gridManager.tileSize;
+    let newMesh: THREE.Object3D;
+    if (this.isFishMode) {
+      newMesh = this.fofFactory.createPearlTile(tile.color, tile.encapsulated, tileSize, tile.shieldLayers || 0, tile.specialType);
+    } else {
+      newMesh = this.primitiveFactory.createTile(tile.color, tile.encapsulated, tileSize);
+    }
+    if (tile.worldPos) {
+      newMesh.position.set(tile.worldPos[0], tile.worldPos[1], tile.worldPos[2]);
+    }
+    this.gridGroup.add(newMesh);
+    this.tileMeshMap.set(tile.id, newMesh);
+  }
+
   private clearGroup(group: THREE.Group) {
     while (group.children.length > 0) {
       const child = group.children[0];
@@ -440,19 +453,6 @@ export class GameSceneManager {
         child.geometry?.dispose();
       }
     }
-  }
-
-  private clearObstacleTimers() {
-    this.obstacleTimers.forEach((item) => {
-      this.gridGroup.remove(item.sprite);
-      item.texture.dispose();
-    });
-    this.obstacleTimers.clear();
-  }
-
-  private clearWinExplosions() {
-    this.winExplosionTimeouts.forEach((t) => clearTimeout(t));
-    this.winExplosionTimeouts = [];
   }
 
   private startLoop() {
@@ -475,6 +475,12 @@ export class GameSceneManager {
     if (this.paused) return;
     const dt = Math.min(delta, 0.1);
 
+    // Animación de la cinta transportadora
+    if (this.conveyorBeltMaterial && this.conveyorBeltMaterial.map) {
+      this.conveyorBeltMaterial.map.offset.x -= dt * 0.4 * this.speedMultiplier;
+    }
+
+    // Actualización de los corredores
     for (let i = this.activeRunners.length - 1; i >= 0; i--) {
       const runner = this.activeRunners[i];
 
@@ -506,6 +512,37 @@ export class GameSceneManager {
         runner.meshGroup.position.copy(currentPos);
         runner.meshGroup.lookAt(nextPos);
 
+        // Absorción en el perímetro
+        const distThreshold = Math.max(0.48, this.gridManager.tileSize * 1.15) * this.magnetMultiplier;
+        const exposedTile = this.gridManager.findExposedTile(
+          runner.progress,
+          currentPos.x,
+          currentPos.z,
+          runner.color,
+          distThreshold,
+          runner.isPrismatic
+        );
+
+        if (exposedTile && !exposedTile.collected && runner.allocatedRemaining > 0) {
+          if (exposedTile.encapsulated) {
+            exposedTile.encapsulated = false;
+            this.updateTileMesh(exposedTile);
+          } else {
+            exposedTile.collected = true;
+            runner.allocatedRemaining--;
+            runner.remaining--;
+            if (runner.updateNumber) runner.updateNumber(runner.remaining);
+
+            const oldMesh = this.tileMeshMap.get(exposedTile.id);
+            if (oldMesh) {
+              this.gridGroup.remove(oldMesh);
+              this.tileMeshMap.delete(exposedTile.id);
+            }
+
+            this.callbacks.onTileAbsorbed?.(exposedTile.id, exposedTile.color, runner.remaining);
+          }
+        }
+
         if (runner.remaining <= 0) {
           runner.state = 'clearing';
           runner.clearingTimer = 0;
@@ -525,6 +562,13 @@ export class GameSceneManager {
         }
       }
     }
+
+    // Verificación de victoria
+    const uncollectedCount = this.gridManager.tiles.filter((t) => !t.collected).length;
+    if (uncollectedCount === 0 && !this.hasTriggeredWin) {
+      this.hasTriggeredWin = true;
+      this.callbacks.onWinState?.(this.currentLevel);
+    }
   }
 
   public handleResize() {
@@ -538,8 +582,6 @@ export class GameSceneManager {
 
   public dispose() {
     cancelAnimationFrame(this.frameId);
-    this.clearObstacleTimers();
-    this.clearWinExplosions();
     this.renderer.dispose();
     if (this.container.contains(this.renderer.domElement)) {
       this.container.removeChild(this.renderer.domElement);

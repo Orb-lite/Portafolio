@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { ALL_COLORS, GameVersion, TileColor } from "../../game/types";
-import { getLevelConfig, getThemeForLevel, getVisualThemeForLevel, getColorsForLevel } from "../../game/experience";
-import { getLevelConfig, getVisualThemeForLevel } from "../../game/experience";
+import { getLevelConfig, getVisualThemeForLevel, getColorsForLevel } from "../../game/experience";
 import { GameSceneManager } from "../../game/threeScene";
 import { HeaderBar } from "./HeaderBar";
 import { BottomQueue, QueueRunner } from "./BottomQueue";
@@ -49,7 +48,6 @@ const savedProgress = getSavedProgress();
 const MAX_ACTIVE_RUNNERS = 5;
 
 // Mapeador universal de colores para sincronizar la UI lateral con las perlas y peces del mapa 3D
-// Mantiene contrastes máximos e idéntica apariencia tanto en versión día como en versión noche
 const getTileColorBg = (color: string) => {
   switch (color?.toLowerCase()) {
     case 'blue': return 'bg-blue-600 border-2 border-blue-300 text-white font-black';
@@ -196,7 +194,6 @@ export function TileAbsorberGame({
             if (!col.length) return col;
             const newBottomColor = colors[cIdx % colors.length];
             const updated = [...col];
-            // Actualizar la tarjeta lanzadora activa (al fondo de la columna)
             updated[updated.length - 1] = { ...updated[updated.length - 1], color: newBottomColor };
             return updated;
           })
@@ -281,19 +278,14 @@ export function TileAbsorberGame({
       : (sceneManagerRef.current?.getExposedColors() || []);
     const remaining = sceneManagerRef.current?.getRemainingColors() || [];
 
-    // Prioridad 1: Colores de perlas expuestas en el perímetro (absorbibles de inmediato)
-    // Prioridad 2: Colores presentes en el tablero
-    // Prioridad 3: Colores base del nivel
     const validColors = exposed.length > 0
       ? exposed
       : (remaining.length > 0 ? remaining : levelColors);
 
-    return [0, 1].map((colIdx) => {
-      // Color garantizado para el lanzador activo (tarjeta inferior col[5])
+    return [0, 1, 2, 3].map((colIdx) => {
       const bottomColor = validColors[colIdx % validColors.length];
 
       const colItems: QueueRunner[] = [];
-      // Todas las tarjetas en cola superior se obtienen exclusivamente de perlas válidas presentes en el mapa
       for (let r = 0; r < 5; r++) {
         const poolColor = validColors[(colIdx * 2 + r) % validColors.length];
         colItems.push({
@@ -302,15 +294,9 @@ export function TileAbsorberGame({
           capacity: config.runnerCapacity,
         });
       }
-      // Tarjeta activa lanzadora inferior
       colItems.push({
         id: `queue_${lvl}_${colIdx}_active_${Date.now()}_${Math.random()}`,
         color: bottomColor,
-    const availableColors = ALL_COLORS.slice(0, config.colorsCount);
-    return [0, 1, 2, 3].map((c) =>
-      Array.from({ length: 4 }, (_, r) => ({
-        id: `queue_${lvl}_${c}_${r}_${Date.now()}_${Math.random()}`,
-        color: availableColors[(c + r) % availableColors.length],
         capacity: config.runnerCapacity,
       });
 
@@ -393,7 +379,6 @@ export function TileAbsorberGame({
     );
     sceneManagerRef.current = manager;
     manager.setTimeOfDay(timeOfDay);
-    // Sincroniza inmediatamente las tarjetas del selector con las perlas expuestas en el mapa 3D
     setQueueColumns(createQueueForLevel(playingLevel, manager.getExposedColors()));
     refreshExposedColors();
 
@@ -406,7 +391,6 @@ export function TileAbsorberGame({
     };
   }, [refreshExposedColors, startTime, experience, playingLevel, userProfile.gamertag, tilesAbsorbedCount, version]);
 
-  // Sincroniza dinámicamente las tarjetas activas del selector cuando cambia el perímetro de perlas
   useEffect(() => {
     if (!sceneManagerRef.current || isStuck || hasWon || showMap) return;
     const exposed = sceneManagerRef.current.getExposedColors();
@@ -469,15 +453,10 @@ export function TileAbsorberGame({
           const remainingColors = sceneManagerRef.current?.getRemainingColors() || [];
           const levelColors = getColorsForLevel(playingLevel, isFishOfFortune);
 
-          // Prioridad de reposición:
-          // 1. Colores de perlas expuestas en el perímetro (inmediatamente útiles)
-          // 2. Colores restantes en el tablero (evita dar colores extintos)
-          // 3. Colores base del nivel
           const validPool = exposedColors.length > 0
             ? exposedColors
             : (remainingColors.length > 0 ? remainingColors : levelColors);
 
-          // Verifica que la nueva tarjeta activa que baja al lanzador coincida con perlas disponibles
           if (updated.length > 0) {
             const nextActiveIdx = updated.length - 1;
             if (!validPool.includes(updated[nextActiveIdx].color)) {
@@ -488,7 +467,6 @@ export function TileAbsorberGame({
             }
           }
 
-          const chosenColor = validPool[Math.floor(Math.random() * validPool.length)];
           const remainingOnBoard = sceneManagerRef.current?.gridManager.getRemainingColors() || [];
           const currentExposed = sceneManagerRef.current?.getExposedColors() || [];
           const colorPool = remainingOnBoard.length > 0 ? remainingOnBoard : currentExposed;
@@ -674,7 +652,6 @@ export function TileAbsorberGame({
         return bottomCard && exposed.includes(bottomCard.color);
       });
       if (!canLaunchValidRunner) {
-        // Asegura que el selector siempre ofrezca colores de perlas que existen en el borde
         setQueueColumns((prev) =>
           prev.map((col, idx) => {
             if (!col.length) return col;
@@ -852,10 +829,8 @@ export function TileAbsorberGame({
 
         <div ref={mountRef} className="absolute inset-0 z-0 h-full w-full cursor-grab active:cursor-grabbing" />
 
-        {/* CONTROLES LATERALES (Slots en cinta arriba + Matriz con colores vinculados al mapa) */}
         {!showMap && (
           <div className="absolute right-4 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center select-none">
-            
             <div className="flex flex-col items-center mb-2">
               <span className="text-[11px] font-black text-white drop-shadow-md tracking-wider mb-1">
                 {activeSlotCount}/5
@@ -880,8 +855,6 @@ export function TileAbsorberGame({
 
                 return (
                   <div key={colIdx} className="flex flex-col gap-1.5 items-center">
-                    
-                    {/* Tarjetas superiores por venir (Al 85% de opacidad para mantener nitidez visual y contraste) */}
                     {col.slice(0, col.length - 1).map((item, idx) => {
                       const colorClasses = getTileColorBg(item.color);
                       
@@ -897,7 +870,6 @@ export function TileAbsorberGame({
                       );
                     })}
 
-                    {/* Única tarjeta activa lanzadora (Color 100% brillante + Anillo de selección) */}
                     {activeCard && (
                       <button
                         type="button"
@@ -914,9 +886,9 @@ export function TileAbsorberGame({
                 );
               })}
             </div>
-
           </div>
-        {/* BOTTOM QUEUE CONTROLLER LINKED TO EXPOSED MAP COLORS */}
+        )}
+
         {!showMap && (
           <BottomQueue
             version={version}

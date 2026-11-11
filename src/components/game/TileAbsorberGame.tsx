@@ -1,9 +1,13 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { ALL_COLORS, GameVersion, TileColor } from "../../game/types";
+<<<<<<< HEAD
 import { getLevelConfig, getThemeForLevel, getVisualThemeForLevel, getColorsForLevel } from "../../game/experience";
+=======
+import { getLevelConfig, getVisualThemeForLevel } from "../../game/experience";
+>>>>>>> 9c84bb9 (Fix: Alinea pez triste y estrellas sobre el marco del modal de resultados)
 import { GameSceneManager } from "../../game/threeScene";
 import { HeaderBar } from "./HeaderBar";
-import { QueueRunner } from "./BottomQueue";
+import { BottomQueue, QueueRunner } from "./BottomQueue";
 import { WinModal } from "./WinModal";
 import { DocModal } from "./DocModal";
 import { LifeModal } from "./LifeModal";
@@ -29,14 +33,13 @@ import {
 } from "../../services/supabaseGame";
 import { LeaderboardModal } from "./LeaderboardModal";
 import { GamertagModal } from "./GamertagModal";
-import { SupabaseConfigModal } from "./SupabaseConfigModal";
 import { WebAdViewerModal } from "./WebAdViewerModal";
 import { ComodinesModal } from "./ComodinesModal";
 import { GameMenuModal } from "./GameMenuModal";
 import { generateComodinesForLevel, ComodinDefinition } from "../../game/comodines";
 import { saveComodinSessionToCache, getComodinSessionFromCache } from "../../services/sessionCache";
-import { ArrowLeft, Sparkles, Gamepad2, Zap, Fish, Menu, Music } from "lucide-react";
-import { GameLanguage, GAME_TEXT } from "../../game/localization";
+import { ArrowLeft, Gamepad2, Zap, Fish, Menu, Music } from "lucide-react";
+import { GameLanguage } from "../../game/localization";
 
 interface TileAbsorberGameProps {
   language?: GameLanguage;
@@ -48,8 +51,11 @@ interface TileAbsorberGameProps {
 const savedProgress = getSavedProgress();
 const MAX_ACTIVE_RUNNERS = 5;
 
+<<<<<<< HEAD
 // Mapeador universal de colores para sincronizar la UI lateral con las perlas y peces del mapa 3D
 // Mantiene contrastes máximos e idéntica apariencia tanto en versión día como en versión noche
+=======
+>>>>>>> 9c84bb9 (Fix: Alinea pez triste y estrellas sobre el marco del modal de resultados)
 const getTileColorBg = (color: string) => {
   switch (color?.toLowerCase()) {
     case 'blue': return 'bg-blue-600 border-2 border-blue-300 text-white font-black';
@@ -124,10 +130,12 @@ export function TileAbsorberGame({
   const [showMap, setShowMap] = useState(false);
   const [isExitConfirmOpen, setIsExitConfirmOpen] = useState(false);
 
+  // Synced state for map exposed colors
+  const [exposedColors, setExposedColors] = useState<TileColor[]>([]);
+
   const [userProfile, setUserProfile] = useState(() => getStoredUser());
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [isGamertagModalOpen, setIsGamertagModalOpen] = useState(false);
-  const [isSupabaseConfigOpen, setIsSupabaseConfigOpen] = useState(false);
   const [isWebAdViewerOpen, setIsWebAdViewerOpen] = useState(false);
 
   const [comodinesOptions, setComodinesOptions] = useState<ComodinDefinition[]>(() =>
@@ -139,6 +147,13 @@ export function TileAbsorberGame({
   const [comodinNotification, setComodinNotification] = useState<{ text: string; subtext: string } | null>(null);
   const titanRunnerBoostRef = useRef<boolean>(false);
   const safetyNetArmedRef = useRef<boolean>(false);
+
+  const refreshExposedColors = useCallback(() => {
+    if (sceneManagerRef.current) {
+      const activeColors = sceneManagerRef.current.getExposedColors();
+      setExposedColors(activeColors);
+    }
+  }, []);
 
   const triggerComodinNotification = (text: string, subtext: string) => {
     setComodinNotification({ text, subtext });
@@ -266,6 +281,7 @@ export function TileAbsorberGame({
 
   const createQueueForLevel = useCallback((lvl: number, exposedHint?: TileColor[]): QueueRunner[][] => {
     const config = getLevelConfig(lvl, isFishOfFortune);
+<<<<<<< HEAD
     const levelColors = getColorsForLevel(lvl, isFishOfFortune);
     const exposed = (exposedHint && exposedHint.length > 0)
       ? exposedHint
@@ -297,6 +313,13 @@ export function TileAbsorberGame({
       colItems.push({
         id: `queue_${lvl}_${colIdx}_active_${Date.now()}_${Math.random()}`,
         color: bottomColor,
+=======
+    const availableColors = ALL_COLORS.slice(0, config.colorsCount);
+    return [0, 1, 2, 3].map((c) =>
+      Array.from({ length: 4 }, (_, r) => ({
+        id: `queue_${lvl}_${c}_${r}_${Date.now()}_${Math.random()}`,
+        color: availableColors[(c + r) % availableColors.length],
+>>>>>>> 9c84bb9 (Fix: Alinea pez triste y estrellas sobre el marco del modal de resultados)
         capacity: config.runnerCapacity,
       });
 
@@ -337,9 +360,12 @@ export function TileAbsorberGame({
         onTileAbsorbed: () => {
           setTilesAbsorbedCount((prev) => prev + 1);
           addExperience(15);
+          refreshExposedColors();
         },
         onEncapsulationPopped: () => addExperience(15),
-        onRunnerCleared: () => {},
+        onRunnerCleared: () => {
+          refreshExposedColors();
+        },
         onWinState: (_clearedLevel?: number) => {
           setTimeout(() => {
             setHasWon(true);
@@ -375,9 +401,14 @@ export function TileAbsorberGame({
       playingLevel
     );
     sceneManagerRef.current = manager;
+<<<<<<< HEAD
     manager.setTimeOfDay(timeOfDay);
     // Sincroniza inmediatamente las tarjetas del selector con las perlas expuestas en el mapa 3D
     setQueueColumns(createQueueForLevel(playingLevel, manager.getExposedColors()));
+=======
+    refreshExposedColors();
+
+>>>>>>> 9c84bb9 (Fix: Alinea pez triste y estrellas sobre el marco del modal de resultados)
     const handleResize = () => manager.handleResize();
     window.addEventListener("resize", handleResize);
     return () => {
@@ -385,7 +416,7 @@ export function TileAbsorberGame({
       manager.dispose();
       sceneManagerRef.current = null;
     };
-  }, []);
+  }, [refreshExposedColors, startTime, experience, playingLevel, userProfile.gamertag, tilesAbsorbedCount, version]);
 
   // Sincroniza dinámicamente las tarjetas activas del selector cuando cambia el perímetro de perlas
   useEffect(() => {
@@ -438,12 +469,15 @@ export function TileAbsorberGame({
 
     if (sceneManagerRef.current.launchRunner(activeRunner.color, finalCapacity, colIdx)) {
       setShowTutorialHand(false);
+      refreshExposedColors();
+
       setQueueColumns((prev) =>
         prev.map((items, i) => {
           if (i !== colIdx) return items;
           const updated = [...items];
           updated.pop();
 
+<<<<<<< HEAD
           const exposedColors = sceneManagerRef.current?.getExposedColors() || [];
           const remainingColors = sceneManagerRef.current?.getRemainingColors() || [];
           const levelColors = getColorsForLevel(playingLevel, isFishOfFortune);
@@ -468,6 +502,15 @@ export function TileAbsorberGame({
           }
 
           const chosenColor = validPool[Math.floor(Math.random() * validPool.length)];
+=======
+          const remainingOnBoard = sceneManagerRef.current?.gridManager.getRemainingColors() || [];
+          const currentExposed = sceneManagerRef.current?.getExposedColors() || [];
+          const colorPool = remainingOnBoard.length > 0 ? remainingOnBoard : currentExposed;
+
+          const chosenColor = colorPool.length > 0
+            ? colorPool[Math.floor(Math.random() * colorPool.length)]
+            : activeRunner.color;
+>>>>>>> 9c84bb9 (Fix: Alinea pez triste y estrellas sobre el marco del modal de resultados)
 
           updated.unshift({
             id: `queue_replenish_${Date.now()}_${Math.random()}`,
@@ -493,9 +536,13 @@ export function TileAbsorberGame({
     if (sceneManagerRef.current) {
       sceneManagerRef.current.paused = false;
       sceneManagerRef.current.resetLevel(playingLevel);
+<<<<<<< HEAD
       setQueueColumns(createQueueForLevel(playingLevel, sceneManagerRef.current.getExposedColors()));
     } else {
       setQueueColumns(createQueueForLevel(playingLevel));
+=======
+      refreshExposedColors();
+>>>>>>> 9c84bb9 (Fix: Alinea pez triste y estrellas sobre el marco del modal de resultados)
     }
   };
   const handleReset = () => {
@@ -523,9 +570,13 @@ export function TileAbsorberGame({
     if (sceneManagerRef.current) {
       sceneManagerRef.current.paused = false;
       sceneManagerRef.current.setMode(theme, "v3", selected);
+<<<<<<< HEAD
       setQueueColumns(createQueueForLevel(selected, sceneManagerRef.current.getExposedColors()));
     } else {
       setQueueColumns(createQueueForLevel(selected));
+=======
+      refreshExposedColors();
+>>>>>>> 9c84bb9 (Fix: Alinea pez triste y estrellas sobre el marco del modal de resultados)
     }
   };
 
@@ -595,9 +646,13 @@ export function TileAbsorberGame({
     if (sceneManagerRef.current) {
       sceneManagerRef.current.setMode(nextTheme, "v3", nextPlayableLevel);
       sceneManagerRef.current.paused = false;
+<<<<<<< HEAD
       setQueueColumns(createQueueForLevel(nextPlayableLevel, sceneManagerRef.current.getExposedColors()));
     } else {
       setQueueColumns(createQueueForLevel(nextPlayableLevel));
+=======
+      refreshExposedColors();
+>>>>>>> 9c84bb9 (Fix: Alinea pez triste y estrellas sobre el marco del modal de resultados)
     }
   };
 
@@ -660,13 +715,6 @@ export function TileAbsorberGame({
 
     return undefined;
   }, [activeSlotCount, tilesAbsorbedCount, queueColumns, hasWon, isStuck, showMap, handleStuck]);
-
-  useEffect(() => {
-    if (activeSlotCount < MAX_ACTIVE_RUNNERS || hasWon || isStuck || showMap || !sceneManagerRef.current) return;
-    if (sceneManagerRef.current.chronoStasisTimer > 0) return;
-    const timeout = window.setTimeout(handleStuck, 8000);
-    return () => window.clearTimeout(timeout);
-  }, [tilesAbsorbedCount, activeSlotCount, hasWon, isStuck, showMap, handleStuck]);
 
   const adsPerLife = playingLevel <= 30 ? 1 : 2;
   const handleWatchAd = async () => {
@@ -828,6 +876,7 @@ export function TileAbsorberGame({
 
         <div ref={mountRef} className="absolute inset-0 z-0 h-full w-full cursor-grab active:cursor-grabbing" />
 
+<<<<<<< HEAD
         {/* CONTROLES LATERALES (Slots en cinta arriba + Matriz con colores vinculados al mapa) */}
         {!showMap && (
           <div className="absolute right-4 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center select-none">
@@ -892,6 +941,20 @@ export function TileAbsorberGame({
             </div>
 
           </div>
+=======
+        {/* BOTTOM QUEUE CONTROLLER LINKED TO EXPOSED MAP COLORS */}
+        {!showMap && (
+          <BottomQueue
+            version={version}
+            activeRunnersCount={activeSlotCount}
+            maxCapacity={MAX_ACTIVE_RUNNERS}
+            queueColumns={queueColumns}
+            onLaunch={handleLaunchRunner}
+            showTutorialHand={showTutorialHand}
+            exposedColors={exposedColors}
+            language={language}
+          />
+>>>>>>> 9c84bb9 (Fix: Alinea pez triste y estrellas sobre el marco del modal de resultados)
         )}
 
         {hasWon && (

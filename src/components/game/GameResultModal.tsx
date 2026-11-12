@@ -245,6 +245,206 @@ const SadFishMascot: React.FC<{ size?: number }> = ({ size = 190 }) => {
   );
 };
 
+/* -------------------------------------------------------------
+ * 3D Sad Black Tile (Ficha Negra con cara triste) for Tile Absorber
+ * -----------------------------------------------------------*/
+const SadBlackTile: React.FC<{
+  size?: number;
+  rotate?: number;
+  scale?: number;
+  glow?: boolean;
+  expression?: 'crying' | 'worried' | 'sobbing';
+}> = ({ size = 72, rotate = 0, scale = 1, glow = false, expression = 'crying' }) => {
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        transform: `rotate(${rotate}deg) scale(${scale})`,
+      }}
+      className={`relative inline-flex items-center justify-center transition-transform pointer-events-none select-none ${
+        glow
+          ? 'filter drop-shadow-[0_10px_24px_rgba(56,189,248,0.35)] drop-shadow-[0_4px_12px_rgba(0,0,0,0.7)]'
+          : 'filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)]'
+      }`}
+    >
+      <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible">
+        <defs>
+          <linearGradient id="tileDarkBorderGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#94a3b8" />
+            <stop offset="40%" stopColor="#475569" />
+            <stop offset="100%" stopColor="#0f172a" />
+          </linearGradient>
+          <linearGradient id="tileDarkBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#334155" />
+            <stop offset="35%" stopColor="#1e293b" />
+            <stop offset="75%" stopColor="#0f172a" />
+            <stop offset="100%" stopColor="#020617" />
+          </linearGradient>
+          <linearGradient id="tileDarkGlossGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.4" />
+            <stop offset="55%" stopColor="#ffffff" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+          </linearGradient>
+          <radialGradient id="tileDarkTearGrad" cx="35%" cy="30%" r="70%">
+            <stop offset="0%" stopColor="#bae6fd" />
+            <stop offset="60%" stopColor="#38bdf8" />
+            <stop offset="100%" stopColor="#0284c7" />
+          </radialGradient>
+        </defs>
+
+        {/* 3D Base Tile Body (Beveled Rounded Square) */}
+        <rect
+          x="8"
+          y="10"
+          width="84"
+          height="84"
+          rx="22"
+          fill="url(#tileDarkBorderGrad)"
+          stroke="#cbd5e1"
+          strokeWidth="1.5"
+          strokeOpacity="0.5"
+        />
+        <rect
+          x="12"
+          y="12"
+          width="76"
+          height="76"
+          rx="18"
+          fill="url(#tileDarkBodyGrad)"
+        />
+
+        {/* Gloss reflection arc on top */}
+        <path
+          d="M 18 20 C 35 14 65 14 82 20 C 78 36 60 40 50 40 C 40 40 22 36 18 20 Z"
+          fill="url(#tileDarkGlossGrad)"
+        />
+
+        {/* Top Rim Highlight Specular Line */}
+        <path
+          d="M 28 14 Q 50 12 72 14"
+          stroke="#ffffff"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeOpacity="0.8"
+        />
+
+        {/* Facial Expressions */}
+        {expression === 'crying' && (
+          <g>
+            {/* Worried curved eyebrows */}
+            <path d="M 28 36 Q 36 32 42 37" stroke="#cbd5e1" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+            <path d="M 72 36 Q 64 32 58 37" stroke="#cbd5e1" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+
+            {/* Left Big Sad Eye */}
+            <ellipse cx="36" cy="48" rx="7" ry="8" fill="#020617" stroke="#64748b" strokeWidth="1" />
+            <ellipse cx="35" cy="46" rx="5" ry="6" fill="#0f172a" />
+            <circle cx="34" cy="44" r="2.8" fill="#ffffff" />
+            <circle cx="38" cy="49" r="1.3" fill="#ffffff" />
+
+            {/* Right Big Sad Eye */}
+            <ellipse cx="64" cy="48" rx="7" ry="8" fill="#020617" stroke="#64748b" strokeWidth="1" />
+            <ellipse cx="65" cy="46" rx="5" ry="6" fill="#0f172a" />
+            <circle cx="63" cy="44" r="2.8" fill="#ffffff" />
+            <circle cx="67" cy="49" r="1.3" fill="#ffffff" />
+
+            {/* Rosy Blush on Dark Cheeks */}
+            <ellipse cx="26" cy="55" rx="5" ry="2.5" fill="#f43f5e" opacity="0.45" />
+            <ellipse cx="74" cy="55" rx="5" ry="2.5" fill="#f43f5e" opacity="0.45" />
+
+            {/* Wavy quivering sad mouth */}
+            <path
+              d="M 43 66 Q 50 60 57 66"
+              stroke="#f1f5f9"
+              strokeWidth="2.8"
+              strokeLinecap="round"
+              fill="none"
+            />
+
+            {/* Big Shiny Teardrops */}
+            <path
+              d="M 26 58 C 24 64 29 69 32 66 C 34 63 31 58 28 53 C 27 55 26 56 26 58 Z"
+              fill="url(#tileDarkTearGrad)"
+              filter="drop-shadow(0 2px 4px rgba(56,189,248,0.5))"
+            />
+            <circle cx="28.5" cy="62" r="1.2" fill="#ffffff" opacity="0.8" />
+
+            <path
+              d="M 74 58 C 76 64 71 69 68 66 C 66 63 69 58 72 53 C 73 55 74 56 74 58 Z"
+              fill="url(#tileDarkTearGrad)"
+              filter="drop-shadow(0 2px 4px rgba(56,189,248,0.5))"
+            />
+            <circle cx="71.5" cy="62" r="1.2" fill="#ffffff" opacity="0.8" />
+          </g>
+        )}
+
+        {expression === 'worried' && (
+          <g>
+            {/* Sad downward slant brows */}
+            <path d="M 30 38 Q 38 34 43 40" stroke="#cbd5e1" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+            <path d="M 70 38 Q 62 34 57 40" stroke="#cbd5e1" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+
+            {/* Sad drooping eyes */}
+            <ellipse cx="38" cy="49" rx="6" ry="6.5" fill="#0f172a" stroke="#64748b" strokeWidth="1" />
+            <circle cx="36" cy="47" r="2.2" fill="#ffffff" />
+            <circle cx="39.5" cy="51" r="1" fill="#ffffff" />
+
+            <ellipse cx="62" cy="49" rx="6" ry="6.5" fill="#0f172a" stroke="#64748b" strokeWidth="1" />
+            <circle cx="60" cy="47" r="2.2" fill="#ffffff" />
+            <circle cx="63.5" cy="51" r="1" fill="#ffffff" />
+
+            {/* Blush */}
+            <ellipse cx="29" cy="56" rx="4" ry="2" fill="#f43f5e" opacity="0.4" />
+            <ellipse cx="71" cy="56" rx="4" ry="2" fill="#f43f5e" opacity="0.4" />
+
+            {/* Downturned sad frown */}
+            <path
+              d="M 44 65 Q 50 59 56 65"
+              stroke="#f1f5f9"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              fill="none"
+            />
+
+            {/* Single small tear on left */}
+            <path
+              d="M 30 58 C 28 62 31 66 33 64 C 35 62 33 58 31 54 Z"
+              fill="url(#tileDarkTearGrad)"
+            />
+          </g>
+        )}
+
+        {expression === 'sobbing' && (
+          <g>
+            {/* Squeezed crying eyes (> <) */}
+            <path d="M 32 44 L 40 48 L 32 52" stroke="#f1f5f9" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            <path d="M 68 44 L 60 48 L 68 52" stroke="#f1f5f9" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+
+            {/* Blush */}
+            <ellipse cx="28" cy="57" rx="4.5" ry="2" fill="#f43f5e" opacity="0.45" />
+            <ellipse cx="72" cy="57" rx="4.5" ry="2" fill="#f43f5e" opacity="0.45" />
+
+            {/* Open waaaah sad mouth */}
+            <path
+              d="M 44 61 Q 50 71 56 61 Z"
+              fill="#e11d48"
+              stroke="#f1f5f9"
+              strokeWidth="1.8"
+              strokeLinejoin="round"
+            />
+
+            {/* Tear stream on right */}
+            <path
+              d="M 70 56 C 73 63 68 67 65 64 C 63 61 66 56 69 52 Z"
+              fill="url(#tileDarkTearGrad)"
+            />
+          </g>
+        )}
+      </svg>
+    </div>
+  );
+};
+
 export const GameResultModal: React.FC<GameResultModalProps> = ({
   type,
   version,
@@ -403,9 +603,33 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
                   <GlossyStar size={68} rotate={12} scale={0.92} />
                 </div>
               </div>
-            ) : (
+            ) : isFoF ? (
               <div className="flex justify-center relative z-40 -top-2">
                 <SadFishMascot size={150} />
+              </div>
+            ) : (
+              /* Tile Absorber Defeat: Fichas negras con caras tristes a la misma altura de las estrellas */
+              <div className="relative flex items-end justify-center">
+                {/* Sad tears / droplets around the tiles */}
+                <span className="absolute -top-3 left-1 text-sky-300 text-sm sm:text-base animate-pulse">💧</span>
+                <span className="absolute -top-4 right-1 text-sky-300 text-sm sm:text-base animate-pulse delay-150">💧</span>
+                <span className="absolute bottom-4 -left-4 text-slate-400 text-xs sm:text-sm animate-pulse">✧</span>
+                <span className="absolute bottom-5 -right-4 text-slate-400 text-xs sm:text-sm animate-pulse delay-300">✧</span>
+
+                {/* Left Sad Black Tile */}
+                <div className="-mr-3 sm:-mr-4 -mb-1 transform -rotate-12">
+                  <SadBlackTile size={68} rotate={-12} scale={0.92} expression="worried" />
+                </div>
+
+                {/* Center Hero Sad Black Tile */}
+                <div className="z-10 -mb-2">
+                  <SadBlackTile size={96} rotate={0} scale={1.08} glow={true} expression="crying" />
+                </div>
+
+                {/* Right Sad Black Tile */}
+                <div className="-ml-3 sm:-ml-4 -mb-1 transform rotate-12">
+                  <SadBlackTile size={68} rotate={12} scale={0.92} expression="sobbing" />
+                </div>
               </div>
             )}
           </div>

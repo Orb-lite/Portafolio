@@ -336,92 +336,99 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
       aria-labelledby="game-result-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-300 select-none overflow-y-auto"
     >
-      <div className="relative w-full max-w-xl my-auto pt-16 sm:pt-20 pb-4">
-        <Pearl size={24} tint="lavender" className="absolute top-12 -left-2 sm:-left-4 z-20 animate-pulse" />
-        <Pearl size={16} tint="cyan" className="absolute top-20 left-6 z-20 opacity-80" />
-        <Pearl size={28} tint="white" className="absolute top-1/2 -left-4 sm:-left-6 z-20 shadow-cyan-500/50" />
+      <div className="relative w-full max-w-lg my-auto pt-14 sm:pt-16 pb-3">
+        {/* Decorative Floating Pearls around the card */}
+        <Pearl size={22} tint="lavender" className="absolute top-10 -left-2 sm:-left-4 z-20 animate-pulse" />
+        <Pearl size={16} tint="cyan" className="absolute top-24 left-4 z-20 opacity-80" />
+        <Pearl size={26} tint="white" className="absolute top-1/2 -left-3 sm:-left-5 z-20 shadow-cyan-500/50" />
         <Pearl size={18} tint="pink" className="absolute bottom-16 -left-1 sm:-left-3 z-20" />
-        <Pearl size={22} tint="cyan" className="absolute bottom-6 left-10 z-20" />
+        <Pearl size={20} tint="cyan" className="absolute -bottom-2 left-8 z-20" />
 
-        <Pearl size={22} tint="lavender" className="absolute top-14 -right-1 sm:-right-3 z-20" />
-        <Pearl size={26} tint="cyan" className="absolute top-24 -right-4 sm:-right-5 z-20" />
-        <Pearl size={28} tint="white" className="absolute top-2/3 -right-4 sm:-right-6 z-20" />
-        <Pearl size={18} tint="pink" className="absolute bottom-20 right-6 z-20" />
-        <Pearl size={16} tint="lavender" className="absolute bottom-8 -right-1 z-20" />
+        <Pearl size={20} tint="lavender" className="absolute top-12 -right-2 sm:-right-4 z-20" />
+        <Pearl size={24} tint="cyan" className="absolute top-26 -right-3 sm:-right-5 z-20" />
+        <Pearl size={26} tint="white" className="absolute top-2/3 -right-3 sm:-right-5 z-20" />
+        <Pearl size={16} tint="pink" className="absolute bottom-20 right-4 z-20" />
+        <Pearl size={18} tint="lavender" className="absolute -bottom-2 right-10 z-20" />
 
         {isWin && (
           <>
-            <StarCoin size={30} className="absolute top-10 right-16 sm:right-24 z-20 rotate-12" />
-            <StarCoin size={26} className="absolute bottom-24 -left-3 sm:-left-5 z-20 -rotate-12" />
-            <StarCoin size={32} className="absolute bottom-10 -right-2 sm:-right-4 z-20 rotate-6" />
+            <StarCoin size={28} className="absolute -top-3 right-8 sm:right-12 z-20 rotate-12" />
+            <StarCoin size={26} className="absolute bottom-24 -left-3 sm:-left-4 z-20 -rotate-12" />
+            <StarCoin size={30} className="absolute bottom-8 -right-2 sm:-right-4 z-20 rotate-6" />
           </>
         )}
 
-        {/* Mascot / Stars Header - Straddling the top rim of the card */}
-        <div className="absolute top-2 sm:top-3 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center pointer-events-none">
-          {isWin ? (
-            <div className="relative flex items-end justify-center gap-1 sm:gap-2">
-              {/* Sparkles around stars */}
-              <span className="absolute -top-3 left-2 sm:left-4 text-white text-base sm:text-lg animate-pulse">✦</span>
-              <span className="absolute -top-4 right-3 sm:right-5 text-white text-base sm:text-lg animate-pulse delay-150">✦</span>
-              <span className="absolute bottom-2 -left-3 text-amber-200 text-xs sm:text-sm animate-pulse">✧</span>
-              <span className="absolute bottom-3 -right-3 text-amber-200 text-xs sm:text-sm animate-pulse delay-300">✧</span>
+        {/* FROSTED GLASS CAPSULE CONTAINER (overflow-visible to let stars & mascot crest top rim) */}
+        <div className="relative w-full rounded-[2.5rem] sm:rounded-[3rem] border-2 border-white/70 shadow-[0_25px_65px_rgba(8,145,178,0.35),0_0_40px_rgba(255,255,255,0.25)_inset]">
+          {/* Frosted Glass Background Layer with overflow-hidden */}
+          <div className="absolute inset-0 rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden pointer-events-none">
+            <div
+              className={`absolute inset-0 backdrop-blur-2xl ${
+                isFoF
+                  ? 'bg-white/20 sm:bg-white/25'
+                  : 'bg-slate-900/70 sm:bg-slate-900/80 border-cyan-300/60'
+              }`}
+              style={{
+                background: isFoF
+                  ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(200, 240, 255, 0.18) 50%, rgba(255, 255, 255, 0.28) 100%)'
+                  : undefined,
+              }}
+            />
+            <div className="absolute top-1.5 left-10 right-10 h-3 rounded-full bg-gradient-to-b from-white/60 to-transparent" />
+            <div className="absolute top-3 left-6 w-24 h-12 rounded-full bg-white/20 blur-md -rotate-12" />
+          </div>
 
-              {/* Left Star */}
-              <div className="relative -mr-2 sm:-mr-3 -mb-1">
-                <GlossyStar size={68} rotate={-14} scale={0.92} />
+          {/* Mascot / Stars Header - ANCHORED DIRECTLY ON TOP OF THE CARD RIM */}
+          <div className="absolute -top-12 sm:-top-14 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center pointer-events-none">
+            {isWin ? (
+              <div className="relative flex items-end justify-center">
+                {/* Sparkles around stars */}
+                <span className="absolute -top-3 left-1 text-white text-base sm:text-lg animate-pulse">✦</span>
+                <span className="absolute -top-4 right-1 text-white text-base sm:text-lg animate-pulse delay-150">✦</span>
+                <span className="absolute bottom-4 -left-4 text-amber-200 text-xs sm:text-sm animate-pulse">✧</span>
+                <span className="absolute bottom-5 -right-4 text-amber-200 text-xs sm:text-sm animate-pulse delay-300">✧</span>
+
+                {/* Left Star */}
+                <div className="-mr-3 sm:-mr-4 -mb-1 transform -rotate-12">
+                  <GlossyStar size={68} rotate={-12} scale={0.92} />
+                </div>
+
+                {/* Center Star (Hero) */}
+                <div className="z-10 -mb-2">
+                  <GlossyStar size={96} rotate={0} scale={1.08} glow={true} />
+                </div>
+
+                {/* Right Star */}
+                <div className="-ml-3 sm:-ml-4 -mb-1 transform rotate-12">
+                  <GlossyStar size={68} rotate={12} scale={0.92} />
+                </div>
               </div>
-
-              {/* Center Star (Hero) */}
-              <div className="relative z-10 -mb-2">
-                <GlossyStar size={96} rotate={0} scale={1.08} glow={true} />
+            ) : (
+              <div className="flex justify-center relative z-40 -top-2">
+                <SadFishMascot size={150} />
               </div>
+            )}
+          </div>
 
-              {/* Right Star */}
-              <div className="relative -ml-2 sm:-ml-3 -mb-1">
-                <GlossyStar size={68} rotate={14} scale={0.92} />
+          {/* Card Body */}
+          <div className="relative z-10 p-5 sm:p-7 pt-12 sm:pt-14 text-center text-white">
+            {isWin && isReplay && (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-2 rounded-full bg-white/30 border border-white/60 text-xs font-black text-amber-300 uppercase tracking-wider shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                {t.replayPastCleared}
               </div>
-            </div>
-          ) : (
-            <div className="flex justify-center relative z-40">
-              <SadFishMascot size={150} />
-            </div>
-          )}
-        </div>
+            )}
 
-        {/* FROSTED GLASS CAPSULE */}
-        <div
-          className={`relative w-full rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-9 pt-16 sm:pt-20 text-center text-white border-2 border-white/70 shadow-[0_25px_65px_rgba(8,145,178,0.35),0_0_40px_rgba(255,255,255,0.25)_inset] transition-all overflow-hidden ${
-            isFoF
-              ? 'backdrop-blur-2xl bg-white/20 sm:bg-white/25'
-              : 'backdrop-blur-2xl bg-slate-900/60 sm:bg-slate-900/70 border-cyan-300/60'
-          }`}
-          style={{
-            background: isFoF
-              ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(200, 240, 255, 0.18) 50%, rgba(255, 255, 255, 0.28) 100%)'
-              : undefined,
-          }}
-        >
-          <div className="absolute top-1.5 left-10 right-10 h-3 rounded-full bg-gradient-to-b from-white/60 to-transparent pointer-events-none" />
-          <div className="absolute top-3 left-6 w-24 h-12 rounded-full bg-white/20 blur-md pointer-events-none -rotate-12" />
+            <h1
+              id="game-result-title"
+              className="text-3xl sm:text-4xl md:text-5xl font-black tracking-wide text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)] mt-0 mb-1.5 uppercase"
+            >
+              {titleText}
+            </h1>
 
-          {isWin && isReplay && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-2 rounded-full bg-white/30 border border-white/60 text-xs font-black text-amber-300 uppercase tracking-wider shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              {t.replayPastCleared}
-            </div>
-          )}
-
-          <h1
-            id="game-result-title"
-            className="text-3xl sm:text-4xl md:text-5xl font-black tracking-wide text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)] mt-1 mb-2 uppercase"
-          >
-            {titleText}
-          </h1>
-
-          <p className="text-sm sm:text-base md:text-lg font-bold text-white/95 max-w-md mx-auto mb-6 leading-snug drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]">
-            {subtitleText}
-          </p>
+            <p className="text-sm sm:text-base font-bold text-white/95 max-w-md mx-auto mb-5 leading-snug drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]">
+              {subtitleText}
+            </p>
 
           <div className="w-full flex justify-center mb-6">
             <button
@@ -561,9 +568,10 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
             )}
           </div>
 
-          <div className="mt-4 pt-2 border-t border-white/20 flex items-center justify-center gap-1 text-[11px] text-white/80 font-medium">
-            <Sparkles className="w-3 h-3 text-amber-300" />
-            <span>Fish Feeder · By Dimpz Games · Isaac Gómez</span>
+            <div className="mt-4 pt-2 border-t border-white/20 flex items-center justify-center gap-1 text-[11px] text-white/80 font-medium">
+              <Sparkles className="w-3 h-3 text-amber-300" />
+              <span>Fish Feeder · By Dimpz Games · Isaac Gómez</span>
+            </div>
           </div>
         </div>
       </div>

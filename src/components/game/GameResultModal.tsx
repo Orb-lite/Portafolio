@@ -113,16 +113,17 @@ const GlossyStar: React.FC<{
           </radialGradient>
         </defs>
         <polygon
-          points="50,5 64,36 98,38 72,62 80,95 50,77 20,95 28,62 2,38 36,36"
+          points="50,6 64,36 97,38 72,62 80,95 50,77 20,95 28,62 3,38 36,36"
           fill="url(#starGradFront)"
           stroke="url(#starGradBorder)"
-          strokeWidth="3.5"
+          strokeWidth="5"
           strokeLinejoin="round"
         />
         <polygon
-          points="50,14 60,38 86,40 66,58 72,83 50,69 28,83 34,58 14,40 40,38"
+          points="50,14 61,38 87,40 67,58 73,83 50,69 27,83 33,58 13,40 39,38"
           fill="url(#starGloss)"
         />
+        <circle cx="43" cy="35" r="5.5" fill="#ffffff" opacity="0.65" filter="blur(0.4px)" />
       </svg>
     </div>
   );
@@ -356,17 +357,34 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
           </>
         )}
 
-        {/* Mascot / Stars Header */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center pointer-events-none">
+        {/* Mascot / Stars Header - Straddling the top rim of the card */}
+        <div className="absolute top-2 sm:top-3 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center pointer-events-none">
           {isWin ? (
-            <div className="flex items-end justify-center gap-1 sm:gap-3">
-              <GlossyStar size={54} rotate={-14} scale={0.92} />
-              <GlossyStar size={78} rotate={0} scale={1.05} glow={true} />
-              <GlossyStar size={54} rotate={14} scale={0.92} />
+            <div className="relative flex items-end justify-center gap-1 sm:gap-2">
+              {/* Sparkles around stars */}
+              <span className="absolute -top-3 left-2 sm:left-4 text-white text-base sm:text-lg animate-pulse">✦</span>
+              <span className="absolute -top-4 right-3 sm:right-5 text-white text-base sm:text-lg animate-pulse delay-150">✦</span>
+              <span className="absolute bottom-2 -left-3 text-amber-200 text-xs sm:text-sm animate-pulse">✧</span>
+              <span className="absolute bottom-3 -right-3 text-amber-200 text-xs sm:text-sm animate-pulse delay-300">✧</span>
+
+              {/* Left Star */}
+              <div className="relative -mr-2 sm:-mr-3 -mb-1">
+                <GlossyStar size={68} rotate={-14} scale={0.92} />
+              </div>
+
+              {/* Center Star (Hero) */}
+              <div className="relative z-10 -mb-2">
+                <GlossyStar size={96} rotate={0} scale={1.08} glow={true} />
+              </div>
+
+              {/* Right Star */}
+              <div className="relative -ml-2 sm:-ml-3 -mb-1">
+                <GlossyStar size={68} rotate={14} scale={0.92} />
+              </div>
             </div>
           ) : (
-            <div className="mt-45 -mb-80 flex justify-center relative z-40">
-              <SadFishMascot size={190} />
+            <div className="flex justify-center relative z-40">
+              <SadFishMascot size={150} />
             </div>
           )}
         </div>

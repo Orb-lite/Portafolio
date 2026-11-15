@@ -92,33 +92,33 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     workClassification: 'personal-rnd',
     year: '2026',
     engine: 'Three.js / WebGL / TypeScript / React',
-    mediaType: 'image',
-    mediaSrc: realGameScreenshot,
+    mediaType: 'video',
+    mediaSrc: '/assets/aistudio/tile_absorber_64df8e71.mp4',
     thumbnailSrc: realGameScreenshot,
     mediaNote: {
-      en: 'Fully playable original 3D web game engineered by Isaac Gómez Estrada directly in browser with Three.js, orthogonal conveyor tracks, queue state machines, 3-tier tactical wildcards, and real-time Supabase cloud leaderboards.',
-      es: 'Videojuego 3D original 100% jugable en navegador desarrollado por Isaac Gómez Estrada con Three.js, bandas transportadoras ortogonales, máquinas de estados de cola, comodines tácticos de 3 tiers y tablas de clasificación en la nube con Supabase.',
+      en: 'Real gameplay video capture of Conveyor Realms (Tile Absorber 3D) engineered by Isaac Gómez Estrada in Three.js with orthogonal conveyor tracks, 3-tier wildcards, chain bombs/rainbows, and Supabase cloud leaderboards.',
+      es: 'Video de gameplay real de Conveyor Realms (Tile Absorber 3D) desarrollado por Isaac Gómez Estrada en Three.js con pistas ortogonales, comodines de 3 tiers, fichas explosivas/arcoiris en cadena y rankings en Supabase.',
     },
     description: {
-      en: 'A high-speed 3D spatial puzzle-action game designed, architected, and built from scratch. Features color-coded autonomous runners patrolling an isometric floating tile grid on elevated conveyor belts. Incorporates exposed-edge tile absorption algorithms, an evolving 3-tier wildcard system (1 per level) demanding tactical risk-reward calculations, a continuous streak XP scoring economy, an adventure pathway across 9 procedural WebGL biomes, and a 5-heart asynchronous life regeneration system.',
-      es: 'Videojuego de puzzle-acción espacial en 3D de alta velocidad diseñado, arquitecturado e implementado desde cero. Incluye runners autónomos codificados por color que patrullan una cuadrícula isométrica suspendida sobre bandas transportadoras elevadas. Incorpora algoritmos de absorción de baldosas expuestas en perímetro, un sistema de comodines evolutivos de 3 tiers (1 por nivel) con equilibrio táctico de riesgo/beneficio, economía de puntuación y XP por rachas continuas, camino de aventura por 9 biomas WebGL procedurales y un sistema de vida y muerte de 5 corazones con regeneración asíncrona.',
+      en: 'A high-speed 3D spatial puzzle-action game designed, architected, and built from scratch. Features color-coded autonomous runners patrolling an isometric floating tile grid on elevated conveyor belts. Incorporates exposed-edge tile absorption algorithms, bomb & rainbow chain reactions, an evolving 3-tier wildcard system, 9 procedural WebGL biomes, and a 5-heart asynchronous life regeneration system.',
+      es: 'Videojuego de puzzle-acción espacial en 3D diseñado, arquitecturado e implementado desde cero. Incluye runners autónomos por color sobre bandas transportadoras elevadas, absorción perimetral expuesta, detonaciones en cadena (bomba/arcoiris), comodines de 3 tiers, 9 biomas WebGL y economía de vidas con regeneración asíncrona.',
     },
     highlights: {
       en: [
         'Autonomous 3D Runners & Orthogonal Conveyor Loop: Directional path routing with color queue state machine and collision detection',
         'Exposed-Edge Tile Absorption Algorithm: Evaluates real-time obstruction masks so only unblocked outer-tier tiles can be absorbed',
-        '3-Tier Tactical Wildcard System: 9 balanced skills (Stasis Micro-discharge, Conveyor Surge, Magnetic Vortex, Ejection, Prismatic Runner, Polar Board Inversion) with strict 1-use-per-level limit',
-        'Dynamic Streak XP & Star Ratings: Exponential combo multipliers, time-based 3-star ratings, and 9 procedural WebGL biomes (Cyber Grid, Banana Paradise, Golden Vault, Chess Kingdom, Sky Isles, etc.)',
-        '5-Heart Life & Death Economy: 5-slot queue overflow penalty, 20-minute autonomous background regeneration clock, emergency rescue, and permadeath stakes',
-        'Cloud Highscore & Session Caching: Supabase real-time leaderboard integration with cross-tab localStorage session persistence',
+        'Special Bomb & Rainbow Tiles + 3-Tier Wildcards: Explosive chain clearing and tactical trade-off skills',
+        'Dynamic Streak XP & Star Ratings: Exponential combo multipliers, 3-star ratings, and 9 procedural WebGL biomes',
+        '5-Heart Life & Death Economy: 5-slot queue overflow penalty, 20-minute regeneration clock, and emergency rescue',
+        'Cloud Highscore & Session Caching: Supabase real-time leaderboard integration with localStorage session persistence',
       ],
       es: [
-        'Runners 3D Autónomos y Circuito Ortogonal: Ruteo direccional con máquina de estados de cola y trazado de colisiones perimetrales',
-        'Algoritmo de Absorción Perimetral Expuesta: Evalúa máscaras de obstrucción en tiempo real para que solo las piezas sin bloqueo frontal sean absorbibles',
-        'Sistema de Comodines Tácticos de 3 Tiers: 9 habilidades balanceadas (Micro-descarga Stasis, Sobrecarga de Banda, Vórtice Magnético, Eyección, Runner Prismático, Inversión de Polaridad) con límite estricto de 1 por nivel',
-        'XP Dinámica por Rachas y Estrellas: Multiplicadores exponenciales de combo, evaluación de 1 a 3 estrellas por tiempo y 9 biomas procedurales en WebGL',
-        'Economía de Vida y Muerte de 5 Corazones: Penalización por desbordamiento de cola, reloj de regeneración autónomo de 20 min en background y rescate de emergencia',
-        'Récord Global en la Nube y Caché de Sesiones: Integración de leaderboards en Supabase con persistencia local multiventana',
+        'Runners 3D Autónomos y Circuito Ortogonal: Ruteo direccional con máquina de estados de cola y trazado de colisiones',
+        'Algoritmo de Absorción Perimetral Expuesta: Evalúa obstrucciones en tiempo real para liberar piezas de afuera hacia adentro',
+        'Fichas Bomba & Arcoiris + Comodines de 3 Tiers: Detonación en cadena y habilidades tácticas evolutivas',
+        'XP Dinámica por Rachas y Estrellas: Multiplicadores de combo, evaluación de 1 a 3 estrellas y 9 biomas procedurales',
+        'Economía de Vida y Muerte de 5 Corazones: Control de saturación de cola, regeneración de 20 min y rescate de emergencia',
+        'Récord Global en Supabase y Caché Offline: Persistencia automática por nivel y ranking compartido',
       ],
     },
     techStack: [
@@ -130,6 +130,59 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       'Procedural Shaders',
       'Web Audio API',
       'Tailwind CSS',
+    ],
+    featured: true,
+  },
+  {
+    id: 'fish-feeder-3d',
+    title: {
+      en: 'Fish Feeder 3D (Coral Cove Ocean Edition)',
+      es: 'Fish Feeder 3D (Edición Oceánica Coral Cove)',
+    },
+    subtitle: {
+      en: 'Procedural Marine Species, 3-Layer Pearl Shields & Aquatic Conveyor Mechanics',
+      es: 'Especies Marinas Procedurales, Perlas con Escudos de 3 Capas y Mecánicas Oceánicas',
+    },
+    category: 'virtual-env',
+    categoryLabel: {
+      en: 'Playable 3D Marine Puzzle',
+      es: 'Puzzle Marino 3D Jugable',
+    },
+    workClassification: 'personal-rnd',
+    year: '2026',
+    engine: 'Three.js / WebGL / Procedural Fauna',
+    mediaType: 'video',
+    mediaSrc: '/assets/aistudio/Fish_feeder_6c148142.mp4',
+    thumbnailSrc: '/assets/worlds/coral_cove.jpg',
+    mediaNote: {
+      en: 'Real gameplay video capture of Fish Feeder 3D: procedural swimming fish (Clownfish, Blue Tang, Angler, Axolotl, Puffer, Lionfish, Sea Turtle, Betta), 3-layer iridescent pearl shields, and aquatic power-ups.',
+      es: 'Video de gameplay real de Fish Feeder 3D: peces procedurales en 3D (Payaso, Cirujano, Pez Rape, Ajolote, Globo, León, Tortuga, Betta), perlas iridiscentes con escudos de 3 capas y comodines acuáticos.',
+    },
+    description: {
+      en: 'An aquatic companion edition built atop the custom Three.js conveyor engine. Players deploy color-coded 3D fish onto a luminous ocean reef current to devour exposed pearls, crack 3-layer protective sea-shields, trigger chain-reaction special pearls, and master underwater tempo.',
+      es: 'Edición acuática construida sobre el motor personalizado en Three.js. Los jugadores despliegan peces 3D codificados por color sobre una corriente marina para absorber perlas expuestas, quebrar escudos de hasta 3 capas, activar perlas especiales en cadena y dominar el ritmo submarino.',
+    },
+    highlights: {
+      en: [
+        '8 Procedural 3D Marine Species: Individually sculpted geometries in FofMeshFactory with sinusoidal tail-wag locomotion',
+        'Dynamic Pearls & 3-Layer Bubble Shields: Multi-hit protective shells that shatter progressively as outer pearls are fed',
+        'Aquatic Power-Ups & Chain Pearls: Bubble-breaker shockwaves, sonar wave slowdown, and prismatic rainbow fish',
+        'Ocean Day/Night Moods & Sound Synthesis: Real-time Web Audio underwater bubble effects and synchronized Supabase leaderboards',
+      ],
+      es: [
+        '8 Especies Marinas Procedurales en 3D: Geometrías escultóricas en FofMeshFactory con nado sinusoidal en aleta y cola',
+        'Perlas Dinámicas & Escudos de 3 Capas: Burbujas protectoras multicapa que se fracturan al despejar el perímetro',
+        'Comodines Acuáticos & Perlas en Cadena: Pulso rompe-burbujas, calma oceánica y pez prismático universal',
+        'Ambiente Día/Noche y Síntesis Sonora: Audio procedural de burbujas en tiempo real y récords sincronizados con Supabase',
+      ],
+    },
+    techStack: [
+      'Three.js',
+      'Procedural 3D Fauna',
+      'TypeScript',
+      'Web Audio API',
+      'Supabase Cloud',
+      'React 19',
     ],
     featured: true,
   },
@@ -1148,44 +1201,36 @@ export function PortfolioView({
 
           {/* Interactive Media Showcase & Quick Specs */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Thumbnail Preview with Interactive Overlay */}
+            {/* Real Gameplay Video Preview with Interactive Launch Bar */}
             <div className="lg:col-span-7 space-y-4">
-              <div
-                onClick={onSwitchToGame}
-                className="group relative aspect-video rounded-2xl overflow-hidden border-2 border-cyan-500/40 shadow-2xl bg-slate-950 cursor-pointer transition-all duration-300 hover:border-cyan-400 hover:shadow-cyan-500/20"
-              >
-                <img
-                  src={realGameScreenshot}
-                  alt={isEn ? "Conveyor Realms 3D Real Gameplay Screenshot" : "Captura Real del Juego Conveyor Realms en Acción"}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-95 group-hover:opacity-100"
+              <div className="group relative aspect-video rounded-2xl overflow-hidden border-2 border-cyan-500/40 shadow-2xl bg-slate-950 transition-all duration-300 hover:border-cyan-400 hover:shadow-cyan-500/20">
+                <video
+                  src="/assets/aistudio/tile_absorber_64df8e71.mp4"
+                  poster={realGameScreenshot}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  controls
+                  className="w-full h-full object-contain bg-slate-950"
                 />
 
-                {/* Cybernetic Grid Overlay & Play Prompt */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent flex flex-col justify-between p-5 pointer-events-none">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono font-bold bg-slate-900/90 text-cyan-300 px-3 py-1 rounded-full border border-cyan-500/30 backdrop-blur-md flex items-center gap-1.5">
-                      <Activity className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
-                      <span>60 FPS WebGL Engine</span>
-                    </span>
-                    <span className="text-[11px] font-bold bg-indigo-500/30 text-indigo-200 px-3 py-1 rounded-full border border-indigo-400/30 backdrop-blur-md">
-                      9 Biomes & Worlds
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-white font-black text-lg sm:text-xl drop-shadow-md">
-                        Tile Absorber 3D
-                      </p>
-                      <p className="text-cyan-300 text-xs font-mono drop-shadow-sm">
-                        {isEn ? 'Click anywhere to launch playable build' : 'Haz clic para iniciar la partida en vivo'}
-                      </p>
-                    </div>
-
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 to-indigo-600 flex items-center justify-center text-slate-950 shadow-lg shadow-cyan-500/50 group-hover:scale-110 transition-transform">
-                      <Play className="w-7 h-7 fill-slate-950" />
-                    </div>
-                  </div>
+                {/* Top Status & Quick Play Pill */}
+                <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none">
+                  <span className="text-[11px] font-mono font-bold bg-slate-900/90 text-cyan-300 px-3 py-1 rounded-full border border-cyan-500/30 backdrop-blur-md flex items-center gap-1.5">
+                    <Activity className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
+                    <span>60 FPS WebGL Engine</span>
+                  </span>
+                  {onSwitchToGame && (
+                    <button
+                      type="button"
+                      onClick={onSwitchToGame}
+                      className="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500 hover:from-cyan-300 hover:to-indigo-400 text-slate-950 font-black text-[11px] shadow-lg transition hover:scale-105 cursor-pointer"
+                    >
+                      <Play className="w-3 h-3 fill-slate-950" />
+                      <span>{isEn ? 'Play Live Build' : 'Jugar en Vivo'}</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -1484,6 +1529,319 @@ export function PortfolioView({
 
                 <div className="pt-3 border-t border-slate-800 text-[11px] text-rose-300/80 font-mono">
                   {isEn ? 'Asynchronous Life Timer • Saturation Fail-Safe' : 'Temporizador Asíncrono • Control de Saturación'}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DEDICATED SHOWCASE SECTION: Fish Feeder 3D (Coral Cove Ocean Edition) */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-teal-950/50 to-cyan-950/70 text-white border-2 border-teal-500/35 p-6 sm:p-8 md:p-10 shadow-2xl">
+        {/* Glowing underwater atmospheric backdrop */}
+        <div className="absolute top-0 left-1/4 -mt-16 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-0 -mb-16 -mr-16 w-80 h-80 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 space-y-8">
+          {/* Section Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-teal-900/60 pb-6">
+            <div className="space-y-2 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 border border-teal-400/40 text-teal-200 text-xs font-bold uppercase tracking-wider">
+                <Fish className="w-4 h-4 text-teal-300 animate-pulse" />
+                <span>
+                  {isEn
+                    ? 'Featured Spin-Off • Aquatic 3D Puzzle & Procedural Fauna'
+                    : 'Proyecto Destacado • Puzzle Acuático 3D & Fauna Procedural'}
+                </span>
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+                <span className="text-white/80 font-mono text-[10px]">Coral Cove Engine</span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight flex items-center gap-3 flex-wrap">
+                <span>Fish Feeder 3D (Ocean Edition)</span>
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 font-mono">
+                  {isEn ? '100% Playable in Browser' : '100% Jugable en Navegador'}
+                </span>
+              </h2>
+
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                {isEn ? (
+                  <>
+                    An aquatic 3D puzzle showcase built on top of the custom Three.js conveyor engine.
+                    Procedural fish species swim along a glowing coral reef current to devour shimmering multi-layer pearls,
+                    pop underwater bubble shields, and unleash 3-tier ocean power-ups with procedural wave sound synthesis.
+                  </>
+                ) : (
+                  <>
+                    Muestra interactiva acuática en 3D construida sobre el motor personalizado en Three.js.
+                    Especies marinas procedurales nadan alrededor de una corriente luminosa de arrecife para devorar perlas dinámicas,
+                    romper escudos de burbujas de hasta 3 capas y desplegar comodines oceánicos con síntesis sonora en tiempo real.
+                  </>
+                )}
+              </p>
+            </div>
+
+            {/* Quick Play CTA */}
+            <div className="shrink-0 flex items-center gap-2.5 flex-wrap">
+              {onSwitchToFishFeeder && (
+                <button
+                  type="button"
+                  onClick={onSwitchToFishFeeder}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-teal-400 via-cyan-400 to-sky-400 hover:from-teal-300 hover:to-sky-300 text-slate-950 font-black text-xs sm:text-sm shadow-xl shadow-teal-950/60 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                >
+                  <Fish className="w-4 h-4 fill-slate-950 text-slate-950" />
+                  <span>{isEn ? '🐟 Play Fish Feeder' : '🐟 Jugar Fish Feeder'}</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Interactive Video Showcase & Quick Specs */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Real Fish Feeder Gameplay Video */}
+            <div className="lg:col-span-7 space-y-4">
+              <div className="group relative aspect-video rounded-2xl overflow-hidden border-2 border-teal-500/45 shadow-2xl bg-slate-950 transition-all duration-300 hover:border-teal-300 hover:shadow-teal-500/20">
+                <video
+                  src="/assets/aistudio/Fish_feeder_6c148142.mp4"
+                  poster="/assets/worlds/coral_cove.jpg"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  controls
+                  className="w-full h-full object-contain bg-slate-950"
+                />
+
+                {/* Top Status & Quick Play Pill */}
+                <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none">
+                  <span className="text-[11px] font-mono font-bold bg-slate-900/90 text-teal-300 px-3 py-1 rounded-full border border-teal-500/35 backdrop-blur-md flex items-center gap-1.5">
+                    <Fish className="w-3.5 h-3.5 text-teal-300" />
+                    <span>8 Procedural Marine Species</span>
+                  </span>
+                  {onSwitchToFishFeeder && (
+                    <button
+                      type="button"
+                      onClick={onSwitchToFishFeeder}
+                      className="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 hover:from-teal-300 hover:to-cyan-300 text-slate-950 font-black text-[11px] shadow-lg transition hover:scale-105 cursor-pointer"
+                    >
+                      <Play className="w-3 h-3 fill-slate-950" />
+                      <span>{isEn ? 'Play Fish Feeder' : 'Jugar Fish Feeder'}</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Sub-strip metrics */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
+                <div className="bg-slate-900/80 border border-teal-800/60 rounded-xl p-2.5">
+                  <p className="text-[10px] uppercase font-bold text-slate-400">{isEn ? '3D Fauna' : 'Fauna 3D'}</p>
+                  <p className="text-teal-300 font-bold font-mono mt-0.5">{isEn ? '8 Species' : '8 Especies'}</p>
+                </div>
+                <div className="bg-slate-900/80 border border-teal-800/60 rounded-xl p-2.5">
+                  <p className="text-[10px] uppercase font-bold text-slate-400">{isEn ? 'Pearls & Shields' : 'Perlas y Escudos'}</p>
+                  <p className="text-cyan-300 font-bold font-mono mt-0.5">{isEn ? '3-Layer Shells' : '3 Capas Activas'}</p>
+                </div>
+                <div className="bg-slate-900/80 border border-teal-800/60 rounded-xl p-2.5">
+                  <p className="text-[10px] uppercase font-bold text-slate-400">{isEn ? 'Power-Ups' : 'Comodines'}</p>
+                  <p className="text-amber-300 font-bold font-mono mt-0.5">11 (3 Tiers)</p>
+                </div>
+                <div className="bg-slate-900/80 border border-teal-800/60 rounded-xl p-2.5">
+                  <p className="text-[10px] uppercase font-bold text-slate-400">{isEn ? 'Cloud Data' : 'Persistencia'}</p>
+                  <p className="text-emerald-300 font-bold font-mono mt-0.5">Supabase + Cache</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Fish Feeder Narrative & Action Buttons */}
+            <div className="lg:col-span-5 space-y-4">
+              <div className="bg-slate-900/80 border border-teal-800/60 rounded-2xl p-5 space-y-3">
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-teal-300" />
+                  <span>{isEn ? 'Procedural Marine Art & Fluid Dynamics' : 'Arte Marino Procedural & Dinámica Oceánica'}</span>
+                </h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  {isEn ? (
+                    <>
+                      Every creature—Clownfish, Blue Tang, Anglerfish with glowing bioluminescent lure, Axolotl, Pufferfish,
+                      Lionfish, Sea Turtle, and Betta—is generated procedurally in Three.js with harmonic tail-wag locomotion,
+                      while multi-layered sea pearls reflect underwater light inside translucent protective bubbles.
+                    </>
+                  ) : (
+                    <>
+                      Cada criatura marina—Payaso, Cirujano, Pez Rape con señuelo luminoso, Ajolote, Pez Globo, Pez León, Tortuga y Betta—se construye
+                      proceduralmente en Three.js con animación sinusoidal de cola, mientras las perlas reflectantes descansan bajo burbujas protectoras de 3 capas.
+                    </>
+                  )}
+                </p>
+
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {['FofMeshFactory', '3-Layer Shields', 'Iridescent Pearls', 'Coral Track Shaders', 'Aquatic WebAudio', 'Three.js', 'Supabase SQL'].map((tech, i) => (
+                    <span
+                      key={i}
+                      className="text-[10px] font-semibold bg-teal-950/90 text-teal-200 px-2 py-0.5 rounded-md border border-teal-700/60"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-2.5">
+                {onSwitchToFishFeeder && (
+                  <button
+                    type="button"
+                    onClick={onSwitchToFishFeeder}
+                    className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-400 to-cyan-400 hover:from-teal-300 hover:to-cyan-300 text-slate-950 font-black text-xs shadow-md transition-all hover:scale-102 cursor-pointer"
+                  >
+                    <Fish className="w-4 h-4 text-slate-950" />
+                    <span>{isEn ? 'Launch Fish Feeder 3D' : 'Lanzar Fish Feeder 3D'}</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const fofProject = PORTFOLIO_PROJECTS.find((p) => p.id === 'fish-feeder-3d');
+                    if (fofProject) openProjectModal(fofProject);
+                  }}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 transition-all hover:scale-102 cursor-pointer"
+                >
+                  <Info className="w-4 h-4 text-teal-400" />
+                  <span>{isEn ? 'Specs' : 'Ficha'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* THREE TECHNICAL PILLARS FOR FISH FEEDER */}
+          <div className="space-y-4 pt-4 border-t border-teal-900/60">
+            <div className="text-center md:text-left">
+              <h3 className="text-lg sm:text-xl font-black text-white flex items-center justify-center md:justify-start gap-2">
+                <Fish className="w-5 h-5 text-teal-300" />
+                <span>
+                  {isEn
+                    ? 'Fish Feeder Dynamics: Marine Mechanics, Pearl Progression & Ocean Stakes'
+                    : 'Dinámicas de Fish Feeder: Mecánicas Marinas, Perlas Progresivas y Supervivencia'}
+                </span>
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                {isEn
+                  ? 'How the underwater puzzle loop transforms spatial grid absorption into an expressive marine feeding challenge.'
+                  : 'Cómo el ciclo submarino transforma la absorción espacial en una experiencia táctica de alimentación marina.'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* FoF Pillar 1 */}
+              <div className="rounded-2xl bg-slate-900/90 border border-teal-500/30 p-5 sm:p-6 space-y-4 flex flex-col justify-between hover:border-teal-400/60 transition-colors">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-300 border border-teal-500/40 flex items-center justify-center">
+                    <Fish className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-sm sm:text-base font-bold text-white">
+                    {isEn ? '1. Marine Feeders & 3-Layer Pearl Shields' : '1. Especies Marinas & Escudos de 3 Capas'}
+                  </h4>
+                  <ul className="space-y-2 text-xs text-slate-300 leading-relaxed">
+                    <li className="flex items-start gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 shrink-0" />
+                      <span>
+                        <strong className="text-teal-300 font-semibold">{isEn ? 'Species-Coded Color Matching:' : 'Especies por Color y Especie:'}</strong>{' '}
+                        {isEn
+                          ? 'Deploy Clownfish, Tang, Angler, Axolotl, Puffer, Lionfish, Turtle, or Betta swimmers onto the coral current—each swims with wagging fins and feeds exclusively on matching exposed pearls.'
+                          : 'Despliega peces Payaso, Cirujano, Rape, Ajolote, Globo, León, Tortuga o Betta a la corriente para que absorban perlas del mismo tono desde los bordes expuestos.'}
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 shrink-0" />
+                      <span>
+                        <strong className="text-teal-300 font-semibold">{isEn ? '3-Layer Protective Shells:' : 'Escudos Marinos de 3 Capas:'}</strong>{' '}
+                        {isEn
+                          ? 'Deep levels encase pearls in layered translucent sea-shields (up to 3 concentric shells) that crack step-by-step as outer adjacent pearls are cleared.'
+                          : 'Los niveles avanzados protegen las perlas bajo hasta 3 capas concéntricas de burbuja translúcida que se quiebran progresivamente conforme despejas el perímetro.'}
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 shrink-0" />
+                      <span>
+                        <strong className="text-teal-300 font-semibold">{isEn ? 'Chain Bomb & Rainbow Pearls:' : 'Perlas Explosivas & Arcoiris en Cadena:'}</strong>{' '}
+                        {isEn
+                          ? 'Special explosive and iridescent pearls trigger cascading chain clears across nearby reef cells while prismatic fish feed on any exposed color.'
+                          : 'Las perlas especiales detonantes y arcoiris desencadenan reacciones en cadena sobre celdas cercanas mientras el pez prismático absorbe cualquier color expuesto.'}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="pt-3 border-t border-slate-800 text-[11px] text-teal-300/80 font-mono">
+                  {isEn ? 'FofMeshFactory • Sinusoidal Swim Cycles' : 'FofMeshFactory • Nado Sinusoidal 3D'}
+                </div>
+              </div>
+
+              {/* FoF Pillar 2 */}
+              <div className="rounded-2xl bg-slate-900/90 border border-cyan-500/30 p-5 sm:p-6 space-y-4 flex flex-col justify-between hover:border-cyan-400/60 transition-colors">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 flex items-center justify-center">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-sm sm:text-base font-bold text-white">
+                    {isEn ? '2. Ocean Rhythm, XP Combos & Auto-Save' : '2. Ritmo Acuático, XP & Autoguardado'}
+                  </h4>
+                  <ul className="space-y-2 text-xs text-slate-300 leading-relaxed">
+                    <li className="flex items-start gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-1.5 shrink-0" />
+                      <span>
+                        <strong className="text-cyan-300 font-semibold">{isEn ? 'Aquatic Soundscape & Bubbles:' : 'Audio Submarino & Burbujas:'}</strong>{' '}
+                        {isEn
+                          ? 'Distinct Web Audio bubble pops, pitch-escalating pearl chimes, and ambient reef tracks give immediate tactile feedback.'
+                          : 'Efectos procedurales de burbuja con tono ascendente por racha y música temática marina con control instantáneo desde el HUD.'}
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-1.5 shrink-0" />
+                      <span>
+                        <strong className="text-cyan-300 font-semibold">{isEn ? 'Day/Night Ocean Moods & Pathway:' : 'Modos Día/Noche & Mapa Oceánico:'}</strong>{' '}
+                        {isEn
+                          ? 'Switch between sunlit reef and bioluminescent abyss visuals while keeping your frontier level and leaderboard XP synced.'
+                          : 'Alterna iluminación de arrecife diurno y abismo bioluminiscente conservando tu frontera de niveles, gamertag y récords en la nube.'}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="pt-3 border-t border-slate-800 text-[11px] text-cyan-300/80 font-mono">
+                  {isEn ? 'Auto-Save Per Level • Coral Cove Audio' : 'Autoguardado por Nivel • Audio Coral Cove'}
+                </div>
+              </div>
+
+              {/* FoF Pillar 3 */}
+              <div className="rounded-2xl bg-slate-900/90 border border-amber-500/30 p-5 sm:p-6 space-y-4 flex flex-col justify-between hover:border-amber-400/60 transition-colors">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center justify-center">
+                    <Heart className="w-5 h-5 fill-amber-400 text-amber-400" />
+                  </div>
+                  <h4 className="text-sm sm:text-base font-bold text-white">
+                    {isEn ? '3. Current Saturation & Mobile Landscape Rescue' : '3. Saturación de Corriente & Rescate Móvil'}
+                  </h4>
+                  <ul className="space-y-2 text-xs text-slate-300 leading-relaxed">
+                    <li className="flex items-start gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />
+                      <span>
+                        <strong className="text-amber-300 font-semibold">{isEn ? '5-Slot Ocean Current Cap:' : 'Límite de 5 Peces en Corriente:'}</strong>{' '}
+                        {isEn
+                          ? 'Only 5 swimmers can patrol the coral track simultaneously. Filling all slots with unmatched colors triggers a jam—use Safety Net or Tactical Purge to recover.'
+                          : 'Solo 5 nadadores pueden patrullar la pista coralina a la vez. Si saturas los 5 espacios sin coincidencias pierdes una vida; usa Red de Salvamento o Purga Táctica para evitarlo.'}
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />
+                      <span>
+                        <strong className="text-amber-300 font-semibold">{isEn ? 'Rewarded Promo & Mobile Invite:' : 'Ads con Gameplay Real & Invitación Móvil:'}</strong>{' '}
+                        {isEn
+                          ? 'End-of-level wins and out-of-lives screens showcase landscape mobile gameplay promos for both Fish Feeder and Conveyor Realms with one-tap PWA install.'
+                          : 'Al ganar cada nivel o quedarte sin vidas se muestra un teléfono en modo horizontal reproduciendo las promos reales de ambos juegos para instalarlo en tu móvil.'}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="pt-3 border-t border-slate-800 text-[11px] text-amber-300/80 font-mono">
+                  {isEn ? '5-Slot Jam Detection • Rewarded Video Promos' : 'Control de 5 Slots • Promos Recompensadas'}
                 </div>
               </div>
             </div>
@@ -2115,7 +2473,7 @@ export function PortfolioView({
                 {/* External Action Links */}
                 <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-2 flex-wrap">
-                    {activeModalProject.id === 'tile-absorber-3d' && onSwitchToGame && (
+                    {(activeModalProject.id === 'tile-absorber-3d' || activeModalProject.id === 'fish-feeder-3d') && onSwitchToGame && (
                       <button
                         type="button"
                         onClick={() => {
@@ -2128,7 +2486,7 @@ export function PortfolioView({
                         <span>{isEn ? 'Play Conveyor Realms' : '🎮 Conveyor Realms'}</span>
                       </button>
                     )}
-                    {activeModalProject.id === 'tile-absorber-3d' && onSwitchToFishFeeder && (
+                    {(activeModalProject.id === 'tile-absorber-3d' || activeModalProject.id === 'fish-feeder-3d') && onSwitchToFishFeeder && (
                       <button
                         type="button"
                         onClick={() => {

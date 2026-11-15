@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Database, Check, Copy, ExternalLink, X, AlertCircle, CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react';
-import { getSupabaseConfig, saveSupabaseConfig, SUPABASE_SETUP_SQL, getSupabaseClient } from '../../services/supabaseGame';
+import { Database, Check, Copy, ExternalLink, X, AlertCircle, CheckCircle2, ShieldCheck, Sparkles, Trash2 } from 'lucide-react';
+import { getSupabaseConfig, saveSupabaseConfig, SUPABASE_SETUP_SQL, getSupabaseClient, hardResetSupabaseLeaderboard } from '../../services/supabaseGame';
 
 interface SupabaseConfigModalProps {
   onClose: () => void;
@@ -13,8 +13,45 @@ export const SupabaseConfigModal: React.FC<SupabaseConfigModalProps> = ({ onClos
   const [url, setUrl] = useState(currentConfig.url || defaultProjectUrl);
   const [key, setKey] = useState(currentConfig.key);
   const [copied, setCopied] = useState(false);
+  const [copiedTruncate, setCopiedTruncate] = useState(false);
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState('');
+  const [isResetting, setIsResetting] = useState(false);
+
+  const TRUNCATE_SQL = `TRUNCATE TABLE public.tile_absorber_scores;
+TRUNCATE TABLE public.tile_absorber_users;
+
+-- Habilitar política de eliminación por API con anon key
+DROP POLICY IF EXISTS "Permitir eliminar puntuaciones" ON public.tile_absorber_scores;
+CREATE POLICY "Permitir eliminar puntuaciones" ON public.tile_absorber_scores FOR DELETE USING (true);`;
+
+  const handleCopyTruncate = async () => {
+    try {
+      await navigator.clipboard.writeText(TRUNCATE_SQL);
+      setCopiedTruncate(true);
+      setTimeout(() => setCopiedTruncate(false), 2000);
+    } catch {
+      // noop
+    }
+  };
+
+  const handleHardReset = async () => {
+    if (!window.confirm('¿Seguro que deseas vaciar las tablas de puntuaciones y usuarios por API?')) {
+      return;
+    }
+    setIsResetting(true);
+    try {
+      const res = await hardResetSupabaseLeaderboard();
+      setStatusMessage(res.message);
+      setTestStatus(res.success ? 'success' : 'error');
+      onSaved?.();
+    } catch (err) {
+      setStatusMessage('Error al ejecutar reset: ' + String(err));
+      setTestStatus('error');
+    } finally {
+      setIsResetting(false);
+    }
+  };
 
   const handleCopySql = async () => {
     try {
@@ -177,6 +214,39 @@ export const SupabaseConfigModal: React.FC<SupabaseConfigModalProps> = ({ onClos
             <p className="text-[11px] text-slate-400">
               Pega este código en el <strong>SQL Editor</strong> de tu proyecto en Supabase para crear las tablas <code className="text-amber-300">tile_absorber_scores</code> y <code className="text-amber-300">tile_absorber_users</code> con permisos automáticos.
             </p>
+          </div>
+
+          {/* Hard Reset API Section */}
+          <div className="bg-rose-950/30 border border-rose-900/60 rounded-2xl p-3.5">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-xs font-bold text-rose-300 flex items-center gap-1.5">
+                <Trash2 className="h-3.5 w-3.5" />
+                Hard Reset (Vaciar Base de Datos)
+              </span>
+              <button
+                type="button"
+                onClick={handleHardReset}
+                disabled={isResetting}
+                className="flex items-center gap-1 px-3 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/35 text-rose-200 border border-rose-400/40 text-[11px] font-bold transition cursor-pointer disabled:opacity-50"
+              >
+                <Trash2 className="h-3 w-3" />
+                <span>{isResetting ? 'Vaciando...' : 'Vaciar por API'}</span>
+              </button>
+            </div>
+            <p className="text-[11px] text-slate-400 mb-2">
+              Limpia la caché local y borra los registros de usuarios y puntuaciones mediante la API de Supabase.
+            </p>
+            <div className="flex items-center justify-between pt-1 border-t border-rose-900/40">
+              <span className="text-[10px] text-slate-400">Si RLS restringe DELETE en scores:</span>
+              <button
+                type="button"
+                onClick={handleCopyTruncate}
+                className="text-[10px] text-amber-300 hover:text-amber-200 underline font-semibold flex items-center gap-1 cursor-pointer"
+              >
+                {copiedTruncate ? <Check className="h-2.5 w-2.5 text-emerald-400" /> : <Copy className="h-2.5 w-2.5" />}
+                <span>{copiedTruncate ? '¡Copiado!' : 'Copiar SQL Truncate'}</span>
+              </button>
+            </div>
           </div>
 
           <div className="flex gap-2 pt-2">

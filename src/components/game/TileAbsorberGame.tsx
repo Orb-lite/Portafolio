@@ -931,8 +931,7 @@ export function TileAbsorberGame({
 
         {isWebAdViewerOpen && (
           <WebAdViewerModal
-            language={language}
-            version={version}
+            version={isFishOfFortune ? 'fof' : 'chess'}
             onRewardEarned={handleWebAdRewardEarned}
             onClose={() => setIsWebAdViewerOpen(false)}
           />

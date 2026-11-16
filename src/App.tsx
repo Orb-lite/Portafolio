@@ -21,6 +21,7 @@ import { exportResumeToDocx } from './utils/docxExport';
 import { PortfolioView } from './components/portfolio/PortfolioView';
 import { AboutMeView } from './components/about/AboutMeView';
 import { TileAbsorberGame } from './components/game/TileAbsorberGame';
+import { SpotifyDisplay } from './components/common/SpotifyDisplay';
 import { EditorAuthGate } from './components/auth/EditorAuthGate';
 import { getStoredSession, AdminUser } from './services/authService';
 import {
@@ -794,6 +795,11 @@ export default function App() {
           </div>
         </main>
       )}
+
+      {/* Spotify Studio Playlist Display (kept alive on Portfolio & About Me views; excluded from CV print & full-screen games) */}
+      <div className={mainTab === 'portfolio' || mainTab === 'about' ? 'no-print block' : 'no-print hidden'}>
+        <SpotifyDisplay language={language} />
+      </div>
 
       {/* PRIVATE RESUME EDITOR GATE */}
       {isEditorRequestedViaUrl && (

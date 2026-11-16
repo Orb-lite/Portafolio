@@ -103,8 +103,7 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
     try {
       const { user, isAuthorized: authorized } = signInWithAdminPasscode(
         passcodeInput,
-        selectedEmailForPasscode,
-        language
+        selectedEmailForPasscode
       );
       setCurrentUser(user);
       setIsAuthorized(authorized);
@@ -112,7 +111,7 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
         onSessionChange?.(user);
       }
     } catch (err: any) {
-      setPasscodeError(err.message || (isEn ? 'Incorrect passcode.' : 'Clave incorrecta.'));
+      setPasscodeError(err.message || 'Clave incorrecta.');
     }
   };
 
@@ -228,7 +227,7 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
                     <span>{isEn ? 'Direct Admin Key Access' : 'Acceso Directo con Clave'}</span>
                   </div>
                   <span className="text-[10px] text-amber-700 bg-amber-100 font-semibold px-2 py-0.5 rounded-full border border-amber-200">
-                    {isEn ? 'Origin Bypass' : 'Acceso Alterno'}
+                    Bypass 400 Origin
                   </span>
                 </div>
 
@@ -376,7 +375,7 @@ export const EditorAuthGate: React.FC<EditorAuthGateProps> = ({
             </span>
             {currentUser.authMethod === 'admin_passcode' && (
               <span className="text-[10px] text-amber-300 bg-amber-950/80 border border-amber-700/60 px-1.5 py-0.5 rounded">
-                {isEn ? 'Master Key' : 'Clave Maestra'}
+                Master Key
               </span>
             )}
           </div>

@@ -13,7 +13,6 @@ import {
   Heart,
   ChevronDown,
   ChevronUp,
-  Coins,
 } from 'lucide-react';
 import { DownloadGameInvite } from './DownloadGameInvite';
 import { formatLifeCountdown } from '../../game/lives';
@@ -478,26 +477,6 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
 
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showStats, setShowStats] = useState(false);
-  const [jackpotDisplay, setJackpotDisplay] = useState(0);
-
-  useEffect(() => {
-    if (isWin && isFoF) {
-      let rafId = 0;
-      const start = performance.now();
-      const duration = 950;
-      const step = (ts: number) => {
-        const progress = Math.min(1, (ts - start) / duration);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        setJackpotDisplay(Math.round(eased * 1000000));
-        if (progress < 1) {
-          rafId = requestAnimationFrame(step);
-        }
-      };
-      rafId = requestAnimationFrame(step);
-      return () => cancelAnimationFrame(rafId);
-    }
-    return undefined;
-  }, [isWin, isFoF]);
 
   useEffect(() => {
     if (isWin) {
@@ -543,7 +522,7 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
   };
 
   const titleText = isWin
-    ? (isFoF ? t.jackpotLabel : t.winTitleConveyor)
+    ? (isFoF ? t.winTitleFof : t.winTitleConveyor)
     : (isFoF ? t.loseTitleFof : t.loseTitleConveyor);
 
   const subtitleText = isWin
@@ -555,14 +534,12 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="game-result-title"
-      className={`fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 ${
-        isFoF && isWin ? 'bg-sky-950/75' : 'bg-slate-950/80'
-      } animate-in fade-in duration-300 select-none overflow-y-auto`}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-300 select-none overflow-y-auto"
     >
       <div className="relative w-full max-w-lg my-auto pt-14 sm:pt-16 pb-3">
         {/* Decorative Floating Pearls around the card */}
-        <Pearl size={22} tint="lavender" className="absolute top-10 -left-2 sm:-left-4 z-20" />
-        <Pearl size={16} tint="cyan" className="absolute top-24 left-4 z-20 opacity-85" />
+        <Pearl size={22} tint="lavender" className="absolute top-10 -left-2 sm:-left-4 z-20 animate-pulse" />
+        <Pearl size={16} tint="cyan" className="absolute top-24 left-4 z-20 opacity-80" />
         <Pearl size={26} tint="white" className="absolute top-1/2 -left-3 sm:-left-5 z-20 shadow-cyan-500/50" />
         <Pearl size={18} tint="pink" className="absolute bottom-16 -left-1 sm:-left-3 z-20" />
         <Pearl size={20} tint="cyan" className="absolute -bottom-2 left-8 z-20" />
@@ -575,43 +552,53 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
 
         {isWin && (
           <>
-            <StarCoin size={32} className="absolute -top-2 right-8 sm:right-12 z-20 rotate-12" />
-            <StarCoin size={28} className="absolute top-10 left-6 z-20 -rotate-12" />
-            <StarCoin size={30} className="absolute bottom-24 -left-3 sm:-left-4 z-20 -rotate-12" />
-            <StarCoin size={34} className="absolute bottom-8 -right-2 sm:-right-4 z-20 rotate-6" />
+            <StarCoin size={28} className="absolute -top-3 right-8 sm:right-12 z-20 rotate-12" />
+            <StarCoin size={26} className="absolute bottom-24 -left-3 sm:-left-4 z-20 -rotate-12" />
+            <StarCoin size={30} className="absolute bottom-8 -right-2 sm:-right-4 z-20 rotate-6" />
           </>
         )}
 
-        {/* CARD CONTAINER */}
-        <div className="relative w-full rounded-[2.5rem] sm:rounded-[3rem] border-2 border-white/80 shadow-[0_25px_65px_rgba(8,145,178,0.45)]">
+        {/* FROSTED GLASS CAPSULE CONTAINER (overflow-visible to let stars & mascot crest top rim) */}
+        <div className="relative w-full rounded-[2.5rem] sm:rounded-[3rem] border-2 border-white/70 shadow-[0_25px_65px_rgba(8,145,178,0.35),0_0_40px_rgba(255,255,255,0.25)_inset]">
+          {/* Frosted Glass Background Layer with overflow-hidden */}
           <div className="absolute inset-0 rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden pointer-events-none">
             <div
-              className={`absolute inset-0 ${
+              className={`absolute inset-0 backdrop-blur-2xl ${
                 isFoF
-                  ? 'bg-gradient-to-b from-sky-500 via-cyan-600 to-teal-700'
-                  : 'bg-slate-900 border-cyan-300/60'
+                  ? 'bg-white/20 sm:bg-white/25'
+                  : 'bg-slate-900/70 sm:bg-slate-900/80 border-cyan-300/60'
               }`}
+              style={{
+                background: isFoF
+                  ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(200, 240, 255, 0.18) 50%, rgba(255, 255, 255, 0.28) 100%)'
+                  : undefined,
+              }}
             />
-            <div className="absolute top-1.5 left-10 right-10 h-3 rounded-full bg-gradient-to-b from-white/50 to-transparent" />
+            <div className="absolute top-1.5 left-10 right-10 h-3 rounded-full bg-gradient-to-b from-white/60 to-transparent" />
+            <div className="absolute top-3 left-6 w-24 h-12 rounded-full bg-white/20 blur-md -rotate-12" />
           </div>
 
-          {/* Mascot / Stars Header */}
+          {/* Mascot / Stars Header - ANCHORED DIRECTLY ON TOP OF THE CARD RIM */}
           <div className="absolute -top-12 sm:-top-14 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center pointer-events-none">
             {isWin ? (
               <div className="relative flex items-end justify-center">
-                <span className="absolute -top-3 left-1 text-white text-base sm:text-lg">✦</span>
-                <span className="absolute -top-4 right-1 text-white text-base sm:text-lg">✦</span>
-                <span className="absolute bottom-4 -left-4 text-amber-200 text-xs sm:text-sm">✧</span>
-                <span className="absolute bottom-5 -right-4 text-amber-200 text-xs sm:text-sm">✧</span>
+                {/* Sparkles around stars */}
+                <span className="absolute -top-3 left-1 text-white text-base sm:text-lg animate-pulse">✦</span>
+                <span className="absolute -top-4 right-1 text-white text-base sm:text-lg animate-pulse delay-150">✦</span>
+                <span className="absolute bottom-4 -left-4 text-amber-200 text-xs sm:text-sm animate-pulse">✧</span>
+                <span className="absolute bottom-5 -right-4 text-amber-200 text-xs sm:text-sm animate-pulse delay-300">✧</span>
 
+                {/* Left Star */}
                 <div className="-mr-3 sm:-mr-4 -mb-1 transform -rotate-12">
                   <GlossyStar size={68} rotate={-12} scale={0.92} />
                 </div>
 
+                {/* Center Star (Hero) */}
                 <div className="z-10 -mb-2">
                   <GlossyStar size={96} rotate={0} scale={1.08} glow={true} />
                 </div>
 
+                {/* Right Star */}
                 <div className="-ml-3 sm:-ml-4 -mb-1 transform rotate-12">
                   <GlossyStar size={68} rotate={12} scale={0.92} />
                 </div>
@@ -621,20 +608,25 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
                 <SadFishMascot size={150} />
               </div>
             ) : (
+              /* Tile Absorber Defeat: Fichas negras con caras tristes a la misma altura de las estrellas */
               <div className="relative flex items-end justify-center">
-                <span className="absolute -top-3 left-1 text-sky-300 text-sm sm:text-base">💧</span>
-                <span className="absolute -top-4 right-1 text-sky-300 text-sm sm:text-base">💧</span>
-                <span className="absolute bottom-4 -left-4 text-slate-400 text-xs sm:text-sm">✧</span>
-                <span className="absolute bottom-5 -right-4 text-slate-400 text-xs sm:text-sm">✧</span>
+                {/* Sad tears / droplets around the tiles */}
+                <span className="absolute -top-3 left-1 text-sky-300 text-sm sm:text-base animate-pulse">💧</span>
+                <span className="absolute -top-4 right-1 text-sky-300 text-sm sm:text-base animate-pulse delay-150">💧</span>
+                <span className="absolute bottom-4 -left-4 text-slate-400 text-xs sm:text-sm animate-pulse">✧</span>
+                <span className="absolute bottom-5 -right-4 text-slate-400 text-xs sm:text-sm animate-pulse delay-300">✧</span>
 
+                {/* Left Sad Black Tile */}
                 <div className="-mr-3 sm:-mr-4 -mb-1 transform -rotate-12">
                   <SadBlackTile size={68} rotate={-12} scale={0.92} expression="worried" />
                 </div>
 
+                {/* Center Hero Sad Black Tile */}
                 <div className="z-10 -mb-2">
                   <SadBlackTile size={96} rotate={0} scale={1.08} glow={true} expression="crying" />
                 </div>
 
+                {/* Right Sad Black Tile */}
                 <div className="-ml-3 sm:-ml-4 -mb-1 transform rotate-12">
                   <SadBlackTile size={68} rotate={12} scale={0.92} expression="sobbing" />
                 </div>
@@ -645,15 +637,9 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
           {/* Card Body */}
           <div className="relative z-10 p-5 sm:p-7 pt-12 sm:pt-14 text-center text-white">
             {isWin && isReplay && (
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-2 rounded-full bg-white/25 border border-white/60 text-xs font-black text-amber-200 uppercase tracking-wider shadow-sm">
-                <Sparkles className="w-3.5 h-3.5 text-amber-200" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-2 rounded-full bg-white/30 border border-white/60 text-xs font-black text-amber-300 uppercase tracking-wider shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                 {t.replayPastCleared}
-              </div>
-            )}
-
-            {isFoF && isWin && (
-              <div className="inline-flex items-center gap-2 px-4 py-1 mb-2 rounded-full bg-amber-400/25 border border-amber-200/80 text-xs font-black tracking-widest uppercase text-amber-100">
-                <span>FISH FEEDER</span>
               </div>
             )}
 
@@ -664,33 +650,21 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
               {titleText}
             </h1>
 
-            {isFoF && isWin ? (
-              <div className="my-3 py-3 px-5 rounded-3xl bg-slate-950/35 border-2 border-amber-300/80 inline-flex items-center justify-center gap-3 shadow-inner">
-                <Coins className="w-7 h-7 sm:w-8 sm:h-8 text-amber-300 shrink-0" />
-                <span className="text-3xl sm:text-4xl font-black text-amber-300 tracking-tight tabular-nums drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]">
-                  {jackpotDisplay.toLocaleString('en-US')}
-                </span>
-              </div>
-            ) : null}
-
             <p className="text-sm sm:text-base font-bold text-white/95 max-w-md mx-auto mb-5 leading-snug drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]">
               {subtitleText}
             </p>
 
-          <div className="w-full flex justify-center mb-5">
+          <div className="w-full flex justify-center mb-6">
             <button
               type="button"
               onClick={handleDownloadFreeClick}
-              aria-label={isFoF && isWin ? t.playNowCta : t.downloadFree}
-              className={`group relative w-full sm:w-[84%] max-w-md py-3.5 sm:py-4 px-6 rounded-full font-black text-lg sm:text-xl text-white tracking-wide border-2 border-white/90 active:scale-95 transition-all duration-150 cursor-pointer flex items-center justify-center gap-3 ${
-                isFoF && isWin
-                  ? 'shadow-[0_12px_28px_rgba(22,163,74,0.55),0_-3px_8px_rgba(255,255,255,0.45)_inset] bg-gradient-to-b from-lime-400 via-emerald-500 to-green-700 hover:brightness-110'
-                  : 'shadow-[0_12px_28px_rgba(255,140,0,0.55),0_-3px_8px_rgba(255,255,255,0.45)_inset] bg-gradient-to-b from-[#ffbe3b] via-[#ff8d00] to-[#e65c00] hover:brightness-110'
-              }`}
+              aria-label={t.downloadFree}
+              className="group relative w-full sm:w-[84%] max-w-md py-3.5 sm:py-4 px-6 rounded-full font-black text-lg sm:text-xl text-white tracking-wide border-2 border-white/90 shadow-[0_12px_28px_rgba(255,140,0,0.55),0_-3px_8px_rgba(255,255,255,0.45)_inset] bg-gradient-to-b from-[#ffbe3b] via-[#ff8d00] to-[#e65c00] hover:brightness-110 active:scale-95 transition-all duration-150 cursor-pointer flex items-center justify-center gap-3"
             >
-              <div className="absolute top-1.5 left-6 right-6 h-1.5 rounded-full bg-white/50 pointer-events-none" />
+              <div className="absolute top-1.5 left-6 right-6 h-1.5 rounded-full bg-white/50 blur-[0.4px] pointer-events-none" />
+              <span className="text-xl sm:text-2xl filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">✨</span>
               <span className="drop-shadow-[0_2px_3px_rgba(0,0,0,0.3)] font-black uppercase">
-                {isFoF && isWin ? t.playNowCta : t.downloadFree}
+                {t.downloadFree}
               </span>
             </button>
           </div>
@@ -700,10 +674,10 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
               <button
                 type="button"
                 onClick={onNextLevel}
-                className="w-full py-3 px-6 rounded-full font-black text-sm sm:text-base text-white border-2 border-white/75 bg-white/15 hover:bg-white/25 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-6 rounded-full font-black text-base sm:text-lg text-white border-2 border-white/80 shadow-[0_10px_24px_rgba(16,185,129,0.45),0_-2px_6px_rgba(255,255,255,0.4)_inset] bg-gradient-to-b from-emerald-400 via-teal-500 to-emerald-700 hover:brightness-110 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <span>{t.continueLevel} {level + 1}</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-5 h-5" />
               </button>
             )}
 
@@ -731,11 +705,11 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
             )}
 
             <div className="grid grid-cols-2 gap-2.5">
-                {onBackToPath && (
+              {onBackToPath && (
                 <button
                   type="button"
                   onClick={onBackToPath}
-                  className="py-2.5 px-3 rounded-full font-bold text-xs sm:text-sm text-white border border-white/60 bg-white/20 hover:bg-white/30 active:scale-95 transition cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
+                  className="py-2.5 px-3 rounded-full font-bold text-xs sm:text-sm text-white border border-white/60 bg-white/20 hover:bg-white/30 active:scale-95 backdrop-blur-md transition cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
                 >
                   <span className="truncate">{t.returnToPathway}</span>
                 </button>
@@ -745,7 +719,7 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
                 <button
                   type="button"
                   onClick={isWin ? onRestart : onRetry}
-                  className="py-2.5 px-3 rounded-full font-bold text-xs sm:text-sm text-white border border-white/60 bg-white/20 hover:bg-white/30 active:scale-95 transition cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
+                  className="py-2.5 px-3 rounded-full font-bold text-xs sm:text-sm text-white border border-white/60 bg-white/20 hover:bg-white/30 active:scale-95 backdrop-blur-md transition cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
                 >
                   <RotateCcw className="w-4 h-4 text-amber-200" />
                   <span className="truncate">{isWin ? t.replayThisLevel : t.retryLevel}</span>
@@ -754,13 +728,13 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
             </div>
 
             {!isWin && lives < maxLives && (
-              <div className="mt-1 p-3 rounded-2xl bg-white/15 border border-white/30 text-left text-xs space-y-2">
+              <div className="mt-1 p-3 rounded-2xl bg-white/15 backdrop-blur-md border border-white/30 text-left text-xs space-y-2">
                 <div className="flex items-center justify-between text-white font-bold">
                   <div className="flex items-center gap-1">
                     <Heart className="w-3.5 h-3.5 fill-rose-400 text-rose-300" />
                     <span>{t.lives}: {lives}/{maxLives}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-cyan-200 font-mono text-[11px] tabular-nums">
+                  <div className="flex items-center gap-1 text-cyan-200 font-mono text-[11px]">
                     <Clock3 className="w-3.5 h-3.5" />
                     <span>{t.nextLifeIn} {formatLifeCountdown(nextLifeAt, now)}</span>
                   </div>
@@ -794,23 +768,31 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
                   onClick={() => setShowStats(!showStats)}
                   className="inline-flex items-center gap-1 text-xs font-semibold text-white/80 hover:text-white transition cursor-pointer"
                 >
-                  <span>{showStats ? (language === 'en' ? 'Hide stats' : 'Ocultar estadísticas') : (language === 'en' ? 'View stats' : 'Ver estadísticas')}</span>
+                  <span>
+                    {language === 'en'
+                      ? showStats
+                        ? 'Hide stats'
+                        : 'View stats'
+                      : showStats
+                      ? 'Ocultar estadísticas'
+                      : 'Ver estadísticas'}
+                  </span>
                   {showStats ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                 </button>
 
                 {showStats && (
-                  <div className="grid grid-cols-3 gap-2 mt-2 p-2.5 rounded-2xl bg-white/15 border border-white/30 text-center animate-in fade-in duration-200">
+                  <div className="grid grid-cols-3 gap-2 mt-2 p-2.5 rounded-2xl bg-white/15 backdrop-blur-md border border-white/30 text-center animate-in fade-in duration-200">
                     <div>
                       <p className="text-[10px] font-semibold text-white/70 uppercase">{t.absorbedCount}</p>
-                      <p className="text-base font-black text-white tabular-nums">{totalTiles}</p>
+                      <p className="text-base font-black text-white">{totalTiles}</p>
                     </div>
                     <div>
                       <p className="text-[10px] font-semibold text-white/70 uppercase">{t.timeElapsed}</p>
-                      <p className="text-base font-black text-emerald-200 tabular-nums">{timeElapsed}s</p>
+                      <p className="text-base font-black text-emerald-200">{timeElapsed}s</p>
                     </div>
                     <div>
                       <p className="text-[10px] font-semibold text-white/70 uppercase">{t.xpEarned}</p>
-                      <p className="text-base font-black text-amber-200 tabular-nums">+{xpEarned}</p>
+                      <p className="text-base font-black text-amber-200">+{xpEarned}</p>
                     </div>
                   </div>
                 )}
@@ -820,15 +802,15 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
 
             <div className="mt-4 pt-2 border-t border-white/20 flex items-center justify-center gap-1 text-[11px] text-white/80 font-medium">
               <Sparkles className="w-3 h-3 text-amber-300" />
-              <span>{`${isFoF ? 'Fish Feeder' : 'Conveyor Realms'} · ${language === 'en' ? 'By Dimpz Games' : 'Por Dimpz Games'} · Isaac Gómez`}</span>
+              <span>{isFoF ? 'Fish Feeder' : 'Conveyor Realms'} · By Dimpz Games · Isaac Gómez</span>
             </div>
           </div>
         </div>
       </div>
 
       {showInviteModal && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85">
-          <div className="relative w-full max-w-xl max-h-[92vh] overflow-y-auto rounded-3xl bg-slate-900 border border-cyan-400/50 p-4 sm:p-6 shadow-2xl text-left">
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="relative w-full max-w-lg sm:max-w-xl max-h-[92vh] overflow-y-auto rounded-3xl bg-slate-900 border border-cyan-400/50 p-4 sm:p-6 shadow-2xl text-left">
             <button
               type="button"
               onClick={() => setShowInviteModal(false)}
@@ -841,8 +823,8 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
               context={isWin ? 'win' : 'death'}
               level={level}
               language={language}
+              gameName={isFoF ? 'Fish Feeder' : 'Conveyor Realms'}
               version={version}
-              gameName={isFoF ? 'Fish Feeder' : 'Tile Absorber'}
               compact={false}
             />
           </div>

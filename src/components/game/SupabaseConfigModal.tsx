@@ -1,66 +1,20 @@
 import React, { useState } from 'react';
-import { Database, Check, Copy, ExternalLink, X, AlertCircle, CheckCircle2, Sparkles, Trash2 } from 'lucide-react';
-import { getSupabaseConfig, saveSupabaseConfig, SUPABASE_SETUP_SQL, getSupabaseClient, hardResetSupabaseLeaderboard } from '../../services/supabaseGame';
-import { GameLanguage } from '../../game/localization';
+import { Database, Check, Copy, ExternalLink, X, AlertCircle, CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react';
+import { getSupabaseConfig, saveSupabaseConfig, SUPABASE_SETUP_SQL, getSupabaseClient } from '../../services/supabaseGame';
 
 interface SupabaseConfigModalProps {
-  language?: GameLanguage;
   onClose: () => void;
   onSaved?: () => void;
 }
 
-export const SupabaseConfigModal: React.FC<SupabaseConfigModalProps> = ({ language = 'es', onClose, onSaved }) => {
-  const isEn = language === 'en';
+export const SupabaseConfigModal: React.FC<SupabaseConfigModalProps> = ({ onClose, onSaved }) => {
   const currentConfig = getSupabaseConfig();
   const defaultProjectUrl = 'https://kryibdmiwdeccniilzgx.supabase.co';
   const [url, setUrl] = useState(currentConfig.url || defaultProjectUrl);
   const [key, setKey] = useState(currentConfig.key);
   const [copied, setCopied] = useState(false);
-  const [copiedTruncate, setCopiedTruncate] = useState(false);
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState('');
-  const [isResetting, setIsResetting] = useState(false);
-
-  const TRUNCATE_SQL = `TRUNCATE TABLE public.tile_absorber_scores;
-TRUNCATE TABLE public.tile_absorber_users;
-
--- Enable API delete policy with anon key
-DROP POLICY IF EXISTS "Permitir eliminar puntuaciones" ON public.tile_absorber_scores;
-CREATE POLICY "Permitir eliminar puntuaciones" ON public.tile_absorber_scores FOR DELETE USING (true);`;
-
-  const handleCopyTruncate = async () => {
-    try {
-      await navigator.clipboard.writeText(TRUNCATE_SQL);
-      setCopiedTruncate(true);
-      setTimeout(() => setCopiedTruncate(false), 2000);
-    } catch {
-      // noop
-    }
-  };
-
-  const handleHardReset = async () => {
-    if (
-      !window.confirm(
-        isEn
-          ? 'Are you sure you want to clear the scores and users tables via API?'
-          : '¿Seguro que deseas vaciar las tablas de puntuaciones y usuarios por API?'
-      )
-    ) {
-      return;
-    }
-    setIsResetting(true);
-    try {
-      const res = await hardResetSupabaseLeaderboard(language);
-      setStatusMessage(res.message);
-      setTestStatus(res.success ? 'success' : 'error');
-      onSaved?.();
-    } catch (err) {
-      setStatusMessage((isEn ? 'Reset error: ' : 'Error al ejecutar reset: ') + String(err));
-      setTestStatus('error');
-    } finally {
-      setIsResetting(false);
-    }
-  };
 
   const handleCopySql = async () => {
     try {
@@ -79,47 +33,36 @@ CREATE POLICY "Permitir eliminar puntuaciones" ON public.tile_absorber_scores FO
 
     if (!cleanUrl.startsWith('http')) {
       setTestStatus('error');
-      setStatusMessage(isEn ? 'Supabase URL must start with https://' : 'La URL de Supabase debe comenzar con https://');
+      setStatusMessage('La URL de Supabase debe comenzar con https://');
       return;
     }
     if (!cleanKey || cleanKey.length < 20) {
       setTestStatus('error');
-      setStatusMessage(
-        isEn
-          ? 'Please enter a valid public anon key.'
-          : 'Por favor ingresa una clave anon válida (API public anon key).'
-      );
+      setStatusMessage('Por favor ingresa una clave anon válida (API public anon key).');
       return;
     }
 
     setTestStatus('testing');
-    setStatusMessage(isEn ? 'Testing connection with Supabase...' : 'Probando conexión con Supabase...');
+    setStatusMessage('Probando conexión con Supabase...');
 
     try {
       saveSupabaseConfig(cleanUrl, cleanKey);
       const client = getSupabaseClient();
       if (!client) {
         setTestStatus('error');
-        setStatusMessage(isEn ? 'Could not initialize Supabase client.' : 'No se pudo inicializar el cliente de Supabase.');
+        setStatusMessage('No se pudo inicializar el cliente de Supabase.');
         return;
       }
 
       // Quick test query
       const { error } = await client.from('tile_absorber_scores').select('id').limit(1);
       if (error && !error.message.includes('0 rows')) {
+        // Connected to Supabase, but tables might not exist yet
         setTestStatus('success');
-        setStatusMessage(
-          isEn
-            ? 'Successfully connected to Supabase! (Remember to run the SQL script if the tables do not exist yet.)'
-            : '¡Conectado exitosamente con Supabase! (Recuerda ejecutar el script SQL si las tablas aún no existen)'
-        );
+        setStatusMessage('¡Conectado exitosamente con Supabase! (Recuerda ejecutar el script SQL si las tablas aún no existen)');
       } else {
         setTestStatus('success');
-        setStatusMessage(
-          isEn
-            ? 'Connection verified! Your Hall of Fame is now synced live.'
-            : '¡Conexión verificada! Tu Salón de la Fama ya está sincronizado en vivo.'
-        );
+        setStatusMessage('¡Conexión verificada! Tu Salón de la Fama ya está sincronizado en vivo.');
       }
 
       onSaved?.();
@@ -128,7 +71,7 @@ CREATE POLICY "Permitir eliminar puntuaciones" ON public.tile_absorber_scores FO
       }, 1200);
     } catch (err) {
       setTestStatus('error');
-      setStatusMessage((isEn ? 'Connection error: ' : 'Error de conexión: ') + String(err));
+      setStatusMessage('Error de conexión: ' + String(err));
     }
   };
 
@@ -138,7 +81,6 @@ CREATE POLICY "Permitir eliminar puntuaciones" ON public.tile_absorber_scores FO
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg"
-          aria-label={isEn ? 'Close modal' : 'Cerrar modal'}
         >
           <X className="h-5 w-5" />
         </button>
@@ -148,17 +90,15 @@ CREATE POLICY "Permitir eliminar puntuaciones" ON public.tile_absorber_scores FO
             <Database className="h-6 w-6 text-slate-950" />
           </div>
           <div>
-            <h3 className="text-lg font-black text-white">{isEn ? 'Supabase Connection' : 'Conexión con Supabase'}</h3>
-            <p className="text-xs text-slate-400">
-              {isEn ? 'Save global scores and player profiles in your database' : 'Guarda puntuaciones globales y perfiles en tu base de datos'}
-            </p>
+            <h3 className="text-lg font-black text-white">Conexión con Supabase</h3>
+            <p className="text-xs text-slate-400">Guarda puntuaciones globales y perfiles en tu base de datos</p>
           </div>
         </div>
 
         <form onSubmit={handleTestAndSave} className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-slate-300 mb-1">
-              {isEn ? 'Project URL' : 'URL del Proyecto'}
+              Project URL
             </label>
             <input
               type="text"
@@ -180,7 +120,7 @@ CREATE POLICY "Permitir eliminar puntuaciones" ON public.tile_absorber_scores FO
                 rel="noreferrer"
                 className="text-[11px] text-emerald-400 hover:text-emerald-300 underline inline-flex items-center gap-1 font-semibold"
               >
-                <span>{isEn ? 'Get in Supabase' : 'Obtener en Supabase'}</span>
+                <span>Obtener en Supabase</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>
@@ -192,15 +132,7 @@ CREATE POLICY "Permitir eliminar puntuaciones" ON public.tile_absorber_scores FO
               className="w-full bg-slate-950 border border-slate-700 focus:border-emerald-400 rounded-xl px-3.5 py-2.5 font-mono text-xs text-white focus:outline-none focus:ring-2 focus:ring-emerald-400/30"
             />
             <p className="text-[10px] text-slate-400 mt-1">
-              {isEn ? (
-                <>
-                  Copy the <strong>anon public</strong> key from <em>Project Settings → API</em> of your project <strong>kryibdmiwdeccniilzgx</strong>.
-                </>
-              ) : (
-                <>
-                  Copia la clave <strong>anon public</strong> desde <em>Project Settings → API</em> de tu proyecto <strong>kryibdmiwdeccniilzgx</strong>.
-                </>
-              )}
+              Copia la clave <strong>anon public</strong> desde <em>Project Settings → API</em> de tu proyecto <strong>kryibdmiwdeccniilzgx</strong>.
             </p>
           </div>
 
@@ -231,7 +163,7 @@ CREATE POLICY "Permitir eliminar puntuaciones" ON public.tile_absorber_scores FO
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
                 <Sparkles className="h-3.5 w-3.5" />
-                {isEn ? 'SQL Script for Tables & RLS' : 'Script SQL para Tablas & RLS'}
+                Script SQL para Tablas & RLS
               </span>
               <button
                 type="button"
@@ -239,57 +171,12 @@ CREATE POLICY "Permitir eliminar puntuaciones" ON public.tile_absorber_scores FO
                 className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-400/30 text-[11px] font-bold transition cursor-pointer"
               >
                 {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
-                <span>{copied ? (isEn ? 'Copied!' : '¡Copiado!') : (isEn ? 'Copy SQL' : 'Copiar SQL')}</span>
+                <span>{copied ? '¡Copiado!' : 'Copiar SQL'}</span>
               </button>
             </div>
             <p className="text-[11px] text-slate-400">
-              {isEn ? (
-                <>
-                  Paste this code into your Supabase <strong>SQL Editor</strong> to create <code className="text-amber-300">tile_absorber_scores</code> and <code className="text-amber-300">tile_absorber_users</code> with automatic permissions.
-                </>
-              ) : (
-                <>
-                  Pega este código en el <strong>SQL Editor</strong> de tu proyecto en Supabase para crear las tablas <code className="text-amber-300">tile_absorber_scores</code> y <code className="text-amber-300">tile_absorber_users</code> con permisos automáticos.
-                </>
-              )}
+              Pega este código en el <strong>SQL Editor</strong> de tu proyecto en Supabase para crear las tablas <code className="text-amber-300">tile_absorber_scores</code> y <code className="text-amber-300">tile_absorber_users</code> con permisos automáticos.
             </p>
-          </div>
-
-          {/* Hard Reset API Section */}
-          <div className="bg-rose-950/30 border border-rose-900/60 rounded-2xl p-3.5">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs font-bold text-rose-300 flex items-center gap-1.5">
-                <Trash2 className="h-3.5 w-3.5" />
-                {isEn ? 'Hard Reset (Clear Database)' : 'Hard Reset (Vaciar Base de Datos)'}
-              </span>
-              <button
-                type="button"
-                onClick={handleHardReset}
-                disabled={isResetting}
-                className="flex items-center gap-1 px-3 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/35 text-rose-200 border border-rose-400/40 text-[11px] font-bold transition cursor-pointer disabled:opacity-50"
-              >
-                <Trash2 className="h-3 w-3" />
-                <span>{isResetting ? (isEn ? 'Clearing...' : 'Vaciando...') : (isEn ? 'Clear via API' : 'Vaciar por API')}</span>
-              </button>
-            </div>
-            <p className="text-[11px] text-slate-400 mb-2">
-              {isEn
-                ? 'Clears local cache and deletes user and score records via the Supabase API.'
-                : 'Limpia la caché local y borra los registros de usuarios y puntuaciones mediante la API de Supabase.'}
-            </p>
-            <div className="flex items-center justify-between pt-1 border-t border-rose-900/40">
-              <span className="text-[10px] text-slate-400">
-                {isEn ? 'If RLS blocks DELETE on scores:' : 'Si RLS restringe DELETE en scores:'}
-              </span>
-              <button
-                type="button"
-                onClick={handleCopyTruncate}
-                className="text-[10px] text-amber-300 hover:text-amber-200 underline font-semibold flex items-center gap-1 cursor-pointer"
-              >
-                {copiedTruncate ? <Check className="h-2.5 w-2.5 text-emerald-400" /> : <Copy className="h-2.5 w-2.5" />}
-                <span>{copiedTruncate ? (isEn ? 'Copied!' : '¡Copiado!') : (isEn ? 'Copy SQL Truncate' : 'Copiar SQL Truncate')}</span>
-              </button>
-            </div>
           </div>
 
           <div className="flex gap-2 pt-2">
@@ -298,16 +185,14 @@ CREATE POLICY "Permitir eliminar puntuaciones" ON public.tile_absorber_scores FO
               onClick={onClose}
               className="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition cursor-pointer"
             >
-              {isEn ? 'Cancel' : 'Cancelar'}
+              Cancelar
             </button>
             <button
               type="submit"
               disabled={testStatus === 'testing'}
               className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-300 hover:to-teal-400 text-slate-950 font-black text-xs transition cursor-pointer shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-1.5"
             >
-              {testStatus === 'testing'
-                ? isEn ? 'Connecting...' : 'Conectando...'
-                : isEn ? 'Save & Test' : 'Guardar y Probar'}
+              {testStatus === 'testing' ? 'Conectando...' : 'Guardar y Probar'}
             </button>
           </div>
         </form>

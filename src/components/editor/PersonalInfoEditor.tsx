@@ -27,8 +27,8 @@ export const PersonalInfoEditor: React.FC<PersonalInfoEditorProps> = ({
   // English & Spanish Summary Presets
   const presets = {
     orblite_leader: {
-      es: 'Lead Automation Engineer y Desarrollador de Plataformas con sólida experiencia en integración de APIs de Inteligencia Artificial (LLMs), sistemas telemáticos en tiempo real y aplicaciones web de alto rendimiento. Actualmente Lead Automation Engineer & Platform Developer en Orblite, liderando automatizaciones de flujos con IA, infraestructura telemática vehicular y desarrollo de sistemas ERP/CRM propietarios (TypeScript, React, APIs REST, SQL Supabase, Cloudflare). Experiencia previa destacada en simulación industrial y gemelos digitales para corporativos globales Fortune 500 y como Artista Técnico en estudio de co-desarrollo para título deportivo AAA de clase mundial con crédito verificado en MobyGames (EA Sports College Football 25).',
-      en: 'Lead Automation Engineer and Platform Developer combining full-stack web and sensor telemetry with modern AI API integrations and 3D simulation engineering. Currently Lead Automation Engineer & Platform Developer at Orblite, engineering AI workflow automations, vehicle telematics infrastructure, and custom internal ERP/CRM applications (TypeScript, React, RESTful APIs, SQL Supabase, AI/LLM APIs, Cloudflare). Extensive background developing industrial Digital Twins for global Fortune 500 enterprise clients (automotive, tech, and pharmaceutical sectors under strict NDAs) and Technical Art for premier AAA sports franchise at an elite co-development studio (verified shipped credit on MobyGames for EA Sports College Football 25, interactive UI/UX in Frostbite, Perforce P4, and Jenkins CI).',
+      es: 'Lead Automation Engineer y Desarrollador de Plataformas con sólida experiencia en automatización de procesos en la nube, sistemas telemáticos en tiempo real y aplicaciones web de alto rendimiento. Actualmente Lead Automation Engineer & Platform Developer en Orblite, liderando automatizaciones operativas, infraestructura telemática vehicular y desarrollo de sistemas ERP/CRM propietarios (TypeScript, React, APIs REST, SQL Supabase, Cloudflare). Experiencia previa destacada en simulación industrial y gemelos digitales para corporativos globales Fortune 500 y como Artista Técnico en estudio de co-desarrollo para título deportivo AAA de clase mundial con crédito verificado en MobyGames (EA Sports College Football 25).',
+      en: 'Lead Automation Engineer and Platform Developer combining full-stack web and sensor telemetry with scalable backend integrations and 3D simulation engineering. Currently Lead Automation Engineer & Platform Developer at Orblite, engineering workflow automations, vehicle telematics infrastructure, and custom internal ERP/CRM applications (TypeScript, React, RESTful APIs, SQL Supabase, Cloudflare). Extensive background developing industrial Digital Twins for global Fortune 500 enterprise clients (automotive, tech, and pharmaceutical sectors under strict NDAs) and Technical Art for premier AAA sports franchise at an elite co-development studio (verified shipped credit on MobyGames for EA Sports College Football 25, interactive UI/UX in Frostbite, Perforce P4, and Jenkins CI).',
     },
     digital_twins: {
       es: 'Especialista en Simulación 3D y Gemelos Digitales (Digital Twins) con Unreal Engine 5 y FlexSim. Amplia experiencia modelando líneas de manufactura y ensamble para corporativos globales Fortune 500 con detección de fallas en tiempo real, optimización térmica y espacial de maquinaria, y programas inmersivos de capacitación en Realidad Virtual para reducción de riesgos y aumento de eficiencia operativa.',
@@ -144,7 +144,11 @@ export const PersonalInfoEditor: React.FC<PersonalInfoEditorProps> = ({
             value={personalInfo.title}
             onChange={(e) => updateField('title', e.target.value)}
             className="w-full px-3 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-sky-600 focus:border-sky-600 outline-none"
-            placeholder="Sr. Technical Artist"
+            placeholder={
+              isEn
+                ? 'Lead Automation Engineer & Platform Developer | Orblite'
+                : 'Lead Automation Engineer & Platform Developer | Orblite'
+            }
           />
         </div>
 
@@ -310,7 +314,7 @@ export const PersonalInfoEditor: React.FC<PersonalInfoEditorProps> = ({
               }
             >
               <Languages className="w-3 h-3 text-sky-600" />
-              <span>{isEn ? 'Translate / Toggle ES ⇄ EN' : 'Traducir al Inglés (ES ⇄ EN)'}</span>
+              <span>{isEn ? 'Traducir / Toggle ES ⇄ EN' : 'Traducir al Inglés (ES ⇄ EN)'}</span>
             </button>
           </div>
         </div>
@@ -324,14 +328,14 @@ export const PersonalInfoEditor: React.FC<PersonalInfoEditorProps> = ({
             onClick={() => applySummaryPreset('orblite_leader')}
             className="px-2 py-0.5 bg-white hover:bg-sky-50 text-sky-700 rounded border border-slate-200 hover:border-sky-300 transition-colors font-medium"
           >
-            {isEn ? 'Orblite (Automation & Platform Dev)' : 'Orblite (Automatización & Plataformas)'}
+            {isEn ? 'Orblite (Commercial & SaaS)' : 'Orblite (Gerente & Full-Stack)'}
           </button>
           <button
             type="button"
             onClick={() => applySummaryPreset('digital_twins')}
             className="px-2 py-0.5 bg-white hover:bg-sky-50 text-sky-700 rounded border border-slate-200 hover:border-sky-300 transition-colors font-medium"
           >
-            {isEn ? 'Digital Twins (Flex)' : 'Gemelos Digitales (Flex)'}
+            Digital Twins (Flex)
           </button>
           <button
             type="button"

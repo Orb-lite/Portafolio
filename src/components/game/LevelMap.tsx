@@ -369,7 +369,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
           <button
             onClick={onClose}
             className="flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/10 px-3 py-1.5 text-xs sm:text-sm font-bold text-white shadow-lg backdrop-blur hover:bg-white/20 active:scale-95 cursor-pointer transition"
-            aria-label={isEn ? "Resume Game" : "Volver al Juego"}
+            aria-label="Resume Game"
           >
             <X className="h-4 w-4 sm:h-5 sm:w-5" />
             <span className="hidden sm:inline">{isEn ? 'Close Map' : 'Cerrar Mapa'}</span>
@@ -563,7 +563,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                   {isEn ? `Level ${activeFrontier}` : `Nivel ${activeFrontier}`}
                 </span>
                 <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-cyan-400/20 text-cyan-300 border border-cyan-400/30">
-                  {isEn ? 'Frontier Peak' : 'Cima Actual'}
+                  Frontier Peak
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-1.5 mt-2 text-[10px] text-slate-300">
@@ -667,7 +667,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                   </div>
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      {isEn ? `Levels ${start} – ${end}` : `Niveles ${start} – ${end}`}
+                      Levels {start} – {end}
                     </span>
                     <h2 className="text-sm sm:text-lg font-black tracking-tight text-white drop-shadow">
                       {def.title}
@@ -840,7 +840,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                         ? (isEn ? `Replay Past Level ${level} (Your frontier level ${activeFrontier} is kept)` : `Rejugar Nivel Pasado ${level} (Tu nivel actual ${activeFrontier} se conserva)`)
                         : (isEn ? `Level ${level} Locked` : `Nivel ${level} Bloqueado`)
                     }
-                    aria-label={isEn ? `Level ${level}` : `Nivel ${level}`}
+                    aria-label={`Level ${level}`}
                   >
                     {/* Inner Icon */}
                     {isFrontier ? (

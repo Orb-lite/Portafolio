@@ -28,15 +28,9 @@ export const DocModal: React.FC<DocModalProps> = ({ isOpen, onClose, language = 
         <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/40">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-white">{isEn ? "How to Play" : "Cómo Jugar"}</h2>
-            <p className="text-xs text-slate-400">
-              {isEn ? 'Conveyor Realms · By Dimpz Games' : 'Conveyor Realms · Por Dimpz Games'}
-            </p>
+            <p className="text-xs text-slate-400">Conveyor Realms · By Dimpz Games</p>
           </div>
-          <button
-            onClick={onClose}
-            aria-label={isEn ? 'Close game guide' : 'Cerrar guía del juego'}
-            className="p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition"
-          >
+          <button onClick={onClose} aria-label="Close game guide" className="p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -84,7 +78,7 @@ export const DocModal: React.FC<DocModalProps> = ({ isOpen, onClose, language = 
 
         <div className="px-6 py-3.5 border-t border-slate-800 flex items-center justify-between bg-slate-950/60">
           <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-400">
-            <Sparkles className="h-3.5 w-3.5" /> {isEn ? 'By Dimpz Games' : 'Por Dimpz Games'}
+            <Sparkles className="h-3.5 w-3.5" /> By Dimpz Games
           </div>
           <button onClick={onClose} className="cursor-pointer rounded-xl bg-slate-800 px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-slate-700">
             {isEn ? "Close" : "Cerrar"}

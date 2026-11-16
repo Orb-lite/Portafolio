@@ -388,9 +388,7 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
                 {isEn ? '2013 - 2018 · Academic Degree' : '2013 - 2018 · Grado Universitario'}
               </span>
               <h3 className="text-base font-bold text-slate-900">
-                {isEn
-                  ? 'B.S. in Interactive Technologies & Digital Animation Engineering'
-                  : 'Ingeniería en Tecnologías Interactivas de Animación Digital'}
+                Ingeniería en Tecnologías Interactivas de Animación Digital
               </h3>
               <p className="text-xs font-semibold text-slate-600">
                 Universidad del Valle de México (UVM) · Zapopan / Guadalajara, Jalisco
@@ -473,20 +471,18 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
             <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-sky-500 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
             <div className="space-y-1">
               <span className="text-[11px] font-bold text-sky-700 uppercase tracking-wider">
-                {isEn ? '2026 - Present · AI Automation & Platform Engineering' : '2026 - Presente · Automatización con IA & Desarrollo de Plataformas'}
+                {isEn ? '2026 - Present · Cloud Automation & Platform Engineering' : '2026 - Presente · Automatización Cloud & Desarrollo de Plataformas'}
               </span>
               <h3 className="text-base font-bold text-slate-900">
-                {isEn
-                  ? 'Lead Automation Engineer & Platform Developer at Orblite'
-                  : 'Lead Automation Engineer & Platform Developer en Orblite'}
+                Lead Automation Engineer & Platform Developer at Orblite
               </h3>
               <p className="text-xs font-semibold text-slate-600">
                 {isEn ? 'Vehicle Telematics SaaS & Proprietary ERP/CRM (orb-lite.com)' : 'SaaS de Telemática Vehicular & ERP/CRM Propietario (orb-lite.com)'}
               </p>
               <p className="text-xs text-slate-600 leading-relaxed mt-1">
                 {isEn
-                  ? 'Engineering AI workflow automation pipelines, architecting real-time vehicle telematics & data simulation infrastructure, and building custom internal ERP/CRM applications using TypeScript, React, RESTful APIs, SQL (Supabase), and Cloudflare.'
-                  : 'Ingeniería de pipelines de automatización con IA, diseño de infraestructura telemática y simulación de datos en tiempo real, y desarrollo de aplicaciones internas ERP/CRM propietarios utilizando TypeScript, React, APIs REST, SQL (Supabase) y Cloudflare.'}
+                  ? 'Engineering cloud workflow automation pipelines, architecting real-time vehicle telematics & data simulation infrastructure, and building custom internal ERP/CRM applications using TypeScript, React, RESTful APIs, SQL (Supabase), and Cloudflare.'
+                  : 'Ingeniería de pipelines de automatización operativa, diseño de infraestructura telemática y simulación de datos en tiempo real, y desarrollo de aplicaciones internas ERP/CRM propietarias utilizando TypeScript, React, APIs REST, SQL (Supabase) y Cloudflare.'}
               </p>
             </div>
           </div>
@@ -522,7 +518,7 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
           <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs text-slate-300">
             <span>📧 isaacgestrada94@gmail.com</span>
             <span>📱 +52 33 1835 9421</span>
-            <span>{isEn ? '📍 Zapopan / Guadalajara, Jalisco, Mexico' : '📍 Zapopan / Guadalajara, Jalisco, México'}</span>
+            <span>📍 Zapopan / Guadalajara, Jalisco, México</span>
           </div>
         </div>
 

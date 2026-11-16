@@ -235,8 +235,7 @@ export const signInWithGoogleUnified = async (): Promise<{
 // Emergency Admin Passcode (allows Isaac or Ventas to unlock if browser blocks popups in iframe or origin_mismatch)
 export const signInWithAdminPasscode = (
   passcode: string,
-  selectedEmail?: string,
-  language: 'es' | 'en' = 'es'
+  selectedEmail?: string
 ): {
   user: AdminUser;
   isAuthorized: boolean;
@@ -260,9 +259,7 @@ export const signInWithAdminPasscode = (
     return { user: adminUser, isAuthorized: true };
   }
 
-  throw new Error(
-    language === 'en' ? 'Incorrect administrator passcode.' : 'Clave de administrador incorrecta.'
-  );
+  throw new Error('Clave de administrador incorrecta.');
 };
 
 // Sign out

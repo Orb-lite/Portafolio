@@ -92,25 +92,14 @@ export class GridManager {
           !isBorder &&
           Math.random() < config.encapsulationChance;
 
-        // Special Tile assignment (Bombs, Rainbow pearls, Frozen Pearls, Clam Traps) starting at level 2
+        // Special Tile assignment (Bombs and Rainbow pearls) starting at level 2
         let specialType: import('./types').SpecialTileType | undefined = undefined;
-        let shieldLayers = 0;
         if (level >= 2 && !shouldEncapsulate) {
           const rand = Math.random();
-          if (rand < 0.05) {
-            specialType = isFishMode ? 'coral_bomb' : 'bomb';
-          } else if (rand < 0.08) {
+          if (rand < 0.06) {
+            specialType = 'bomb';
+          } else if (rand < 0.09) {
             specialType = 'rainbow';
-          } else if (isFishMode && level >= 3 && rand < 0.13) {
-            specialType = 'frozen_pearl';
-          } else if (isFishMode && level >= 4 && rand < 0.17) {
-            specialType = 'clam_trap';
-          }
-        }
-
-        if (isFishMode && level >= 3 && !specialType && !shouldEncapsulate && !isBorder) {
-          if (Math.random() < Math.min(0.18, 0.05 + (level - 3) * 0.02)) {
-            shieldLayers = level >= 6 ? 3 : level >= 4 ? 2 : 1;
           }
         }
 
@@ -125,7 +114,6 @@ export class GridManager {
           collected: false,
           encapsulated: shouldEncapsulate,
           specialType,
-          shieldLayers,
           absorbedProgress: 0,
           worldPos: [posX, 0.2, posZ],
         };
@@ -139,11 +127,11 @@ export class GridManager {
     const minSpecial = level >= 4 ? 3 : level >= 2 ? 2 : 0;
     const currentSpecial = this.tiles.filter((t) => t.specialType).length;
     if (currentSpecial < minSpecial) {
-      const candidates = this.tiles.filter((t) => !t.specialType && !t.encapsulated && !t.shieldLayers);
+      const candidates = this.tiles.filter((t) => !t.specialType && !t.encapsulated);
       for (let i = 0; i < minSpecial - currentSpecial && candidates.length > 0; i++) {
         const idx = Math.floor(Math.random() * candidates.length);
         const picked = candidates.splice(idx, 1)[0];
-        picked.specialType = i % 2 === 0 ? (isFishMode ? 'coral_bomb' : 'bomb') : 'rainbow';
+        picked.specialType = i % 2 === 0 ? 'bomb' : 'rainbow';
       }
     }
   }

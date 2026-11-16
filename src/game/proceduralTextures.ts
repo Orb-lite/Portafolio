@@ -80,26 +80,21 @@ export function createConveyorTexture(isFish: boolean = false): THREE.CanvasText
     ctx.clearRect(0, 0, 256, 64);
 
     if (isFish) {
-      // Crisp bright-white conveyor belt matching the Fish of Fortune playable-ad reference
+      // Bioluminescent ocean current / water stream with glowing waves
       const grad = ctx.createLinearGradient(0, 0, 0, 64);
-      grad.addColorStop(0, '#ffffff');
-      grad.addColorStop(0.5, '#f1f5f9');
-      grad.addColorStop(1, '#e2e8f0');
+      grad.addColorStop(0, '#0284c7');
+      grad.addColorStop(0.5, '#0369a1');
+      grad.addColorStop(1, '#075985');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 256, 64);
 
-      // Subtle aqua inner guide tracks
-      ctx.fillStyle = 'rgba(14, 165, 233, 0.25)';
-      ctx.fillRect(0, 2, 256, 4);
-      ctx.fillRect(0, 58, 256, 4);
-
-      // Clean aqua-blue directional chevrons pointing forward (+u)
-      ctx.fillStyle = 'rgba(56, 189, 248, 0.65)';
+      // Water ripples pointing forward (+u)
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.45)';
       for (let x = 0; x < 256; x += 64) {
         ctx.beginPath();
         ctx.moveTo(x + 20, 16);
         ctx.lineTo(x + 30, 22);
-        ctx.lineTo(x + 46, 32);
+        ctx.lineTo(x + 46, 32); // Forward pointing tip
         ctx.lineTo(x + 30, 42);
         ctx.lineTo(x + 20, 48);
         ctx.lineTo(x + 28, 32);
@@ -140,121 +135,49 @@ export function createConveyorTexture(isFish: boolean = false): THREE.CanvasText
   return texture;
 }
 
-let cachedWaterCausticsTexture: THREE.CanvasTexture | null = null;
-
 /**
- * Generates a 100% seamless toroidal Voronoi underwater caustics texture
- * with zero tile seams or square artifacts for Fish Feeder mode.
+ * Generates an underwater water-caustics texture for Fish of Fortune mode.
  */
 export function createWaterCausticsTexture(): THREE.CanvasTexture {
-  if (cachedWaterCausticsTexture) {
-    return cachedWaterCausticsTexture;
-  }
-
-  const size = 256;
   const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
+  canvas.width = 256;
+  canvas.height = 256;
   const ctx = canvas.getContext('2d');
 
   if (ctx) {
-    const imgData = ctx.createImageData(size, size);
-    const data = imgData.data;
+    // Deep sea sand base
+    const grad = ctx.createLinearGradient(0, 0, 256, 256);
+    grad.addColorStop(0, '#0f3b57');
+    grad.addColorStop(1, '#0a2538');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 256, 256);
 
-    // Deterministic seamless Voronoi feature points (primary & secondary wave layers)
-    const countA = 18;
-    const ptsA: Array<[number, number]> = [];
-    for (let i = 0; i < countA; i++) {
-      const fx = ((Math.sin(i * 12.9898 + 4.1414) * 43758.5453) % 1 + 1) % 1;
-      const fy = ((Math.sin(i * 78.233 + 1.732) * 28411.1923) % 1 + 1) % 1;
-      ptsA.push([fx * size, fy * size]);
+    // Caustic light webs
+    ctx.strokeStyle = 'rgba(125, 211, 252, 0.25)';
+    ctx.lineWidth = 3;
+    ctx.filter = 'blur(3px)';
+
+    for (let i = 0; i < 20; i++) {
+      ctx.beginPath();
+      const sx = (i * 37) % 256;
+      const sy = (i * 59) % 256;
+      ctx.moveTo(sx, sy);
+      ctx.bezierCurveTo(
+        (sx + 80) % 256,
+        (sy + 40) % 256,
+        (sx + 30) % 256,
+        (sy + 120) % 256,
+        (sx + 100) % 256,
+        (sy + 90) % 256
+      );
+      ctx.stroke();
     }
-
-    const countB = 14;
-    const ptsB: Array<[number, number]> = [];
-    for (let i = 0; i < countB; i++) {
-      const fx = ((Math.sin(i * 45.164 + 9.21) * 19384.712) % 1 + 1) % 1;
-      const fy = ((Math.sin(i * 93.719 + 3.45) * 31942.581) % 1 + 1) % 1;
-      ptsB.push([fx * size, fy * size]);
-    }
-
-    const halfSize = size * 0.5;
-    const invNorm = 1 / (size / Math.sqrt(countA));
-
-    for (let y = 0; y < size; y++) {
-      for (let x = 0; x < size; x++) {
-        // Primary Voronoi F1 & F2 with exact toroidal wrapping
-        let d1A = 1e9;
-        let d2A = 1e9;
-        for (let i = 0; i < countA; i++) {
-          let dx = Math.abs(x - ptsA[i][0]);
-          if (dx > halfSize) dx = size - dx;
-          let dy = Math.abs(y - ptsA[i][1]);
-          if (dy > halfSize) dy = size - dy;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < d1A) {
-            d2A = d1A;
-            d1A = dist;
-          } else if (dist < d2A) {
-            d2A = dist;
-          }
-        }
-
-        // Secondary Voronoi layer for natural overlapping sunlight ripples
-        let d1B = 1e9;
-        let d2B = 1e9;
-        for (let i = 0; i < countB; i++) {
-          let dx = Math.abs(x - ptsB[i][0]);
-          if (dx > halfSize) dx = size - dx;
-          let dy = Math.abs(y - ptsB[i][1]);
-          if (dy > halfSize) dy = size - dy;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < d1B) {
-            d2B = d1B;
-            d1B = dist;
-          } else if (dist < d2B) {
-            d2B = dist;
-          }
-        }
-
-        // Ridge sharpness around cell boundaries (d2 - d1 near 0 -> bright caustic line)
-        const edgeA = Math.max(0, 1 - (d2A - d1A) * invNorm * 2.3);
-        const edgeB = Math.max(0, 1 - (d2B - d1B) * invNorm * 2.0);
-        const caustic = Math.min(1, Math.pow(edgeA, 2.4) * 0.8 + Math.pow(edgeB, 2.7) * 0.5);
-
-        // Cohesive sunlit Caribbean azure-blue base (B > G > R, zero muddy teal or hard seams)
-        const u = (x / size) * Math.PI * 2;
-        const v = (y / size) * Math.PI * 2;
-        const swell = 0.5 + 0.5 * Math.sin(u + Math.cos(v)) * Math.cos(v - Math.sin(u));
-
-        const baseR = 14 + swell * 12;
-        const baseG = 146 + swell * 24;
-        const baseB = 212 + swell * 20;
-
-        const r = Math.min(255, Math.round(baseR + caustic * 135));
-        const g = Math.min(255, Math.round(baseG + caustic * 78));
-        const b = Math.min(255, Math.round(baseB + caustic * 42));
-
-        const idx = (y * size + x) * 4;
-        data[idx] = r;
-        data[idx + 1] = g;
-        data[idx + 2] = b;
-        data[idx + 3] = 255;
-      }
-    }
-
-    ctx.putImageData(imgData, 0, 0);
   }
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(4.5, 4.5);
-  texture.generateMipmaps = true;
-  texture.minFilter = THREE.LinearMipmapLinearFilter;
-  texture.magFilter = THREE.LinearFilter;
+  texture.repeat.set(4, 4);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.needsUpdate = true;
-  cachedWaterCausticsTexture = texture;
   return texture;
 }

@@ -5,15 +5,12 @@ import { Plus, Trash2, ChevronUp, ChevronDown, Sparkles, Building2 } from 'lucid
 interface ExperienceEditorProps {
   experiences: Experience[];
   onChange: (updated: Experience[]) => void;
-  language?: 'es' | 'en';
 }
 
 export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
   experiences,
   onChange,
-  language = 'es',
 }) => {
-  const isEn = language === 'en';
   const [expandedId, setExpandedId] = useState<string | null>(
     experiences[0]?.id || null
   );
@@ -21,21 +18,16 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
   const addExperience = () => {
     const newExp: Experience = {
       id: `exp-${Date.now()}`,
-      role: 'Sr. Technical Artist',
-      company: isEn ? 'New Company' : 'Nueva Empresa',
-      location: isEn ? 'Mexico' : 'México',
+      role: 'Ejecutivo de Cuentas Clave / Consultor',
+      company: 'Nueva Empresa',
+      location: 'México',
       startDate: '2023',
-      endDate: isEn ? 'Present' : 'Presente',
+      endDate: 'Presente',
       isCurrent: true,
-      highlights: isEn
-        ? [
-            'Architected real-time 3D pipelines, shaders, and UI/UX integration.',
-            'Optimized engine performance and automated asset validation workflows.',
-          ]
-        : [
-            'Diseño e integración de pipelines 3D en tiempo real, shaders y UI/UX.',
-            'Optimización de rendimiento gráfico y flujos automatizados de validación de assets.',
-          ],
+      highlights: [
+        'Prospección activa y negociación de acuerdos comerciales estratégicos.',
+        'Superación de cuotas de ventas trimestrales y retención de cuentas clave.',
+      ],
     };
     const updated = [newExp, ...experiences];
     onChange(updated);
@@ -66,9 +58,7 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
     if (!exp) return;
     const updatedHighlights = [
       ...exp.highlights,
-      isEn
-        ? 'New key achievement or technical impact with measurable metrics...'
-        : 'Nuevo logro o responsabilidad técnica con métrica cuantificable...',
+      'Nuevo logro o responsabilidad comercial con métrica cuantificable...',
     ];
     updateExperience(expId, { highlights: updatedHighlights });
   };
@@ -92,19 +82,12 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
     const exp = experiences.find((e) => e.id === expId);
     if (!exp) return;
     const current = exp.highlights[index];
-    if (
-      !current.includes('%') &&
-      !current.includes('incrementando') &&
-      !current.includes('reduciendo') &&
-      !current.includes('improving') &&
-      !current.includes('reducing')
-    ) {
+    // Add strong action verbs and quantified impact
+    if (!current.includes('%') && !current.includes('incrementando') && !current.includes('reduciendo')) {
       updateHighlight(
         expId,
         index,
-        isEn
-          ? `${current} — exceeding target benchmarks by 20% and optimizing pipeline efficiency.`
-          : `${current} — superando el objetivo planificado en un 20% y optimizando la eficiencia del pipeline.`
+        `${current} — superando el objetivo planificado en un 20% y optimizando la eficiencia de costos.`
       );
     }
   };
@@ -114,12 +97,10 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold text-slate-800">
-            {isEn ? 'Work Experience' : 'Experiencia Laboral'}
+            Experiencia Laboral
           </h3>
           <p className="text-xs text-slate-500">
-            {isEn
-              ? 'Detail your roles, studios/companies, and quantified achievements.'
-              : 'Detalla tus puestos, empresas y logros cuantificados.'}
+            Detalla tus puestos comerciales, empresas y logros cuantificados.
           </p>
         </div>
         <button
@@ -128,7 +109,7 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
           className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded transition-colors"
         >
           <Plus className="w-3.5 h-3.5" />
-          <span>{isEn ? 'Add Role' : 'Añadir Empleo'}</span>
+          <span>Añadir Empleo</span>
         </button>
       </div>
 
@@ -149,14 +130,14 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
                   <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
                   <div className="truncate text-xs">
                     <span className="font-semibold text-slate-800">
-                      {exp.role || (isEn ? 'Untitled Role' : 'Puesto sin título')}
+                      {exp.role || 'Puesto sin título'}
                     </span>
-                    <span className="text-slate-400 mx-1.5">{isEn ? 'at' : 'en'}</span>
+                    <span className="text-slate-400 mx-1.5">en</span>
                     <span className="font-medium text-slate-600">
-                      {exp.company || (isEn ? 'Company' : 'Empresa')}
+                      {exp.company || 'Empresa'}
                     </span>
                     <span className="text-[11px] text-slate-400 ml-2">
-                      ({exp.startDate} – {exp.isCurrent ? (isEn ? 'Present' : 'Presente') : exp.endDate})
+                      ({exp.startDate} – {exp.isCurrent ? 'Presente' : exp.endDate})
                     </span>
                   </div>
                 </div>
@@ -170,7 +151,7 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
                     disabled={index === 0}
                     onClick={() => moveExperience(index, 'up')}
                     className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-30"
-                    title={isEn ? 'Move up' : 'Mover arriba'}
+                    title="Mover arriba"
                   >
                     <ChevronUp className="w-3.5 h-3.5" />
                   </button>
@@ -179,7 +160,7 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
                     disabled={index === experiences.length - 1}
                     onClick={() => moveExperience(index, 'down')}
                     className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-30"
-                    title={isEn ? 'Move down' : 'Mover abajo'}
+                    title="Mover abajo"
                   >
                     <ChevronDown className="w-3.5 h-3.5" />
                   </button>
@@ -187,7 +168,7 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
                     type="button"
                     onClick={() => removeExperience(exp.id)}
                     className="p-1 text-red-500 hover:text-red-700"
-                    title={isEn ? 'Delete role' : 'Eliminar empleo'}
+                    title="Eliminar empleo"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -200,7 +181,7 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-medium text-slate-700 mb-1">
-                        {isEn ? 'Role / Title' : 'Puesto / Cargo'}
+                        Puesto / Cargo
                       </label>
                       <input
                         type="text"
@@ -214,7 +195,7 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
 
                     <div>
                       <label className="block text-xs font-medium text-slate-700 mb-1">
-                        {isEn ? 'Company / Organization' : 'Empresa / Organización'}
+                        Empresa / Organización
                       </label>
                       <input
                         type="text"
@@ -228,7 +209,7 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
 
                     <div>
                       <label className="block text-xs font-medium text-slate-700 mb-1">
-                        {isEn ? 'Location' : 'Ubicación'}
+                        Ubicación
                       </label>
                       <input
                         type="text"
@@ -237,14 +218,14 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
                           updateExperience(exp.id, { location: e.target.value })
                         }
                         className="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-600 outline-none"
-                        placeholder={isEn ? 'e.g. Mexico / Remote' : 'Ej. México / Remoto'}
+                        placeholder="Ej. México / Remoto"
                       />
                     </div>
 
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="block text-xs font-medium text-slate-700 mb-1">
-                          {isEn ? 'Start' : 'Inicio'}
+                          Inicio
                         </label>
                         <input
                           type="text"
@@ -259,17 +240,17 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
 
                       <div>
                         <label className="block text-xs font-medium text-slate-700 mb-1">
-                          {isEn ? 'End' : 'Fin'}
+                          Fin
                         </label>
                         <input
                           type="text"
                           disabled={exp.isCurrent}
-                          value={exp.isCurrent ? (isEn ? 'Present' : 'Presente') : exp.endDate}
+                          value={exp.isCurrent ? 'Presente' : exp.endDate}
                           onChange={(e) =>
                             updateExperience(exp.id, { endDate: e.target.value })
                           }
                           className="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded disabled:bg-slate-100 disabled:text-slate-400 focus:ring-1 focus:ring-blue-600 outline-none"
-                          placeholder={isEn ? 'Present' : 'Presente'}
+                          placeholder="Presente"
                         />
                       </div>
                     </div>
@@ -289,7 +270,7 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
                       htmlFor={`current-${exp.id}`}
                       className="text-xs text-slate-700 font-medium cursor-pointer"
                     >
-                      {isEn ? 'I currently work in this role' : 'Trabajo actualmente en este puesto'}
+                      Trabajo actualmente en este puesto
                     </label>
                   </div>
 
@@ -297,9 +278,7 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
                   <div className="pt-2 border-t border-slate-100">
                     <div className="flex items-center justify-between mb-2">
                       <label className="text-xs font-medium text-slate-700">
-                        {isEn
-                          ? 'Achievements, responsibilities & measurable impact:'
-                          : 'Logros, responsabilidades e impacto cuantificable:'}
+                        Logros, responsabilidades e impacto cuantificable:
                       </label>
                       <button
                         type="button"
@@ -307,7 +286,7 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
                         className="text-[11px] text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
                       >
                         <Plus className="w-3 h-3" />
-                        <span>{isEn ? 'Add bullet' : 'Añadir viñeta'}</span>
+                        <span>Añadir viñeta</span>
                       </button>
                     </div>
 
@@ -328,7 +307,7 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
                               type="button"
                               onClick={() => quickEnhanceBullet(exp.id, hIndex)}
                               className="p-1 text-slate-400 hover:text-amber-600"
-                              title={isEn ? 'Add impact metric' : 'Añadir métrica de impacto'}
+                              title="Añadir métrica de impacto"
                             >
                               <Sparkles className="w-3.5 h-3.5" />
                             </button>
@@ -336,7 +315,7 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({
                               type="button"
                               onClick={() => removeHighlight(exp.id, hIndex)}
                               className="p-1 text-slate-400 hover:text-red-600"
-                              title={isEn ? 'Delete bullet' : 'Eliminar viñeta'}
+                              title="Eliminar viñeta"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>

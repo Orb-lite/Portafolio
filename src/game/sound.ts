@@ -11,7 +11,7 @@ export function getMusicTrackForLevel(level: number, version: GameVersion): Musi
   if (version === 'fof') {
     if (level >= 10) {
       return {
-        path: './audio/golden_vault_theme.mp3',
+        path: '/audio/golden_vault_theme.mp3',
         title: 'Golden Sunken Vault',
         artist: 'Isaac Gómez · Sunken Sanctuary',
         bpm: 126,
@@ -19,14 +19,14 @@ export function getMusicTrackForLevel(level: number, version: GameVersion): Musi
     }
     if (level >= 7) {
       return {
-        path: './audio/sixty_frames_conveyor.mp3',
+        path: '/audio/sixty_frames_conveyor.mp3',
         title: 'Sixty Frames (Bioluminescent Abyss)',
         artist: 'Tile Absorber 3D Official Track',
         bpm: 128,
       };
     }
     return {
-      path: './audio/fish_of_fortune_theme.mp3',
+      path: '/audio/fish_of_fortune_theme.mp3',
       title: 'Fish Feeder (Coral Reef 124 BPM)',
       artist: 'Isaac Gómez · Subaquatic Synth',
       bpm: 124,
@@ -36,7 +36,7 @@ export function getMusicTrackForLevel(level: number, version: GameVersion): Musi
   // Conveyor Realms worlds by block level:
   if (level <= 3) {
     return {
-      path: './audio/chess_kingdom_theme.mp3',
+      path: '/audio/chess_kingdom_theme.mp3',
       title: 'Chess Kingdom (Baroque Synthwave)',
       artist: 'Isaac Gómez · Royal Parquet',
       bpm: 118,
@@ -44,7 +44,7 @@ export function getMusicTrackForLevel(level: number, version: GameVersion): Musi
   }
   if (level <= 6) {
     return {
-      path: './audio/fish_of_fortune_theme.mp3',
+      path: '/audio/fish_of_fortune_theme.mp3',
       title: 'Coral Cove (Aquatic Synthwave)',
       artist: 'Isaac Gómez · Subaquatic Synth',
       bpm: 124,
@@ -52,14 +52,14 @@ export function getMusicTrackForLevel(level: number, version: GameVersion): Musi
   }
   if (level <= 9) {
     return {
-      path: './audio/sixty_frames_conveyor.mp3',
+      path: '/audio/sixty_frames_conveyor.mp3',
       title: 'Sixty Frames (Zero Latency Synthwave)',
       artist: 'Tile Absorber 3D Official Track',
       bpm: 128,
     };
   }
   return {
-    path: './audio/golden_vault_theme.mp3',
+    path: '/audio/golden_vault_theme.mp3',
     title: 'Golden Vault (Emperor Anthem)',
     artist: 'Isaac Gómez · Imperial Synth',
     bpm: 126,

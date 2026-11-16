@@ -216,10 +216,10 @@ export async function uploadToYouTube(
 export const DEFAULT_YOUTUBE_PORTFOLIO_POSTS: YouTubeVideoMetadata[] = [
   {
     id: 'yt-watercolor',
-    linkedProjectId: 'acuarela-archviz',
-    title: 'Acuarela - Interactive 3D Master Plan & Availability Twin | Unreal Engine',
+    linkedProjectId: 'watercolor-sim',
+    title: 'Acuarela - Stylized Interactive Virtual Environment | Unreal Engine NPR Shaders',
     localVideoSrc: '/portfolio_assets/watercolor-development-viewport.mp4',
-    thumbnailSrc: '/portfolio_assets/thumbs/acuarela-archviz-thumb.jpg',
+    thumbnailSrc: '/portfolio_assets/watercolor-thumb.jpg',
     categoryId: '20', // Gaming / Simulation
     privacyStatus: 'public',
     tags: [
@@ -292,7 +292,7 @@ Capacidades del Sistema:
     linkedProjectId: 'unreal-editor-multiplayer',
     title: 'Unreal Engine Dedicated Server & Multiplayer Architecture | PCD3D_SM5 Preview',
     localVideoSrc: '/portfolio_assets/unreal-multiplayer-server-preview.mp4',
-    thumbnailSrc: '/portfolio_assets/thumbs/unreal-multiplayer-thumb.jpg',
+    thumbnailSrc: '/portfolio_assets/unreal-multiplayer-thumb.jpg',
     categoryId: '20', // Gaming
     privacyStatus: 'public',
     tags: [
@@ -326,8 +326,8 @@ Aspectos Técnicos:
     id: 'yt-scores-cfb25',
     linkedProjectId: 'scores-sports-sim',
     title: 'EA Sports College Football 25 | Dynasty Hub UI & Real-Time Scorebug HUD Debug',
-    localVideoSrc: '/assets/aistudio/scores_96d7bf7d.mp4',
-    thumbnailSrc: '/portfolio_assets/thumbs/scores-thumb.jpg',
+    localVideoSrc: '/portfolio_assets/scores-cfb25-debug.mp4',
+    thumbnailSrc: '/portfolio_assets/scores-cfb25-thumb.jpg',
     categoryId: '20', // Gaming
     privacyStatus: 'public',
     tags: [
@@ -363,10 +363,10 @@ Aspectos Técnicos Destacados:
   },
   {
     id: 'yt-vdb-realestate',
-    linkedProjectId: 'vistas-del-bosque-archviz',
-    title: 'Vistas Del Bosque (VDB) - 3D ArchViz & Solar Cycle Digital Twin | Unreal Engine',
-    localVideoSrc: '/assets/aistudio/VDB__1__7df7a179.mp4',
-    thumbnailSrc: '/portfolio_assets/thumbs/vistas-del-bosque-thumb.jpg',
+    linkedProjectId: 'vdb-realestate-digitaltwin',
+    title: 'Interactive 3D Architectural Master Plan & Day/Night Sun Simulation | Unreal Engine',
+    localVideoSrc: '/portfolio_assets/vdb-realestate-digitaltwin.mp4',
+    thumbnailSrc: '/portfolio_assets/vdb-realestate-thumb.jpg',
     categoryId: '28', // Science & Tech
     privacyStatus: 'public',
     tags: [
@@ -400,8 +400,8 @@ Aspectos Técnicos:
     id: 'yt-goblins-castle',
     linkedProjectId: 'goblins-castle',
     title: 'Goblins Castle - Medieval Dark Fantasy Action RPG Gameplay | Unreal Engine 64-bit',
-    localVideoSrc: '/assets/aistudio/Goblins_Castle__64-bit_Development_PCD3D_SM5___2022-10-26_17-21-27_721806ae.mp4',
-    thumbnailSrc: '/portfolio_assets/thumbs/goblins-castle-thumb.jpg',
+    localVideoSrc: '/portfolio_assets/goblins-castle-gameplay.mp4',
+    thumbnailSrc: '/portfolio_assets/goblins-castle-thumb.jpg',
     categoryId: '20', // Gaming
     privacyStatus: 'public',
     tags: [
@@ -420,7 +420,7 @@ Aspectos Técnicos:
 • Locomoción en tercera persona, combos de combate con espada, esquive reactivo y feedback de daño.
 • Iluminación dinámica de antorchas en DirectX Shader Model 5 y sombras volumétricas en mazmorras.
 • HUD interactivo con alertas de objetivos de misión, experiencia (Exp) y barras de salud.
-• IA de enemigos reactivos con comportamientos de patrulla y combate cuerpo a cuerpo.
+• Comportamiento de enemigos reactivos con patrulla y combate cuerpo a cuerpo.
 
 🌐 Portafolio: https://orb-lite.com
 💻 GitHub: https://github.com/Orb-lite/Portafolio
@@ -435,8 +435,8 @@ Aspectos Técnicos:
     id: 'yt-unreal-landscape',
     linkedProjectId: 'procedural-world-gen',
     title: 'Open World RPG Exploration & Dynamic Landscape | Unreal Engine (IWG Studios)',
-    localVideoSrc: '/assets/aistudio/landscape_977261be.mp4',
-    thumbnailSrc: '/portfolio_assets/thumbs/landscape-iwg-thumb.jpg',
+    localVideoSrc: '/portfolio_assets/unreal-landscape-openworld.mp4',
+    thumbnailSrc: '/portfolio_assets/unreal-landscape-thumb.jpg',
     categoryId: '20', // Gaming
     privacyStatus: 'public',
     tags: [
@@ -469,8 +469,8 @@ Aspectos Técnicos:
     id: 'yt-devbot-gamejam',
     linkedProjectId: 'gamejam-devbot',
     title: 'DevBot Game Jam - Rapid Action Prototype & Dungeon Combat | NetMode Standalone',
-    localVideoSrc: '/assets/aistudio/GameJam_DevBot_Preview__NetMode__Standalone____64-bit_Windows___2022-10-13_18-32-24_7aee93f0.mp4',
-    thumbnailSrc: '/portfolio_assets/thumbs/gamejam-devbot-thumb.jpg',
+    localVideoSrc: '/portfolio_assets/devbot-gamejam-combat.mp4',
+    thumbnailSrc: '/portfolio_assets/devbot-gamejam-thumb.jpg',
     categoryId: '20', // Gaming
     privacyStatus: 'public',
     tags: [
@@ -500,10 +500,10 @@ Aspectos Técnicos:
   },
   {
     id: 'yt-watercolor-sim',
-    linkedProjectId: 'acuarela-archviz',
-    title: 'Acuarela - Interactive 3D Master Plan & Availability Twin | Unreal Engine',
+    linkedProjectId: 'watercolor-sim',
+    title: 'Acuarela - Stylized Interactive Virtual Environment | Unreal Engine NPR Shaders',
     localVideoSrc: '/portfolio_assets/watercolor-development-viewport.mp4',
-    thumbnailSrc: '/portfolio_assets/thumbs/acuarela-archviz-thumb.jpg',
+    thumbnailSrc: '/portfolio_assets/watercolor-thumb.jpg',
     categoryId: '20',
     privacyStatus: 'public',
     tags: [
@@ -559,7 +559,7 @@ Desarrollado en Unreal Engine 5, DirectX Shader Model 6 y Arch FlexSim por Isaac
     id: 'yt-class-sim',
     linkedProjectId: 'class-sim',
     title: 'ClassSim - Interactive 3D Educational Classroom Simulation | Unreal Engine',
-    localVideoSrc: '/portfolio_assets/class-sim-preview.mp4',
+    localVideoSrc: '/portfolio_assets/class-sim-interactive-classroom.mp4',
     thumbnailSrc: '/portfolio_assets/class-sim-thumb.jpg',
     categoryId: '28', // Science & Tech
     privacyStatus: 'public',

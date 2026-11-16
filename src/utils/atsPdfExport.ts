@@ -52,10 +52,10 @@ export function exportResumeToAtsPdf(
   // Set standard PDF document metadata
   doc.setProperties({
     title: `CV - ${data.personalInfo.fullName} - ${data.personalInfo.title}`,
-    subject: `${isEn ? 'Sr. Technical Artist Resume' : 'CV Sr. Technical Artist'} - ${data.personalInfo.fullName}`,
+    subject: `Technical Artist Resume - ${data.personalInfo.fullName}`,
     author: data.personalInfo.fullName,
     keywords:
-      'Sr. Technical Artist, Unreal Engine 5, Frostbite, Digital Twins, EA Sports College Football 25, Perforce, Jenkins, Python, C++, Blueprints',
+      'Technical Artist, Unreal Engine 5, Frostbite, Digital Twins, EA Sports College Football 25, Perforce, Jenkins, Python, C++, Blueprints',
     creator: 'Isaac Gomez Estrada Resume Engine',
   });
 
@@ -92,22 +92,10 @@ export function exportResumeToAtsPdf(
 
   // Web & Portfolio Links
   const links = [
-    data.personalInfo.mobygamesUrl
-      ? isEn
-        ? 'MobyGames (Shipped AAA Credits)'
-        : 'MobyGames (Créditos AAA)'
-      : null,
-    data.personalInfo.githubUrl
-      ? isEn
-        ? 'GitHub: Portfolio'
-        : 'GitHub: Portafolio'
-      : null,
+    data.personalInfo.mobygamesUrl ? 'MobyGames (Shipped AAA Credits)' : null,
+    data.personalInfo.githubUrl ? 'GitHub: Portafolio' : null,
     data.personalInfo.linkedinUrl ? 'LinkedIn' : null,
-    data.personalInfo.portfolioUrl
-      ? isEn
-        ? 'Drive Portfolio'
-        : 'Portafolio Drive'
-      : null,
+    data.personalInfo.portfolioUrl ? 'Drive Portfolio' : null,
     data.personalInfo.websiteUrl ? 'orb-lite.com' : null,
   ].filter(Boolean);
 
@@ -371,13 +359,13 @@ export function exportResumeToAtsPdf(
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
     doc.setTextColor(...mutedTextColor);
-    const pageText = `${isEn ? 'Page' : 'Página'} ${i} ${isEn ? 'of' : 'de'} ${totalPages}  |  ${data.personalInfo.fullName}  \u2014  ${data.personalInfo.title}`;
+    const pageText = `${isEn ? 'Page' : 'Página'} ${i} of ${totalPages}  |  ${data.personalInfo.fullName}  \u2014  ${data.personalInfo.title}`;
     doc.text(pageText, marginX, pageHeight - 7);
   }
 
   const targetFileName =
     options.fileName ||
-    `CV_Isaac_Gomez_Estrada_Sr_Technical_Artist_${language.toUpperCase()}.pdf`;
+    `CV_Isaac_Gomez_Estrada_Technical_Artist_${language.toUpperCase()}.pdf`;
 
   doc.save(targetFileName);
 }

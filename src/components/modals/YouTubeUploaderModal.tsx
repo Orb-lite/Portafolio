@@ -65,12 +65,7 @@ export function YouTubeUploaderModal({
       setChannelProfile(profile);
     } catch (err: any) {
       console.error('Google YouTube OAuth error:', err);
-      setAuthError(
-        err.message ||
-          (isEn
-            ? 'Could not complete Google authorization.'
-            : 'No se pudo completar la autorización con Google.')
-      );
+      setAuthError(err.message || 'No se pudo completar la autorización con Google.');
     } finally {
       setIsAuthenticating(false);
     }
@@ -111,11 +106,7 @@ export function YouTubeUploaderModal({
     } catch (err: any) {
       console.error('Upload error for', video.title, err);
       handleUpdateField(video.id, 'status', 'error');
-      handleUpdateField(
-        video.id,
-        'errorMessage',
-        err.message || (isEn ? 'Error uploading to YouTube' : 'Error al subir a YouTube')
-      );
+      handleUpdateField(video.id, 'errorMessage', err.message || 'Error al subir a YouTube');
     }
   };
 
@@ -192,7 +183,7 @@ export function YouTubeUploaderModal({
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   </div>
                   <span className="text-xs text-slate-300 font-medium">
-                    {channelProfile?.title || (isEn ? 'YouTube Channel Ready' : 'Canal de YouTube Listo')}
+                    {channelProfile?.title || 'YouTube Channel Ready'}
                   </span>
                 </div>
               </div>
@@ -469,9 +460,9 @@ export function YouTubeUploaderModal({
                       onChange={(e) => handleUpdateField(activeVideo.id, 'categoryId', e.target.value)}
                       className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:outline-hidden focus:border-sky-500"
                     >
-                      <option value="20">{isEn ? 'Gaming' : 'Gaming (Videojuegos)'}</option>
-                      <option value="28">{isEn ? 'Science & Technology' : 'Ciencia y Tecnología'}</option>
-                      <option value="27">{isEn ? 'Education' : 'Educación'}</option>
+                      <option value="20">Gaming (Videojuegos)</option>
+                      <option value="28">Science & Technology (Ciencia y Tecnología)</option>
+                      <option value="27">Education (Educación)</option>
                     </select>
                   </div>
                 </div>

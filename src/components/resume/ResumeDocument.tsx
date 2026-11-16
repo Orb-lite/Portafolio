@@ -87,10 +87,10 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
     if (language === 'en') {
       const tLower = personalInfo.title.toLowerCase();
       if (tLower.includes('artista técnico') || tLower.includes('technical artist')) {
-        return 'Sr. Technical Artist';
+        return 'Technical Artist';
       }
       if (tLower.includes('gerente comercial') || tLower.includes('commercial manager')) {
-        return 'Sr. Technical Artist';
+        return 'Technical Artist';
       }
       if (tLower.includes('líder en realidad virtual')) {
         return 'Virtual Reality (VR) & Simulation Lead';
@@ -287,7 +287,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-1.5 hover:text-white transition-colors text-amber-200 font-semibold underline decoration-amber-300/40"
-                    title={language === 'en' ? 'Verified credits on MobyGames' : 'Créditos verificados en MobyGames'}
+                    title="Verified credits on MobyGames"
                   >
                     <Trophy className="w-3.5 h-3.5 text-amber-300 opacity-95" />
                     <span>{language === 'en' ? 'MobyGames (Shipped AAA Credits)' : 'MobyGames (Créditos Títulos AAA)'}</span>
@@ -503,16 +503,14 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                 {personalInfo.githubUrl && (
                   <>
                     <span>·</span>
-                    <a href={personalInfo.githubUrl} target="_blank" rel="noreferrer" className="underline">
-                      {language === 'en' ? 'GitHub: Portfolio' : 'GitHub: Portafolio'}
-                    </a>
+                    <a href={personalInfo.githubUrl} target="_blank" rel="noreferrer" className="underline">GitHub: Portafolio</a>
                   </>
                 )}
                 {personalInfo.mobygamesUrl && (
                   <>
                     <span>·</span>
                     <a href={personalInfo.mobygamesUrl} target="_blank" rel="noreferrer" className="underline font-semibold text-amber-700">
-                      {language === 'en' ? 'MobyGames (Shipped Credits)' : 'MobyGames (Créditos AAA)'}
+                      MobyGames (Shipped Credits)
                     </a>
                   </>
                 )}
@@ -625,7 +623,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                   <>
                     <span>·</span>
                     <a href={personalInfo.mobygamesUrl} target="_blank" rel="noreferrer" className="underline hover:text-amber-300 text-amber-300 font-semibold">
-                      {language === 'en' ? 'MobyGames (Shipped Credits)' : 'MobyGames (Créditos AAA)'}
+                      MobyGames (Shipped Credits)
                     </a>
                   </>
                 )}

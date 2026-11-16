@@ -1,7 +1,6 @@
-import React from 'react';
-import { X, Trophy, Lock, Play, Star, Sparkles, Crown, Fish, Cpu, Gem, CloudFog } from 'lucide-react';
-import { WORLD_BLOCKS, getWorldForLevel, localizeWorldBlock } from '../../game/worlds';
-import { GameLanguage } from '../../game/localization';
+import React, { useState } from 'react';
+import { X, Trophy, Lock, Play, Star, Sparkles, MapPin, ChevronRight, Crown, Fish, Cpu, Gem, CloudFog } from 'lucide-react';
+import { WORLD_BLOCKS, WorldBlock, getWorldForLevel } from '../../game/worlds';
 
 interface LevelPathwayModalProps {
   isOpen: boolean;
@@ -9,7 +8,6 @@ interface LevelPathwayModalProps {
   highestUnlockedLevel: number;
   experience: number;
   expToLevelUp: number;
-  language?: GameLanguage;
   onSelectLevel: (lvl: number) => void;
   onClose: () => void;
 }
@@ -19,12 +17,11 @@ export const LevelPathwayModal: React.FC<LevelPathwayModalProps> = ({
   currentLevel,
   highestUnlockedLevel,
   experience,
-  language = 'es',
+  expToLevelUp,
   onSelectLevel,
   onClose,
 }) => {
-  const isEn = language === 'en';
-  const currentWorld = localizeWorldBlock(getWorldForLevel(currentLevel), language);
+  const currentWorld = getWorldForLevel(currentLevel);
 
   if (!isOpen) return null;
 
@@ -51,15 +48,14 @@ export const LevelPathwayModal: React.FC<LevelPathwayModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base sm:text-lg font-black text-white tracking-tight">
-                  {isEn ? 'World Journey Pathway' : 'Ruta de Mundos'}
+                  World Journey Pathway
                 </h2>
                 <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                  {isEn ? 'Saga Progression' : 'Progresión Saga'}
+                  Candy Crush Saga Style
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                {isEn ? 'Current Realm:' : 'Reino Actual:'} <strong className="text-white">{currentWorld.name}</strong> •{' '}
-                {isEn ? `Level ${currentLevel}` : `Nivel ${currentLevel}`}
+                Current Realm: <strong className="text-white">{currentWorld.name}</strong> • Level {currentLevel}
               </p>
             </div>
           </div>
@@ -74,7 +70,6 @@ export const LevelPathwayModal: React.FC<LevelPathwayModalProps> = ({
             <button
               onClick={onClose}
               className="p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
-              aria-label={isEn ? 'Close pathway modal' : 'Cerrar ruta de niveles'}
             >
               <X className="w-5 h-5" />
             </button>
@@ -83,9 +78,9 @@ export const LevelPathwayModal: React.FC<LevelPathwayModalProps> = ({
 
         {/* Continuous Adventure Road with Seamless Cross-Fade Transitions */}
         <div className="relative z-10 flex-1 overflow-y-auto no-scrollbar scroll-smooth">
-          {WORLD_BLOCKS.map((rawWorld, worldIdx) => {
-            const world = localizeWorldBlock(rawWorld, language);
+          {WORLD_BLOCKS.map((world, worldIdx) => {
             const isWorldUnlocked = highestUnlockedLevel >= world.levelsRange[0];
+            const isCurrentWorld = currentWorld.id === world.id;
             const levels = [];
             for (let l = world.levelsRange[0]; l <= Math.min(12, world.levelsRange[1]); l++) {
               levels.push(l);
@@ -117,9 +112,10 @@ export const LevelPathwayModal: React.FC<LevelPathwayModalProps> = ({
                   }}
                 />
 
-                {/* 3. Fog-of-War Shroud over Locked World Blocks */}
+                {/* 3. Candy Crush Fog-of-War Shroud over Locked World Blocks */}
                 {!isWorldUnlocked && (
                   <div className="absolute inset-0 z-20 backdrop-blur-md bg-slate-950/75 flex flex-col items-center justify-center p-6 text-center animate-in fade-in">
+                    {/* Drifting Volumetric Cloud Mist Illustration */}
                     <div className="relative mb-3">
                       <div className="w-20 h-20 rounded-full bg-slate-800/80 border-2 border-slate-600 flex items-center justify-center shadow-2xl relative z-10">
                         <Lock className="w-9 h-9 text-amber-400/90" />
@@ -130,13 +126,11 @@ export const LevelPathwayModal: React.FC<LevelPathwayModalProps> = ({
 
                     <div className="max-w-md bg-slate-900/90 border border-slate-700/80 rounded-2xl p-4 shadow-2xl backdrop-blur-lg">
                       <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/30">
-                        {isEn ? 'Fog of War Enshrouded' : 'Cubierto por Niebla de Guerra'}
+                        Fog of War Enshrouded
                       </span>
                       <h4 className="text-base font-black text-white mt-1.5">{world.name}</h4>
                       <p className="text-xs text-slate-300 mt-1">
-                        {isEn
-                          ? `Clear Level ${world.levelsRange[0] - 1} in the previous realm to dispel the mystical fog and unlock these challenges!`
-                          : `¡Completa el Nivel ${world.levelsRange[0] - 1} en el reino anterior para disipar la niebla y desbloquear estos desafíos!`}
+                        Clear Level {world.levelsRange[0] - 1} in the previous realm to dispel the mystical fog and unlock these challenges!
                       </p>
                     </div>
                   </div>
@@ -175,7 +169,7 @@ export const LevelPathwayModal: React.FC<LevelPathwayModalProps> = ({
 
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-mono font-bold text-slate-400 bg-slate-900/80 px-2.5 py-1 rounded-xl border border-slate-800">
-                        {isEn ? 'Levels' : 'Niveles'} {world.levelsRange[0]} - {world.levelsRange[1] === 999 ? '12+' : world.levelsRange[1]}
+                        Levels {world.levelsRange[0]} - {world.levelsRange[1] === 999 ? '12+' : world.levelsRange[1]}
                       </span>
                     </div>
                   </div>
@@ -211,11 +205,11 @@ export const LevelPathwayModal: React.FC<LevelPathwayModalProps> = ({
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1.5">
                               <span className={`text-base font-black ${isCurrent ? 'text-amber-300' : 'text-white'}`}>
-                                {isEn ? `Level ${lvl}` : `Nivel ${lvl}`}
+                                Level {lvl}
                               </span>
                               {isCurrent && (
                                 <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black shadow-sm">
-                                  {isEn ? 'CURRENT' : 'ACTUAL'}
+                                  CURRENT
                                 </span>
                               )}
                             </div>
@@ -236,18 +230,10 @@ export const LevelPathwayModal: React.FC<LevelPathwayModalProps> = ({
                           {/* Node Description */}
                           <div>
                             <p className="text-[11px] font-bold text-slate-200">
-                              {lvl <= 3
-                                ? isEn ? '8x8 Chess Arena' : 'Arena Ajedrez 8x8'
-                                : lvl <= 6
-                                ? isEn ? '10x10 Coral Reef' : 'Arrecife Coral 10x10'
-                                : isEn ? '12x12 Master Grid' : 'Tablero Maestro 12x12'}
+                              {lvl <= 3 ? '8x8 Chess Arena' : lvl <= 6 ? '10x10 Coral Reef' : '12x12 Master Grid'}
                             </p>
                             <p className="text-[9px] text-slate-400">
-                              {lvl <= 3
-                                ? isEn ? '2 Colors • Classic' : '2 Colores • Clásico'
-                                : lvl <= 6
-                                ? isEn ? '3-4 Colors • Bubbles' : '3-4 Colores • Burbujas'
-                                : isEn ? '5-6 Colors • High Density' : '5-6 Colores • Alta Densidad'}
+                              {lvl <= 3 ? '2 Colors • Classic' : lvl <= 6 ? '3-4 Colors • Bubbles' : '5-6 Colors • High Density'}
                             </p>
                           </div>
 
@@ -269,12 +255,8 @@ export const LevelPathwayModal: React.FC<LevelPathwayModalProps> = ({
                             </div>
 
                             <span className="text-[10px] font-bold text-slate-300 group-hover:text-white flex items-center gap-0.5">
-                              {isUnlocked
-                                ? isCurrent
-                                  ? isEn ? 'Play Now' : 'Jugar Ahora'
-                                  : isEn ? 'Replay' : 'Rejugar'
-                                : isEn ? 'Locked' : 'Bloqueado'}
-                              {isUnlocked && <span className="sr-only">→</span>}
+                              {isUnlocked ? (isCurrent ? 'Play Now' : 'Replay') : 'Locked'}
+                              {isUnlocked && <ChevronRight className="w-3 h-3 text-amber-400" />}
                             </span>
                           </div>
                         </button>
@@ -291,14 +273,14 @@ export const LevelPathwayModal: React.FC<LevelPathwayModalProps> = ({
         <div className="relative z-20 px-5 py-3 border-t border-slate-800 flex items-center justify-between bg-slate-950/90 backdrop-blur-md text-xs">
           <div className="flex items-center gap-1.5 text-amber-400 font-semibold">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            {isEn ? 'Made by Isaac Gómez • Sr. Technical Artist' : 'Hecho por Isaac Gómez • Sr. Technical Artist'}
+            Made by Isaac Gómez • Technical Artist
           </div>
 
           <button
             onClick={onClose}
             className="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 transition font-bold cursor-pointer"
           >
-            {isEn ? 'Return to Arena' : 'Volver a la Arena'}
+            Return to Arena
           </button>
         </div>
       </div>

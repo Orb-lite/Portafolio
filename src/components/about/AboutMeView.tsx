@@ -385,18 +385,20 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
             <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-sky-600 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
             <div className="space-y-1">
               <span className="text-[11px] font-bold text-sky-700 uppercase tracking-wider">
-                {isEn ? '2013 - 2018 · Academic Degree' : '2013 - 2018 · Grado Universitario'}
+                {isEn ? '2013 - 2018 · Higher Education' : '2013 - 2018 · Formación Universitaria'}
               </span>
               <h3 className="text-base font-bold text-slate-900">
-                Ingeniería en Tecnologías Interactivas de Animación Digital
+                {isEn
+                  ? 'Interactive Technologies & Digital Animation Engineering (80% Completed)'
+                  : 'Ingeniería en Tecnologías Interactivas de Animación Digital (80% Completada)'}
               </h3>
               <p className="text-xs font-semibold text-slate-600">
                 Universidad del Valle de México (UVM) · Zapopan / Guadalajara, Jalisco
               </p>
               <p className="text-xs text-slate-600 leading-relaxed mt-1">
                 {isEn
-                  ? 'Completed 5-year specialized engineering program centered on interactive virtual environments, real-time 3D graphics, procedural animation, computer graphics math, C++, and game engines.'
-                  : 'Ingeniería especializada de 5 años enfocada en desarrollo de entornos virtuales interactivos, gráficos 3D en tiempo real, animación digital, matemáticas computacionales, C++ y motores de videojuegos.'}
+                  ? 'Specialized engineering coursework (80% completed) centered on interactive virtual environments, real-time 3D graphics, procedural animation, computer graphics math, C++, and game engines.'
+                  : 'Formación universitaria especializada (80% completada) enfocada en desarrollo de entornos virtuales interactivos, gráficos 3D en tiempo real, animación digital, matemáticas computacionales, C++ y motores de videojuegos.'}
               </p>
             </div>
           </div>

@@ -79,11 +79,11 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
   const addEducation = () => {
     const newEdu: Education = {
       id: `edu-${Date.now()}`,
-      degree: 'Ingeniería en Tecnologías Interactivas de Animación Digital',
+      degree: 'Ingeniería en Tecnologías Interactivas de Animación Digital (80% Completada)',
       institution: 'Universidad del Valle de México (UVM)',
       location: 'México',
       graduationYear: '2013 - 2018',
-      details: 'Formación especializada en ingeniería interactiva, gráficos 3D en tiempo real y animación.',
+      details: 'Formación universitaria especializada (80% completada) en ingeniería interactiva, gráficos 3D en tiempo real y animación.',
     };
     onEducationChange([...education, newEdu]);
   };

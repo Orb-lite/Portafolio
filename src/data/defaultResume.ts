@@ -105,11 +105,11 @@ export const resumeDataEs: ResumeData = {
   education: [
     {
       id: 'edu-1',
-      degree: 'Ingeniería en Tecnologías Interactivas de Animación Digital',
+      degree: 'Ingeniería en Tecnologías Interactivas de Animación Digital (80% Completada)',
       institution: 'Universidad del Valle de México (UVM)',
       location: 'México',
       graduationYear: '2013 - 2018',
-      details: 'Formación especializada en ingeniería de software interactivo, simulación 3D en tiempo real, gráficos computacionales, animación digital y liderazgo de proyectos tecnológicos.',
+      details: 'Formación universitaria especializada (80% completada) en ingeniería de software interactivo, simulación 3D en tiempo real, gráficos computacionales, animación digital y liderazgo de proyectos tecnológicos.',
     },
   ],
   skillCategories: [
@@ -313,11 +313,11 @@ export const resumeDataEn: ResumeData = {
   education: [
     {
       id: 'edu-1',
-      degree: 'B.S. in Interactive Technologies & Digital Animation Engineering',
+      degree: 'Interactive Technologies & Digital Animation Engineering (80% Completed)',
       institution: 'Universidad del Valle de México (UVM)',
       location: 'Mexico',
       graduationYear: '2013 - 2018',
-      details: 'Specialized engineering degree in interactive software systems, 3D real-time simulation, computer graphics, digital animation pipelines, and technology project leadership.',
+      details: 'Specialized engineering coursework (80% completed) in interactive software systems, 3D real-time simulation, computer graphics, digital animation pipelines, and technology project leadership.',
     },
   ],
   skillCategories: [
@@ -504,7 +504,7 @@ export const resumeDataPlatformEn: ResumeData = {
   education: [
     {
       id: 'edu-plat-1',
-      degree: 'B.S. in Interactive Technologies & Digital Animation Engineering',
+      degree: 'Interactive Technologies & Digital Animation Engineering (80% Completed)',
       institution: 'Universidad del Valle de México (UVM)',
       location: 'Guadalajara, Mexico',
       graduationYear: '2013 - 2018',
@@ -682,11 +682,11 @@ export const resumeDataPlatformEs: ResumeData = {
   education: [
     {
       id: 'edu-plat-es-1',
-      degree: 'Ingeniería en Tecnologías Interactivas de Animación Digital',
+      degree: 'Ingeniería en Tecnologías Interactivas de Animación Digital (80% Completada)',
       institution: 'Universidad del Valle de México (UVM)',
       location: 'Guadalajara, México',
       graduationYear: '2013 - 2018',
-      details: 'Base de ingeniería en arquitectura de sistemas de software, estructuras algorítmicas, simulación 3D en tiempo real, cómputo distribuido en backend y liderazgo tecnológico.',
+      details: 'Base de ingeniería (80% completada) en arquitectura de sistemas de software, estructuras algorítmicas, simulación 3D en tiempo real, cómputo distribuido en backend y liderazgo tecnológico.',
     },
   ],
   skillCategories: [

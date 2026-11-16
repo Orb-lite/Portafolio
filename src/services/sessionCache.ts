@@ -12,7 +12,7 @@ import { ResumeProfileType } from '../data/defaultResume';
 // LocalStorage Keys
 const KEYS = {
   ADMIN_SESSION: 'ig_admin_session_auth_v2',
-  RESUME_CACHE_PREFIX: 'ig_cached_resume_',
+  RESUME_CACHE_PREFIX: 'ig_cached_resume_v2_',
   STYLE_CACHE: 'ig_cached_style_config_v1',
   GAME_COMODIN_SESSION: 'conveyor_realms_active_comodin_v1',
   GAME_PROGRESS: 'conveyor_realms_progress_v2',

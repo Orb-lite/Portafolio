@@ -75,126 +75,14 @@ export interface ProjectItem {
 
 export const PORTFOLIO_PROJECTS: ProjectItem[] = [
   {
-    id: 'tile-absorber-3d',
-    title: {
-      en: 'Conveyor Realms (Tile Absorber 3D)',
-      es: 'Conveyor Realms (Tile Absorber 3D)',
-    },
-    subtitle: {
-      en: 'Original Playable 3D Action-Puzzle Engine, Runners & Evolving Wildcard Architecture',
-      es: 'Motor de Puzzle-Acción 3D Original Jugable, Runners y Arquitectura de Comodines',
-    },
-    category: 'virtual-env',
-    categoryLabel: {
-      en: 'Playable 3D Game & Engine',
-      es: 'Videojuego 3D Jugable & Motor',
-    },
-    workClassification: 'personal-rnd',
-    year: '2026',
-    engine: 'Three.js / WebGL / TypeScript / React',
-    mediaType: 'video',
-    mediaSrc: '/assets/videos/conveyor-realms-gameplay.mp4',
-    thumbnailSrc: realGameScreenshot,
-    mediaNote: {
-      en: 'Real gameplay video capture of Conveyor Realms (Tile Absorber 3D) engineered by Isaac Gómez Estrada in Three.js with orthogonal conveyor tracks, 3-tier wildcards, chain bombs/rainbows, and Supabase cloud leaderboards.',
-      es: 'Video de gameplay real de Conveyor Realms (Tile Absorber 3D) desarrollado por Isaac Gómez Estrada en Three.js con pistas ortogonales, comodines de 3 tiers, fichas explosivas/arcoiris en cadena y rankings en Supabase.',
-    },
-    description: {
-      en: 'A high-speed 3D spatial puzzle-action game designed, architected, and built from scratch. Features color-coded autonomous runners patrolling an isometric floating tile grid on elevated conveyor belts. Incorporates exposed-edge tile absorption algorithms, bomb & rainbow chain reactions, an evolving 3-tier wildcard system, 9 procedural WebGL biomes, and a 5-heart asynchronous life regeneration system.',
-      es: 'Videojuego de puzzle-acción espacial en 3D diseñado, arquitecturado e implementado desde cero. Incluye runners autónomos por color sobre bandas transportadoras elevadas, absorción perimetral expuesta, detonaciones en cadena (bomba/arcoiris), comodines de 3 tiers, 9 biomas WebGL y economía de vidas con regeneración asíncrona.',
-    },
-    highlights: {
-      en: [
-        'Autonomous 3D Runners & Orthogonal Conveyor Loop: Directional path routing with color queue state machine and collision detection',
-        'Exposed-Edge Tile Absorption Algorithm: Evaluates real-time obstruction masks so only unblocked outer-tier tiles can be absorbed',
-        'Special Bomb & Rainbow Tiles + 3-Tier Wildcards: Explosive chain clearing and tactical trade-off skills',
-        'Dynamic Streak XP & Star Ratings: Exponential combo multipliers, 3-star ratings, and 9 procedural WebGL biomes',
-        '5-Heart Life & Death Economy: 5-slot queue overflow penalty, 20-minute regeneration clock, and emergency rescue',
-        'Cloud Highscore & Session Caching: Supabase real-time leaderboard integration with localStorage session persistence',
-      ],
-      es: [
-        'Runners 3D Autónomos y Circuito Ortogonal: Ruteo direccional con máquina de estados de cola y trazado de colisiones',
-        'Algoritmo de Absorción Perimetral Expuesta: Evalúa obstrucciones en tiempo real para liberar piezas de afuera hacia adentro',
-        'Fichas Bomba & Arcoiris + Comodines de 3 Tiers: Detonación en cadena y habilidades tácticas evolutivas',
-        'XP Dinámica por Rachas y Estrellas: Multiplicadores de combo, evaluación de 1 a 3 estrellas y 9 biomas procedurales',
-        'Economía de Vida y Muerte de 5 Corazones: Control de saturación de cola, regeneración de 20 min y rescate de emergencia',
-        'Récord Global en Supabase y Caché Offline: Persistencia automática por nivel y ranking compartido',
-      ],
-    },
-    techStack: [
-      'Three.js',
-      'WebGL',
-      'TypeScript',
-      'React 19',
-      'Supabase Cloud',
-      'Procedural Shaders',
-      'Web Audio API',
-      'Tailwind CSS',
-    ],
-    featured: true,
-  },
-  {
-    id: 'fish-feeder-3d',
-    title: {
-      en: 'Fish Feeder 3D (Coral Cove Ocean Edition)',
-      es: 'Fish Feeder 3D (Edición Oceánica Coral Cove)',
-    },
-    subtitle: {
-      en: 'Procedural Marine Species, 3-Layer Pearl Shields & Aquatic Conveyor Mechanics',
-      es: 'Especies Marinas Procedurales, Perlas con Escudos de 3 Capas y Mecánicas Oceánicas',
-    },
-    category: 'virtual-env',
-    categoryLabel: {
-      en: 'Playable 3D Marine Puzzle',
-      es: 'Puzzle Marino 3D Jugable',
-    },
-    workClassification: 'personal-rnd',
-    year: '2026',
-    engine: 'Three.js / WebGL / Procedural Fauna',
-    mediaType: 'video',
-    mediaSrc: '/assets/videos/fish-feeder-gameplay.mp4',
-    thumbnailSrc: '/assets/worlds/coral_cove.jpg',
-    mediaNote: {
-      en: 'Real gameplay video capture of Fish Feeder 3D: procedural swimming fish (Clownfish, Blue Tang, Angler, Axolotl, Puffer, Lionfish, Sea Turtle, Betta), 3-layer iridescent pearl shields, and aquatic power-ups.',
-      es: 'Video de gameplay real de Fish Feeder 3D: peces procedurales en 3D (Payaso, Cirujano, Pez Rape, Ajolote, Globo, León, Tortuga, Betta), perlas iridiscentes con escudos de 3 capas y comodines acuáticos.',
-    },
-    description: {
-      en: 'An aquatic companion edition built atop the custom Three.js conveyor engine. Players deploy color-coded 3D fish onto a luminous ocean reef current to devour exposed pearls, crack 3-layer protective sea-shields, trigger chain-reaction special pearls, and master underwater tempo.',
-      es: 'Edición acuática construida sobre el motor personalizado en Three.js. Los jugadores despliegan peces 3D codificados por color sobre una corriente marina para absorber perlas expuestas, quebrar escudos de hasta 3 capas, activar perlas especiales en cadena y dominar el ritmo submarino.',
-    },
-    highlights: {
-      en: [
-        '8 Procedural 3D Marine Species: Individually sculpted geometries in FofMeshFactory with sinusoidal tail-wag locomotion',
-        'Dynamic Pearls & 3-Layer Bubble Shields: Multi-hit protective shells that shatter progressively as outer pearls are fed',
-        'Aquatic Power-Ups & Chain Pearls: Bubble-breaker shockwaves, sonar wave slowdown, and prismatic rainbow fish',
-        'Ocean Day/Night Moods & Sound Synthesis: Real-time Web Audio underwater bubble effects and synchronized Supabase leaderboards',
-      ],
-      es: [
-        '8 Especies Marinas Procedurales en 3D: Geometrías escultóricas en FofMeshFactory con nado sinusoidal en aleta y cola',
-        'Perlas Dinámicas & Escudos de 3 Capas: Burbujas protectoras multicapa que se fracturan al despejar el perímetro',
-        'Comodines Acuáticos & Perlas en Cadena: Pulso rompe-burbujas, calma oceánica y pez prismático universal',
-        'Ambiente Día/Noche y Síntesis Sonora: Audio procedural de burbujas en tiempo real y récords sincronizados con Supabase',
-      ],
-    },
-    techStack: [
-      'Three.js',
-      'Procedural 3D Fauna',
-      'TypeScript',
-      'Web Audio API',
-      'Supabase Cloud',
-      'React 19',
-    ],
-    featured: true,
-  },
-  {
     id: 'shipped-aaa-titles',
     title: {
       en: 'EA Sports College Football 25',
       es: 'EA Sports College Football 25',
     },
     subtitle: {
-      en: 'Shipped AAA Sports Title (MobyGames Verified Credit)',
-      es: 'Título Deportivo AAA Lanzado (Crédito Verificado en MobyGames)',
+      en: 'Shipped AAA Sports Title · Frostbite Engine & C++ (MobyGames Verified)',
+      es: 'Título Deportivo AAA Lanzado · Frostbite Engine & C++ (Verificado en MobyGames)',
     },
     category: 'aaa-games',
     categoryLabel: {
@@ -203,7 +91,7 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     },
     workClassification: 'aaa-studio',
     year: '2024',
-    engine: 'Frostbite Engine',
+    engine: 'Frostbite Engine / C++',
     mediaType: 'video',
     youtubeId: 'ubRvxZC4jGI',
     thumbnailSrc: 'https://img.youtube.com/vi/ubRvxZC4jGI/maxresdefault.jpg',
@@ -212,24 +100,24 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       es: 'Título AAA de consola co-desarrollado bajo estricto acuerdo de confidencialidad (NDA) en DEVBOT para EA Sports. Demostrado mediante gameplay oficial de EA y créditos verificados en MobyGames.',
     },
     description: {
-      en: 'Verified public credit on MobyGames for flagship sports release EA Sports College Football 25. Co-developed at DEVBOT for premier global publisher Electronic Arts (EA Sports). Provided critical Technical Art and QA support across UI/UX systems, Frostbite engine pipelines, initial playable build performance, and console certification for PlayStation 5 and Xbox Series X/S.',
-      es: 'Crédito público verificado en MobyGames para el lanzamiento deportivo insignia EA Sports College Football 25. Co-desarrollado en DEVBOT para el publisher líder global Electronic Arts (EA Sports). Soporte crítico como Artista Técnico y QA en sistemas de UI/UX, pipelines en Frostbite Engine, rendimiento en builds jugables iniciales y certificación de consola para PlayStation 5 y Xbox Series X/S.',
+      en: 'Verified public credit on MobyGames for flagship sports release EA Sports College Football 25. Co-developed at DEVBOT for premier global publisher Electronic Arts (EA Sports). Provided critical Technical Art, C++ runtime integration, and QA support across UI/UX systems, Frostbite engine pipelines, initial playable build performance, and console certification for PlayStation 5 and Xbox Series X/S.',
+      es: 'Crédito público verificado en MobyGames para el lanzamiento deportivo insignia EA Sports College Football 25. Co-desarrollado en DEVBOT para el publisher líder global Electronic Arts (EA Sports). Soporte crítico como Artista Técnico, integración en C++ y QA en sistemas de UI/UX, pipelines en Frostbite Engine, rendimiento en builds jugables iniciales y certificación de consola para PlayStation 5 y Xbox Series X/S.',
     },
     highlights: {
       en: [
         'Publicly verified credits on MobyGames database for Isaac Gómez',
         'Engineered & validated initial playable build ensuring steady 60+ FPS performance',
-        'Interactive UI/UX implementation in proprietary Frostbite Engine',
+        'Interactive UI/UX implementation & C++ runtime integration in proprietary Frostbite Engine',
         'Large-scale source control with Perforce (Helix Core) and automated Jenkins CI/CD',
       ],
       es: [
         'Crédito verificado públicamente en la base de datos de MobyGames para Isaac Gómez',
         'Ingeniería y validación del primer build jugable asegurando rendimiento sostenido a 60+ FPS',
-        'Implementación de sistemas de UI/UX interactiva en el motor propietario Frostbite',
+        'Implementación de UI/UX interactiva e integración runtime en C++ en el motor propietario Frostbite',
         'Control de versiones a gran escala con Perforce (Helix Core) y automatización CI/CD con Jenkins',
       ],
     },
-    techStack: ['Frostbite Engine', 'Perforce Helix Core', 'Jenkins CI', 'C++', 'UI/UX', 'PS5', 'Xbox Series X/S'],
+    techStack: ['Frostbite Engine', 'C++', 'Perforce Helix Core', 'Jenkins CI', 'UI/UX', 'PS5', 'Xbox Series X/S'],
     externalUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
     externalLabel: {
       en: 'View Verified MobyGames Credits',
@@ -239,46 +127,167 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     featured: true,
   },
   {
-    id: 'watercolor-sim',
+    id: 'industrial-digital-twins',
     title: {
-      en: 'Acuarela - Stylized Interactive Virtual Environment',
-      es: 'Acuarela - Entorno Virtual Interactivo Estilizado',
+      en: 'Industrial Manufacturing Digital Twins (Flex)',
+      es: 'Gemelos Digitales de Manufactura Industrial (Flex)',
     },
     subtitle: {
-      en: 'Real-Time Non-Photorealistic Rendering (NPR) & Exploration in Unreal Engine',
-      es: 'Renderizado No Fotorrealista (NPR) en Tiempo Real y Exploración en Unreal Engine',
+      en: 'Unreal Engine 5 / C++ Assembly Line Simulation & VR Training (Fortune 500)',
+      es: 'Simulación con Unreal Engine 5 / C++ y Capacitación VR (Fortune 500)',
     },
-    category: 'virtual-env',
+    category: 'simulation',
     categoryLabel: {
-      en: 'Interactive Virtual Environments',
-      es: 'Entornos Virtuales Interactivos',
+      en: '3D Simulation & Digital Twins',
+      es: 'Simulación 3D & Gemelos Digitales',
     },
-    workClassification: 'personal-rnd',
-    year: '2022',
-    engine: 'Unreal Engine (PCD3D_SM5)',
+    workClassification: 'enterprise-client',
+    year: 'Jun 2024 – Apr 2026',
+    engine: 'Unreal Engine 5 / C++ & FlexSim',
     mediaType: 'video',
-    mediaSrc: '/portfolio_assets/watercolor-development-viewport.mp4',
+    mediaSrc: '/portfolio_assets/digital-twin-campus-standalone.mp4',
+    thumbnailSrc: '/portfolio_assets/digital-twin-campus-thumb.jpg',
     mediaNote: {
-      en: "Isaac's personal technical R&D in Unreal Engine: Direct screen recording from Isaac's independent development workstation testing custom watercolor HLSL post-process shaders.",
-      es: 'I+D técnico personal de Isaac en Unreal Engine: Grabación de pantalla directa desde su estación de desarrollo independiente probando shaders de post-proceso en HLSL estilo acuarela.',
+      en: "Enterprise digital twin screen capture from Isaac's 64-bit D3D Shader Model 6 Standalone build at Flex: Real-time Guadalajara North campus navigation, building B29 monitoring, C++ telemetry hooks, failure list triage, and live power consumption dashboards.",
+      es: 'Grabación de pantalla del gemelo digital corporativo desde el build Standalone de 64 bits (D3D Shader Model 6) de Isaac en Flex: Navegación del campus Guadalajara Norte, monitoreo del edificio B29, módulos de telemetría en C++, lista de fallas y dashboards de consumo energético en tiempo real.',
     },
     description: {
-      en: 'An expressive interactive 3D virtual environment built in Unreal Engine featuring custom stylized post-processing shaders mimicking traditional watercolor paintings. Players navigate an atmospheric architectural setting with real-time dynamic lighting, ambient audio, and responsive player movement.',
-      es: 'Entorno virtual 3D interactivo y expresivo desarrollado en Unreal Engine con shaders de post-procesamiento estilizados personalizados que emulan pinturas en acuarela tradicionales. Permite navegar por un escenario arquitectónico atmosférico con iluminación dinámica en tiempo real, audio ambiental y locomoción reactiva.',
+      en: 'High-precision real-time 3D Digital Twin of industrial manufacturing facilities engineered with Unreal Engine 5, C++, D3D Shader Model 6, and Arch FlexSim. Features interactive campus navigation (Guadalajara North campus), building-level telemetry (B29), real-time machine utilization dashboards, line failure alerts (AOI Zenith, Vitrox, Heller Reflow Oven), throughput tracking, yield metrics, and power consumption monitoring for Fortune 500 enterprise operations.',
+      es: 'Gemelo Digital 3D en tiempo real de alta precisión para instalaciones de manufactura industrial desarrollado con Unreal Engine 5, C++, D3D Shader Model 6 y Arch FlexSim. Incluye navegación interactiva de campus (Campus Guadalajara Norte), telemetría a nivel de edificio (B29), tableros de utilización de maquinaria en tiempo real, alertas y triage de fallas (AOI Zenith, Vitrox, Horno de Reflujo Heller), seguimiento de rendimiento de producción (Yield, Throughput) y monitoreo de consumo eléctrico para operaciones corporativas Fortune 500.',
     },
     highlights: {
       en: [
-        'Custom HLSL post-process material edge detection & watercolor pigment bleeding',
-        'Smooth 60+ FPS navigation in 64-bit Standalone Windows preview',
-        'Dynamic lighting, particle dust motes, and atmospheric depth cues',
+        'Standalone 64-bit D3D Shader Model 6 executable build powered by C++ & UE5 systems',
+        'Live IoT telematics integration: Temperature, Humidity, Energy, Water & Nitrogen consumption tracking',
+        'Machine-level inspection (SIPLACE, AOI Zenith, Vitrox, Heller Reflow Oven) with live yield & failure triage',
+        'Real-time power consumption gauge dashboard and workstation multi-monitor telemetry center setup',
+        'Automated bottleneck detection & predictive simulation of automated lines prior to physical deployment',
       ],
       es: [
-        'Material de post-proceso en HLSL con detección de bordes y dispersión de pigmentos de acuarela',
-        'Navegación fluida a 60+ FPS en preview ejecutable Standalone para Windows de 64 bits',
-        'Iluminación dinámica, partículas de polvo en suspensión y efectos atmosféricos de profundidad',
+        'Build ejecutable Standalone de 64 bits en D3D Shader Model 6 impulsado por sistemas en C++ y UE5',
+        'Integración telemática de sensores IoT en vivo: temperatura, humedad, energía, agua y nitrógeno',
+        'Inspección detallada de maquinaria (SIPLACE, AOI Zenith, Vitrox, Horno Heller) con yield y reporte de fallas en vivo',
+        'Dashboard de consumo de energía con indicadores en tiempo real y estación de trabajo multi-monitor de telemetría',
+        'Detección predictiva de cuellos de botella y simulación de líneas automatizadas antes de su despliegue físico',
       ],
     },
-    techStack: ['Unreal Engine', 'HLSL / Shaders', 'Post-Process Materials', 'DirectX SM5', 'C++ / Blueprints'],
+    techStack: [
+      'Unreal Engine 5',
+      'C++',
+      'Arch FlexSim',
+      'D3D Shader Model 6',
+      'Industrial IoT',
+      'Digital Twins',
+      'Blueprints',
+      'VR Simulation',
+    ],
+    galleryImages: [
+      {
+        src: '/portfolio_assets/digital-twin-workstation-setup.jpg',
+        caption: {
+          en: 'Engineering workstation setup: Real-time building power consumption meters, thermal heatmap, and live 3D production line viewport in Unreal Engine.',
+          es: 'Estación de trabajo de ingeniería: Medidores de consumo eléctrico en tiempo real, mapa de calor térmico y viewport 3D de la línea de producción en Unreal Engine.',
+        },
+      },
+      {
+        src: '/portfolio_assets/digital-twin-campus-thumb.jpg',
+        caption: {
+          en: 'Guadalajara North Campus 3D overview with building markers (B-1, B-28, B-29) and interactive view controls.',
+          es: 'Vista general 3D del Campus Guadalajara Norte con marcadores de edificios (B-1, B-28, B-29) y controles de navegación interactiva.',
+        },
+      },
+    ],
+    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
+    externalLabel: {
+      en: 'View Portfolio Drive Folder',
+      es: 'Ver Carpeta de Portafolio en Drive',
+    },
+    featured: true,
+  },
+  {
+    id: 'unreal-editor-multiplayer',
+    title: {
+      en: 'Unreal Engine Technical R&D: Multiplayer Server Replication in C++',
+      es: 'I+D Técnico en Unreal Engine: Replicación Cliente-Servidor en C++',
+    },
+    subtitle: {
+      en: 'Authoritative C++ Gameplay Replication, RPCs & Dedicated Server Architecture',
+      es: 'Replicación Autoritativa en C++, RPCs y Arquitectura de Servidor Dedicado',
+    },
+    category: 'virtual-env',
+    categoryLabel: {
+      en: 'Unreal Engine C++ R&D',
+      es: 'I+D C++ & Unreal Engine',
+    },
+    workClassification: 'personal-rnd',
+    year: '2020 – 2024',
+    engine: 'Unreal Engine 5 / C++ (Server 64-bit)',
+    mediaType: 'video',
+    mediaSrc: '/portfolio_assets/unreal-multiplayer-server-preview.mp4',
+    mediaNote: {
+      en: "Isaac's personal R&D screen capture: Testing C++ multiplayer server replication, Server/Client/Multicast RPCs, authoritative physics, and network debug tools in Unreal Engine.",
+      es: 'Grabación de pantalla de I+D personal de Isaac: Pruebas de replicación de servidor multijugador en C++, RPCs autoritativos, físicas en red y depuración en Unreal Engine.',
+    },
+    description: {
+      en: 'Dedicated server multiplayer simulation in C++ and Unreal Engine testing real-time client-to-server property replication (DOREPLIFETIME), Server/Client RPCs, authoritative state verification, position interpolation, and network debug tooling.',
+      es: 'Simulación multijugador con servidor dedicado en C++ y Unreal Engine probando replicación de propiedades en tiempo real (DOREPLIFETIME), RPCs Cliente/Servidor, verificación autoritativa de estado, interpolación de posiciones y depuración de red.',
+    },
+    highlights: {
+      en: [
+        'Multiplayer Server Replication in C++ with server-authoritative physics and DOREPLIFETIME variables',
+        'Multi-client window debugging with synchronized C++ replicated actors and game state in real time',
+        'Deep workflow familiarity with Unreal Engine C++ Gameplay Framework and dedicated server builds',
+      ],
+      es: [
+        'Replicación Multijugador de Servidor en C++ con físicas autoritativas y macros DOREPLIFETIME',
+        'Depuración en múltiples ventanas con clientes simultáneos y estado sincronizado en C++',
+        'Dominio profundo del Gameplay Framework en C++ y pipelines de compilación de servidor dedicado',
+      ],
+    },
+    techStack: ['C++', 'Unreal Engine 5', 'Multiplayer Server Replication', 'RPCs / DOREPLIFETIME', 'Dedicated Server'],
+    featured: true,
+  },
+  {
+    id: 'unreal-editor-project4',
+    title: {
+      en: 'Unreal Engine Technical R&D: Custom UE5 Editor Tools & C++ Architecture',
+      es: 'I+D Técnico en Unreal Engine: Herramientas Custom UE5 & Arquitectura C++',
+    },
+    subtitle: {
+      en: 'Custom Editor Modules in C++, Material Instances & Viewport Profiling',
+      es: 'Módulos Custom en C++, Instancias de Materiales y Perfilado en Viewport',
+    },
+    category: 'virtual-env',
+    categoryLabel: {
+      en: 'Unreal Engine C++ R&D',
+      es: 'I+D C++ & Unreal Engine',
+    },
+    workClassification: 'personal-rnd',
+    year: '2020 – 2024',
+    engine: 'Unreal Engine 5 / C++ Editor',
+    mediaType: 'video',
+    mediaSrc: '/portfolio_assets/unreal-editor-workflow.mp4',
+    mediaNote: {
+      en: "Isaac's personal screen recording inside Unreal Editor: Custom UE5 Editor Tools & C++ Architecture for level assembly, material instancing, lighting building, and viewport GPU profiling.",
+      es: 'Grabación de pantalla personal de Isaac dentro de Unreal Editor: Herramientas personalizadas de UE5 y arquitectura C++ para montaje de niveles, instancias de materiales y perfilado en viewport.',
+    },
+    description: {
+      en: 'Custom UE5 Editor Tools & C++ Architecture showcase demonstrating automated scene assembly utilities, PBR material instancing pipelines, volumetric fog tuning, and real-time draw-call profiling across rendering passes.',
+      es: 'Demostración de herramientas personalizadas en Unreal Editor y arquitectura C++ para automatización de montaje de escenas, pipelines de instancias PBR, niebla volumétrica y perfilado de rendimiento de passes de render.',
+    },
+    highlights: {
+      en: [
+        'Custom UE5 Editor Tools & C++ Architecture streamlining asset placement and validation',
+        'Material instance parameter automation for physically based rendering (PBR) consistency',
+        'Real-time editor viewport draw-call, shader complexity, and polygon budget profiling',
+      ],
+      es: [
+        'Herramientas Custom de UE5 Editor y arquitectura en C++ para agilizar montaje y validación de assets',
+        'Automatización de instancias de materiales para consistencia de renderizado PBR',
+        'Depuración y perfilado de rendimiento de draw calls y shaders en tiempo real en viewport',
+      ],
+    },
+    techStack: ['C++', 'Unreal Engine 5', 'Custom UE5 Editor Tools', 'PBR Materials', 'Viewport Profiling'],
     featured: true,
   },
   {
@@ -297,8 +306,8 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       es: 'Videojuegos AAA & Co-Desarrollo',
     },
     workClassification: 'aaa-studio',
-    year: '2022 - 2024',
-    engine: 'Frostbite Engine',
+    year: 'Jan 2022 – Aug 2023',
+    engine: 'Frostbite Engine / C++',
     mediaType: 'video',
     mediaSrc: '/portfolio_assets/scores.mp4',
     youtubeId: '3Rkj6FlMcLU',
@@ -325,113 +334,13 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
         'Diseñado para pipelines de presentación AAA de EA Sports y certificación en consolas',
       ],
     },
-    techStack: ['ActionScript', 'C++', 'Frostbite Engine', 'EA Sports UI/HUD', 'Perforce Helix Core', 'Broadcast Graphics'],
+    techStack: ['C++', 'ActionScript', 'Frostbite Engine', 'EA Sports UI/HUD', 'Perforce Helix Core', 'Broadcast Graphics'],
     externalUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
     externalLabel: {
       en: 'View Verified MobyGames Credits',
       es: 'Ver Créditos Verificados en MobyGames',
     },
     mobyGamesUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
-    featured: true,
-  },
-  {
-    id: 'goblins-castle',
-    title: {
-      en: 'Goblins Castle - Medieval Dark Fantasy Action RPG',
-      es: 'Goblins Castle - RPG de Acción y Fantasía Oscura Medieval',
-    },
-    subtitle: {
-      en: '64-bit Development PCD3D_SM5 In-Engine Viewport Preview',
-      es: 'Preview de Desarrollo en 64 bits (PCD3D_SM5) en Unreal Engine',
-    },
-    category: 'virtual-env',
-    categoryLabel: {
-      en: 'Interactive Virtual Environments',
-      es: 'Entornos Virtuales Interactivos',
-    },
-    workClassification: 'personal-rnd',
-    year: '2022',
-    engine: 'Unreal Engine (PCD3D_SM5)',
-    mediaType: 'video',
-    mediaSrc: '/portfolio_assets/Goblins_Castle (64-bit Development PCD3D_SM5)  2022-10-26 17-21-27.mp4',
-    mediaNote: {
-      en: "Direct Unreal Engine 64-bit Development preview screen capture (Goblins_Castle 2022-10-26): Knight third-person locomotion, castle dungeon environment, sword combat combos, reactive enemy combat, dynamic torch lighting, and interactive quest HUD ('Compra una espada').",
-      es: "Grabación directa de pantalla en Unreal Engine 64-bit Development preview (Goblins_Castle 2022-10-26): Locomoción en tercera persona con caballero, entorno de mazmorra y castillo medieval, combos de combate con espada, comportamiento reactivo de enemigos, iluminación dinámica de antorchas y HUD de misiones ('Compra una espada').",
-    },
-    description: {
-      en: 'Atmospheric third-person medieval action RPG prototype engineered in Unreal Engine (64-bit Development build). Features fluid knight character movement, sword collision tracing, responsive combat combos, dynamic lighting with torch flicker, quest objective HUD tracking, and dungeon modular architecture.',
-      es: 'Prototipo de RPG de acción medieval en tercera persona desarrollado en Unreal Engine (build 64-bit Development). Cuenta con locomoción fluida de personaje caballero, trazado de colisiones para combate con espada, combos de ataque responsivos, iluminación dinámica con antorchas, seguimiento de misiones en HUD y arquitectura modular de mazmorra.',
-    },
-    highlights: {
-      en: [
-        'Custom third-person locomotion, sprint, dodge, and sword attack combo animation states',
-        'DirectX Shader Model 5 dynamic point lights, volumetric dungeon shadows, and stone PBR materials',
-        'Interactive player HUD with quest objective alerts and health/stamina monitoring',
-        'Stable 60+ FPS performance in 64-bit Development in-editor viewport testing',
-      ],
-      es: [
-        'Locomoción en tercera persona, carrera, esquive y máquina de estados para animaciones de combate con espada',
-        'Luces dinámicas puntuales en DirectX SM5, sombras volumétricas de mazmorra y materiales PBR de piedra',
-        'HUD interactivo del jugador con alertas de objetivos de misión y barras de salud/estamina',
-        'Rendimiento sostenido a más de 60 FPS en pruebas de viewport 64-bit Development',
-      ],
-    },
-    techStack: ['Unreal Engine', 'DirectX SM5', 'Combat Mechanics', 'Third-Person Locomotion', 'Level Design', 'Blueprints / C++'],
-    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
-    externalLabel: {
-      en: 'View in Drive Portfolio Folder',
-      es: 'Ver en Carpeta Drive de Portafolio',
-    },
-    featured: true,
-  },
-  {
-    id: 'gamejam-devbot',
-    title: {
-      en: 'DevBot Game Jam - Rapid Action Prototype Preview',
-      es: 'DevBot Game Jam - Prototipo Rápido de Acción y Mecánicas',
-    },
-    subtitle: {
-      en: 'NetMode Standalone 64-bit Windows Gameplay Loop & Physics',
-      es: 'Ciclo de Jugabilidad y Físicas en NetMode Standalone (Windows 64 bits)',
-    },
-    category: 'virtual-env',
-    categoryLabel: {
-      en: 'Interactive Virtual Environments',
-      es: 'Game Jam & Prototipado Rápido',
-    },
-    workClassification: 'personal-rnd',
-    year: '2022',
-    engine: 'Unreal Engine (Standalone NetMode)',
-    mediaType: 'video',
-    mediaSrc: '/portfolio_assets/GameJam_DevBot Preview [NetMode_ Standalone]  (64-bit_Windows)  2022-10-13 18-32-24.mp4',
-    mediaNote: {
-      en: "Screen recording from Isaac's NetMode Standalone 64-bit Windows preview (GameJam_DevBot 2022-10-13): Rapid prototype mechanics engineered during the DEVBOT studio game jam, testing high-mobility locomotion, responsive physics, and level obstacle navigation.",
-      es: "Grabación de pantalla desde el preview NetMode Standalone de 64 bits para Windows de Isaac (GameJam_DevBot 2022-10-13): Prototipo rápido de mecánicas desarrollado en el Game Jam del estudio DEVBOT, probando locomoción ágil, físicas reactivas y navegación de obstáculos.",
-    },
-    description: {
-      en: 'Fast-paced game jam prototype engineered under rapid turnaround constraints at DEVBOT studio. Packaged as a standalone 64-bit Windows executable, testing character responsiveness, platform traversal physics, and spatial timing challenges.',
-      es: 'Prototipo de acción ágil desarrollado bajo estrictas restricciones de tiempo en el Game Jam del estudio DEVBOT. Empaquetado como ejecutable Standalone para Windows de 64 bits, validando respuesta del personaje, físicas de movimiento en plataformas y desafíos espaciales de precisión.',
-    },
-    highlights: {
-      en: [
-        'Packaged and benchmarked as NetMode Standalone 64-bit Windows release',
-        'High-velocity character movement physics, variable jumping, and obstacle collision',
-        'Rapid level grayboxing, lighting pass, and responsive game loop completed under game jam deadline',
-        'Co-development collaboration and agile prototyping inside DEVBOT pipeline',
-      ],
-      es: [
-        'Empaquetado y validado en build ejecutable Standalone NetMode de 64 bits para Windows',
-        'Físicas de movimiento de alta velocidad, salto variable y colisión precisa con obstáculos',
-        'Grayboxing rápido de nivel, pase de iluminación y ciclo de juego interactivo completado en plazo de jam',
-        'Colaboración y prototipado ágil dentro de la cultura de co-desarrollo de DEVBOT',
-      ],
-    },
-    techStack: ['Unreal Engine', 'DEVBOT Game Jam', 'Standalone NetMode', 'Character Physics', 'Rapid Prototyping'],
-    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
-    externalLabel: {
-      en: 'View in Drive Portfolio Folder',
-      es: 'Ver en Carpeta Drive de Portafolio',
-    },
     featured: true,
   },
   {
@@ -485,14 +394,14 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     featured: true,
   },
   {
-    id: 'class-sim',
+    id: 'watercolor-sim',
     title: {
-      en: 'ClassSim - Interactive Classroom Virtual Simulation',
-      es: 'ClassSim - Simulación Virtual Interactiva de Aulas',
+      en: 'Acuarela - Stylized Interactive Virtual Environment',
+      es: 'Acuarela - Entorno Virtual Interactivo Estilizado',
     },
     subtitle: {
-      en: 'Spatial Presence & Interactive Education Environment',
-      es: 'Presencia Espacial y Entorno Interactivo de Educación',
+      en: 'Real-Time Non-Photorealistic Rendering (NPR) & Exploration in Unreal Engine',
+      es: 'Renderizado No Fotorrealista (NPR) en Tiempo Real y Exploración en Unreal Engine',
     },
     category: 'virtual-env',
     categoryLabel: {
@@ -500,35 +409,82 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       es: 'Entornos Virtuales Interactivos',
     },
     workClassification: 'personal-rnd',
-    year: '2020',
-    engine: 'Unreal Engine (Standalone NetMode)',
-    mediaType: 'external',
+    year: '2022',
+    engine: 'Unreal Engine (PCD3D_SM5)',
+    mediaType: 'video',
+    mediaSrc: '/portfolio_assets/watercolor-development-viewport.mp4',
     mediaNote: {
-      en: 'Personal interactive 3D virtual environment and spatial navigation study built in Unreal Engine.',
-      es: 'Estudio y entorno virtual 3D interactivo personal de navegación espacial desarrollado en Unreal Engine.',
-    },
-    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
-    externalLabel: {
-      en: 'View Project in Drive Archive',
-      es: 'Ver Proyecto en Carpeta Drive',
+      en: "Isaac's personal technical R&D in Unreal Engine: Direct screen recording from Isaac's independent development workstation testing custom watercolor HLSL post-process shaders.",
+      es: 'I+D técnico personal de Isaac en Unreal Engine: Grabación de pantalla directa desde su estación de desarrollo independiente probando shaders de post-proceso en HLSL estilo acuarela.',
     },
     description: {
-      en: 'Interactive 3D simulation of an academic auditorium and classroom setting designed for training, multi-perspective spatial awareness, and interactive virtual navigation.',
-      es: 'Simulación 3D interactiva de un auditorio y aula académica diseñada para capacitación, conciencia espacial multiperspectiva y navegación virtual interactiva.',
+      en: 'An expressive interactive 3D virtual environment built in Unreal Engine featuring custom stylized post-processing shaders mimicking traditional watercolor paintings. Players navigate an atmospheric architectural setting with real-time dynamic lighting, ambient audio, and responsive player movement.',
+      es: 'Entorno virtual 3D interactivo y expresivo desarrollado en Unreal Engine con shaders de post-procesamiento estilizados personalizados que emulan pinturas en acuarela tradicionales. Permite navegar por un escenario arquitectónico atmosférico con iluminación dinámica en tiempo real, audio ambiental y locomoción reactiva.',
     },
     highlights: {
       en: [
-        'Interactive first-person controller with collision geometry and sightline testing',
-        'Realistic architectural scaling, natural light bounce, and seating arrangements',
-        'Optimized standalone Windows build for lightweight distribution',
+        'Custom HLSL post-process material edge detection & watercolor pigment bleeding',
+        'Smooth 60+ FPS navigation in 64-bit Standalone Windows preview',
+        'Dynamic lighting, particle dust motes, and atmospheric depth cues',
       ],
       es: [
-        'Controlador interactivo en primera persona con geometría de colisión y análisis visual',
-        'Escala arquitectónica realista, rebote de luz natural y distribución ergonómica',
-        'Build ejecutable Standalone para Windows altamente optimizado para distribución ligera',
+        'Material de post-proceso en HLSL con detección de bordes y dispersión de pigmentos de acuarela',
+        'Navegación fluida a 60+ FPS en preview ejecutable Standalone para Windows de 64 bits',
+        'Iluminación dinámica, partículas de polvo en suspensión y efectos atmosféricos de profundidad',
       ],
     },
-    techStack: ['Unreal Engine', 'Architectural Visualization', 'Standalone Build', 'C++ / Blueprints'],
+    techStack: ['Unreal Engine', 'C++ / Blueprints', 'HLSL / Shaders', 'Post-Process Materials', 'DirectX SM5'],
+    featured: true,
+  },
+  {
+    id: 'goblins-castle',
+    title: {
+      en: 'Goblins Castle - Medieval Dark Fantasy Action RPG',
+      es: 'Goblins Castle - RPG de Acción y Fantasía Oscura Medieval',
+    },
+    subtitle: {
+      en: '64-bit Development PCD3D_SM5 In-Engine Viewport Preview',
+      es: 'Preview de Desarrollo en 64 bits (PCD3D_SM5) en Unreal Engine',
+    },
+    category: 'virtual-env',
+    categoryLabel: {
+      en: 'Interactive Virtual Environments',
+      es: 'Entornos Virtuales Interactivos',
+    },
+    workClassification: 'personal-rnd',
+    year: '2022',
+    engine: 'Unreal Engine / C++ (PCD3D_SM5)',
+    mediaType: 'video',
+    mediaSrc: '/portfolio_assets/Goblins_Castle (64-bit Development PCD3D_SM5)  2022-10-26 17-21-27.mp4',
+    mediaNote: {
+      en: "Direct Unreal Engine 64-bit Development preview screen capture (Goblins_Castle 2022-10-26): Knight third-person locomotion, castle dungeon environment, sword combat combos, reactive enemy combat, dynamic torch lighting, and interactive quest HUD ('Compra una espada').",
+      es: "Grabación directa de pantalla en Unreal Engine 64-bit Development preview (Goblins_Castle 2022-10-26): Locomoción en tercera persona con caballero, entorno de mazmorra y castillo medieval, combos de combate con espada, comportamiento reactivo de enemigos, iluminación dinámica de antorchas y HUD de misiones ('Compra una espada').",
+    },
+    description: {
+      en: 'Atmospheric third-person medieval action RPG prototype engineered in Unreal Engine (64-bit Development build) with C++ & Blueprints. Features fluid knight character movement, sword collision tracing, responsive combat combos, dynamic lighting with torch flicker, quest objective HUD tracking, and dungeon modular architecture.',
+      es: 'Prototipo de RPG de acción medieval en tercera persona desarrollado en Unreal Engine (build 64-bit Development) con C++ y Blueprints. Cuenta con locomoción fluida de personaje caballero, trazado de colisiones para combate con espada, combos de ataque responsivos, iluminación dinámica con antorchas, seguimiento de misiones en HUD y arquitectura modular de mazmorra.',
+    },
+    highlights: {
+      en: [
+        'Custom C++ & Blueprint third-person locomotion, sprint, dodge, and sword attack combo state machine',
+        'DirectX Shader Model 5 dynamic point lights, volumetric dungeon shadows, and stone PBR materials',
+        'Interactive player HUD with quest objective alerts and health/stamina monitoring',
+        'Stable 60+ FPS performance in 64-bit Development in-editor viewport testing',
+      ],
+      es: [
+        'Locomoción en tercera persona en C++ / Blueprints, carrera, esquive y máquina de estados para combos con espada',
+        'Luces dinámicas puntuales en DirectX SM5, sombras volumétricas de mazmorra y materiales PBR de piedra',
+        'HUD interactivo del jugador con alertas de objetivos de misión y barras de salud/estamina',
+        'Rendimiento sostenido a más de 60 FPS en pruebas de viewport 64-bit Development',
+      ],
+    },
+    techStack: ['Unreal Engine', 'C++ / Blueprints', 'DirectX SM5', 'Combat Mechanics', 'Third-Person Locomotion', 'Level Design'],
+    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
+    externalLabel: {
+      en: 'View in Drive Portfolio Folder',
+      es: 'Ver en Carpeta Drive de Portafolio',
+    },
+    featured: true,
   },
   {
     id: 'procedural-world-gen',
@@ -575,126 +531,168 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
         'Reglas procedimentales que eliminan la colocación manual repetitiva en niveles masivos',
       ],
     },
-    techStack: ['Unreal Engine', 'Procedural Algorithms', 'Landscape Tools', 'HLSL', 'LOD Streaming'],
+    techStack: ['Unreal Engine', 'C++', 'Procedural Algorithms', 'Landscape Tools', 'HLSL', 'LOD Streaming'],
   },
   {
-    id: 'unreal-editor-multiplayer',
+    id: 'gamejam-devbot',
     title: {
-      en: 'Unreal Engine Multiplayer & Server Architecture Preview',
-      es: 'Arquitectura Multijugador y Servidor Dedicado en Unreal Engine',
+      en: 'DevBot Game Jam - Rapid Action Prototype Preview',
+      es: 'DevBot Game Jam - Prototipo Rápido de Acción y Mecánicas',
     },
     subtitle: {
-      en: 'Client-Server Replication, RPCs & Network Synchronization',
-      es: 'Replicación Cliente-Servidor, RPCs y Sincronización en Red',
+      en: 'NetMode Standalone 64-bit Windows Gameplay Loop & Physics',
+      es: 'Ciclo de Jugabilidad y Físicas en NetMode Standalone (Windows 64 bits)',
     },
     category: 'virtual-env',
     categoryLabel: {
       en: 'Interactive Virtual Environments',
-      es: 'Entornos Virtuales Interactivos',
+      es: 'Game Jam & Prototipado Rápido',
     },
     workClassification: 'personal-rnd',
-    year: '2020',
-    engine: 'Unreal Engine (Server 64-bit PCD3D_SM5)',
+    year: '2022',
+    engine: 'Unreal Engine (Standalone NetMode)',
     mediaType: 'video',
-    mediaSrc: '/portfolio_assets/unreal-multiplayer-server-preview.mp4',
+    mediaSrc: '/portfolio_assets/GameJam_DevBot Preview [NetMode_ Standalone]  (64-bit_Windows)  2022-10-13 18-32-24.mp4',
     mediaNote: {
-      en: "Isaac's personal R&D screen capture: Testing client-server replication, authoritative physics, and network debug tools in Unreal Engine.",
-      es: 'Grabación de pantalla de I+D personal de Isaac: Pruebas de replicación cliente-servidor, físicas autoritativas y depuración de red en Unreal Engine.',
+      en: "Screen recording from Isaac's NetMode Standalone 64-bit Windows preview (GameJam_DevBot 2022-10-13): Rapid prototype mechanics engineered during the DEVBOT studio game jam, testing high-mobility locomotion, responsive physics, and level obstacle navigation.",
+      es: "Grabación de pantalla desde el preview NetMode Standalone de 64 bits para Windows de Isaac (GameJam_DevBot 2022-10-13): Prototipo rápido de mecánicas desarrollado en el Game Jam del estudio DEVBOT, probando locomoción ágil, físicas reactivas y navegación de obstáculos.",
     },
     description: {
-      en: 'Dedicated server multiplayer simulation testing real-time client-to-server replication, authoritative state verification, position interpolation, and network debug tools in Unreal Engine.',
-      es: 'Simulación multijugador con servidor dedicado probando replicación de cliente a servidor en tiempo real, verificación de estado autoritativo, interpolación de posiciones y herramientas de depuración de red en Unreal Engine.',
+      en: 'Fast-paced game jam prototype engineered under rapid turnaround constraints at DEVBOT studio. Packaged as a standalone 64-bit Windows executable, testing character responsiveness, platform traversal physics, and spatial timing challenges.',
+      es: 'Prototipo de acción ágil desarrollado bajo estrictas restricciones de tiempo en el Game Jam del estudio DEVBOT. Empaquetado como ejecutable Standalone para Windows de 64 bits, validando respuesta del personaje, físicas de movimiento en plataformas y desafíos espaciales de precisión.',
     },
     highlights: {
       en: [
-        'Server-authoritative physics and network replication setup',
-        'Multi-client window debugging with synchronized game state in real time',
-        'Deep workflow familiarity with Unreal Editor internal build pipelines',
+        'Packaged and benchmarked as NetMode Standalone 64-bit Windows release',
+        'High-velocity character movement physics, variable jumping, and obstacle collision',
+        'Rapid level grayboxing, lighting pass, and responsive game loop completed under game jam deadline',
+        'Co-development collaboration and agile prototyping inside DEVBOT pipeline',
       ],
       es: [
-        'Físicas con servidor autoritativo y configuración de replicación en red',
-        'Depuración en múltiples ventanas con clientes simultáneos y estado sincronizado',
-        'Dominio profundo de pipelines de compilación interna de Unreal Editor',
+        'Empaquetado y validado en build ejecutable Standalone NetMode de 64 bits para Windows',
+        'Físicas de movimiento de alta velocidad, salto variable y colisión precisa con obstáculos',
+        'Grayboxing rápido de nivel, pase de iluminación y ciclo de juego interactivo completado en plazo de jam',
+        'Colaboración y prototipado ágil dentro de la cultura de co-desarrollo de DEVBOT',
       ],
     },
-    techStack: ['Unreal Engine', 'Multiplayer Networking', 'Replication / RPCs', 'Server Architecture'],
+    techStack: ['Unreal Engine', 'DEVBOT Game Jam', 'Standalone NetMode', 'Character Physics', 'Rapid Prototyping'],
+    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
+    externalLabel: {
+      en: 'View in Drive Portfolio Folder',
+      es: 'Ver en Carpeta Drive de Portafolio',
+    },
+    featured: true,
   },
   {
-    id: 'industrial-digital-twins',
+    id: 'tile-absorber-3d',
     title: {
-      en: 'Industrial Manufacturing Digital Twins (Flex)',
-      es: 'Gemelos Digitales de Manufactura Industrial (Flex)',
+      en: 'Conveyor Realms (Tile Absorber 3D)',
+      es: 'Conveyor Realms (Tile Absorber 3D)',
     },
     subtitle: {
-      en: 'Assembly Line Simulation & VR Training for Fortune 500 Enterprises',
-      es: 'Simulación de Líneas de Ensamble y Capacitación VR para Clientes Fortune 500',
+      en: 'Original Playable 3D Action-Puzzle Engine, Runners & Evolving Wildcard Architecture',
+      es: 'Motor de Puzzle-Acción 3D Original Jugable, Runners y Arquitectura de Comodines',
     },
-    category: 'simulation',
+    category: 'virtual-env',
     categoryLabel: {
-      en: '3D Simulation & VFX',
-      es: 'Simulación 3D & Gemelos Digitales',
+      en: 'Playable 3D Game & Engine',
+      es: 'Videojuego 3D Jugable & Motor',
     },
-    workClassification: 'enterprise-client',
-    year: '2024 - 2026',
-    engine: 'Unreal Engine 5 & FlexSim',
+    workClassification: 'personal-rnd',
+    year: '2026',
+    engine: 'Three.js / WebGL / TypeScript / React',
     mediaType: 'video',
-    mediaSrc: '/portfolio_assets/digital-twin-campus-standalone.mp4',
-    thumbnailSrc: '/portfolio_assets/digital-twin-campus-thumb.jpg',
+    mediaSrc: '/assets/videos/conveyor-realms-gameplay.mp4',
+    thumbnailSrc: realGameScreenshot,
     mediaNote: {
-      en: "Enterprise digital twin screen capture from Isaac's 64-bit D3D Shader Model 6 Standalone build at Flex: Real-time Guadalajara North campus navigation, building B29 monitoring, machine line telemetry, failure list triage, and live power consumption dashboards.",
-      es: 'Grabación de pantalla del gemelo digital corporativo desde el build Standalone de 64 bits (D3D Shader Model 6) de Isaac en Flex: Navegación del campus Guadalajara Norte, monitoreo del edificio B29, telemetría de líneas de producción, lista de fallas y dashboards de consumo energético en tiempo real.',
+      en: 'Real gameplay video capture of Conveyor Realms (Tile Absorber 3D) engineered by Isaac Gómez Estrada in Three.js with orthogonal conveyor tracks, 3-tier wildcards, chain bombs/rainbows, and Supabase cloud leaderboards. Audio Credits: +1 (809) 716-1036 Rafael Espada.',
+      es: 'Video de gameplay real de Conveyor Realms (Tile Absorber 3D) desarrollado por Isaac Gómez Estrada en Three.js con pistas ortogonales, comodines de 3 tiers, fichas explosivas/arcoiris en cadena y rankings en Supabase. Créditos de Audio: +1 (809) 716-1036 Rafael Espada.',
     },
     description: {
-      en: 'High-precision real-time 3D Digital Twin of industrial manufacturing facilities engineered with Unreal Engine 5, D3D Shader Model 6, and Arch FlexSim. Features interactive campus navigation (Guadalajara North campus), building-level telemetry (B29), real-time machine utilization dashboards, line failure alerts (AOI Zenith, Vitrox, Heller Reflow Oven), throughput tracking, yield metrics, and power consumption monitoring for Fortune 500 enterprise operations.',
-      es: 'Gemelo Digital 3D en tiempo real de alta precisión para instalaciones de manufactura industrial desarrollado con Unreal Engine 5, D3D Shader Model 6 y Arch FlexSim. Incluye navegación interactiva de campus (Campus Guadalajara Norte), telemetría a nivel de edificio (B29), tableros de utilización de maquinaria en tiempo real, alertas y triage de fallas (AOI Zenith, Vitrox, Horno de Reflujo Heller), seguimiento de rendimiento de producción (Yield, Throughput) y monitoreo de consumo eléctrico para operaciones corporativas Fortune 500.',
+      en: 'A high-speed 3D spatial puzzle-action game designed, architected, and built from scratch. Features color-coded autonomous runners patrolling an isometric floating tile grid on elevated conveyor belts, 9 procedural WebGL biomes, and cloud leaderboards. Audio Credits: +1 (809) 716-1036 Rafael Espada.',
+      es: 'Videojuego de puzzle-acción espacial en 3D diseñado, arquitecturado e implementado desde cero. Incluye runners autónomos por color sobre bandas transportadoras elevadas, absorción perimetral expuesta, 9 biomas WebGL y rankings en Supabase. Créditos de Audio: +1 (809) 716-1036 Rafael Espada.',
     },
     highlights: {
       en: [
-        'Standalone 64-bit D3D Shader Model 6 executable build running interactive campus flythrough',
-        'Live IoT telematics integration: Temperature, Humidity, Energy, Water & Nitrogen consumption tracking',
-        'Machine-level inspection (SIPLACE, AOI Zenith, Vitrox, Heller Reflow Oven) with live yield & failure triage',
-        'Real-time power consumption gauge dashboard and workstation multi-monitor telemetry center setup',
-        'Automated bottleneck detection & predictive simulation of automated lines prior to physical deployment',
+        'Autonomous 3D Runners & Orthogonal Conveyor Loop: Directional path routing with color queue state machine and collision detection',
+        'Exposed-Edge Tile Absorption Algorithm: Evaluates real-time obstruction masks so only unblocked outer-tier tiles can be absorbed',
+        'Special Bomb & Rainbow Tiles + 3-Tier Wildcards: Explosive chain clearing and tactical trade-off skills',
+        'Dynamic Streak XP & Star Ratings: Exponential combo multipliers, 3-star ratings, and 9 procedural WebGL biomes',
+        '5-Heart Life & Death Economy: 5-slot queue overflow penalty, 20-minute regeneration clock, and emergency rescue',
+        'Audio Credits: +1 (809) 716-1036 Rafael Espada · Cloud Highscore & Session Caching via Supabase',
       ],
       es: [
-        'Build ejecutable Standalone de 64 bits en D3D Shader Model 6 con navegación interactiva por todo el campus',
-        'Integración telemática de sensores IoT en vivo: temperatura, humedad, energía, agua y nitrógeno',
-        'Inspección detallada de maquinaria (SIPLACE, AOI Zenith, Vitrox, Horno Heller) con yield y reporte de fallas en vivo',
-        'Dashboard de consumo de energía con indicadores en tiempo real y estación de trabajo multi-monitor de telemetría',
-        'Detección predictiva de cuellos de botella y simulación de líneas automatizadas antes de su despliegue físico',
+        'Runners 3D Autónomos y Circuito Ortogonal: Ruteo direccional con máquina de estados de cola y trazado de colisiones',
+        'Algoritmo de Absorción Perimetral Expuesta: Evalúa obstrucciones en tiempo real para liberar piezas de afuera hacia adentro',
+        'Fichas Bomba & Arcoiris + Comodines de 3 Tiers: Detonación en cadena y habilidades tácticas evolutivas',
+        'XP Dinámica por Rachas y Estrellas: Multiplicadores de combo, evaluación de 1 a 3 estrellas y 9 biomas procedurales',
+        'Economía de Vida y Muerte de 5 Corazones: Control de saturación de cola, regeneración de 20 min y rescate de emergencia',
+        'Créditos de Audio: +1 (809) 716-1036 Rafael Espada · Récord Global en Supabase y Caché Offline',
       ],
     },
     techStack: [
-      'Unreal Engine 5',
-      'Arch FlexSim',
-      'D3D Shader Model 6',
-      'Industrial IoT',
-      'Digital Twins',
-      'Real-Time Telemetry',
-      'C++ / Blueprints',
-      'VR Simulation',
+      'Three.js',
+      'WebGL',
+      'TypeScript',
+      'React 19',
+      'Supabase Cloud',
+      'Procedural Shaders',
+      'Web Audio API',
+      'Audio: Rafael Espada',
     ],
-    galleryImages: [
-      {
-        src: '/portfolio_assets/digital-twin-workstation-setup.jpg',
-        caption: {
-          en: 'Engineering workstation setup: Real-time building power consumption meters, thermal heatmap, and live 3D production line viewport in Unreal Engine.',
-          es: 'Estación de trabajo de ingeniería: Medidores de consumo eléctrico en tiempo real, mapa de calor térmico y viewport 3D de la línea de producción en Unreal Engine.',
-        },
-      },
-      {
-        src: '/portfolio_assets/digital-twin-campus-thumb.jpg',
-        caption: {
-          en: 'Guadalajara North Campus 3D overview with building markers (B-1, B-28, B-29) and interactive view controls.',
-          es: 'Vista general 3D del Campus Guadalajara Norte con marcadores de edificios (B-1, B-28, B-29) y controles de navegación interactiva.',
-        },
-      },
-    ],
-    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
-    externalLabel: {
-      en: 'View Portfolio Drive Folder',
-      es: 'Ver Carpeta de Portafolio en Drive',
+    featured: true,
+  },
+  {
+    id: 'fish-feeder-3d',
+    title: {
+      en: 'Fish Feeder 3D (Coral Cove Ocean Edition)',
+      es: 'Fish Feeder 3D (Edición Oceánica Coral Cove)',
     },
+    subtitle: {
+      en: 'Procedural Marine Species, 3-Layer Pearl Shields & Aquatic Conveyor Mechanics',
+      es: 'Especies Marinas Procedurales, Perlas con Escudos de 3 Capas y Mecánicas Oceánicas',
+    },
+    category: 'virtual-env',
+    categoryLabel: {
+      en: 'Playable 3D Marine Puzzle',
+      es: 'Puzzle Marino 3D Jugable',
+    },
+    workClassification: 'personal-rnd',
+    year: '2026',
+    engine: 'Three.js / WebGL / Procedural Fauna',
+    mediaType: 'video',
+    mediaSrc: '/assets/videos/fish-feeder-gameplay.mp4',
+    thumbnailSrc: '/assets/worlds/coral_cove.jpg',
+    mediaNote: {
+      en: 'Real gameplay video capture of Fish Feeder 3D: procedural swimming fish (Clownfish, Blue Tang, Angler, Axolotl, Puffer, Lionfish, Sea Turtle, Betta), 3-layer iridescent pearl shields, and aquatic power-ups. Audio Credits: +1 (809) 716-1036 Rafael Espada.',
+      es: 'Video de gameplay real de Fish Feeder 3D: peces procedurales en 3D (Payaso, Cirujano, Pez Rape, Ajolote, Globo, León, Tortuga, Betta), perlas iridiscentes con escudos de 3 capas y comodines acuáticos. Créditos de Audio: +1 (809) 716-1036 Rafael Espada.',
+    },
+    description: {
+      en: 'An aquatic companion edition built atop the custom Three.js conveyor engine. Players deploy color-coded 3D fish onto a luminous ocean reef current to devour exposed pearls, crack 3-layer protective sea-shields, and master underwater tempo. Audio Credits: +1 (809) 716-1036 Rafael Espada.',
+      es: 'Edición acuática construida sobre el motor personalizado en Three.js. Los jugadores despliegan peces 3D codificados por color sobre una corriente marina para absorber perlas expuestas, quebrar escudos de hasta 3 capas y dominar el ritmo submarino. Créditos de Audio: +1 (809) 716-1036 Rafael Espada.',
+    },
+    highlights: {
+      en: [
+        '8 Procedural 3D Marine Species: Individually sculpted geometries in FofMeshFactory with sinusoidal tail-wag locomotion',
+        'Dynamic Pearls & 3-Layer Bubble Shields: Multi-hit protective shells that shatter progressively as outer pearls are fed',
+        'Aquatic Power-Ups & Chain Pearls: Bubble-breaker shockwaves, sonar wave slowdown, and prismatic rainbow fish',
+        'Audio Credits: +1 (809) 716-1036 Rafael Espada · Underwater Sound Synthesis & Supabase Leaderboards',
+      ],
+      es: [
+        '8 Especies Marinas Procedurales en 3D: Geometrías escultóricas en FofMeshFactory con nado sinusoidal en aleta y cola',
+        'Perlas Dinámicas & Escudos de 3 Capas: Burbujas protectoras multicapa que se fracturan al despejar el perímetro',
+        'Comodines Acuáticos & Perlas en Cadena: Pulso rompe-burbujas, calma oceánica y pez prismático universal',
+        'Créditos de Audio: +1 (809) 716-1036 Rafael Espada · Síntesis Sonora Acuática y Récords en Supabase',
+      ],
+    },
+    techStack: [
+      'Three.js',
+      'Procedural 3D Fauna',
+      'TypeScript',
+      'Web Audio API',
+      'Supabase Cloud',
+      'Audio: Rafael Espada',
+    ],
     featured: true,
   },
   {
@@ -778,14 +776,14 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     featured: true,
   },
   {
-    id: 'unreal-editor-project4',
+    id: 'class-sim',
     title: {
-      en: 'Unreal Engine Scene Assembly & Level Construction',
-      es: 'Montaje de Escenarios y Construcción de Niveles en Unreal Engine',
+      en: 'ClassSim - Interactive Classroom Virtual Simulation',
+      es: 'ClassSim - Simulación Virtual Interactiva de Aulas',
     },
     subtitle: {
-      en: 'Lighting Setup, Material Instances & Viewport Profiling',
-      es: 'Iluminación, Instancias de Materiales y Perfilado en Viewport',
+      en: 'Spatial Presence & Interactive Education Environment',
+      es: 'Presencia Espacial y Entorno Interactivo de Educación',
     },
     category: 'virtual-env',
     categoryLabel: {
@@ -794,30 +792,34 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     },
     workClassification: 'personal-rnd',
     year: '2020',
-    engine: 'Unreal Editor',
-    mediaType: 'video',
-    mediaSrc: '/portfolio_assets/unreal-editor-workflow.mp4',
+    engine: 'Unreal Engine (Standalone NetMode)',
+    mediaType: 'external',
     mediaNote: {
-      en: "Isaac's personal screen recording inside Unreal Editor: Level assembly, material instancing, lighting building, and viewport profiling.",
-      es: 'Grabación de pantalla personal de Isaac dentro de Unreal Editor: Montaje de nivel, instancias de materiales, cálculo de iluminación y perfilado en viewport.',
+      en: 'Personal interactive 3D virtual environment and spatial navigation study built in Unreal Engine.',
+      es: 'Estudio y entorno virtual 3D interactivo personal de navegación espacial desarrollado en Unreal Engine.',
+    },
+    externalUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
+    externalLabel: {
+      en: 'View Project in Drive Archive',
+      es: 'Ver Proyecto en Carpeta Drive',
     },
     description: {
-      en: 'In-editor level construction session demonstrating asset placement, volumetric fog tuning, static and dynamic light building, and performance profiling across rendering passes.',
-      es: 'Sesión de construcción de nivel en editor demostrando colocación de assets, niebla volumétrica, cálculo de iluminación estática y dinámica, y perfilado de rendimiento en passes de render.',
+      en: 'Interactive 3D simulation of an academic auditorium and classroom setting designed for training, multi-perspective spatial awareness, and interactive virtual navigation.',
+      es: 'Simulación 3D interactiva de un auditorio y aula académica diseñada para capacitación, conciencia espacial multiperspectiva y navegación virtual interactiva.',
     },
     highlights: {
       en: [
-        'Material instance parameters tuning for physically based rendering (PBR)',
-        'Draw call and polygon budget optimization for target platforms',
-        'Real-time editor viewport profiling and debugging',
+        'Interactive first-person controller with collision geometry and sightline testing',
+        'Realistic architectural scaling, natural light bounce, and seating arrangements',
+        'Optimized standalone Windows build for lightweight distribution',
       ],
       es: [
-        'Ajuste fino de instancias de materiales para renderizado basado en física (PBR)',
-        'Optimización de presupuesto de polígonos y draw calls para plataformas de destino',
-        'Depuración y perfilado de rendimiento en tiempo real en viewport del editor',
+        'Controlador interactivo en primera persona con geometría de colisión y análisis visual',
+        'Escala arquitectónica realista, rebote de luz natural y distribución ergonómica',
+        'Build ejecutable Standalone para Windows altamente optimizado para distribución ligera',
       ],
     },
-    techStack: ['Unreal Engine', 'Level Design', 'PBR Materials', 'Profiling & Optimization'],
+    techStack: ['Unreal Engine', 'Architectural Visualization', 'Standalone Build', 'C++ / Blueprints'],
   },
   {
     id: 'concept-artworks',
@@ -835,7 +837,7 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       es: 'Arte Conceptual & Desarrollo Visual',
     },
     workClassification: 'personal-rnd',
-    year: '2018 - 2022',
+    year: '2018 – 2022',
     engine: 'Photoshop / Digital Painting',
     mediaType: 'image',
     mediaSrc: '/portfolio_assets/concept-artwork-1.png',
@@ -943,8 +945,8 @@ export function PortfolioView({
             <Sparkles className="w-3.5 h-3.5 text-sky-400" />
             <span>
               {isEn
-                ? 'Interactive Virtual Environments & AAA Real-Time 3D'
-                : 'Entornos Virtuales Interactivos & 3D en Tiempo Real'}
+                ? 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer'
+                : 'Senior Technical Artist & Ingeniero C++ / Unreal Engine 5'}
             </span>
           </div>
 
@@ -952,20 +954,22 @@ export function PortfolioView({
             Isaac Gómez Estrada
           </h1>
 
+          <p className="text-sm sm:text-base font-bold text-sky-300 tracking-wide">
+            {isEn
+              ? 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer'
+              : 'Senior Technical Artist & Ingeniero C++ / Unreal Engine 5'}
+          </p>
+
           <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal">
             {isEn ? (
               <>
-                <span className="text-amber-400 font-semibold">32-year-old engineer</span> dedicated since{' '}
-                <span className="text-sky-300 font-semibold">2018</span> to creating interactive virtual environments,
-                Unreal Engine simulations, and high-performance 3D graphics. Credited on shipped AAA sports titles verified
-                on MobyGames.
+                <span className="text-amber-400 font-semibold">Senior Technical Artist &amp; C++ / Unreal Engine 5 Engineer</span>{' '}
+                with <span className="text-sky-300 font-semibold">8+ years of experience (since 2018)</span> engineering C++ gameplay/simulation systems, interactive virtual environments, Unreal Engine 5 Digital Twins, and high-performance 3D graphics. Credited on shipped AAA sports titles verified on MobyGames.
               </>
             ) : (
               <>
-                <span className="text-amber-400 font-semibold">Ingeniero de 32 años</span> dedicado desde{' '}
-                <span className="text-sky-300 font-semibold">2018</span> a la creación de entornos virtuales interactivos,
-                simulaciones en Unreal Engine y gráficos 3D de alto rendimiento. Acreditado en títulos deportivos AAA lanzados
-                al mercado y verificados en MobyGames.
+                <span className="text-amber-400 font-semibold">Senior Technical Artist &amp; Ingeniero C++ / Unreal Engine 5</span>{' '}
+                con <span className="text-sky-300 font-semibold">más de 8 años de experiencia (desde 2018)</span> desarrollando sistemas en C++, entornos virtuales interactivos, Gemelos Digitales en Unreal Engine 5 y gráficos 3D de alto rendimiento. Acreditado en títulos deportivos AAA lanzados al mercado y verificados en MobyGames.
               </>
             )}
           </p>
@@ -1129,6 +1133,317 @@ export function PortfolioView({
         </div>
       </section>
 
+      {/* FEATURED PORTFOLIO & TECHNICAL SHOWCASES (Top Priority Order) */}
+      <section className="space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              {isEn ? 'Featured Portfolio & C++ / Unreal Engine 5 Showcases' : 'Portafolio Destacado & Proyectos C++ / Unreal Engine 5'}
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500">
+              {isEn
+                ? 'Flagship AAA shipped credits, Fortune 500 UE5 Digital Twins, C++ R&D, and interactive 3D engines.'
+                : 'Créditos AAA publicados, Gemelos Digitales UE5 Fortune 500, I+D en C++ y motores 3D interactivos.'}
+            </p>
+          </div>
+        </div>
+
+        {/* Category Filter Controls */}
+        <div className="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-3">
+          <div className="flex items-center gap-1.5 overflow-x-auto py-1 text-xs">
+            {categories.map((cat) => {
+              const Icon = cat.icon;
+              const active = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all shrink-0 ${
+                    active
+                      ? 'bg-slate-900 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 bg-white border border-slate-200'
+                  }`}
+                >
+                  <Icon className={`w-3.5 h-3.5 ${active ? 'text-sky-400' : 'text-slate-500'}`} />
+                  <span>{cat.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <span className="text-xs text-slate-500 font-medium">
+            {isEn ? (
+              <>Showing <strong>{filteredProjects.length}</strong> project showcases</>
+            ) : (
+              <>Mostrando <strong>{filteredProjects.length}</strong> proyectos</>
+            )}
+          </span>
+        </div>
+
+        {/* Projects Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredProjects.map((project) => {
+            const title = project.title[language] || project.title.en;
+            const categoryLabel = project.categoryLabel[language] || project.categoryLabel.en;
+            const description = project.description[language] || project.description.en;
+
+            const isAaa = project.workClassification === 'aaa-studio';
+            const isPersonalRnd = project.workClassification === 'personal-rnd';
+            const isEnterprise = project.workClassification === 'enterprise-client';
+            const isProprietary = project.workClassification === 'proprietary-platform';
+
+            const badgeLabel = isAaa
+              ? (isEn ? 'AAA Studio (NDA)' : 'Estudio AAA (NDA)')
+              : isPersonalRnd
+              ? (isEn ? 'Personal R&D' : 'I+D Personal')
+              : isProprietary
+              ? (isEn ? 'Proprietary Platform' : 'Plataforma Propia')
+              : (isEn ? 'Enterprise (NDA)' : 'Corporativo (NDA)');
+
+            const mediaBadgeText = project.youtubeId
+              ? (isEn ? 'Official Gameplay Broadcast' : 'Transmisión Oficial AAA')
+              : isProprietary
+              ? (isEn ? 'Live Production SaaS' : 'Producción en Vivo (SaaS)')
+              : project.mediaSrc
+              ? (isEn ? "Isaac's Screen Recording" : 'Grabación de Pantalla (Isaac)')
+              : (isEn ? 'Project Showcase' : 'Muestra del Proyecto');
+
+            return (
+              <div
+                key={project.id}
+                className="group bg-white rounded-2xl border border-slate-200/90 hover:border-sky-500 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden"
+              >
+                {/* Project Media Preview Area */}
+                <div className="relative aspect-video bg-slate-950 flex items-center justify-center overflow-hidden">
+                  {project.mediaType === 'video' && (project.mediaSrc || project.youtubeId) ? (
+                    <div
+                      className="w-full h-full relative cursor-pointer bg-slate-950"
+                      onClick={() => openProjectModal(project)}
+                    >
+                      {project.mediaSrc && !videoErrors[project.id] ? (
+                        <video
+                          src={encodeURI(project.mediaSrc)}
+                          autoPlay
+                          muted
+                          playsInline
+                          loop
+                          preload="metadata"
+                          onError={() => setVideoErrors((prev) => ({ ...prev, [project.id]: true }))}
+                          className="w-full h-full object-contain bg-slate-950 opacity-90 group-hover:opacity-100 transition-opacity"
+                        />
+                      ) : project.youtubeId ? (
+                        <div className="w-full h-full relative overflow-hidden">
+                          <img
+                            src={project.thumbnailSrc || `https://img.youtube.com/vi/${project.youtubeId}/hqdefault.jpg`}
+                            alt={title}
+                            className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
+                            onError={(e) => {
+                              if (project.youtubeId && !e.currentTarget.src.includes('hqdefault')) {
+                                e.currentTarget.src = `https://img.youtube.com/vi/${project.youtubeId}/hqdefault.jpg`;
+                              }
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex flex-col items-center justify-center p-4 text-center">
+                          <div className="w-11 h-11 rounded-xl bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-400 mb-2">
+                            <Film className="w-5 h-5" />
+                          </div>
+                          <span className="text-white text-xs font-bold line-clamp-1">{title}</span>
+                          <span className="text-sky-300 text-[10px] font-mono mt-0.5 line-clamp-1">
+                            {project.mediaSrc ? project.mediaSrc.split('/').pop() : project.engine}
+                          </span>
+                        </div>
+                      )}
+
+                      <div
+                        className={`absolute top-2.5 left-3 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shadow ${
+                          isAaa
+                            ? 'bg-amber-500 text-slate-950'
+                            : isPersonalRnd
+                            ? 'bg-sky-500 text-slate-950'
+                            : isProprietary
+                            ? 'bg-cyan-400 text-slate-950'
+                            : 'bg-emerald-500 text-slate-950'
+                        }`}
+                      >
+                        {isAaa && <Trophy className="w-3 h-3" />}
+                        {isPersonalRnd && <Monitor className="w-3 h-3" />}
+                        {isProprietary && <Globe className="w-3 h-3" />}
+                        {isEnterprise && <Building2 className="w-3 h-3" />}
+                        <span>{mediaBadgeText}</span>
+                      </div>
+
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className="w-12 h-12 rounded-full bg-sky-600/90 text-white flex items-center justify-center shadow-lg group-hover:bg-sky-500 group-hover:scale-110 transition-all">
+                          <Play className="w-5 h-5 ml-0.5" />
+                        </div>
+                      </div>
+                      <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1 pointer-events-none">
+                        <Film className="w-3 h-3 text-sky-400" />
+                        <span>{project.youtubeId ? (isEn ? 'Watch Official Video' : 'Ver Transmisión Oficial') : (isEn ? 'Watch Screen Recording' : 'Ver Grabación de Pantalla')}</span>
+                      </span>
+                    </div>
+                  ) : project.mediaType === 'image' && project.mediaSrc ? (
+                    <div
+                      className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500 bg-slate-950 flex items-center justify-center overflow-hidden"
+                      onClick={() => openProjectModal(project)}
+                    >
+                      <img
+                        src={project.mediaSrc}
+                        alt={title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div
+                        className={`absolute top-2.5 left-3 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shadow ${
+                          isProprietary
+                            ? 'bg-cyan-400 text-slate-950'
+                            : isEnterprise
+                            ? 'bg-emerald-500 text-slate-950'
+                            : 'bg-pink-500 text-slate-950'
+                        }`}
+                      >
+                        {isProprietary || isEnterprise ? <Globe className="w-3 h-3" /> : <Sparkles className="w-3 h-3" />}
+                        <span>
+                          {isProprietary
+                            ? isEn
+                              ? 'Live Production SaaS'
+                              : 'Plataforma en Vivo (SaaS)'
+                            : isEnterprise
+                            ? isEn
+                              ? 'Live Platform UI'
+                              : 'Interfaz en Vivo'
+                            : isEn
+                            ? 'Visual Art'
+                            : 'Arte Visual'}
+                        </span>
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
+                      <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1 pointer-events-none">
+                        <ExternalLink className="w-3 h-3 text-sky-400" />
+                        <span>{isEn ? 'View Platform Showcase' : 'Ver Interfaz & Detalles'}</span>
+                      </span>
+                    </div>
+                  ) : (
+                    <div
+                      className="w-full h-full relative flex flex-col items-center justify-center p-6 text-center cursor-pointer bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900"
+                      onClick={() => setActiveModalProject(project)}
+                    >
+                      {isAaa ? (
+                        <Trophy className="w-12 h-12 text-amber-400 mb-2 animate-bounce" />
+                      ) : (
+                        <Globe className="w-12 h-12 text-sky-400 mb-2" />
+                      )}
+                      <h3 className="text-white font-bold text-sm">{title}</h3>
+                      <p className="text-xs text-slate-300 mt-1">{project.engine}</p>
+                      <span className="mt-3 text-[11px] font-semibold text-sky-300 underline decoration-sky-400">
+                        {isEn ? 'Explore Details & Verification' : 'Explorar Detalles y Créditos'}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="absolute top-2.5 right-2.5 z-10">
+                    <span className="text-[10px] font-bold text-white bg-slate-900/90 backdrop-blur-xs px-2 py-1 rounded-md border border-slate-700/80">
+                      {project.engine}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Project Content */}
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-[11px] text-slate-500">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-sky-700">{categoryLabel}</span>
+                        <span className="text-slate-300">•</span>
+                        <span
+                          className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                            isAaa
+                              ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                              : isPersonalRnd
+                              ? 'bg-sky-100 text-sky-900 border border-sky-300'
+                              : isProprietary
+                              ? 'bg-cyan-100 text-cyan-900 border border-cyan-300'
+                              : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+                          }`}
+                        >
+                          {isAaa && <ShieldCheck className="w-2.5 h-2.5" />}
+                          {isPersonalRnd && <Monitor className="w-2.5 h-2.5" />}
+                          {isProprietary && <Globe className="w-2.5 h-2.5" />}
+                          {isEnterprise && <Building2 className="w-2.5 h-2.5" />}
+                          <span>{badgeLabel}</span>
+                        </span>
+                      </div>
+                      <span>{project.year}</span>
+                    </div>
+
+                    <h3
+                      onClick={() => setActiveModalProject(project)}
+                      className="text-base font-bold text-slate-900 group-hover:text-sky-600 transition-colors cursor-pointer leading-snug"
+                    >
+                      {title}
+                    </h3>
+
+                    <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
+                      {description}
+                    </p>
+
+                    {project.mediaNote && (
+                      <p className="text-[11px] text-slate-500 italic border-l-2 pl-2 border-slate-300 leading-normal">
+                        {project.mediaNote[language] || project.mediaNote.en}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-3 pt-2 border-t border-slate-100">
+                    <div className="flex flex-wrap gap-1.5">
+                      {project.techStack.slice(0, 4).map((tech, idx) => (
+                        <span
+                          key={idx}
+                          className="text-[10px] bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded-md"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                      {project.techStack.length > 4 && (
+                        <span className="text-[10px] text-slate-400 font-medium px-1">
+                          +{project.techStack.length - 4} {isEn ? 'more' : 'más'}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => setActiveModalProject(project)}
+                        className="text-xs font-bold text-sky-600 hover:text-sky-800 flex items-center gap-1 transition-colors"
+                      >
+                        <span>{isEn ? 'View Showcase' : 'Ver Detalles'}</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+
+                      {project.externalUrl && (
+                        <a
+                          href={project.externalUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-1 transition-colors"
+                        >
+                          <span>{isEn ? 'External' : 'Enlace'}</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
       {/* DEDICATED SHOWCASE SECTION: Tile Absorber 3D (Cyber Frontier) */}
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white border-2 border-cyan-500/30 p-6 sm:p-8 md:p-10 shadow-2xl">
         {/* Glowing atmospheric backdrop */}
@@ -1162,13 +1477,15 @@ export function PortfolioView({
                   <>
                     An original 3D spatial puzzle-action game designed, architected, and coded from scratch by Isaac Gómez Estrada.
                     Combines high-framerate Three.js WebGL graphics, orthogonal conveyor loops, queue state machines, an evolving
-                    3-tier tactical wildcard economy, and real-time cloud leaderboards with Supabase.
+                    3-tier tactical wildcard economy, and real-time cloud leaderboards with Supabase.{' '}
+                    <span className="text-amber-300 font-semibold">Audio Credits: +1 (809) 716-1036 Rafael Espada.</span>
                   </>
                 ) : (
                   <>
                     Videojuego original de puzzle-acción espacial en 3D diseñado, arquitecturado y programado desde cero por Isaac Gómez Estrada.
                     Combina gráficos WebGL en Three.js a 60 FPS, circuitos de cintas transportadoras ortogonales, máquinas de estados de cola,
-                    economía de comodines tácticos en 3 tiers y tablas de clasificación en tiempo real con Supabase.
+                    economía de comodines tácticos en 3 tiers y tablas de clasificación en tiempo real con Supabase.{' '}
+                    <span className="text-amber-300 font-semibold">Créditos de Audio: +1 (809) 716-1036 Rafael Espada.</span>
                   </>
                 )}
               </p>
@@ -1569,13 +1886,15 @@ export function PortfolioView({
                   <>
                     An aquatic 3D puzzle showcase built on top of the custom Three.js conveyor engine.
                     Procedural fish species swim along a glowing coral reef current to devour shimmering multi-layer pearls,
-                    pop underwater bubble shields, and unleash 3-tier ocean power-ups with procedural wave sound synthesis.
+                    pop underwater bubble shields, and unleash 3-tier ocean power-ups with procedural wave sound synthesis.{' '}
+                    <span className="text-amber-300 font-semibold">Audio Credits: +1 (809) 716-1036 Rafael Espada.</span>
                   </>
                 ) : (
                   <>
                     Muestra interactiva acuática en 3D construida sobre el motor personalizado en Three.js.
                     Especies marinas procedurales nadan alrededor de una corriente luminosa de arrecife para devorar perlas dinámicas,
-                    romper escudos de burbujas de hasta 3 capas y desplegar comodines oceánicos con síntesis sonora en tiempo real.
+                    romper escudos de burbujas de hasta 3 capas y desplegar comodines oceánicos con síntesis sonora en tiempo real.{' '}
+                    <span className="text-amber-300 font-semibold">Créditos de Audio: +1 (809) 716-1036 Rafael Espada.</span>
                   </>
                 )}
               </p>
@@ -1848,305 +2167,6 @@ export function PortfolioView({
           </div>
         </div>
       </section>
-
-      {/* Category Filter Controls */}
-      <div className="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200 pb-3">
-        <div className="flex items-center gap-1.5 overflow-x-auto py-1 text-xs">
-          {categories.map((cat) => {
-            const Icon = cat.icon;
-            const active = selectedCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all shrink-0 ${
-                  active
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 bg-white border border-slate-200'
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${active ? 'text-sky-400' : 'text-slate-500'}`} />
-                <span>{cat.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        <span className="text-xs text-slate-500 font-medium">
-          {isEn ? (
-            <>Showing <strong>{filteredProjects.length}</strong> project showcases</>
-          ) : (
-            <>Mostrando <strong>{filteredProjects.length}</strong> proyectos</>
-          )}
-        </span>
-      </div>
-
-      {/* Projects Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredProjects.map((project) => {
-          const title = project.title[language] || project.title.en;
-          const subtitle = project.subtitle[language] || project.subtitle.en;
-          const categoryLabel = project.categoryLabel[language] || project.categoryLabel.en;
-          const description = project.description[language] || project.description.en;
-
-          const isAaa = project.workClassification === 'aaa-studio';
-          const isPersonalRnd = project.workClassification === 'personal-rnd';
-          const isEnterprise = project.workClassification === 'enterprise-client';
-          const isProprietary = project.workClassification === 'proprietary-platform';
-
-          const badgeLabel = isAaa
-            ? (isEn ? 'AAA Studio (NDA)' : 'Estudio AAA (NDA)')
-            : isPersonalRnd
-            ? (isEn ? 'Personal R&D' : 'I+D Personal')
-            : isProprietary
-            ? (isEn ? 'Proprietary Platform' : 'Plataforma Propia')
-            : (isEn ? 'Enterprise (NDA)' : 'Corporativo (NDA)');
-
-          const mediaBadgeText = project.youtubeId
-            ? (isEn ? 'Official Gameplay Broadcast' : 'Transmisión Oficial AAA')
-            : isProprietary
-            ? (isEn ? 'Live Production SaaS' : 'Producción en Vivo (SaaS)')
-            : project.mediaSrc
-            ? (isEn ? "Isaac's Screen Recording" : 'Grabación de Pantalla (Isaac)')
-            : (isEn ? 'Project Showcase' : 'Muestra del Proyecto');
-
-          return (
-            <div
-              key={project.id}
-              className="group bg-white rounded-2xl border border-slate-200/90 hover:border-sky-500 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden"
-            >
-              {/* Project Media Preview Area */}
-              <div className="relative aspect-video bg-slate-950 flex items-center justify-center overflow-hidden">
-                {project.mediaType === 'video' && (project.mediaSrc || project.youtubeId) ? (
-                  <div
-                    className="w-full h-full relative cursor-pointer bg-slate-950"
-                    onClick={() => openProjectModal(project)}
-                  >
-                    {project.mediaSrc && !videoErrors[project.id] ? (
-                      <video
-                        src={encodeURI(project.mediaSrc)}
-                        autoPlay
-                        muted
-                        playsInline
-                        loop
-                        preload="metadata"
-                        onError={() => setVideoErrors((prev) => ({ ...prev, [project.id]: true }))}
-                        className="w-full h-full object-contain bg-slate-950 opacity-90 group-hover:opacity-100 transition-opacity"
-                      />
-                    ) : project.youtubeId ? (
-                      <div className="w-full h-full relative overflow-hidden">
-                        <img
-                          src={project.thumbnailSrc || `https://img.youtube.com/vi/${project.youtubeId}/hqdefault.jpg`}
-                          alt={title}
-                          className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
-                          onError={(e) => {
-                            if (project.youtubeId && !e.currentTarget.src.includes('hqdefault')) {
-                              e.currentTarget.src = `https://img.youtube.com/vi/${project.youtubeId}/hqdefault.jpg`;
-                            }
-                          }}
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex flex-col items-center justify-center p-4 text-center">
-                        <div className="w-11 h-11 rounded-xl bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-400 mb-2">
-                          <Film className="w-5 h-5" />
-                        </div>
-                        <span className="text-white text-xs font-bold line-clamp-1">{title}</span>
-                        <span className="text-sky-300 text-[10px] font-mono mt-0.5 line-clamp-1">
-                          {project.mediaSrc ? project.mediaSrc.split('/').pop() : project.engine}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Classification overlay pill */}
-                    <div
-                      className={`absolute top-2.5 left-3 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shadow ${
-                        isAaa
-                          ? 'bg-amber-500 text-slate-950'
-                          : isPersonalRnd
-                          ? 'bg-sky-500 text-slate-950'
-                          : isProprietary
-                          ? 'bg-cyan-400 text-slate-950'
-                          : 'bg-emerald-500 text-slate-950'
-                      }`}
-                    >
-                      {isAaa && <Trophy className="w-3 h-3" />}
-                      {isPersonalRnd && <Monitor className="w-3 h-3" />}
-                      {isProprietary && <Globe className="w-3 h-3" />}
-                      {isEnterprise && <Building2 className="w-3 h-3" />}
-                      <span>{mediaBadgeText}</span>
-                    </div>
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="w-12 h-12 rounded-full bg-sky-600/90 text-white flex items-center justify-center shadow-lg group-hover:bg-sky-500 group-hover:scale-110 transition-all">
-                        <Play className="w-5 h-5 ml-0.5" />
-                      </div>
-                    </div>
-                    <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1 pointer-events-none">
-                      <Film className="w-3 h-3 text-sky-400" />
-                      <span>{project.youtubeId ? (isEn ? 'Watch Official Video' : 'Ver Transmisión Oficial') : (isEn ? 'Watch Screen Recording' : 'Ver Grabación de Pantalla')}</span>
-                    </span>
-                  </div>
-                ) : project.mediaType === 'image' && project.mediaSrc ? (
-                  <div
-                    className="w-full h-full relative cursor-pointer group-hover:scale-105 transition-transform duration-500 bg-slate-950 flex items-center justify-center overflow-hidden"
-                    onClick={() => openProjectModal(project)}
-                  >
-                    <img
-                      src={project.mediaSrc}
-                      alt={title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div
-                      className={`absolute top-2.5 left-3 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shadow ${
-                        isProprietary
-                          ? 'bg-cyan-400 text-slate-950'
-                          : isEnterprise
-                          ? 'bg-emerald-500 text-slate-950'
-                          : 'bg-pink-500 text-slate-950'
-                      }`}
-                    >
-                      {isProprietary || isEnterprise ? <Globe className="w-3 h-3" /> : <Sparkles className="w-3 h-3" />}
-                      <span>
-                        {isProprietary
-                          ? isEn
-                            ? 'Live Production SaaS'
-                            : 'Plataforma en Vivo (SaaS)'
-                          : isEnterprise
-                          ? isEn
-                            ? 'Live Platform UI'
-                            : 'Interfaz en Vivo'
-                          : isEn
-                          ? 'Visual Art'
-                          : 'Arte Visual'}
-                      </span>
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
-                    <span className="absolute bottom-2.5 left-3 text-[11px] font-medium text-white/90 bg-slate-900/80 px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1 pointer-events-none">
-                      <ExternalLink className="w-3 h-3 text-sky-400" />
-                      <span>{isEn ? 'View Platform Showcase' : 'Ver Interfaz & Detalles'}</span>
-                    </span>
-                  </div>
-                ) : (
-                  <div
-                    className="w-full h-full relative flex flex-col items-center justify-center p-6 text-center cursor-pointer bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900"
-                    onClick={() => setActiveModalProject(project)}
-                  >
-                    {isAaa ? (
-                      <Trophy className="w-12 h-12 text-amber-400 mb-2 animate-bounce" />
-                    ) : (
-                      <Globe className="w-12 h-12 text-sky-400 mb-2" />
-                    )}
-                    <h3 className="text-white font-bold text-sm">{title}</h3>
-                    <p className="text-xs text-slate-300 mt-1">{project.engine}</p>
-                    <span className="mt-3 text-[11px] font-semibold text-sky-300 underline decoration-sky-400">
-                      {isEn ? 'Explore Details & Verification' : 'Explorar Detalles y Créditos'}
-                    </span>
-                  </div>
-                )}
-
-                {/* Engine Badge on top-right */}
-                <div className="absolute top-2.5 right-2.5 z-10">
-                  <span className="text-[10px] font-bold text-white bg-slate-900/90 backdrop-blur-xs px-2 py-1 rounded-md border border-slate-700/80">
-                    {project.engine}
-                  </span>
-                </div>
-              </div>
-
-              {/* Project Content */}
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-[11px] text-slate-500">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-sky-700">{categoryLabel}</span>
-                      <span className="text-slate-300">•</span>
-                      <span
-                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                          isAaa
-                            ? 'bg-amber-100 text-amber-900 border border-amber-300'
-                            : isPersonalRnd
-                            ? 'bg-sky-100 text-sky-900 border border-sky-300'
-                            : isProprietary
-                            ? 'bg-cyan-100 text-cyan-900 border border-cyan-300'
-                            : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                        }`}
-                      >
-                        {isAaa && <ShieldCheck className="w-2.5 h-2.5" />}
-                        {isPersonalRnd && <Monitor className="w-2.5 h-2.5" />}
-                        {isProprietary && <Globe className="w-2.5 h-2.5" />}
-                        {isEnterprise && <Building2 className="w-2.5 h-2.5" />}
-                        <span>{badgeLabel}</span>
-                      </span>
-                    </div>
-                    <span>{project.year}</span>
-                  </div>
-
-                  <h3
-                    onClick={() => setActiveModalProject(project)}
-                    className="text-base font-bold text-slate-900 group-hover:text-sky-600 transition-colors cursor-pointer leading-snug"
-                  >
-                    {title}
-                  </h3>
-
-                  <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
-                    {description}
-                  </p>
-
-                  {project.mediaNote && (
-                    <p className="text-[11px] text-slate-500 italic border-l-2 pl-2 border-slate-300 leading-normal">
-                      {project.mediaNote[language] || project.mediaNote.en}
-                    </p>
-                  )}
-                </div>
-
-                {/* Tech Stack Pills */}
-                <div className="space-y-3 pt-2 border-t border-slate-100">
-                  <div className="flex flex-wrap gap-1.5">
-                    {project.techStack.slice(0, 4).map((tech, idx) => (
-                      <span
-                        key={idx}
-                        className="text-[10px] bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded-md"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                    {project.techStack.length > 4 && (
-                      <span className="text-[10px] text-slate-400 font-medium px-1">
-                        +{project.techStack.length - 4} {isEn ? 'more' : 'más'}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between gap-2 pt-1">
-                    <button
-                      type="button"
-                      onClick={() => setActiveModalProject(project)}
-                      className="text-xs font-bold text-sky-600 hover:text-sky-800 flex items-center gap-1 transition-colors"
-                    >
-                      <span>{isEn ? 'View Showcase' : 'Ver Detalles'}</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </button>
-
-                    {project.externalUrl && (
-                      <a
-                        href={project.externalUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-1 transition-colors"
-                      >
-                        <span>{isEn ? 'External' : 'Enlace'}</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
 
       {/* Callout to CV and About Me */}
       <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">

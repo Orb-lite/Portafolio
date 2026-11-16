@@ -21,6 +21,8 @@ import {
   Activity,
   Clapperboard,
   Tv,
+  Mail,
+  Linkedin,
 } from 'lucide-react';
 
 interface AboutMeViewProps {
@@ -117,7 +119,7 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
         <div className="relative z-10 max-w-4xl space-y-5">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-bold uppercase tracking-wider">
             <Heart className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-            <span>{isEn ? 'Passions, Story & Creative Philosophy' : 'Pasiones, Historia & Filosofía Creativa'}</span>
+            <span>{isEn ? 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer' : 'Senior Technical Artist & Ingeniero C++ / Unreal Engine 5'}</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
@@ -127,17 +129,17 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
           <p className="text-lg sm:text-xl text-slate-200 leading-relaxed font-light">
             {isEn ? (
               <>
-                I am <strong className="text-amber-400 font-semibold">32 years old</strong>, and since{' '}
-                <strong className="text-sky-300 font-semibold">2018</strong> I have dedicated my career and life to the
+                <strong className="text-amber-400 font-semibold">Senior Technical Artist &amp; C++ / Unreal Engine 5 Engineer</strong> with{' '}
+                <strong className="text-sky-300 font-semibold">8+ years of experience (since 2018)</strong> dedicated to the
                 development of <span className="text-white font-medium underline decoration-sky-400 underline-offset-4">interactive virtual environments</span>,
-                real-time 3D simulation, and game engineering.
+                C++ engine architecture, real-time 3D simulation, and AAA game engineering.
               </>
             ) : (
               <>
-                Tengo <strong className="text-amber-400 font-semibold">32 años de edad</strong>, y desde{' '}
-                <strong className="text-sky-300 font-semibold">2018</strong> he dedicado mi carrera y vocación al
+                <strong className="text-amber-400 font-semibold">Senior Technical Artist &amp; Ingeniero C++ / Unreal Engine 5</strong> con{' '}
+                <strong className="text-sky-300 font-semibold">más de 8 años de experiencia (desde 2018)</strong> dedicados al
                 desarrollo de <span className="text-white font-medium underline decoration-sky-400 underline-offset-4">entornos virtuales interactivos</span>,
-                simulación 3D en tiempo real e ingeniería de videojuegos.
+                arquitectura C++, simulación 3D en tiempo real e ingeniería de videojuegos AAA.
               </>
             )}
           </p>
@@ -146,7 +148,7 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
           <div className="flex flex-wrap items-center gap-3 pt-2 text-xs">
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-300">
               <Clock className="w-3.5 h-3.5 text-sky-400" />
-              <span>{isEn ? '32 Years Old · 8+ Years in Virtual Environments' : '32 Años de Edad · 8+ Años en Entornos Virtuales'}</span>
+              <span>{isEn ? '8+ Years of Experience (Since 2018) · C++ & UE5' : '8+ Años de Experiencia (Desde 2018) · C++ & UE5'}</span>
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/70 border border-emerald-800/80 text-emerald-300 font-medium">
               <MapPin className="w-3.5 h-3.5 text-emerald-400" />
@@ -380,12 +382,77 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
         </div>
 
         <div className="relative border-l-2 border-slate-200 ml-4 space-y-8 pl-6">
-          {/* Milestone 1: Education */}
+          {/* Milestone 1 (Most Recent): Flex Digital Twins */}
+          <div className="relative group">
+            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-600 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
+            <div className="space-y-1">
+              <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">
+                {isEn ? 'Jun 2024 – Apr 2026 · Industrial Simulation & Digital Twins' : 'Jun 2024 – Abr 2026 · Simulación Industrial & Gemelos Digitales'}
+              </span>
+              <h3 className="text-base font-bold text-slate-900">
+                {isEn ? 'Senior Technical Artist & C++ / Unreal Engine 5 Specialist at Flex' : 'Senior Technical Artist & Especialista C++ / Unreal Engine 5 en Flex'}
+              </h3>
+              <p className="text-xs font-semibold text-slate-600">
+                {isEn ? 'Zapopan, Jalisco · Manufacturing Digital Twins for Fortune 500 Clients' : 'Zapopan, Jalisco · Gemelos Digitales de Manufactura para Clientes Fortune 500'}
+              </p>
+              <p className="text-xs text-slate-600 leading-relaxed mt-1">
+                {isEn
+                  ? 'Built real-time assembly line Digital Twins in C++ and Unreal Engine 5 with FlexSim, simulated machine failures, optimized thermal spacing, and developed VR training modules for heavy industrial robotics.'
+                  : 'Construyó Gemelos Digitales de líneas de ensamble en tiempo real con C++, Unreal Engine 5 y FlexSim, simuló fallas de maquinaria, optimizó distanciamiento térmico y desarrolló módulos de capacitación en Realidad Virtual para robótica industrial pesada.'}
+              </p>
+            </div>
+          </div>
+
+          {/* Milestone 2: AAA Co-Development */}
+          <div className="relative group">
+            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-amber-500 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
+            <div className="space-y-1">
+              <span className="text-[11px] font-bold text-amber-800 uppercase tracking-wider">
+                {isEn ? 'Jan 2022 – Aug 2023 · AAA Co-Development' : 'Ene 2022 – Ago 2023 · Co-Desarrollo de Videojuegos AAA'}
+              </span>
+              <h3 className="text-base font-bold text-slate-900">
+                {isEn ? 'Technical Artist at DEVBOT (AAA Sports Games)' : 'Artista Técnico en DEVBOT (Videojuegos Deportivos AAA)'}
+              </h3>
+              <p className="text-xs font-semibold text-slate-600">
+                {isEn ? 'Shipped Credit on EA Sports College Football 25' : 'Crédito Lanzado en EA Sports College Football 25'}
+              </p>
+              <p className="text-xs text-slate-600 leading-relaxed mt-1">
+                {isEn
+                  ? 'Built and stabilized initial playable builds in Frostbite Engine, handled interactive UI/UX and C++ pipelines, and managed Perforce branches and Jenkins builds under strict enterprise confidentiality standards.'
+                  : 'Construyó y estabilizó los primeros builds jugables en el motor Frostbite, implementó UI/UX interactiva y pipelines en C++, y gestionó ramas en Perforce e integración continua con Jenkins bajo estrictos estándares de confidencialidad.'}
+              </p>
+            </div>
+          </div>
+
+          {/* Milestone 3: Virtual Environments & Real-Time Simulation */}
+          <div className="relative group">
+            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-indigo-600 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
+            <div className="space-y-1">
+              <span className="text-[11px] font-bold text-indigo-700 uppercase tracking-wider">
+                {isEn ? 'Aug 2018 – Aug 2021 · Virtual Environments & Real-Time Simulation' : 'Ago 2018 – Ago 2021 · Entornos Virtuales & Simulación en Tiempo Real'}
+              </span>
+              <h3 className="text-base font-bold text-slate-900">
+                {isEn
+                  ? 'Technical Artist & C++ / Unreal Engine Developer'
+                  : 'Artista Técnico & Desarrollador C++ / Unreal Engine'}
+              </h3>
+              <p className="text-xs font-semibold text-slate-600">
+                {isEn ? 'Navi 3D, Spinar Plus, Larva Game Studios & Independent R&D' : 'Navi 3D, Spinar Plus, Larva Game Studios & I+D Independiente'}
+              </p>
+              <p className="text-xs text-slate-600 leading-relaxed mt-1">
+                {isEn
+                  ? 'Engineered C++ Multiplayer Server Replication, Custom UE5 Editor Tools, classroom simulators (ClassSim), stylized NPR worlds (Acuarela), procedural terrain (RWGen), real estate showrooms, and government water conservation simulations.'
+                  : 'Desarrolló replicación multijugador en C++, herramientas personalizadas para Unreal Editor, simuladores de aula (ClassSim), shaders NPR (Acuarela), terreno procedimental (RWGen), recorridos 3D inmobiliarios y simulaciones interactivas gubernamentales.'}
+              </p>
+            </div>
+          </div>
+
+          {/* Milestone 4: Education */}
           <div className="relative group">
             <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-sky-600 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
             <div className="space-y-1">
               <span className="text-[11px] font-bold text-sky-700 uppercase tracking-wider">
-                {isEn ? '2013 - 2018 · Higher Education' : '2013 - 2018 · Formación Universitaria'}
+                {isEn ? '2013 – 2018 · Higher Education' : '2013 – 2018 · Formación Universitaria'}
               </span>
               <h3 className="text-base font-bold text-slate-900">
                 {isEn
@@ -399,71 +466,6 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
                 {isEn
                   ? 'Specialized engineering coursework (80% completed) centered on interactive virtual environments, real-time 3D graphics, procedural animation, computer graphics math, C++, and game engines.'
                   : 'Formación universitaria especializada (80% completada) enfocada en desarrollo de entornos virtuales interactivos, gráficos 3D en tiempo real, animación digital, matemáticas computacionales, C++ y motores de videojuegos.'}
-              </p>
-            </div>
-          </div>
-
-          {/* Milestone 2: 2018 Dedicated focus */}
-          <div className="relative group">
-            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-indigo-600 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
-            <div className="space-y-1">
-              <span className="text-[11px] font-bold text-indigo-700 uppercase tracking-wider">
-                {isEn ? '2018 - 2022 · Virtual Environments & Real-Time Simulation' : '2018 - 2022 · Entornos Virtuales & Simulación en Tiempo Real'}
-              </span>
-              <h3 className="text-base font-bold text-slate-900">
-                {isEn
-                  ? 'Full Commitment to Interactive Virtual Environments (Unreal Engine)'
-                  : 'Dedicación a Entornos Virtuales Interactivos (Unreal Engine)'}
-              </h3>
-              <p className="text-xs font-semibold text-slate-600">
-                {isEn ? 'Independent Projects, Navi 3D, Spinar Plus & Larva Game Studios' : 'Proyectos Independientes, Navi 3D, Spinar Plus & Larva Game Studios'}
-              </p>
-              <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                {isEn
-                  ? 'Engineered classroom simulators (ClassSim), stylized NPR worlds (Acuarela), procedural terrain generators (RWGen), real estate showrooms, and interactive 3D simulations for government water conservation and education.'
-                  : 'Desarrolló simuladores de aula (ClassSim), escenarios interactivos con shaders no fotorrealistas (Acuarela), generadores procedimentales de terreno (RWGen), recorridos 3D inmobiliarios y simulaciones interactivas para campañas de conservación de agua y educación.'}
-              </p>
-            </div>
-          </div>
-
-          {/* Milestone 3: AAA Co-Development */}
-          <div className="relative group">
-            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-amber-500 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
-            <div className="space-y-1">
-              <span className="text-[11px] font-bold text-amber-800 uppercase tracking-wider">
-                {isEn ? '2022 - 2023 · AAA Co-Development' : '2022 - 2023 · Co-Desarrollo de Videojuegos AAA'}
-              </span>
-              <h3 className="text-base font-bold text-slate-900">
-                {isEn ? 'Technical Artist at DEVBOT (AAA Sports Games)' : 'Artista Técnico en DEVBOT (Videojuegos Deportivos AAA)'}
-              </h3>
-              <p className="text-xs font-semibold text-slate-600">
-                {isEn ? 'Shipped Credit on EA Sports College Football 25' : 'Crédito Lanzado en EA Sports College Football 25'}
-              </p>
-              <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                {isEn
-                  ? 'Built and stabilized initial playable builds in Frostbite Engine, handled interactive UI/UX, and managed Perforce branches and Jenkins builds under strict enterprise confidentiality standards.'
-                  : 'Construyó y estabilizó los primeros builds jugables en el motor Frostbite, implementó UI/UX interactiva y gestionó ramas en Perforce e integración continua con Jenkins bajo estrictos estándares de confidencialidad.'}
-              </p>
-            </div>
-          </div>
-
-          {/* Milestone 4: Flex Digital Twins */}
-          <div className="relative group">
-            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-600 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
-            <div className="space-y-1">
-              <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">
-                {isEn ? '2024 - 2026 · Industrial Simulation & Digital Twins' : '2024 - 2026 · Simulación Industrial & Gemelos Digitales'}
-              </span>
-              <h3 className="text-base font-bold text-slate-900">
-                {isEn ? 'Applications Developer & Unreal Engine Specialist at Flex' : 'Desarrollador de Aplicaciones & Unreal Engine Specialist en Flex'}
-              </h3>
-              <p className="text-xs font-semibold text-slate-600">
-                {isEn ? 'Zapopan, Jalisco · Manufacturing Digital Twins for Fortune 500 Clients' : 'Zapopan, Jalisco · Gemelos Digitales de Manufactura para Clientes Fortune 500'}
-              </p>
-              <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                {isEn
-                  ? 'Built real-time assembly line Digital Twins with Unreal Engine 5 and FlexSim, simulated machine failures, optimized thermal spacing, and developed VR training modules for heavy industrial robotics.'
-                  : 'Construyó Gemelos Digitales de líneas de ensamble en tiempo real con Unreal Engine 5 y FlexSim, simuló fallas de maquinaria, optimizó distanciamiento térmico y desarrolló módulos de capacitación en Realidad Virtual para robótica industrial pesada.'}
               </p>
             </div>
           </div>
@@ -496,10 +498,27 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
             )}
           </p>
 
-          <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs text-slate-300">
-            <span>📧 isaacgestrada94@gmail.com</span>
-            <span>📱 +52 33 1835 9421</span>
-            <span>📍 Zapopan / Guadalajara, Jalisco, México</span>
+          <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs text-slate-300">
+            <a
+              href="mailto:isaacgestrada94@gmail.com"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600/30 hover:bg-sky-500/40 border border-sky-400/40 text-sky-200 font-bold transition-colors"
+            >
+              <Mail className="w-3.5 h-3.5" />
+              <span>{isEn ? 'Contact via Email' : 'Contactar por Correo'}</span>
+            </a>
+            <a
+              href="https://www.linkedin.com/in/isaac-gomez-estrada-6959872a0/"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600/30 hover:bg-blue-500/40 border border-blue-400/40 text-blue-200 font-bold transition-colors"
+            >
+              <Linkedin className="w-3.5 h-3.5" />
+              <span>LinkedIn</span>
+            </a>
+            <span className="inline-flex items-center gap-1">
+              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Zapopan / Guadalajara, Jalisco, México</span>
+            </span>
           </div>
         </div>
 

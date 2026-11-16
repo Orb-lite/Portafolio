@@ -5,7 +5,6 @@ import {
 } from '../../types/resume';
 import {
   Mail,
-  Phone,
   MapPin,
   Linkedin,
   Globe,
@@ -86,17 +85,22 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
     if (!personalInfo.title) return '';
     if (language === 'en') {
       const tLower = personalInfo.title.toLowerCase();
+      if (tLower.includes('ingeniero c++') || tLower.includes('c++ / unreal')) {
+        return 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer';
+      }
       if (tLower.includes('artista técnico') || tLower.includes('technical artist')) {
-        return 'Technical Artist';
+        return personalInfo.title.includes('C++')
+          ? personalInfo.title
+          : 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer';
       }
       if (tLower.includes('gerente comercial') || tLower.includes('commercial manager')) {
-        return 'Technical Artist';
+        return 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer';
       }
       if (tLower.includes('líder en realidad virtual')) {
         return 'Virtual Reality (VR) & Simulation Lead';
       }
       if (tLower.includes('desarrollador de aplicaciones')) {
-        return 'Applications Developer & Unreal Engine Specialist';
+        return 'Applications Developer & C++ / Unreal Engine 5 Specialist';
       }
     }
     return personalInfo.title;
@@ -110,7 +114,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
       // If it contains Spanish words or matches Spanish presets:
       const hasSpanishWords =
         sLower.includes('artista técnico') ||
-        sLower.includes('ingeniero de 32 años') ||
+        sLower.includes('ingeniero c++') ||
         sLower.includes('líder comercial') ||
         sLower.includes('desarrollador') ||
         sLower.includes('especialista en') ||
@@ -121,7 +125,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
         sLower.includes('actualmente');
 
       if (hasSpanishWords) {
-        return "Senior Technical Artist and Real-Time 3D Simulation Engineer with 8+ years of experience bridging art, interactive systems, and production pipelines across AAA game development, industrial digital twins, and virtual environments. Shipped Technical Artist on premier world-class sports franchise EA Sports College Football 25 for a leading global publisher (verified public credit on MobyGames), specializing in interactive UI/UX architecture, Frostbite engine pipelines, 60+ FPS performance optimization, Perforce P4 Helix Core branching, and Jenkins automated CI/CD validation. Extensive background building manufacturing Digital Twins and real-time assembly line simulations for Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with Unreal Engine 5 (UE5) and Arch FlexSim. Strong technical background in custom pipeline tooling (Python, TypeScript, C++, Blueprints, HLSL/Shaders) and cross-platform deployment (PC, Console, VR, Mobile, WebGL).";
+        return "Senior Technical Artist & C++ / Unreal Engine 5 Engineer with 8+ years of experience (since 2018) bridging C++ systems architecture, interactive art, and production pipelines across AAA game development, industrial digital twins, and virtual environments. Shipped Technical Artist on premier world-class sports franchise EA Sports College Football 25 for a leading global publisher (verified public credit on MobyGames), specializing in C++, interactive UI/UX architecture, Frostbite engine pipelines, 60+ FPS performance optimization, Perforce P4 Helix Core branching, and Jenkins automated CI/CD validation. Extensive background building manufacturing Digital Twins, custom UE5 Editor tools, and C++ / Blueprint assembly line simulations for Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with Unreal Engine 5 (UE5) and Arch FlexSim. Strong technical foundation in C++, Python, TypeScript, Blueprints, HLSL/Shaders, and cross-platform deployment (PC, Console, VR, Mobile, WebGL).";
       }
     }
     return personalInfo.summary;
@@ -228,18 +232,20 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
               <div className="mt-4 pt-3 border-t border-white/20 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[11px] text-slate-200">
                 <a
                   href={`mailto:${personalInfo.email}`}
-                  className="flex items-center gap-1.5 hover:text-white transition-colors"
+                  className="flex items-center gap-1.5 hover:text-white transition-colors underline decoration-white/40 font-semibold"
                 >
-                  <Mail className="w-3.5 h-3.5 opacity-80" />
-                  <span>{personalInfo.email}</span>
+                  <Mail className="w-3.5 h-3.5 opacity-90" />
+                  <span>{isEn ? 'Email' : 'Correo'}</span>
                 </a>
-                {personalInfo.phone && (
+                {personalInfo.linkedinUrl && (
                   <a
-                    href={`tel:${personalInfo.phone}`}
-                    className="flex items-center gap-1.5 hover:text-white transition-colors"
+                    href={personalInfo.linkedinUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1.5 hover:text-white transition-colors underline decoration-white/40 font-semibold"
                   >
-                    <Phone className="w-3.5 h-3.5 opacity-80" />
-                    <span>{personalInfo.phone}</span>
+                    <Linkedin className="w-3.5 h-3.5 opacity-90" />
+                    <span>LinkedIn</span>
                   </a>
                 )}
                 {personalInfo.location && (
@@ -247,17 +253,6 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                     <MapPin className="w-3.5 h-3.5 opacity-80" />
                     <span>{personalInfo.location}</span>
                   </span>
-                )}
-                {personalInfo.linkedinUrl && (
-                  <a
-                    href={personalInfo.linkedinUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-1.5 hover:text-white transition-colors underline decoration-white/40"
-                  >
-                    <Linkedin className="w-3.5 h-3.5 opacity-80" />
-                    <span>linkedin.com/in/isaac-gomez-estrada</span>
-                  </a>
                 )}
                 {personalInfo.websiteUrl && (
                   <a
@@ -485,13 +480,15 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-600 pt-1.5">
-                <span>{personalInfo.email}</span>
+                <a href={`mailto:${personalInfo.email}`} className="underline font-semibold text-sky-700 hover:text-sky-900">
+                  {isEn ? 'Email' : 'Correo'}
+                </a>
                 <span>·</span>
-                <span>{personalInfo.phone}</span>
+                <a href={personalInfo.linkedinUrl} target="_blank" rel="noreferrer" className="underline font-semibold text-sky-700 hover:text-sky-900">
+                  LinkedIn
+                </a>
                 <span>·</span>
                 <span>{personalInfo.location}</span>
-                <span>·</span>
-                <a href={personalInfo.linkedinUrl} target="_blank" rel="noreferrer" className="underline">LinkedIn</a>
                 {personalInfo.websiteUrl && (
                   <>
                     <span>·</span>
@@ -598,10 +595,18 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                 {displayTitle}
               </p>
               <div className="flex flex-wrap gap-x-4 text-[11px] text-slate-300">
-                <span>{personalInfo.email}</span>
+                <a href={`mailto:${personalInfo.email}`} className="underline hover:text-white font-semibold">
+                  {isEn ? 'Email' : 'Correo'}
+                </a>
                 <span>·</span>
-                <span>{personalInfo.phone}</span>
-                <span>·</span>
+                {personalInfo.linkedinUrl && (
+                  <>
+                    <a href={personalInfo.linkedinUrl} target="_blank" rel="noreferrer" className="underline hover:text-white font-semibold">
+                      LinkedIn
+                    </a>
+                    <span>·</span>
+                  </>
+                )}
                 <span>{personalInfo.location}</span>
                 {personalInfo.websiteUrl && (
                   <>

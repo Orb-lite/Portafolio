@@ -83,13 +83,15 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               {isFoF ? t.fishFeederMode : getThemeName(version, language)}
             </span>
           </h1>
-          <div className="flex items-center gap-1.5 text-[10px] mt-1">
+          <div className="flex items-center gap-1.5 text-[10px] mt-1 flex-wrap">
             <span className="text-amber-400 font-bold flex items-center gap-0.5">
               <Sparkles className="w-2.5 h-2.5 inline" />
               By Dimpz Games
             </span>
             <span className="text-white/40 hidden sm:inline">•</span>
-            <span className="text-white/80 font-medium hidden sm:inline">Technical Artist</span>
+            <span className="text-cyan-200/90 font-medium hidden md:inline">
+              {language === 'en' ? 'Audio' : 'Audio'}: +1 (809) 716-1036 Rafael Espada
+            </span>
           </div>
         </div>
       </div>

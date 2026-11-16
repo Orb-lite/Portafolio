@@ -712,6 +712,8 @@ export function TileAbsorberGame({
             <Music className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
             <span className="font-bold">{getMusicTrackForLevel(playingLevel, version).title}</span>
             <span className="text-[10px] text-slate-400">({getMusicTrackForLevel(playingLevel, version).bpm} BPM)</span>
+            <span className="text-slate-600">·</span>
+            <span className="text-[10px] text-amber-300 font-semibold">Audio: +1 (809) 716-1036 Rafael Espada</span>
           </div>
 
           {isFishOfFortune ? (

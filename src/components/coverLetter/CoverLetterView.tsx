@@ -303,8 +303,8 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
             </h1>
             <p className="text-sm font-medium text-slate-200">
               {isEn
-                ? 'Technical Artist & Real-Time 3D Simulation Engineer'
-                : 'Artista Técnico & Ingeniero de Simulación 3D en Tiempo Real'}
+                ? 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer'
+                : 'Senior Technical Artist & Ingeniero C++ / Unreal Engine 5'}
             </p>
 
             {/* Contact details */}

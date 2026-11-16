@@ -3,7 +3,7 @@ import { ResumeData, StyleConfig } from '../types/resume';
 export const resumeDataEs: ResumeData = {
   personalInfo: {
     fullName: 'Isaac Gómez Estrada',
-    title: 'Artista Técnico (Technical Artist)',
+    title: 'Senior Technical Artist & Ingeniero C++ / Unreal Engine 5',
     email: 'isaacgestrada94@gmail.com',
     phone: '+52 33 1835 9421',
     location: 'Zapopan / Guadalajara, Jalisco, México (Presencial, Híbrido o Remoto)',
@@ -12,12 +12,26 @@ export const resumeDataEs: ResumeData = {
     githubUrl: 'https://github.com/Orb-lite/Portafolio.git',
     portfolioUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
     mobygamesUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
-    age: 32,
     summary:
-      'Artista Técnico e Ingeniero de Simulación 3D en Tiempo Real de 32 años con más de 8 años de trayectoria conectando arte, código y arquitectura de pipelines en desarrollo de videojuegos AAA, gemelos digitales industriales y entornos virtuales interactivos. Artista Técnico con crédito público verificado en MobyGames para el título deportivo AAA de clase mundial EA Sports College Football 25 con un publisher global líder, especializado en UI/UX interactiva en el motor Frostbite, optimización rigurosa a 60+ FPS, control de versiones con Perforce (P4 Helix Core) e integración continua automatizada con Jenkins. Extensa experiencia en Unreal Engine 5 (UE5) y Arch FlexSim desarrollando Gemelos Digitales (Digital Twins) de manufactura para corporativos globales Fortune 500 (sectores automotriz, tecnología y farmacéutico bajo estricta confidencialidad). Sólida capacidad de desarrollo de herramientas de pipeline y automatización (Python, TypeScript, C++, Blueprints, Shaders) y despliegue multiplataforma (PC, Consolas, VR, Móvil y WebGL).',
+      'Senior Technical Artist & Ingeniero C++ / Unreal Engine 5 con más de 8 años de experiencia (desde 2018) conectando arquitectura C++, arte técnico y pipelines de producción en desarrollo de videojuegos AAA, gemelos digitales industriales y entornos virtuales interactivos. Artista Técnico con crédito público verificado en MobyGames para el título deportivo AAA de clase mundial EA Sports College Football 25 con un publisher global líder, especializado en C++, UI/UX interactiva en el motor Frostbite, optimización rigurosa a 60+ FPS, control de versiones con Perforce (P4 Helix Core) e integración continua automatizada con Jenkins. Extensa experiencia en Unreal Engine 5 (UE5 / C++) y Arch FlexSim desarrollando Gemelos Digitales (Digital Twins) de manufactura para corporativos globales Fortune 500 (sectores automotriz, tecnología y farmacéutico bajo estricta confidencialidad). Sólida capacidad de ingeniería en C++, Blueprints, Shaders / HLSL, Python y TypeScript con despliegue multiplataforma (PC, Consolas, VR, Móvil y WebGL).',
     photoUrl: '',
   },
   experiences: [
+    {
+      id: 'exp-flex',
+      role: 'Senior Technical Artist & Especialista C++ / Unreal Engine 5 (Digital Twins)',
+      company: 'Multinacional de Soluciones de Manufactura y Tecnología (Flex)',
+      location: 'Zapopan, Jalisco, México (Híbrido)',
+      startDate: 'Jun 2024',
+      endDate: 'Abr 2026',
+      isCurrent: false,
+      highlights: [
+        'Desarrollo de Gemelos Digitales (Digital Twins) en C++ y Unreal Engine 5 de piso de producción industrial para corporativos globales Fortune 500 (sectores automotriz, tecnología avanzada y farmacéutica bajo acuerdos de confidencialidad).',
+        'Simulación en tiempo real de líneas de producción automatizadas con Unreal Engine 5 (C++ / Blueprints) y Arch FlexSim, detectando fallas de maquinaria y cuellos de botella antes del traspaso a estaciones de ensamble subsiguientes.',
+        'Simulación de espacios óptimos considerando separación de líneas y maquinaria para prevención de sobrecalentamiento y maximización de flujo de piezas.',
+        'Creación de simuladores inmersivos en Realidad Virtual (VR) para capacitación segura y efectiva de nuevos operarios en maquinaria especializada.',
+      ],
+    },
     {
       id: 'exp-devbot',
       role: 'Artista Técnico (Technical Artist)',
@@ -27,25 +41,10 @@ export const resumeDataEs: ResumeData = {
       endDate: 'Ago 2023',
       isCurrent: false,
       highlights: [
-        'Desempeño como Artista Técnico asignado a la producción deportiva AAA de clase mundial EA Sports College Football 25 para publisher internacional líder, especializándome en UI/UX interactiva y motor Frostbite (crédito público y verificable en MobyGames).',
+        'Desempeño como Artista Técnico asignado a la producción deportiva AAA de clase mundial EA Sports College Football 25 para publisher internacional líder, especializándome en UI/UX interactiva, C++ y motor Frostbite (crédito público y verificable en MobyGames).',
         'Desarrollo, integración técnica y validación del primer build funcional y jugable para producciones deportivas AAA de lanzamiento global, asegurando estabilidad a 60+ FPS y estricta fidelidad visual.',
         'Gestión integral del control de versiones y branching con Perforce (P4 Helix Core) en pipelines masivos de co-desarrollo multicentro.',
         'Mantenimiento y ejecución de pruebas automatizadas de integración continua (CI) mediante Jenkins para validación de builds y aceleración de entregas.',
-      ],
-    },
-    {
-      id: 'exp-flex',
-      role: 'Artista Técnico & Especialista en Unreal Engine 5 (Digital Twins)',
-      company: 'Multinacional de Soluciones de Manufactura y Tecnología (Flex)',
-      location: 'Zapopan, Jalisco, México (Híbrido)',
-      startDate: 'Jun 2024',
-      endDate: 'Abr 2026',
-      isCurrent: false,
-      highlights: [
-        'Desarrollo de Gemelos Digitales (Digital Twins) de piso de producción industrial para corporativos globales Fortune 500 (sectores automotriz, tecnología avanzada y farmacéutica bajo acuerdos de confidencialidad).',
-        'Simulación en tiempo real de líneas de producción automatizadas con Unreal Engine 5 y Arch FlexSim, detectando fallas de maquinaria y cuellos de botella antes del traspaso a estaciones de ensamble subsiguientes.',
-        'Simulación de espacios óptimos considerando separación de líneas y maquinaria para prevención de sobrecalentamiento y maximización de flujo de piezas.',
-        'Creación de simuladores inmersivos en Realidad Virtual (VR) para capacitación segura y efectiva de nuevos operarios en maquinaria especializada.',
       ],
     },
     {
@@ -57,7 +56,7 @@ export const resumeDataEs: ResumeData = {
       endDate: 'Ago 2021',
       isCurrent: false,
       highlights: [
-        'Desarrollo de sistema interactivo 3D en tiempo real en Unreal Engine 4 para showrooms inmobiliarios con visualización de fichas técnicas y disponibilidad.',
+        'Desarrollo de sistema interactivo 3D en tiempo real en Unreal Engine 4 (C++ / Blueprints) para showrooms inmobiliarios con visualización de fichas técnicas y disponibilidad.',
         'Integración con bases de datos SQL y APIs para cálculo de comisiones e informes en tiempo real.',
       ],
     },
@@ -83,7 +82,7 @@ export const resumeDataEs: ResumeData = {
       isCurrent: false,
       highlights: [
         'Desarrollo de videojuegos y experiencias interactivas multiplataforma: PC Windows, móviles (iOS y Android), WebGL y cascos VR (Meta Quest, HTC Vive, Oculus Rift).',
-        'Implementación de sistemas de comportamiento de juego, shaders, optimización de draw calls y animaciones técnicas para proyectos de universidades y empresas.',
+        'Implementación de sistemas de comportamiento de juego en C++ / C#, shaders, optimización de draw calls y animaciones técnicas para proyectos de universidades y empresas.',
       ],
     },
   ],
@@ -196,7 +195,7 @@ export const resumeDataEs: ResumeData = {
 export const resumeDataEn: ResumeData = {
   personalInfo: {
     fullName: 'Isaac Gómez Estrada',
-    title: 'Technical Artist',
+    title: 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer',
     email: 'isaacgestrada94@gmail.com',
     phone: '+52 33 1835 9421',
     location: 'Zapopan / Guadalajara, Jalisco, Mexico (On-site, Hybrid, or Remote)',
@@ -205,12 +204,26 @@ export const resumeDataEn: ResumeData = {
     githubUrl: 'https://github.com/Orb-lite/Portafolio.git',
     portfolioUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
     mobygamesUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
-    age: 32,
     summary:
-      'Senior Technical Artist and Real-Time 3D Simulation Engineer with 8+ years of experience bridging art, interactive systems, and production pipelines across AAA game development, industrial digital twins, and virtual environments. Shipped Technical Artist on premier world-class sports franchise EA Sports College Football 25 for a leading global publisher (verified public credit on MobyGames), specializing in interactive UI/UX architecture, Frostbite engine pipelines, 60+ FPS performance optimization, Perforce P4 Helix Core branching, and Jenkins automated CI/CD validation. Extensive background building manufacturing Digital Twins and real-time assembly line simulations for Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with Unreal Engine 5 (UE5) and Arch FlexSim. Strong technical background in custom pipeline tooling (Python, TypeScript, C++, Blueprints, HLSL/Shaders) and cross-platform deployment (PC, Console, VR, Mobile, WebGL).',
+      'Senior Technical Artist & C++ / Unreal Engine 5 Engineer with 8+ years of experience (since 2018) bridging C++ systems architecture, interactive art, and production pipelines across AAA game development, industrial digital twins, and virtual environments. Shipped Technical Artist on premier world-class sports franchise EA Sports College Football 25 for a leading global publisher (verified public credit on MobyGames), specializing in C++, interactive UI/UX architecture, Frostbite engine pipelines, 60+ FPS performance optimization, Perforce P4 Helix Core branching, and Jenkins automated CI/CD validation. Extensive background building manufacturing Digital Twins, custom UE5 Editor tools, and C++ / Blueprint assembly line simulations for Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with Unreal Engine 5 (UE5) and Arch FlexSim. Strong technical foundation in C++, Python, TypeScript, Blueprints, HLSL/Shaders, and cross-platform deployment (PC, Console, VR, Mobile, WebGL).',
     photoUrl: '',
   },
   experiences: [
+    {
+      id: 'exp-flex',
+      role: 'Senior Technical Artist & C++ / Unreal Engine 5 Specialist (Digital Twins)',
+      company: 'Multinational Manufacturing & Technology (Flex - Industrial Simulation)',
+      location: 'Zapopan, Jalisco, Mexico (Hybrid)',
+      startDate: 'Jun 2024',
+      endDate: 'Apr 2026',
+      isCurrent: false,
+      highlights: [
+        'Engineered manufacturing Digital Twins in C++ and Unreal Engine 5 (UE5) for global Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) alongside Arch FlexSim.',
+        'Simulated automated assembly line workflows in real time using custom C++ / Blueprint systems, detecting machine failures and bottlenecks before parts proceeded to subsequent workstations.',
+        'Modeled optimal spatial floor layouts and thermal spacing between production lines and machinery to prevent overheating and maximize throughput.',
+        'Created immersive Virtual Reality (VR) simulators for onboarding and safety training of plant operators handling specialized machinery.',
+      ],
+    },
     {
       id: 'exp-devbot',
       role: 'Technical Artist',
@@ -220,25 +233,10 @@ export const resumeDataEn: ResumeData = {
       endDate: 'Aug 2023',
       isCurrent: false,
       highlights: [
-        'Served as Technical Artist assigned to premier AAA sports franchise EA Sports College Football 25 for a leading global publisher, specializing in interactive UI/UX architecture and Frostbite engine pipelines (verified public credit on MobyGames).',
+        'Served as Technical Artist assigned to premier AAA sports franchise EA Sports College Football 25 for a leading global publisher, specializing in interactive UI/UX architecture, C++, and Frostbite engine pipelines (verified public credit on MobyGames).',
         'Engineered and validated initial playable game builds for world-class AAA sports titles, ensuring solid 60+ FPS performance, memory budget adherence, and high visual fidelity.',
         'Managed large-scale source control, asset branching, and merge conflict resolution using Perforce (P4 Helix Core) in multi-site co-development pipelines.',
         'Maintained automated continuous integration (CI) test suites using Jenkins to streamline studio-wide deployments and milestone delivery.',
-      ],
-    },
-    {
-      id: 'exp-flex',
-      role: 'Technical Artist & Unreal Engine Specialist (Digital Twins)',
-      company: 'Multinational Manufacturing & Technology (Flex - Industrial Simulation)',
-      location: 'Zapopan, Jalisco, Mexico (Hybrid)',
-      startDate: 'Jun 2024',
-      endDate: 'Apr 2026',
-      isCurrent: false,
-      highlights: [
-        'Engineered manufacturing Digital Twins for global Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) using Unreal Engine 5 (UE5) and Arch FlexSim.',
-        'Simulated automated assembly line workflows in real time, detecting machine failures and bottlenecks before parts proceeded to subsequent workstations.',
-        'Modeled optimal spatial floor layouts and thermal spacing between production lines and machinery to prevent overheating and maximize throughput.',
-        'Created immersive Virtual Reality (VR) simulators for onboarding and safety training of plant operators handling specialized machinery.',
       ],
     },
     {
@@ -250,7 +248,7 @@ export const resumeDataEn: ResumeData = {
       endDate: 'Aug 2021',
       isCurrent: false,
       highlights: [
-        'Built an interactive real-time 3D showroom for luxury real estate developments utilizing Unreal Engine 4.',
+        'Built an interactive real-time 3D showroom for luxury real estate developments utilizing Unreal Engine 4 (C++ & Blueprints).',
         'Integrated backend SQL databases and REST APIs for real-time synchronization of inventory, sold vs. available apartments, unit specs, and sales commissions.',
       ],
     },
@@ -260,7 +258,7 @@ export const resumeDataEn: ResumeData = {
       company: 'Spinar',
       location: 'Guadalajara, Jalisco, Mexico (Hybrid)',
       startDate: 'Jan 2020',
-      endDate: 'Ago 2020',
+      endDate: 'Aug 2020',
       isCurrent: false,
       highlights: [
         'Developed an interactive real-time 3D simulation in Unreal Engine 4 for a public water conservation and sustainability initiative with a state government entity.',
@@ -276,7 +274,7 @@ export const resumeDataEn: ResumeData = {
       isCurrent: false,
       highlights: [
         'Developed interactive cross-platform applications and video games for Windows, mobile (iOS & Android), WebGL, HTML5, and VR headsets (Meta Quest, HTC Vive, Oculus Rift).',
-        'Implemented real-time gameplay state systems, procedural NPC logic, technical animations, and interactive solutions for a prestigious technical university and regional enterprise clients.',
+        'Implemented real-time gameplay state systems in C++ / C#, procedural NPC logic, technical animations, and interactive solutions for a prestigious technical university and regional enterprise clients.',
       ],
     },
   ],
@@ -398,9 +396,8 @@ export const resumeDataPlatformEn: ResumeData = {
     githubUrl: 'https://github.com/Orb-lite/Portafolio.git',
     portfolioUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
     mobygamesUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
-    age: 32,
     summary:
-      'Lead Software & Platform Systems Engineer with 8+ years of engineering experience specializing in distributed telemetry architectures, real-time 3D simulation, and 24/7 cloud production operations. Proven track record building high-throughput backend services and data pipelines in Python (FastAPI, AsyncIO, Celery) and TypeScript/React, plus orchestrating scalable cloud infrastructure on Google Cloud Platform (GCP: Cloud Run, Pub/Sub, BigQuery, Cloud SQL), Supabase, and Cloudflare. Responsible for the complete production lifecycle—from systems architecture and real-time monitoring to automated CI/CD, incident resolution, and zero-downtime migrations across real-time vehicle telematics platforms and industrial digital twins for Fortune 500 manufacturing leaders (Flex).',
+      'Lead Software & Platform Systems Engineer with 8+ years of experience (since 2018) specializing in distributed telemetry architectures, C++ / Unreal Engine 5 real-time 3D simulation, and 24/7 cloud production operations. Proven track record building high-throughput backend services and data pipelines in Python (FastAPI, AsyncIO, Celery) and TypeScript/React, plus orchestrating scalable cloud infrastructure on Google Cloud Platform (GCP: Cloud Run, Pub/Sub, BigQuery, Cloud SQL), Supabase, and Cloudflare. Responsible for the complete production lifecycle—from systems architecture and real-time monitoring to automated CI/CD, incident resolution, and zero-downtime migrations across real-time vehicle telematics platforms and industrial digital twins for Fortune 500 manufacturing leaders (Flex).',
     photoUrl: '',
   },
   experiences: [
@@ -561,9 +558,8 @@ export const resumeDataPlatformEs: ResumeData = {
     githubUrl: 'https://github.com/Orb-lite/Portafolio.git',
     portfolioUrl: 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing',
     mobygamesUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
-    age: 32,
     summary:
-      'Ingeniero de Software y Sistemas de Plataforma con más de 8 años de trayectoria, especializado en arquitecturas telemáticas distribuidas, simulación 3D en tiempo real y operaciones de producción en la nube 24/7. Experiencia probada desarrollando microservicios y pipelines de datos en Python (FastAPI, AsyncIO, Celery) y TypeScript/React, además de infraestructura escalable en Google Cloud Platform (GCP: Cloud Run, Pub/Sub, BigQuery, Cloud SQL), Supabase y Cloudflare. Responsable del ciclo de vida completo en producción—desde arquitectura y monitoreo en tiempo real hasta CI/CD automatizado, resolución de incidentes y migraciones sin caída en plataformas de telemática vehicular y gemelos digitales industriales para corporativos Fortune 500 (Flex).',
+      'Ingeniero de Software y Sistemas de Plataforma con más de 8 años de experiencia (desde 2018), especializado en arquitecturas telemáticas distribuidas, simulación 3D en tiempo real con C++ / Unreal Engine 5 y operaciones de producción en la nube 24/7. Experiencia probada desarrollando microservicios y pipelines de datos en Python (FastAPI, AsyncIO, Celery) y TypeScript/React, además de infraestructura escalable en Google Cloud Platform (GCP: Cloud Run, Pub/Sub, BigQuery, Cloud SQL), Supabase y Cloudflare. Responsable del ciclo de vida completo en producción—desde arquitectura y monitoreo en tiempo real hasta CI/CD automatizado, resolución de incidentes y migraciones sin caída en plataformas de telemática vehicular y gemelos digitales industriales para corporativos Fortune 500 (Flex).',
     photoUrl: '',
   },
   experiences: [

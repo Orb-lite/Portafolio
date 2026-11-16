@@ -53,6 +53,8 @@ import {
   X,
   SlidersHorizontal,
   CheckCheck,
+  Mail,
+  Linkedin,
 } from 'lucide-react';
 
 export default function App() {
@@ -366,16 +368,34 @@ export default function App() {
                 <h1 className="text-sm font-extrabold tracking-tight text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
                   {resumeData.personalInfo.fullName}
                 </h1>
+                <span className="text-[11px] font-bold text-sky-300">
+                  · {isEn ? 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer' : 'Senior Technical Artist & Ingeniero C++ / Unreal Engine 5'}
+                </span>
                 <span className="text-[10px] text-amber-300 font-bold bg-amber-950/80 border border-amber-600/70 px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
                   <Trophy className="w-3 h-3 text-amber-400" />
                   <span>{isEn ? 'Shipped AAA Credits' : 'Créditos Títulos AAA'}</span>
                 </span>
                 <span className="text-[10px] text-emerald-300 font-medium bg-emerald-950/80 border border-emerald-700/70 px-1.5 py-0.5 rounded shadow-sm">
-                  {isEn ? '32 yo · Virtual Environments (Since 2018)' : '32 años · Entornos Virtuales (Desde 2018)'}
+                  {isEn ? '8+ Years Exp · C++ & UE5 (Since 2018)' : '8+ Años Exp · C++ & UE5 (Desde 2018)'}
                 </span>
               </div>
               <p className="text-[11px] text-slate-300 flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                <span>{resumeData.personalInfo.email}</span>
+                <a
+                  href={`mailto:${resumeData.personalInfo.email}`}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-sky-600/30 hover:bg-sky-500/40 border border-sky-400/40 text-sky-200 font-bold transition-colors"
+                >
+                  <Mail className="w-2.5 h-2.5" />
+                  <span>{isEn ? 'Email' : 'Correo'}</span>
+                </a>
+                <a
+                  href={resumeData.personalInfo.linkedinUrl || 'https://www.linkedin.com/in/isaac-gomez-estrada-6959872a0/'}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-600/30 hover:bg-blue-500/40 border border-blue-400/40 text-blue-200 font-bold transition-colors"
+                >
+                  <Linkedin className="w-2.5 h-2.5" />
+                  <span>LinkedIn</span>
+                </a>
                 <span aria-hidden="true">·</span>
                 <span className="text-emerald-400 font-semibold">
                   {isEn ? 'Zapopan & Guadalajara (On-site / Hybrid / Remote)' : 'Zapopan y Guadalajara (Presencial / Híbrido / Remoto)'}

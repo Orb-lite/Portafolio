@@ -800,9 +800,9 @@ export const GameResultModal: React.FC<GameResultModalProps> = ({
             )}
           </div>
 
-            <div className="mt-4 pt-2 border-t border-white/20 flex items-center justify-center gap-1 text-[11px] text-white/80 font-medium">
+            <div className="mt-4 pt-2 border-t border-white/20 flex items-center justify-center gap-1 text-[11px] text-white/80 font-medium flex-wrap text-center">
               <Sparkles className="w-3 h-3 text-amber-300" />
-              <span>{isFoF ? 'Fish Feeder' : 'Conveyor Realms'} · By Dimpz Games · Isaac Gómez</span>
+              <span>{isFoF ? 'Fish Feeder' : 'Conveyor Realms'} · By Dimpz Games · Isaac Gómez · Audio: +1 (809) 716-1036 Rafael Espada</span>
             </div>
           </div>
         </div>

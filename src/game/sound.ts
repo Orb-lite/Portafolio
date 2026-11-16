@@ -7,13 +7,20 @@ export interface MusicTrackInfo {
   bpm: number;
 }
 
+export const AUDIO_CREDIT = {
+  name: 'Rafael Espada',
+  phone: '+1 (809) 716-1036',
+  labelEn: 'Audio Credits: +1 (809) 716-1036 Rafael Espada',
+  labelEs: 'Créditos de Audio: +1 (809) 716-1036 Rafael Espada',
+};
+
 export function getMusicTrackForLevel(level: number, version: GameVersion): MusicTrackInfo {
   if (version === 'fof') {
     if (level >= 10) {
       return {
         path: '/audio/golden_vault_theme.mp3',
         title: 'Golden Sunken Vault',
-        artist: 'Isaac Gómez · Sunken Sanctuary',
+        artist: 'Rafael Espada (+1 (809) 716-1036) · Isaac Gómez',
         bpm: 126,
       };
     }
@@ -21,14 +28,14 @@ export function getMusicTrackForLevel(level: number, version: GameVersion): Musi
       return {
         path: '/audio/sixty_frames_conveyor.mp3',
         title: 'Sixty Frames (Bioluminescent Abyss)',
-        artist: 'Tile Absorber 3D Official Track',
+        artist: 'Rafael Espada (+1 (809) 716-1036) · Official Track',
         bpm: 128,
       };
     }
     return {
       path: '/audio/fish_of_fortune_theme.mp3',
       title: 'Fish Feeder (Coral Reef 124 BPM)',
-      artist: 'Isaac Gómez · Subaquatic Synth',
+      artist: 'Rafael Espada (+1 (809) 716-1036) · Subaquatic Synth',
       bpm: 124,
     };
   }
@@ -38,7 +45,7 @@ export function getMusicTrackForLevel(level: number, version: GameVersion): Musi
     return {
       path: '/audio/chess_kingdom_theme.mp3',
       title: 'Chess Kingdom (Baroque Synthwave)',
-      artist: 'Isaac Gómez · Royal Parquet',
+      artist: 'Rafael Espada (+1 (809) 716-1036) · Royal Parquet',
       bpm: 118,
     };
   }
@@ -46,7 +53,7 @@ export function getMusicTrackForLevel(level: number, version: GameVersion): Musi
     return {
       path: '/audio/fish_of_fortune_theme.mp3',
       title: 'Coral Cove (Aquatic Synthwave)',
-      artist: 'Isaac Gómez · Subaquatic Synth',
+      artist: 'Rafael Espada (+1 (809) 716-1036) · Subaquatic Synth',
       bpm: 124,
     };
   }
@@ -54,14 +61,14 @@ export function getMusicTrackForLevel(level: number, version: GameVersion): Musi
     return {
       path: '/audio/sixty_frames_conveyor.mp3',
       title: 'Sixty Frames (Zero Latency Synthwave)',
-      artist: 'Tile Absorber 3D Official Track',
+      artist: 'Rafael Espada (+1 (809) 716-1036) · Official Track',
       bpm: 128,
     };
   }
   return {
     path: '/audio/golden_vault_theme.mp3',
     title: 'Golden Vault (Emperor Anthem)',
-    artist: 'Isaac Gómez · Imperial Synth',
+    artist: 'Rafael Espada (+1 (809) 716-1036) · Imperial Synth',
     bpm: 126,
   };
 }

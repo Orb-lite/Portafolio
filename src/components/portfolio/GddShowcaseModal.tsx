@@ -21,6 +21,7 @@ import {
   GDD_SEALS,
   GDD_POIS,
   GDD_MONSTER_TIERS,
+  GDD_MASTERY_SPEC,
 } from '../../data/gddData';
 
 interface GddShowcaseModalProps {
@@ -426,6 +427,16 @@ export const GddShowcaseModal: React.FC<GddShowcaseModalProps> = ({
                     ))}
                   </tbody>
                 </table>
+              </div>
+
+              <div className="p-4 rounded-xl border border-amber-300 bg-amber-50 space-y-1.5">
+                <div className="flex items-center justify-between gap-2 text-xs font-bold text-amber-950">
+                  <span>{t(GDD_MASTERY_SPEC.title)}</span>
+                  <span className="font-mono tabular-nums text-amber-800">
+                    {isEn ? '35% Gold Tier Cap' : 'Tope 35% Gold Tier'}
+                  </span>
+                </div>
+                <p className="text-xs text-amber-900 leading-relaxed">{t(GDD_MASTERY_SPEC.summary)}</p>
               </div>
             </div>
           )}

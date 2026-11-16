@@ -447,13 +447,13 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       en: [
         '5-Act Cycle: 60s squad respawn in Acts I–III (requires 1+ alive; all die = squad wipe) & zero respawns starting Act IV with unbreakable co-op victory',
         'Zero fixed classes: 5 Valdris Quality Tiers (Rusted Forge to Royal Vestige), Vial Belt (1–4) & 8 swappable Aether Seals',
-        '4 escalating PvE Monster Difficulty Tiers for Looting (Valdris Marauders, Spectral Guardians, Catacomb Bosses, Black Bell Executioner) with solo/squad scaling',
+        '4 escalating PvE Monster Difficulty Tiers for Looting + Level/Mastery progression (100 levels = 1 Mastery, +PvE kill speed & loot odds capped at 35% Gold Tier)',
         'UE5 200-player architecture: Replication Graph (50–80m), server-authoritative Altar-Chests & multilayer Anti-Cheat (Kernel + Anti-ESP + telemetry)',
       ],
       es: [
         'Ciclo de 5 Actos: respawn de 60s en Actos I–III (requiere 1+ miembro vivo; si mueren todos = eliminación) y cero respawn desde el Acto IV',
         'Sin clases fijas: 5 Tiers de Valdris (Forja Oxidada a Vestigio Real), Cinturón de Viales (1–4) y 8 Sellos de Éter intercambiables',
-        '4 Niveles de Dificultad de Monstruos PvE para Lootear con escalado Solo/Escuadrón y matriz de drops hasta Vestigio Real (Dorado)',
+        '4 Niveles PvE para Lootear + Mastery cada 100 niveles (más facilidad contra monstruos y mejores drops topados a 35% Gold Tier)',
         'Arquitectura UE5 (200 jugadores): Replication Graph (50–80m), autoridad de servidor y Anti-Cheat multicapa (Kernel + Anti-ESP + telemetría)',
       ],
     },

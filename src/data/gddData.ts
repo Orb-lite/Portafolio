@@ -508,19 +508,19 @@ export const GDD_MONSTER_TIERS: GddMonsterEntry[] = [
       },
     ],
     lootGuarantee: {
-      es: 'Mínimo 1 Reliquia Maldita (Morada) + 18% Vestigio Real (Dorado)',
-      en: 'At least 1 Cursed Relic (Purple) + 18% Royal Vestige (Gold) roll',
+      es: 'Mínimo 1 Reliquia Maldita (Morado) + 14% base Gold Tier (hasta 35% máx. con Mastery)',
+      en: 'At least 1 Cursed Relic (Purple) + 14% base Gold Tier (up to 35% cap via Mastery)',
     },
     dropRates: {
       oxidized: '0%',
       tempered: '5%',
       astral: '32%',
-      cursed: '45%',
-      royal: '18%',
+      cursed: '49%',
+      royal: '14%',
     },
     notableDrops: {
-      es: 'Reliquias Malditas con pasivas de ejecución, Vestigio Real único, Sellos de Ejecución y Restauración.',
-      en: 'Execution-passive Cursed Relics, match-unique Royal Vestige pieces, Execution & Restoration Seals.',
+      es: 'Reliquias Malditas con pasivas de ejecución, Vestigio Real único (tope 35%), Sellos de Ejecución y Restauración.',
+      en: 'Execution-passive Cursed Relics, Royal Vestige roll (35% hard cap), Execution & Restoration Seals.',
     },
   },
   {
@@ -538,8 +538,8 @@ export const GDD_MONSTER_TIERS: GddMonsterEntry[] = [
       en: 'Royal Vestige Orb (Direct Arena Drop)',
     },
     lootingRule: {
-      es: 'Drop directo e instantáneo al dar el golpe de gracia; otorga ventaja legendaria al jugador o equipo rumbo al Salón del Trono.',
-      en: 'Instant drop awarded on killing blow, granting mythic gear to the player or squad entering the Throne Room.',
+      es: 'Drop directo e instantáneo al dar el golpe de gracia; su probabilidad de Gold Tier escala con Nivel/Mastery hasta el tope estricto del 35%.',
+      en: 'Instant drop on killing blow; its Gold Tier probability scales with Level/Mastery up to a strict 35% hard cap.',
     },
     squadScaling: {
       es: 'Errante (1x HP) · Dúo (1.35x) · Trío (1.75x) · Cuarteto (2.2x HP, sin fuego amigo)',
@@ -561,22 +561,35 @@ export const GDD_MONSTER_TIERS: GddMonsterEntry[] = [
       },
     ],
     lootGuarantee: {
-      es: '1 Vestigio Real (Dorado) garantizado + recarga total de Viales',
-      en: '1 guaranteed Royal Vestige (Gold) + full Vial Belt refill',
+      es: 'Reliquia Maldita garantizada + 22% base Gold Tier (topado a 35% máx.) + Viales',
+      en: 'Guaranteed Cursed Relic + 22% base Gold Tier (35% hard cap) + full Vials',
     },
     dropRates: {
       oxidized: '0%',
       tempered: '0%',
       astral: '0%',
-      cursed: '52%',
-      royal: '48%',
+      cursed: '78%',
+      royal: '22%',
     },
     notableDrops: {
-      es: 'Vestigio Real (arma o coraza definitiva), Sello de Égida (Manto de Éter) y recarga total de Viales Carmesí y de Éter.',
-      en: 'Royal Vestige mythic weapon/cuirass, Aegis Seal (Aether Cloak), and full Crimson & Aether Vial refill.',
+      es: 'Vestigio Real (arma o coraza dorada, máx. 35%), Sello de Égida y recarga total de Viales Carmesí y de Éter.',
+      en: 'Royal Vestige mythic weapon/cuirass (35% cap), Aegis Seal, and full Crimson & Aether Vial refill.',
     },
   },
 ];
+
+export const GDD_MASTERY_SPEC = {
+  levelsPerMastery: 100,
+  goldTierHardCapPct: 35,
+  title: {
+    es: 'Progresión de Niveles y Mastery (Cada 100 Niveles = 1 Mastery)',
+    en: 'Level & Mastery Progression (Every 100 Levels = 1 Mastery)',
+  },
+  summary: {
+    es: 'Cada 100 niveles desbloqueas un nuevo rango de Mastery (Nv. 100 = Mastery I, Nv. 200 = Mastery II, etc.). A mayor nivel y Mastery obtienes mayor probabilidad de mejores rarezas al lootear y mayor facilidad para abatir monstruos PvE (+daño contra bestias y guardianes), pero la probabilidad de Gold Tier (Vestigio Real / Dorado) está estrictamente topada al 35% máximo.',
+    en: 'Every 100 levels awards 1 Mastery rank (Lv. 100 = Mastery I, Lv. 200 = Mastery II, etc.). Higher Levels and Mastery increase loot quality odds and PvE clear efficiency against monsters (+PvE damage & faster chest unsealing), while Gold Tier (Royal Vestige) drop probability is strictly hard-capped at 35% maximum.',
+  },
+};
 
 export const GDD_SEALS: GddSealItem[] = [
   {
@@ -890,13 +903,17 @@ export const GDD_PITCH_SLIDES: GddPitchSlide[] = [
         },
       },
       {
-        heading: { es: 'Escalado Dinámico y Alerta a Rivales', en: 'Mode Scaling & PvP Ambush Radius' },
+        heading: { es: 'Escalado por Nivel y Mastery (Cada 100 Nv. = 1 Mastery · Tope 35% Gold)', en: 'Level & Mastery Scaling (100 Lv. = 1 Mastery · 35% Gold Cap)' },
         body: {
-          es: 'La vida y oleadas escalan automáticamente entre Modo Errante (1x) y Modo Juramento (hasta 2.2x), mientras el ruido/haz rúnico alerta a escuadrones enemigos entre 25m y toda la Ciudadela.',
-          en: 'Monster HP and waves scale cleanly from Wanderer Solo (1x) to Oath Squads (up to 2.2x), while combat echoes/beams ping rival squads from 25m up to Citadel-wide.',
+          es: 'A mayor nivel y Mastery, los jugadores derrotan monstruos PvE con más facilidad y mejoran sus probabilidades de rareza al lootear, con un tope estricto del 35% máximo para Gold Tier (Vestigio Real).',
+          en: 'Higher Levels and Mastery ranks (1 per 100 levels) boost PvE monster kill speed and loot rarity odds, strictly hard-capped at 35% max probability for Gold Tier.',
         },
       },
     ],
+    callout: {
+      es: 'Regla de Equilibrio: El nivel y Mastery aceleran la cacería PvE y mejoran drops hasta 35% máx. en Gold Tier sin romper la justicia del combate PvP.',
+      en: 'Balance Rule: Level & Mastery speed up PvE monster clears and scale drops up to the 35% Gold Tier hard cap while keeping PvP fair.',
+    },
     imageKey: 'cryptBestiary',
   },
   {

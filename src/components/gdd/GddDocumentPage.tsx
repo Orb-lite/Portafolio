@@ -25,6 +25,7 @@ import {
   GDD_ACTS,
   GDD_RARITIES,
   GDD_MONSTER_TIERS,
+  GDD_MASTERY_SPEC,
   GDD_SEALS,
   GDD_POIS,
   GDD_PITCH_SLIDES,
@@ -52,6 +53,7 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
   const [lightboxImage, setLightboxImage] = useState<GddReferenceImage | null>(null);
   const [simTierId, setSimTierId] = useState<string>('tier-3');
   const [simMode, setSimMode] = useState<'errante' | 'juramento'>('juramento');
+  const [simLevel, setSimLevel] = useState<number>(100);
   const [simResult, setSimResult] = useState<Array<{
     item: string;
     tierName: string;
@@ -59,6 +61,53 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
   }> | null>(null);
   const currentYear = new Date().getFullYear();
   const documentDate = new Date().toISOString().slice(0, 10);
+
+  const simMasteryRank = Math.floor(simLevel / GDD_MASTERY_SPEC.levelsPerMastery);
+  const simPveBonusPct = Math.round(simLevel * 0.15);
+
+  const getAdjustedDropRates = (tierId: string, level: number) => {
+    const tier = GDD_MONSTER_TIERS.find((item) => item.id === tierId) || GDD_MONSTER_TIERS[0];
+    const parsePct = (val: string) => parseInt(val.replace('%', ''), 10) || 0;
+    let ox = parsePct(tier.dropRates.oxidized);
+    let te = parsePct(tier.dropRates.tempered);
+    let as = parsePct(tier.dropRates.astral);
+    let cu = parsePct(tier.dropRates.cursed);
+    const baseRo = parsePct(tier.dropRates.royal);
+
+    const masteryBonusTotal = Math.min(24, Math.floor(level * 0.06));
+    const maxGoldAdd = tier.tierLevel === 'I' ? 8 : 35;
+    const rawGoldTarget = baseRo + Math.min(maxGoldAdd, Math.floor(level * 0.035));
+    const ro = Math.min(GDD_MASTERY_SPEC.goldTierHardCapPct, rawGoldTarget);
+    const addedGold = Math.max(0, ro - baseRo);
+
+    let shiftBudget = masteryBonusTotal;
+    const takeFrom = (val: number, needed: number) => {
+      const taken = Math.min(val, needed);
+      return [val - taken, taken] as const;
+    };
+
+    const [newOx, tookOx] = takeFrom(ox, shiftBudget + addedGold);
+    ox = newOx;
+    let rem = shiftBudget + addedGold - tookOx;
+
+    const [newTe, tookTe] = takeFrom(te, rem);
+    te = newTe;
+    rem -= tookTe;
+
+    const [newAs, tookAs] = takeFrom(as, Math.min(rem, as));
+    as = newAs;
+    rem -= tookAs;
+
+    const upgradeToCursed = Math.max(0, tookOx + tookTe + tookAs - addedGold);
+    cu = Math.max(0, cu + upgradeToCursed - Math.max(0, addedGold - (tookOx + tookTe + tookAs)));
+
+    const total = ox + te + as + cu + ro;
+    if (total !== 100) {
+      cu = Math.max(0, cu + (100 - total));
+    }
+
+    return { ox, te, as, cu, ro };
+  };
 
   useEffect(() => {
     if (!lightboxImage) return;
@@ -69,15 +118,16 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
     return () => window.removeEventListener('keydown', onKey);
   }, [lightboxImage]);
 
-  const handleSimulateMonsterLoot = (tierId: string) => {
+  const handleSimulateMonsterLoot = (tierId: string, levelOverride?: number) => {
     const tier = GDD_MONSTER_TIERS.find((item) => item.id === tierId) || GDD_MONSTER_TIERS[0];
-    const parsePct = (val: string) => parseInt(val.replace('%', ''), 10) || 0;
+    const effectiveLevel = levelOverride ?? simLevel;
+    const adjusted = getAdjustedDropRates(tierId, effectiveLevel);
     const weights = [
-      { key: 'oxidized', pct: parsePct(tier.dropRates.oxidized), rarity: GDD_RARITIES[0] },
-      { key: 'tempered', pct: parsePct(tier.dropRates.tempered), rarity: GDD_RARITIES[1] },
-      { key: 'astral', pct: parsePct(tier.dropRates.astral), rarity: GDD_RARITIES[2] },
-      { key: 'cursed', pct: parsePct(tier.dropRates.cursed), rarity: GDD_RARITIES[3] },
-      { key: 'royal', pct: parsePct(tier.dropRates.royal), rarity: GDD_RARITIES[4] },
+      { key: 'oxidized', pct: adjusted.ox, rarity: GDD_RARITIES[0] },
+      { key: 'tempered', pct: adjusted.te, rarity: GDD_RARITIES[1] },
+      { key: 'astral', pct: adjusted.as, rarity: GDD_RARITIES[2] },
+      { key: 'cursed', pct: adjusted.cu, rarity: GDD_RARITIES[3] },
+      { key: 'royal', pct: adjusted.ro, rarity: GDD_RARITIES[4] },
     ];
 
     const poolByRarity: Record<string, { es: string[]; en: string[] }> = {
@@ -126,7 +176,7 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
 
     const dropCount = simMode === 'juramento' ? (tier.tierLevel === 'I' ? 2 : 3) : tier.tierLevel === 'I' ? 1 : 2;
     const minRarityIdx =
-      tier.tierLevel === 'IV' ? 4 : tier.tierLevel === 'III' ? 3 : tier.tierLevel === 'II' ? 2 : 0;
+      tier.tierLevel === 'IV' || tier.tierLevel === 'III' ? 3 : tier.tierLevel === 'II' ? 2 : 0;
 
     const drops = Array.from({ length: dropCount }, (_, idx) =>
       rollOnce(idx === 0 ? minRarityIdx : 0)
@@ -753,6 +803,23 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                   </div>
 
                   <div className="flex items-center gap-2 flex-wrap">
+                    <select
+                      aria-label={isEn ? 'Level and Mastery' : 'Nivel y Mastery'}
+                      value={simLevel}
+                      onChange={(e) => {
+                        const lvl = Number(e.target.value);
+                        setSimLevel(lvl);
+                        handleSimulateMonsterLoot(simTierId, lvl);
+                      }}
+                      className="bg-stone-950 border border-stone-700 text-stone-100 text-[11px] px-2 py-1.5 rounded cursor-pointer"
+                    >
+                      <option value={1}>{isEn ? 'Lv. 1 (Mastery 0)' : 'Nv. 1 (Mastery 0)'}</option>
+                      <option value={100}>{isEn ? 'Lv. 100 (Mastery I)' : 'Nv. 100 (Mastery I)'}</option>
+                      <option value={200}>{isEn ? 'Lv. 200 (Mastery II)' : 'Nv. 200 (Mastery II)'}</option>
+                      <option value={300}>{isEn ? 'Lv. 300 (Mastery III)' : 'Nv. 300 (Mastery III)'}</option>
+                      <option value={500}>{isEn ? 'Lv. 500 (Mastery V)' : 'Nv. 500 (Mastery V)'}</option>
+                    </select>
+
                     <div className="flex items-center bg-stone-950 border border-stone-700 p-0.5 rounded text-[11px]">
                       <button
                         type="button"
@@ -770,7 +837,7 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                           simMode === 'juramento' ? 'bg-stone-100 text-stone-950 font-semibold' : 'text-stone-400'
                         }`}
                       >
-                        {isEn ? 'Oath (Squad 4)' : 'Juramento (Escuadrón)'}
+                        {isEn ? 'Oath (Squad)' : 'Juramento (Equipo)'}
                       </button>
                     </div>
 
@@ -782,6 +849,23 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                       <Dices className="w-3.5 h-3.5" />
                       <span>{isEn ? 'Roll Loot Drop' : 'Simular Loot Drop'}</span>
                     </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] bg-stone-950/70 border border-stone-800 px-3 py-1.5">
+                  <div className="text-stone-300 tabular-nums">
+                    <strong className="text-amber-300">
+                      {isEn ? `Lv. ${simLevel} · Mastery ${simMasteryRank}` : `Nv. ${simLevel} · Mastery ${simMasteryRank}`}
+                    </strong>{' '}
+                    ·{' '}
+                    {isEn
+                      ? `+${simPveBonusPct}% PvE Monster Damage`
+                      : `+${simPveBonusPct}% Daño PvE vs Monstruos`}
+                  </div>
+                  <div className="font-mono tabular-nums text-amber-400 font-semibold">
+                    {isEn
+                      ? `Gold Tier Odds: ${getAdjustedDropRates(simTierId, simLevel).ro}% (Hard Cap 35%)`
+                      : `Prob. Gold Tier: ${getAdjustedDropRates(simTierId, simLevel).ro}% (Tope Máx. 35%)`}
                   </div>
                 </div>
 
@@ -860,7 +944,7 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                     </p>
                   </div>
 
-                  <ReferencePlate image={GDD_IMAGES.cryptBestiary} heightClass="h-32" />
+                  <ReferencePlate image={GDD_IMAGES.cryptBestiary} heightClass="h-24" />
 
                   <div className="grid grid-cols-2 gap-2.5">
                     {GDD_MONSTER_TIERS.map((tier) => (
@@ -973,6 +1057,16 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                         </tbody>
                       </table>
                     </div>
+                  </div>
+
+                  <div className="border border-stone-300 bg-stone-100 p-2.5 space-y-0.5">
+                    <div className="flex items-center justify-between gap-2 text-[11px] font-bold text-stone-950">
+                      <span>{t(GDD_MASTERY_SPEC.title)}</span>
+                      <span className="font-mono tabular-nums text-amber-900">
+                        {isEn ? 'Gold Tier Cap: 35% Max' : 'Tope Gold Tier: 35% Máx.'}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-stone-700 leading-snug">{t(GDD_MASTERY_SPEC.summary)}</p>
                   </div>
                 </div>
               </PageChrome>
@@ -1114,8 +1208,8 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                       </h3>
                       <p className="text-[11px] text-stone-700 leading-relaxed">
                         {isEn
-                          ? 'Hit detection, PvE drop rolls, Royal Vestige uniqueness, 60s squad respawn timers (requiring 1+ living teammate; instant wipe if all fall), Act IV respawn lockout, and mode victory rules are validated authoritatively on the server.'
-                          : 'La detección de impactos, las tiradas de botín PvE, los temporizadores de respawn de 60s (con mínimo 1 miembro vivo o eliminación total del equipo), el bloqueo de respawn desde el Acto IV y las condiciones de victoria se validan en el servidor.'}
+                          ? 'Hit detection, PvE drop rolls (enforcing the 35% Gold Tier hard cap across Level/Mastery ranks), Royal Vestige uniqueness, 60s squad respawn timers (requiring 1+ living teammate; instant wipe if all fall), Act IV respawn lockout, and mode victory rules are validated authoritatively on the server.'
+                          : 'La detección de impactos, las tiradas de botín PvE (aplicando el tope del 35% máximo en Gold Tier según Nivel/Mastery), los temporizadores de respawn de 60s (con mínimo 1 miembro vivo o eliminación del equipo), el bloqueo desde el Acto IV y las victorias se validan en el servidor.'}
                       </p>
                     </div>
 
@@ -1163,8 +1257,8 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
 
                     <p className="text-[11px] text-stone-700 leading-relaxed">
                       {isEn
-                        ? `This Game Design Document compiles the original IP "${GDD_META.projectTitle}", encompassing the fictional continent of Valdris, The Abyssal Ash & The Iron Crown lore, Oath Mode (Duos, Trios & Quads winning together with a 60s squad respawn requiring 1+ living member during Acts I–III and zero respawn from Act IV onward) & Wanderer Mode (Solo 1 vs 199 with 1 sole victor), the 5-Act match cycle, the 5 Valdris Quality Tiers, the 8 Aether Seals, the 4-tier PvE Monster Difficulty for Looting & Drop Matrix, the 4 Valdris POIs, and the Unreal Engine 5 multiplayer + anti-cheat architecture.`
-                        : `Este Documento Maestro de Diseño reúne los elementos originales de la obra "${GDD_META.projectTitle}": el continente de Valdris, La Ceniza Abisal y La Corona de Hierro, los modos Modo Juramento (Dúos, Tríos y Cuartetos que ganan en conjunto, con respawn de 60s en Actos I–III condicionado a 1+ aliado vivo y sin respawn desde el Acto IV) y Modo Errante (Solo 1 vs 199 con 1 único ganador), el ciclo de 5 Actos, los 5 Tiers de Calidad, los 8 Sellos de Éter, la dificultad de monstruos PvE en 4 niveles con matriz de botín, los 4 biomas estratégicos y la arquitectura UE5 con sistema Anti-Cheat multicapa.`}
+                        ? `This Game Design Document compiles the original IP "${GDD_META.projectTitle}", encompassing the fictional continent of Valdris, The Abyssal Ash & The Iron Crown lore, Oath Mode (Duos, Trios & Quads winning together with a 60s squad respawn requiring 1+ living member during Acts I–III and zero respawn from Act IV onward) & Wanderer Mode (Solo 1 vs 199 with 1 sole victor), the 5-Act match cycle, the 5 Valdris Quality Tiers, the 8 Aether Seals, 4-tier PvE Monster Difficulty for Looting, Level & Mastery progression (100 levels = 1 Mastery, +PvE efficiency & loot odds capped at 35% Gold Tier), 4 Valdris POIs, and the UE5 multiplayer + anti-cheat architecture.`
+                        : `Este Documento Maestro de Diseño reúne los elementos originales de la obra "${GDD_META.projectTitle}": el continente de Valdris, La Ceniza Abisal y La Corona de Hierro, los modos Modo Juramento (Dúos, Tríos y Cuartetos que ganan en conjunto, con respawn de 60s en Actos I–III condicionado a 1+ aliado vivo y sin respawn desde el Acto IV) y Modo Errante (Solo 1 vs 199 con 1 único ganador), el ciclo de 5 Actos, los 5 Tiers de Calidad, los 8 Sellos de Éter, la dificultad de monstruos PvE en 4 niveles, la progresión por Niveles y Mastery (100 niveles = 1 Mastery, mayor eficacia PvE y mejores drops topados a 35% en Gold Tier), los 4 biomas estratégicos y la arquitectura UE5 con Anti-Cheat multicapa.`}
                     </p>
                   </div>
                 </div>

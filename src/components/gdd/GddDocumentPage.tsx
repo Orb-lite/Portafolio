@@ -26,6 +26,8 @@ import {
   GDD_RARITIES,
   GDD_MONSTER_TIERS,
   GDD_MASTERY_SPEC,
+  GDD_VITALITY_MATCHUP,
+  calcPaladinHp,
   GDD_SEALS,
   GDD_POIS,
   GDD_PITCH_SLIDES,
@@ -54,6 +56,7 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
   const [simTierId, setSimTierId] = useState<string>('tier-3');
   const [simMode, setSimMode] = useState<'errante' | 'juramento'>('juramento');
   const [simLevel, setSimLevel] = useState<number>(100);
+  const [simMatchAvgLevel, setSimMatchAvgLevel] = useState<number>(100);
   const [simResult, setSimResult] = useState<Array<{
     item: string;
     tierName: string;
@@ -64,6 +67,13 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
 
   const simMasteryRank = Math.floor(simLevel / GDD_MASTERY_SPEC.levelsPerMastery);
   const simPveBonusPct = Math.round(simLevel * 0.15);
+  const simPlayerHp = calcPaladinHp(simLevel);
+  const simMonsterEffLevel = simMatchAvgLevel + 100;
+  const simMonsterBaseHp = calcPaladinHp(simMonsterEffLevel);
+  const activeSimTier = GDD_MONSTER_TIERS.find((item) => item.id === simTierId) || GDD_MONSTER_TIERS[0];
+  const simScaledMonsterHp = Math.round(
+    simMonsterBaseHp * activeSimTier.hpTierFactor * (simMode === 'juramento' ? 1.85 : 1)
+  );
 
   const getAdjustedDropRates = (tierId: string, level: number) => {
     const tier = GDD_MONSTER_TIERS.find((item) => item.id === tierId) || GDD_MONSTER_TIERS[0];
@@ -804,7 +814,7 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
 
                   <div className="flex items-center gap-2 flex-wrap">
                     <select
-                      aria-label={isEn ? 'Level and Mastery' : 'Nivel y Mastery'}
+                      aria-label={isEn ? 'Player Level and Mastery' : 'Nivel del Jugador y Mastery'}
                       value={simLevel}
                       onChange={(e) => {
                         const lvl = Number(e.target.value);
@@ -813,11 +823,23 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                       }}
                       className="bg-stone-950 border border-stone-700 text-stone-100 text-[11px] px-2 py-1.5 rounded cursor-pointer"
                     >
-                      <option value={1}>{isEn ? 'Lv. 1 (Mastery 0)' : 'Nv. 1 (Mastery 0)'}</option>
-                      <option value={100}>{isEn ? 'Lv. 100 (Mastery I)' : 'Nv. 100 (Mastery I)'}</option>
-                      <option value={200}>{isEn ? 'Lv. 200 (Mastery II)' : 'Nv. 200 (Mastery II)'}</option>
-                      <option value={300}>{isEn ? 'Lv. 300 (Mastery III)' : 'Nv. 300 (Mastery III)'}</option>
-                      <option value={500}>{isEn ? 'Lv. 500 (Mastery V)' : 'Nv. 500 (Mastery V)'}</option>
+                      <option value={1}>{isEn ? 'Player Lv. 1 (M0)' : 'Jugador Nv. 1 (M0)'}</option>
+                      <option value={100}>{isEn ? 'Player Lv. 100 (MI)' : 'Jugador Nv. 100 (MI)'}</option>
+                      <option value={200}>{isEn ? 'Player Lv. 200 (MII)' : 'Jugador Nv. 200 (MII)'}</option>
+                      <option value={300}>{isEn ? 'Player Lv. 300 (MIII)' : 'Jugador Nv. 300 (MIII)'}</option>
+                      <option value={500}>{isEn ? 'Player Lv. 500 (MV)' : 'Jugador Nv. 500 (MV)'}</option>
+                    </select>
+
+                    <select
+                      aria-label={isEn ? 'Lobby Average Level' : 'Nivel Medio de Partida'}
+                      value={simMatchAvgLevel}
+                      onChange={(e) => setSimMatchAvgLevel(Number(e.target.value))}
+                      className="bg-stone-950 border border-stone-700 text-stone-100 text-[11px] px-2 py-1.5 rounded cursor-pointer"
+                    >
+                      <option value={1}>{isEn ? 'Match Avg: Lv. 1' : 'Media Lobby: Nv. 1'}</option>
+                      <option value={100}>{isEn ? 'Match Avg: Lv. 100' : 'Media Lobby: Nv. 100'}</option>
+                      <option value={200}>{isEn ? 'Match Avg: Lv. 200' : 'Media Lobby: Nv. 200'}</option>
+                      <option value={300}>{isEn ? 'Match Avg: Lv. 300' : 'Media Lobby: Nv. 300'}</option>
                     </select>
 
                     <div className="flex items-center bg-stone-950 border border-stone-700 p-0.5 rounded text-[11px]">
@@ -855,12 +877,14 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                 <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] bg-stone-950/70 border border-stone-800 px-3 py-1.5">
                   <div className="text-stone-300 tabular-nums">
                     <strong className="text-amber-300">
-                      {isEn ? `Lv. ${simLevel} · Mastery ${simMasteryRank}` : `Nv. ${simLevel} · Mastery ${simMasteryRank}`}
+                      {isEn
+                        ? `Lv. ${simLevel} (M${simMasteryRank}) · ${simPlayerHp.toLocaleString()} HP`
+                        : `Nv. ${simLevel} (M${simMasteryRank}) · ${simPlayerHp.toLocaleString()} HP`}
                     </strong>{' '}
                     ·{' '}
                     {isEn
-                      ? `+${simPveBonusPct}% PvE Monster Damage`
-                      : `+${simPveBonusPct}% Daño PvE vs Monstruos`}
+                      ? `+${simPveBonusPct}% PvE Dmg · Monsters Lv. ${simMonsterEffLevel} (Avg+100): ${simScaledMonsterHp.toLocaleString()} HP`
+                      : `+${simPveBonusPct}% Daño PvE · Monstruos Nv. ${simMonsterEffLevel} (Media+100): ${simScaledMonsterHp.toLocaleString()} HP`}
                   </div>
                   <div className="font-mono tabular-nums text-amber-400 font-semibold">
                     {isEn
@@ -1059,14 +1083,25 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                     </div>
                   </div>
 
-                  <div className="border border-stone-300 bg-stone-100 p-2.5 space-y-0.5">
-                    <div className="flex items-center justify-between gap-2 text-[11px] font-bold text-stone-950">
-                      <span>{t(GDD_MASTERY_SPEC.title)}</span>
-                      <span className="font-mono tabular-nums text-amber-900">
-                        {isEn ? 'Gold Tier Cap: 35% Max' : 'Tope Gold Tier: 35% Máx.'}
-                      </span>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div className="border border-stone-300 bg-stone-100 p-2 space-y-0.5">
+                      <div className="flex items-center justify-between gap-2 text-[10.5px] font-bold text-stone-950">
+                        <span>{t(GDD_MASTERY_SPEC.title)}</span>
+                        <span className="font-mono tabular-nums text-amber-900">
+                          {isEn ? 'Cap: 35% Gold' : 'Tope: 35% Gold'}
+                        </span>
+                      </div>
+                      <p className="text-[9.5px] text-stone-700 leading-tight">{t(GDD_MASTERY_SPEC.summary)}</p>
                     </div>
-                    <p className="text-[10px] text-stone-700 leading-snug">{t(GDD_MASTERY_SPEC.summary)}</p>
+                    <div className="border border-stone-300 bg-stone-100 p-2 space-y-0.5">
+                      <div className="flex items-center justify-between gap-2 text-[10.5px] font-bold text-stone-950">
+                        <span>{t(GDD_VITALITY_MATCHUP.matchupTitle)}</span>
+                        <span className="font-mono tabular-nums text-amber-900">
+                          Lv_avg + 100
+                        </span>
+                      </div>
+                      <p className="text-[9.5px] text-stone-700 leading-tight">{t(GDD_VITALITY_MATCHUP.matchupSummary)}</p>
+                    </div>
                   </div>
                 </div>
               </PageChrome>
@@ -1114,12 +1149,13 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                     </div>
                     <div className="border border-stone-300 bg-white p-3 space-y-1">
                       <div className="text-xs font-bold text-stone-900">
-                        {isEn ? 'Vitality, Aether & Stamina' : 'Tríada: Vitalidad, Éter y Estamina'}
+                        {t(GDD_VITALITY_MATCHUP.paladinTitle)}
                       </div>
-                      <p className="text-[10.5px] text-stone-600 leading-snug">
+                      <p className="text-[10px] text-stone-600 leading-snug">
+                        {t(GDD_VITALITY_MATCHUP.paladinSummary)}{' '}
                         {isEn
-                          ? 'Fuel attacks, dodges, and Aether Seals alongside the 1–4 Vial Belt (Crimson Vial, Aether Vial, Vigor Tonic, Purifying Elixir).'
-                          : 'Gestión simultánea de Vitalidad Carmesí, Éter arcano (Sellos) y Estamina, respaldada por el Cinturón de Viales (1–4) de consumo táctico.'}
+                          ? 'Paired with Aether, Stamina, and the 1–4 Vial Belt.'
+                          : 'Integrado con barras de Éter, Estamina y Cinturón de Viales (1–4).'}
                       </p>
                     </div>
                     <div className="border border-stone-300 bg-white p-3 space-y-1">
@@ -1208,8 +1244,8 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                       </h3>
                       <p className="text-[11px] text-stone-700 leading-relaxed">
                         {isEn
-                          ? 'Hit detection, PvE drop rolls (enforcing the 35% Gold Tier hard cap across Level/Mastery ranks), Royal Vestige uniqueness, 60s squad respawn timers (requiring 1+ living teammate; instant wipe if all fall), Act IV respawn lockout, and mode victory rules are validated authoritatively on the server.'
-                          : 'La detección de impactos, las tiradas de botín PvE (aplicando el tope del 35% máximo en Gold Tier según Nivel/Mastery), los temporizadores de respawn de 60s (con mínimo 1 miembro vivo o eliminación del equipo), el bloqueo desde el Acto IV y las victorias se validan en el servidor.'}
+                          ? 'Match-Up bracket balancing & lobby mean calculation (Lv_avg), universal Paladin HP scaling, Lv_avg+100 monster HP, PvE drops (35% Gold cap), 60s squad respawns, Act IV lockout, and queue victory rules are enforced server-side.'
+                          : 'El Match-Up System (brackets y cálculo de Lv_avg), la vida universal Paladín, la vida PvE en Lv_avg+100, las tiradas de botín (tope 35% Gold), respawns de 60s, el cierre del Acto IV y las victorias se validan en servidor.'}
                       </p>
                     </div>
 
@@ -1257,8 +1293,8 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
 
                     <p className="text-[11px] text-stone-700 leading-relaxed">
                       {isEn
-                        ? `This Game Design Document compiles the original IP "${GDD_META.projectTitle}", encompassing the fictional continent of Valdris, The Abyssal Ash & The Iron Crown lore, Oath Mode (Duos, Trios & Quads winning together with a 60s squad respawn requiring 1+ living member during Acts I–III and zero respawn from Act IV onward) & Wanderer Mode (Solo 1 vs 199 with 1 sole victor), the 5-Act match cycle, the 5 Valdris Quality Tiers, the 8 Aether Seals, 4-tier PvE Monster Difficulty for Looting, Level & Mastery progression (100 levels = 1 Mastery, +PvE efficiency & loot odds capped at 35% Gold Tier), 4 Valdris POIs, and the UE5 multiplayer + anti-cheat architecture.`
-                        : `Este Documento Maestro de Diseño reúne los elementos originales de la obra "${GDD_META.projectTitle}": el continente de Valdris, La Ceniza Abisal y La Corona de Hierro, los modos Modo Juramento (Dúos, Tríos y Cuartetos que ganan en conjunto, con respawn de 60s en Actos I–III condicionado a 1+ aliado vivo y sin respawn desde el Acto IV) y Modo Errante (Solo 1 vs 199 con 1 único ganador), el ciclo de 5 Actos, los 5 Tiers de Calidad, los 8 Sellos de Éter, la dificultad de monstruos PvE en 4 niveles, la progresión por Niveles y Mastery (100 niveles = 1 Mastery, mayor eficacia PvE y mejores drops topados a 35% en Gold Tier), los 4 biomas estratégicos y la arquitectura UE5 con Anti-Cheat multicapa.`}
+                        ? `This Game Design Document compiles the original IP "${GDD_META.projectTitle}": Valdris lore, Oath Mode (60s squad respawn with 1+ alive in Acts I–III, zero respawn in Act IV+, co-op victory) & Wanderer Mode (1v199), 5 Quality Tiers, 8 Aether Seals, universal Paladin HP curve (+10 HP/lv), Match-Up System setting PvE monster HP to Lobby Mean + 100 Levels, Level/Mastery scaling (100 lv = 1 Mastery, 35% Gold Tier cap), 4 POIs, and UE5 + Anti-Cheat architecture.`
+                        : `Este Documento Maestro reúne los elementos originales de "${GDD_META.projectTitle}": universo Valdris, Modo Juramento (respawn 60s con 1+ vivo en Actos I–III, sin respawn desde Acto IV, victoria conjunta) y Errante (1 vs 199), 5 Tiers, 8 Sellos de Éter, vida universal de Paladín (+10 HP/nv), Match-Up System con vida de monstruos a Nivel Medio + 100, Mastery cada 100 niveles (tope 35% Gold Tier), 4 biomas y arquitectura UE5 con Anti-Cheat multicapa.`}
                     </p>
                   </div>
                 </div>

@@ -55,6 +55,7 @@ export interface GddMonsterEntry {
   lootingRule: GddLocalizedText;
   squadScaling: GddLocalizedText;
   pvpAlertRadius: GddLocalizedText;
+  hpTierFactor: number;
   monsters: Array<{
     name: GddLocalizedText;
     hp: string;
@@ -363,10 +364,11 @@ export const GDD_MONSTER_TIERS: GddMonsterEntry[] = [
       es: '25m (Ruido bajo, sin marca en mapa)',
       en: '25m (Low noise, no map ping)',
     },
+    hpTierFactor: 0.45,
     monsters: [
       {
         name: { es: 'Mercenario Consumido', en: 'Ash-Stricken Mercenary' },
-        hp: '180 HP',
+        hp: '0.45x HP(Lv_avg+100)',
         role: { es: 'Hostigador Ligero PvE', en: 'Light PvE Skirmisher' },
         combatBehavior: {
           es: 'Deambula por aldeas exteriores y campamentos abandonados; embiste con acero oxidado y suelta viales básicos al caer.',
@@ -375,7 +377,7 @@ export const GDD_MONSTER_TIERS: GddMonsterEntry[] = [
       },
       {
         name: { es: 'Sanguijuela del Miasma', en: 'Miasma Lurker' },
-        hp: '230 HP',
+        hp: '0.52x HP(Lv_avg+100)',
         role: { es: 'Acechador Tóxico', en: 'Toxic Ambusher' },
         combatBehavior: {
           es: 'Emerge bajo las pasarelas hundidas de Las Marismas del Miasma aplicando veneno acumulable; ideal para farmear Elixires Purificadores.',
@@ -425,10 +427,11 @@ export const GDD_MONSTER_TIERS: GddMonsterEntry[] = [
       es: '70m (Haz de luz rúnica visible al abrir sello)',
       en: '70m (Runic beam visible when unsealing)',
     },
+    hpTierFactor: 0.9,
     monsters: [
       {
         name: { es: 'Centinela Espectral del Altar', en: 'Spectral Altar Sentinel' },
-        hp: '540 HP',
+        hp: '0.90x HP(Lv_avg+100)',
         role: { es: 'Guardián de Cofre Sellado', en: 'Sealed Chest Warden' },
         combatBehavior: {
           es: 'Custodia los Altar-Cofres Sellados del Acto II; bloquea con escudo etéreo y solo cede ante parry, ataque cargado o Sello del Bastión.',
@@ -437,7 +440,7 @@ export const GDD_MONSTER_TIERS: GddMonsterEntry[] = [
       },
       {
         name: { es: 'Vigía de las Agujas', en: 'Spire Canopy Stalker' },
-        hp: '390 HP',
+        hp: '0.75x HP(Lv_avg+100)',
         role: { es: 'Tirador de Éter Elevado', en: 'Elevated Aether Marksman' },
         combatBehavior: {
           es: 'Dispara virotes imbuídos desde puentes colgantes en El Bosque de las Agujas, forzando cobertura o Traslación vertical.',
@@ -487,10 +490,11 @@ export const GDD_MONSTER_TIERS: GddMonsterEntry[] = [
       es: '120m + Eco en Escalera (Atrae emboscadas PvPvE)',
       en: '120m + Stairwell Echo (Draws PvPvE third-parties)',
     },
+    hpTierFactor: 1.8,
     monsters: [
       {
         name: { es: 'Caballero Osario del Rey Sin Nombre', en: 'Nameless Ossuary Knight' },
-        hp: '1,480 HP',
+        hp: '1.80x HP(Lv_avg+100)',
         role: { es: 'Jefe de Corredor Subterráneo', en: 'Subterranean Corridor Boss' },
         combatBehavior: {
           es: 'Ejecuta barridos de mandoble en arco y contraataques con escudo agrietado; su derrota abre el relicario de Reliquias Malditas.',
@@ -499,7 +503,7 @@ export const GDD_MONSTER_TIERS: GddMonsterEntry[] = [
       },
       {
         name: { es: 'Sierpe de las Catacumbas', en: 'Catacomb Ash-Wyrm' },
-        hp: '2,250 HP',
+        hp: '2.20x HP(Lv_avg+100)',
         role: { es: 'Bestia Titánica de Subsuelo', en: 'Subterranean Apex Beast' },
         combatBehavior: {
           es: 'Exhala ráfagas de Miasma y Ceniza en espacios cerrados iluminados por antorchas, presionando la huida hacia las 3 escaleras.',
@@ -549,10 +553,11 @@ export const GDD_MONSTER_TIERS: GddMonsterEntry[] = [
       es: 'Global (Marcador permanente en brújula de la Ciudadela)',
       en: 'Global (Live compass beacon inside the Citadel)',
     },
+    hpTierFactor: 3.0,
     monsters: [
       {
         name: { es: 'Verdugo de la Campana Negra', en: 'Black Bell Executioner' },
-        hp: '3,100 HP',
+        hp: '3.00x HP(Lv_avg+100)',
         role: { es: 'Jefe de Cierre en Acto IV', en: 'Act IV Endgame Enforcer' },
         combatBehavior: {
           es: 'Emerge tras el Tañido de la Campana Negra; inmune a control ligero, patrulla el borde de La Ceniza Abisal empujando a los supervivientes hacia el Salón del Trono.',
@@ -578,6 +583,13 @@ export const GDD_MONSTER_TIERS: GddMonsterEntry[] = [
   },
 ];
 
+export function calcPaladinHp(level: number): number {
+  const safeLevel = Math.max(1, Math.floor(level));
+  if (safeLevel === 1) return 150;
+  if (safeLevel <= 8) return 150 + (safeLevel - 1) * 5;
+  return 185 + (safeLevel - 8) * 10;
+}
+
 export const GDD_MASTERY_SPEC = {
   levelsPerMastery: 100,
   goldTierHardCapPct: 35,
@@ -588,6 +600,25 @@ export const GDD_MASTERY_SPEC = {
   summary: {
     es: 'Cada 100 niveles desbloqueas un nuevo rango de Mastery (Nv. 100 = Mastery I, Nv. 200 = Mastery II, etc.). A mayor nivel y Mastery obtienes mayor probabilidad de mejores rarezas al lootear y mayor facilidad para abatir monstruos PvE (+daño contra bestias y guardianes), pero la probabilidad de Gold Tier (Vestigio Real / Dorado) está estrictamente topada al 35% máximo.',
     en: 'Every 100 levels awards 1 Mastery rank (Lv. 100 = Mastery I, Lv. 200 = Mastery II, etc.). Higher Levels and Mastery increase loot quality odds and PvE clear efficiency against monsters (+PvE damage & faster chest unsealing), while Gold Tier (Royal Vestige) drop probability is strictly hard-capped at 35% maximum.',
+  },
+};
+
+export const GDD_VITALITY_MATCHUP = {
+  paladinTitle: {
+    es: 'Vitalidad Universal (Curva de Paladín para Todos)',
+    en: 'Universal Vitality (Paladin HP Curve for All)',
+  },
+  paladinSummary: {
+    es: 'Sin clases fijas: los 200 jugadores comparten la progresión universal de vida de Paladín (150 HP en Nv. 1 → +5 HP/nv hasta 185 HP en Nv. 8 → +10 HP por nivel desde Nv. 9; ej. Nv. 100 = 1,105 HP, Nv. 200 = 2,105 HP).',
+    en: 'With zero fixed classes, all 200 players share the universal Paladin HP curve (150 HP at Lv. 1 → +5 HP/lv to 185 HP at Lv. 8 → +10 HP/level from Lv. 9+; e.g., Lv. 100 = 1,105 HP, Lv. 200 = 2,105 HP).',
+  },
+  matchupTitle: {
+    es: 'Match-Up System y Vida PvE (+100 Niveles sobre la Media)',
+    en: 'Match-Up System & PvE Monster HP (+100 Levels Above Lobby Mean)',
+  },
+  matchupSummary: {
+    es: 'El Match-Up System empareja 200 jugadores en brackets equilibrados por Nivel/Mastery y calcula el Nivel Medio del Lobby (Lv_avg). Todos los monstruos de la partida nacen con Nivel Efectivo = Lv_avg + 100 aplicando la misma curva Paladín × multiplicador de Tier (0.45x a 3.00x).',
+    en: 'The Match-Up System groups 200 mercenaries into balanced Level/Mastery brackets and computes the Lobby Average Level (Lv_avg). Every PvE monster spawns at Effective Level = Lv_avg + 100 using the Paladin HP curve × Tier factor (0.45x–3.00x).',
   },
 };
 
@@ -903,16 +934,16 @@ export const GDD_PITCH_SLIDES: GddPitchSlide[] = [
         },
       },
       {
-        heading: { es: 'Escalado por Nivel y Mastery (Cada 100 Nv. = 1 Mastery · Tope 35% Gold)', en: 'Level & Mastery Scaling (100 Lv. = 1 Mastery · 35% Gold Cap)' },
+        heading: { es: 'Escalado por Mastery, Vida Paladín y Media +100 en Monstruos', en: 'Mastery Scaling, Paladin HP & Mean+100 Monster Levels' },
         body: {
-          es: 'A mayor nivel y Mastery, los jugadores derrotan monstruos PvE con más facilidad y mejoran sus probabilidades de rareza al lootear, con un tope estricto del 35% máximo para Gold Tier (Vestigio Real).',
-          en: 'Higher Levels and Mastery ranks (1 per 100 levels) boost PvE monster kill speed and loot rarity odds, strictly hard-capped at 35% max probability for Gold Tier.',
+          es: 'Curva universal de vida Paladín (+10 HP/nv para todos). El Match-Up System fija los monstruos en Nivel Medio + 100 en vida, mientras tu Mastery (1 por cada 100 nv.) facilita cazarlos y mejora drops hasta 35% máx. en Gold Tier.',
+          en: 'Universal Paladin HP (+10 HP/lv for all). The Match-Up System sets PvE monster HP at Lobby Mean Level + 100, while Mastery (every 100 levels) boosts PvE clears and loot up to a 35% Gold Tier cap.',
         },
       },
     ],
     callout: {
-      es: 'Regla de Equilibrio: El nivel y Mastery aceleran la cacería PvE y mejoran drops hasta 35% máx. en Gold Tier sin romper la justicia del combate PvP.',
-      en: 'Balance Rule: Level & Mastery speed up PvE monster clears and scale drops up to the 35% Gold Tier hard cap while keeping PvP fair.',
+      es: 'Balance Match-Up & Loot: Monstruos escalan a (Media de Partida + 100 niveles) sobre curva Paladín; el Gold Tier nunca supera el 35%.',
+      en: 'Match-Up & Loot Balance: Monsters scale to (Lobby Mean + 100 levels) on the Paladin HP curve; Gold Tier drops never exceed 35%.',
     },
     imageKey: 'cryptBestiary',
   },
@@ -944,25 +975,25 @@ export const GDD_PITCH_SLIDES: GddPitchSlide[] = [
   },
   {
     number: '09',
-    kicker: { es: 'Diapositiva 09 · Arquitectura Técnica UE5 y Anti-Cheat', en: 'Slide 09 · UE5 Tech & Anti-Cheat' },
-    title: { es: 'Ingeniería para 200 Jugadores a 60+ FPS y Anti-Cheat', en: '200-Player Netcode (60+ FPS) & Anti-Cheat' },
+    kicker: { es: 'Diapositiva 09 · Arquitectura UE5, Match-Up y Anti-Cheat', en: 'Slide 09 · UE5 Tech, Match-Up & Anti-Cheat' },
+    title: { es: 'Ingeniería (200J · 60+ FPS), Match-Up y Anti-Cheat', en: '200-Player Netcode, Match-Up & Anti-Cheat' },
     subtitle: {
-      es: 'Arquitectura técnica multijugador en Unreal Engine 5 con integridad competitiva',
-      en: 'Unreal Engine 5 multiplayer systems architecture with competitive integrity',
+      es: 'Emparejamiento por nivel medio, replicación en UE5 e integridad competitiva',
+      en: 'Average-level matchmaking, Unreal Engine 5 networking & competitive integrity',
     },
     bullets: [
       {
-        heading: { es: 'Replication Graph + Autoridad de Servidor + Anti-ESP', en: 'Replication Graph + Server Authority + Anti-ESP' },
+        heading: { es: 'Match-Up System + Replication Graph + Anti-ESP', en: 'Match-Up System + Replication Graph + Anti-ESP' },
         body: {
-          es: 'Replicación de alta frecuencia en radio de 50–80m para parries y proyectiles, culling anti-ESP en servidor para cofres/enemigos ocluidos y validación autoritativa de botín y respawns.',
-          en: 'High-frequency 50–80m relevancy for parries & projectiles, server-side anti-ESP occlusion culling for hidden chests/enemies, and authoritative loot/respawn validation.',
+          es: 'Empareja por Nivel/Mastery, fija la vida PvE en (Nivel Medio + 100) con fórmula Paladín, replica en radio de 50–80m y oculta cofres/rivales tras muros con culling anti-ESP.',
+          en: 'Matches lobbies by Level/Mastery, sets PvE HP to (Mean Level + 100) on the Paladin curve, streams 50–80m combat relevancy, and enforces Anti-ESP occlusion culling.',
         },
       },
       {
         heading: { es: 'Skeletal Mesh Modular + Kernel Guard & Telemetría', en: 'Modular Skeletal Mesh + Kernel Guard & Telemetry' },
         body: {
-          es: 'Un esqueleto modular optimizado intercambia los 5 tiers de armadura junto a protección en kernel anti-DLL, verificación física anti-speedhack y detección de teaming ilícito en Errante.',
-          en: 'Single modular Skeletal Mesh swaps all 5 armor tiers alongside kernel-level anti-tamper, server physics validation, and teaming detection in Wanderer Mode.',
+          es: 'Un esqueleto modular intercambia los 5 tiers de armadura junto a protección en kernel anti-DLL, tope autoritativo del 35% Gold Tier y detección de auto-parry o teaming en Errante.',
+          en: 'Single modular Skeletal Mesh swaps all 5 armor tiers alongside kernel anti-tamper, server-enforced 35% Gold cap, and telemetry against auto-parry or solo teaming.',
         },
       },
     ],

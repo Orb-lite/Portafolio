@@ -22,6 +22,7 @@ import {
   GDD_POIS,
   GDD_MONSTER_TIERS,
   GDD_MASTERY_SPEC,
+  GDD_VITALITY_MATCHUP,
 } from '../../data/gddData';
 
 interface GddShowcaseModalProps {
@@ -429,14 +430,24 @@ export const GddShowcaseModal: React.FC<GddShowcaseModalProps> = ({
                 </table>
               </div>
 
-              <div className="p-4 rounded-xl border border-amber-300 bg-amber-50 space-y-1.5">
-                <div className="flex items-center justify-between gap-2 text-xs font-bold text-amber-950">
-                  <span>{t(GDD_MASTERY_SPEC.title)}</span>
-                  <span className="font-mono tabular-nums text-amber-800">
-                    {isEn ? '35% Gold Tier Cap' : 'Tope 35% Gold Tier'}
-                  </span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl border border-amber-300 bg-amber-50 space-y-1.5">
+                  <div className="flex items-center justify-between gap-2 text-xs font-bold text-amber-950">
+                    <span>{t(GDD_MASTERY_SPEC.title)}</span>
+                    <span className="font-mono tabular-nums text-amber-800">
+                      {isEn ? '35% Gold Cap' : 'Tope 35% Gold'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-amber-900 leading-relaxed">{t(GDD_MASTERY_SPEC.summary)}</p>
                 </div>
-                <p className="text-xs text-amber-900 leading-relaxed">{t(GDD_MASTERY_SPEC.summary)}</p>
+
+                <div className="p-4 rounded-xl border border-slate-300 bg-slate-100 space-y-1.5">
+                  <div className="flex items-center justify-between gap-2 text-xs font-bold text-slate-950">
+                    <span>{t(GDD_VITALITY_MATCHUP.matchupTitle)}</span>
+                    <span className="font-mono tabular-nums text-amber-800">Lv_avg + 100</span>
+                  </div>
+                  <p className="text-xs text-slate-700 leading-relaxed">{t(GDD_VITALITY_MATCHUP.matchupSummary)}</p>
+                </div>
               </div>
             </div>
           )}
@@ -457,10 +468,8 @@ export const GddShowcaseModal: React.FC<GddShowcaseModalProps> = ({
                         : 'Arcos físicos con mandoble y parry preciso para abrir ventanas críticas en duelos 1 vs 1.'}
                     </li>
                     <li>
-                      <strong>{isEn ? 'Vitality, Aether & Stamina:' : 'Vitalidad, Éter y Estamina:'}</strong>{' '}
-                      {isEn
-                        ? 'Balances crimson HP, arcane Aether for Seal casts, and Stamina for blocks, dodges, and charged cleaves.'
-                        : 'Vitalidad Carmesí, Éter arcano para activar Sellos y Estamina para esquives y bloqueos pesados.'}
+                      <strong>{t(GDD_VITALITY_MATCHUP.paladinTitle)}:</strong>{' '}
+                      {t(GDD_VITALITY_MATCHUP.paladinSummary)}
                     </li>
                   </ul>
                 </div>

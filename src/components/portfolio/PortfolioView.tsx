@@ -447,17 +447,17 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       en: [
         '5-Act Cycle: 60s squad respawn in Acts I–III (requires 1+ alive; all die = squad wipe) & zero respawns starting Act IV with unbreakable co-op victory',
         'Zero fixed classes: 5 Valdris Quality Tiers (Rusted Forge to Royal Vestige), Vial Belt (1–4) & 8 swappable Aether Seals',
-        '4 escalating PvE Monster Difficulty Tiers for Looting + Level/Mastery progression (100 levels = 1 Mastery, +PvE kill speed & loot odds capped at 35% Gold Tier)',
-        'UE5 200-player architecture: Replication Graph (50–80m), server-authoritative Altar-Chests & multilayer Anti-Cheat (Kernel + Anti-ESP + telemetry)',
+        '4 escalating PvE Monster Tiers + Mastery (100 lv = 1 Mastery, 35% Gold cap) & Match-Up System scaling monster HP at Lobby Mean + 100 Levels',
+        'Universal Paladin HP curve (+10 HP/lv), UE5 Replication Graph (50–80m) & multilayer Anti-Cheat (Kernel + Anti-ESP + telemetry)',
       ],
       es: [
         'Ciclo de 5 Actos: respawn de 60s en Actos I–III (requiere 1+ miembro vivo; si mueren todos = eliminación) y cero respawn desde el Acto IV',
-        'Sin clases fijas: 5 Tiers de Valdris (Forja Oxidada a Vestigio Real), Cinturón de Viales (1–4) y 8 Sellos de Éter intercambiables',
-        '4 Niveles PvE para Lootear + Mastery cada 100 niveles (más facilidad contra monstruos y mejores drops topados a 35% Gold Tier)',
+        'Sin clases fijas: 5 Tiers de Valdris, curva universal de vida Paladín (+10 HP/nv), Cinturón de Viales (1–4) y 8 Sellos de Éter',
+        '4 Niveles PvE + Mastery cada 100 niveles (tope 35% Gold Tier) y Match-Up System con vida de monstruos a Nivel Medio de Partida + 100',
         'Arquitectura UE5 (200 jugadores): Replication Graph (50–80m), autoridad de servidor y Anti-Cheat multicapa (Kernel + Anti-ESP + telemetría)',
       ],
     },
-    techStack: ['Original IP Design', 'GDD & 10-Slide Pitch', 'PvPvE Monsters & Loot', 'UE5 & Anti-Cheat'],
+    techStack: ['Original IP Design', 'Paladin HP Curve', 'Match-Up & PvE Loot', 'UE5 & Anti-Cheat'],
     featured: true,
   },
   {

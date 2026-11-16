@@ -713,22 +713,22 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       es: 'Arquitectura de Software & Telemática',
     },
     workClassification: 'proprietary-platform',
-    year: '2026 - Present',
+    year: '2026',
     engine: 'React / TypeScript / Leaflet / Supabase',
     mediaType: 'image',
     mediaSrc: '/portfolio_assets/orblite-rastreo-rutas-2.png',
     thumbnailSrc: '/portfolio_assets/orblite-rastreo-dashboard-1.png',
     mediaNote: {
-      en: "Isaac's proprietary production platform (orb-lite.com): Real-time satellite GPS tracking across Mexico & US, 30 active units, 15 Wialon resources, Swarm APIs integration, and Smart Route Planner (Planificador Inteligente) with street-level route optimization.",
-      es: 'Plataforma propietaria de Isaac (orb-lite.com - sin restricciones de confidencialidad): Sistema de rastreo satelital GPS en tiempo real para México y EE. UU., 30 unidades satelitales activas, 15 recursos Wialon, integración Swarm APIs y Planificador Inteligente de rutas optimizadas por calles.',
+      en: "Completed proprietary project (orb-lite.com): Full-stack satellite GPS tracking system across Mexico & US, 30 active units, 15 Wialon resources, Swarm APIs integration, and Smart Route Planner (Planificador Inteligente) with street-level route optimization.",
+      es: 'Proyecto terminado de plataforma propietaria (orb-lite.com - sin restricciones de confidencialidad): Sistema de rastreo satelital GPS en tiempo real para México y EE. UU., 30 unidades satelitales activas, 15 recursos Wialon, integración Swarm APIs y Planificador Inteligente de rutas optimizadas por calles.',
     },
     description: {
-      en: "Proprietary commercial SaaS telematics platform architected and developed by Isaac Gómez Estrada for real-time fleet GPS tracking, telemetry streaming, and automated street routing. Features live multi-point Leaflet GIS maps, the Smart Route Planner (Planificador Inteligente) with multi-stop street routing optimization, geofences, unit telemetry inspection, and Wialon Lite protocol synchronization.",
-      es: 'Plataforma SaaS comercial de telemática desarrollada y operada como proyecto propietario por Isaac Gómez Estrada para rastreo satelital GPS de flotas en tiempo real, transmisión de telemetría y ruteo automatizado. Incluye mapas interactivos Leaflet GIS, el Planificador Inteligente con optimización de rutas por calles punto a punto, geocercas, telemetría de unidades en vivo y sincronización con protocolos Wialon Lite.',
+      en: "Completed full-stack SaaS telematics platform designed and built by Isaac Gómez Estrada as a finished turnkey project for real-time fleet GPS tracking, telemetry streaming, and automated street routing. Features live multi-point Leaflet GIS maps, the Smart Route Planner (Planificador Inteligente) with multi-stop street routing optimization, geofences, unit telemetry inspection, and Wialon Lite protocol synchronization.",
+      es: 'Plataforma SaaS de telemática desarrollada y finalizada como proyecto terminado por Isaac Gómez Estrada para rastreo satelital GPS de flotas en tiempo real, transmisión de telemetría y ruteo automatizado. Incluye mapas interactivos Leaflet GIS, el Planificador Inteligente con optimización de rutas por calles punto a punto, geocercas, telemetría de unidades en vivo y sincronización con protocolos Wialon Lite.',
     },
     highlights: {
       en: [
-        'Proprietary full-stack commercial platform (orb-lite.com) — zero client NDA constraints',
+        'Completed full-stack proprietary project (orb-lite.com) — zero client NDA constraints',
         'Interactive real-time GPS tracking dashboard with Leaflet GIS mapping covering Mexico and USA',
         'Smart Route Planner (Planificador Inteligente) with address geocoding and return-to-origin optimization',
         'Integration with Wialon Lite protocols and custom Swarm APIs for high-frequency telemetry data',
@@ -736,7 +736,7 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
         'Full-stack architecture with TypeScript, React, Tailwind CSS, and Supabase database backend',
       ],
       es: [
-        'Plataforma comercial y plataforma propia (orb-lite.com) — 100% de propiedad directa, sin restricciones de NDA',
+        'Proyecto terminado de plataforma propia (orb-lite.com) — 100% de propiedad directa, sin restricciones de NDA',
         'Dashboard interactivo de rastreo satelital GPS en tiempo real con mapeo Leaflet GIS para México y EE. UU.',
         'Planificador Inteligente con geocodificación de direcciones y optimización de rutas con retorno a origen',
         'Integración con protocolos Wialon Lite y Swarm APIs propietarias para telemetría de alta frecuencia',
@@ -2213,7 +2213,7 @@ export function PortfolioView({
                         : activeModalProject.workClassification === 'personal-rnd'
                         ? (isEn ? 'Personal R&D' : 'I+D Personal')
                         : activeModalProject.workClassification === 'proprietary-platform'
-                        ? (isEn ? 'Proprietary Platform' : 'Plataforma Propia')
+                        ? (isEn ? 'Completed Project' : 'Proyecto Terminado')
                         : (isEn ? 'Enterprise Client (NDA)' : 'Corporativo (NDA)')}
                     </span>
                   </span>
@@ -2278,7 +2278,7 @@ export function PortfolioView({
                         : activeModalProject.workClassification === 'personal-rnd'
                         ? (isEn ? "Isaac Gómez's Personal Workstation Screen Recording" : 'Grabación de Pantalla de I+D Personal de Isaac Gómez')
                         : activeModalProject.workClassification === 'proprietary-platform'
-                        ? (isEn ? 'Proprietary Commercial Platform (Direct Production Capture)' : 'Plataforma Comercial Propia (Captura Directa de Producción)')
+                        ? (isEn ? 'Completed Showcase Project (Direct Production Capture)' : 'Proyecto Terminado (Captura Directa de Plataforma)')
                         : (isEn ? 'Enterprise Client Confidentiality Notice' : 'Aviso de Confidencialidad de Cliente Corporativo')}
                     </span>
                     <p className="text-slate-700">

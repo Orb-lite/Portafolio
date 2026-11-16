@@ -267,7 +267,7 @@ function runLocalJobTailoring(
       opening = `Me dirijo a ustedes con gran entusiasmo para presentar mi candidatura a la posición de ${extractedTitle}${extractedCompany ? ` en ${extractedCompany}` : ''}. Con sólida experiencia desarrollando arquitecturas distribuidas en Python y operando infraestructura en Google Cloud Platform (GCP), mi perfil encaja de forma precisa con el enfoque de ingeniería y operaciones de producción que requiere esta posición.`;
 
       bodyParagraphs = [
-        `Como Lead Platform & Automation Engineer en Orblite, he liderado el diseño, desarrollo y operación en producción de pipelines telemáticos y servicios backend utilizando Python (FastAPI, Asyncio) y Google Cloud Platform (Cloud Run, Google Cloud Storage, BigQuery), conectando flujos GPS de alta frecuencia con bases de datos transaccionales y reduciendo los tiempos de procesamiento operativo en un 75%.`,
+        `Como Lead Platform & Automation Engineer, he liderado el diseño y desarrollo de pipelines telemáticos y servicios backend utilizando Python (FastAPI, Asyncio) y Google Cloud Platform (Cloud Run, Google Cloud Storage, BigQuery), conectando flujos GPS de alta frecuencia con bases de datos transaccionales y reduciendo los tiempos de procesamiento operativo en un 75%.`,
         `Cuento con amplia experiencia en la disciplina de operaciones (SRE / DevOps): despliegue mediante CI/CD automatizado (GitHub Actions y Jenkins) y monitoreo 24/7 con GCP Cloud Monitoring y Cloud Logging para resolución rápida de incidentes. Mi trayectoria previa desarrollando simulaciones para corporativos Fortune 500 y producciones AAA refuerza mi compromiso con la estabilidad y excelencia operativa.`
       ];
 
@@ -280,7 +280,7 @@ function runLocalJobTailoring(
 
       bodyParagraphs = [
         `En mi etapa anterior en DEVBOT, tuve la satisfacción de desarrollar, integrar y validar técnicamente los primeros builds jugables de producciones deportivas AAA globales insignia, especializándome en UI/UX interactiva y motor Frostbite a 60+ FPS estables. Mi día a día implicó una gestión disciplinada de ramas en Perforce (P4 Helix Core), pipelines de integración continua con Jenkins y un estricto respeto a las políticas de privacidad y datos confidenciales del publisher, principios éticos que he mantenido de manera intachable a lo largo de toda mi carrera profesional.`,
-        `Actualmente, mi experiencia como Gerente Comercial y Desarrollador en Orblite (plataforma SaaS, CRM/ERP y telemetría vehicular) sumada a mi trayectoria en gemelos digitales industriales en Flex para corporativos Fortune 500 me permite aportar una visión transversal y madura: capacidad de entrega técnica inmediata sin periodo de adaptación en sus flujos de trabajo, disponibilidad presencial en Zapopan y Guadalajara (o modalidad híbrida/remota), y la total tranquilidad ética de contar con un profesional que salvaguarda la reputación y acuerdos de privacidad del estudio.`
+        `Adicionalmente, mi trayectoria desarrollando gemelos digitales industriales en Flex para corporativos Fortune 500 y plataformas SaaS de telemática vehicular full-stack me permite aportar una visión transversal y madura: capacidad de entrega técnica inmediata sin periodo de adaptación en sus flujos de trabajo, disponibilidad presencial en Zapopan y Guadalajara (o modalidad híbrida/remota), y la total tranquilidad ética de contar con un profesional que salvaguarda la reputación y acuerdos de privacidad del estudio.`
       ];
 
       closing = `Será un verdadero honor tener la oportunidad de conversar con el equipo directivo y técnico para evaluar mi reincorporación inmediata a CGBOT / DEVBOT. Agradezco de antemano su confianza y consideración.`;
@@ -292,7 +292,7 @@ function runLocalJobTailoring(
 
       bodyParagraphs = [
         `Durante mi desempeño como Artista Técnico en producciones de co-desarrollo AAA a través de DEVBOT, tuve la responsabilidad directa de desarrollar, integrar y validar técnicamente los primeros builds jugables de títulos deportivos AAA de lanzamiento global para un publisher internacional de primer nivel. Me especialicé en el motor Frostbite, garantizando coherencia visual y fluidez estricta a 60+ FPS, administrando el flujo de ramas con Perforce (P4 Helix Core) y optimizando pipelines automatizados de CI mediante Jenkins, siempre bajo el más estricto apego a las normas de confidencialidad y protección de propiedad intelectual.`,
-        `Complementariamente, mi rol actual como Gerente Comercial y Desarrollador en Orblite y mi experiencia previa en simulación industrial y Gemelos Digitales para corporativos globales Fortune 500 me han dotado de una visión transversal única: combinar rigor técnico de bajo nivel, optimización de pipelines y una comunicación estratégica orientada a resultados medibles.`
+        `Complementariamente, mi experiencia en simulación industrial y Gemelos Digitales para corporativos globales Fortune 500 junto con el desarrollo de plataformas web full-stack me han dotado de una visión transversal única: combinar rigor técnico de bajo nivel, optimización de pipelines y una comunicación estratégica orientada a resultados medibles.`
       ];
 
       closing = `Agradezco de antemano el tiempo dedicado a revisar mi postulación. Quedo a su entera disposición para conversar en una entrevista sobre cómo mi experiencia, rigor técnico y orientación al impacto pueden sumar valor inmediato a sus objetivos.`;
@@ -309,13 +309,13 @@ function runLocalJobTailoring(
 
       closing = `Agradezco de antemano el tiempo dedicado a revisar mi postulación. Quedo a su disposición para coordinar una entrevista.`;
     } else {
-      suggestedTitle = 'Gerente Comercial & Desarrollador de Plataforma SaaS | Orblite';
-      suggestedSummary = `Líder comercial y desarrollador tecnológico de perfil integral con experiencia encabezando ventas B2B, diseño de plataformas SaaS de administración vehicular en Orblite y sistemas CRM/ERP propietarios con automatización operativa. Dominio de TypeScript, React, Tailwind, Supabase y arquitecturas cloud, complementado con experiencia previa en corporativos multinacionales en simulación e ingeniería interactiva.`;
+      suggestedTitle = 'Full-Stack Platform & Automation Systems Engineer';
+      suggestedSummary = `Desarrollador tecnológico de perfil integral con experiencia diseñando plataformas SaaS de telemática vehicular y sistemas CRM/ERP con automatización operativa. Dominio de TypeScript, React, Tailwind, Supabase y arquitecturas cloud, complementado con experiencia en corporativos multinacionales en simulación 3D e ingeniería interactiva.`;
 
       opening = `Me dirijo a ustedes para presentar mi postulación a la posición de ${extractedTitle}${extractedCompany ? ` en ${extractedCompany}` : ''}.`;
 
       bodyParagraphs = [
-        `Actualmente me desempeño como Gerente Comercial en Orblite, donde encabezo simultáneamente la dirección estratégica de ventas corporativas B2B y el desarrollo de nuestra plataforma integral para administración y telemetría vehicular. En esta posición he arquitectado e implementado sistemas CRM y ERP propietarios, además de diseñar flujos automatizados de prospección operativa que incrementaron exponencialmente la conversión y calificación de cuentas clave.`,
+        `He diseñado e implementado plataformas full-stack de administración y telemetría vehicular, sistemas CRM/ERP y flujos automatizados de operación para optimizar seguimiento de activos y procesos de equipo.`,
         `Mi stack de producción abarca TypeScript, React, APIs REST, CSS/Tailwind, Supabase, Cloudflare, Vercel y Resend. Además, mi experiencia previa en corporativos multinacionales de manufactura y co-desarrollo AAA me brinda una disciplina metodológica y capacidad de ejecución excepcional en entornos de alta exigencia.`
       ];
 
@@ -330,7 +330,7 @@ function runLocalJobTailoring(
       opening = `I am writing with great enthusiasm to submit my application for the ${extractedTitle} position${extractedCompany ? ` with ${extractedCompany}` : ''}. With hands-on experience building distributed backend services in Python and deploying containerized enterprise solutions on Google Cloud Platform (GCP), my background directly matches your focus on engineering rigor, system reliability, and full-lifecycle production operations.`;
 
       bodyParagraphs = [
-        `As Lead Platform & Automation Engineer at Orblite, I designed, deployed, and currently operate distributed telemetry pipelines and cloud microservices using Python (FastAPI, Asyncio) and Google Cloud Platform (Cloud Run, Google Cloud Storage, BigQuery) connecting real-time GPS streams to transactional databases and reducing operational latency by 75%.`,
+        `I have designed and deployed distributed telemetry pipelines and cloud microservices using Python (FastAPI, Asyncio) and Google Cloud Platform (Cloud Run, Google Cloud Storage, BigQuery) connecting real-time GPS streams to transactional databases and reducing operational latency by 75%.`,
         `Complementing backend engineering, I bring strong production operations and SRE discipline: establishing automated CI/CD pipelines (GitHub Actions and Jenkins) and 24/7 observability using GCP Cloud Monitoring and Cloud Logging for rapid incident triage. Coupled with my previous background engineering mission-critical digital twins for Fortune 500 enterprises and operating continuous integration pipelines on AAA game productions, I ensure systems run predictably, securely, and at scale.`
       ];
 
@@ -343,7 +343,7 @@ function runLocalJobTailoring(
 
       bodyParagraphs = [
         `During my prior tenure at DEVBOT, I was directly responsible for developing, integrating, and technically validating initial playable builds for global flagship AAA sports releases, specializing in interactive UI/UX and Frostbite engine pipelines targeting a solid 60+ FPS. My daily responsibilities demanded disciplined Perforce (P4 Helix Core) branch management, Jenkins CI automation, and an unwavering respect for client proprietary assets and privacy—principles I have rigorously upheld across every phase of my career.`,
-        `In addition, my recent experience engineering modern SaaS platforms at Orblite and industrial simulation digital twins at Flex brings cross-functional maturity: zero ramp-up time in your development environment, on-site presence in Zapopan and Guadalajara (or hybrid/remote flexibility), and total peace of mind regarding client data confidentiality.`
+        `In addition, my experience engineering modern SaaS platforms and industrial simulation digital twins at Flex brings cross-functional maturity: zero ramp-up time in your development environment, on-site presence in Zapopan and Guadalajara (or hybrid/remote flexibility), and total peace of mind regarding client data confidentiality.`
       ];
 
       closing = `It would be a privilege to reconnect with the leadership and production team at CGBOT / DEVBOT. Thank you for your time, consideration, and continued trust.`;
@@ -355,7 +355,7 @@ function runLocalJobTailoring(
 
       bodyParagraphs = [
         `In my role as Technical Artist with DEVBOT for premier AAA releases, I was directly responsible for developing, integrating, and validating initial playable builds for world-class sports franchises. Working extensively within the proprietary Frostbite engine, I ensured high visual fidelity while maintaining a strict 60+ FPS performance target, managed complex branch merges using Perforce (P4 Helix Core), and maintained automated continuous integration (CI) pipelines using Jenkins—consistently adhering to strict client confidentiality.`,
-        `In addition, my current position as Lead Automation Engineer and Platform Developer at Orblite—combined with my prior work engineering industrial digital twins for Fortune 500 enterprises—provides me with an exceptional balance of low-level technical discipline and strategic project execution.`
+        `In addition, my work engineering industrial digital twins for Fortune 500 enterprises and full-stack real-time telemetry platforms provides me with an exceptional balance of low-level technical discipline and strategic project execution.`
       ];
 
       closing = `Thank you for your time and consideration. I would welcome the opportunity to discuss how my technical expertise, disciplined delivery, and commitment to confidentiality can contribute to your team's upcoming milestones.`;
@@ -372,13 +372,13 @@ function runLocalJobTailoring(
 
       closing = `Thank you for your time and consideration. I look forward to hearing from you.`;
     } else {
-      suggestedTitle = 'Lead Automation Engineer & Platform Developer | Orblite';
-      suggestedSummary = `Lead Automation Engineer and Platform Developer combining full-stack web and sensor telemetry with scalable backend integrations and 3D simulation engineering. Currently Lead Automation Engineer & Platform Developer at Orblite, engineering workflow automations, vehicle telematics infrastructure, and custom internal ERP/CRM applications (TypeScript, React, RESTful APIs, SQL Supabase, Cloudflare).`;
+      suggestedTitle = 'Full-Stack Platform & Automation Systems Engineer';
+      suggestedSummary = `Full-Stack Platform and Automation Engineer combining web applications and sensor telemetry with scalable backend integrations and 3D simulation engineering. Experienced building workflow automations, vehicle telematics infrastructure, and custom CRM/ERP applications (TypeScript, React, RESTful APIs, SQL Supabase, Cloudflare).`;
 
       opening = `I am writing to express my interest in the ${extractedTitle} position${extractedCompany ? ` with ${extractedCompany}` : ''}.`;
 
       bodyParagraphs = [
-        `Currently, as Lead Automation Engineer and Platform Developer at Orblite, I engineer cloud workflow automation pipelines, architect real-time vehicle telematics and telemetry data simulation, and build custom internal ERP/CRM applications from scratch to optimize asset tracking and team workflows.`,
+        `I have engineered cloud workflow automation pipelines, designed real-time vehicle telematics and telemetry data simulation systems, and built full-stack CRM/ERP web applications from scratch to optimize asset tracking and team workflows.`,
         `My production stack includes TypeScript, React, RESTful APIs, SQL (Supabase), Cloudflare, and Vercel. Combined with my prior engineering background in multinational enterprises and AAA co-development, I offer a unique combination of high-reliability automation and rigorous software craftsmanship.`
       ];
 

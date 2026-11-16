@@ -49,21 +49,6 @@ export const resumeDataEs: ResumeData = {
       ],
     },
     {
-      id: 'exp-orblite',
-      role: 'Lead Automation Engineer & Platform Developer',
-      company: 'Orblite',
-      location: 'México',
-      startDate: 'Jun 2026',
-      endDate: 'Presente',
-      isCurrent: true,
-      highlights: [
-        'Tooling & Automatización: Diseñó y desplegó herramientas internas y pipelines de software integrando servicios cloud y APIs de backend para automatizar análisis de datos y flujos de trabajo.',
-        'Simulación de Sensores & Telemática: Diseñó la arquitectura de extremo a extremo para telemetría vehicular en tiempo real, procesando y simulando flujos de sensores de alta frecuencia.',
-        'Plataformas Propietarias: Desarrolló aplicaciones internas de ERP/CRM desde cero con TypeScript, React y Supabase SQL para monitoreo y rastreo de activos en tiempo real.',
-        'Tech Stack: TypeScript, React, APIs REST, SQL (Supabase), Python, Cloudflare.',
-      ],
-    },
-    {
       id: 'exp-navi',
       role: 'Artista Técnico & Desarrollador 3D Interactivo',
       company: 'Navi 3D - Realidad Virtual y Maquetas Virtuales',
@@ -257,21 +242,6 @@ export const resumeDataEn: ResumeData = {
       ],
     },
     {
-      id: 'exp-orblite',
-      role: 'Lead Automation Engineer & Platform Developer',
-      company: 'Orblite',
-      location: 'Mexico',
-      startDate: 'Jun 2026',
-      endDate: 'Present',
-      isCurrent: true,
-      highlights: [
-        'Tooling & Automation Pipelines: Engineered custom internal tools and automated workflows integrating cloud backend services to accelerate data analysis and pipeline efficiency.',
-        'Real-Time Telemetry & Sensor Simulation: Architected end-to-end full-stack infrastructure for real-time vehicle telematics, simulating high-frequency sensor streams and vehicle telemetry.',
-        'Systems & Internal Platforms: Developed internal ERP/CRM tooling and asset tracking platforms using TypeScript, React, RESTful APIs, and Supabase SQL.',
-        'Tech Stack: TypeScript, React, RESTful APIs, SQL (Supabase), Python, Cloudflare.',
-      ],
-    },
-    {
       id: 'exp-navi',
       role: 'Technical Artist & 3D Interactive Developer',
       company: 'Navi 3D - Virtual Reality & 3D Architectural Mockups',
@@ -430,25 +400,10 @@ export const resumeDataPlatformEn: ResumeData = {
     mobygamesUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
     age: 32,
     summary:
-      'Lead Software & Platform Systems Engineer with 8+ years of engineering experience specializing in distributed telemetry architectures, real-time 3D simulation, and 24/7 cloud production operations. Proven track record building high-throughput backend services and data pipelines in Python (FastAPI, AsyncIO, Celery) and TypeScript/React, plus orchestrating scalable cloud infrastructure on Google Cloud Platform (GCP: Cloud Run, Pub/Sub, BigQuery, Cloud SQL), Supabase, and Cloudflare. Responsible for the complete production lifecycle—from systems architecture and real-time monitoring to automated CI/CD, incident resolution, and zero-downtime migrations across enterprise fleet telematics (Orblite) and industrial digital twins for Fortune 500 manufacturing leaders (Flex).',
+      'Lead Software & Platform Systems Engineer with 8+ years of engineering experience specializing in distributed telemetry architectures, real-time 3D simulation, and 24/7 cloud production operations. Proven track record building high-throughput backend services and data pipelines in Python (FastAPI, AsyncIO, Celery) and TypeScript/React, plus orchestrating scalable cloud infrastructure on Google Cloud Platform (GCP: Cloud Run, Pub/Sub, BigQuery, Cloud SQL), Supabase, and Cloudflare. Responsible for the complete production lifecycle—from systems architecture and real-time monitoring to automated CI/CD, incident resolution, and zero-downtime migrations across real-time vehicle telematics platforms and industrial digital twins for Fortune 500 manufacturing leaders (Flex).',
     photoUrl: '',
   },
   experiences: [
-    {
-      id: 'exp-plat-orblite',
-      role: 'Lead Platform & Automation Engineer (Telematics & ERP/CRM)',
-      company: 'Orblite',
-      location: 'Mexico / Remote US',
-      startDate: 'Jun 2026',
-      endDate: 'Present',
-      isCurrent: true,
-      highlights: [
-        'Distributed Telematics & Routing Engine: Architected and deployed production telemetry ingestion pipelines and algorithmic route optimization engines processing high-frequency GPS streams from 30+ vehicle fleets in real time.',
-        'Python Microservices: Developed asynchronous backend services in Python (FastAPI, AsyncIO, Celery) orchestrating automated geofence evaluation, scheduling, and real-time operational rules across Mexico and the US.',
-        'Google Cloud Platform (GCP) Operations: Deployed and maintained cloud infrastructure using GCP Cloud Run, Cloud Pub/Sub, Cloud SQL, and Secret Manager; designed event-driven pipelines with automated failover.',
-        'End-to-End Platform & Monitoring: Built proprietary B2B SaaS CRM/ERP platforms with TypeScript, React, Leaflet GIS, and Supabase PostgreSQL; reduced operational processing latency by 75%.',
-      ],
-    },
     {
       id: 'exp-plat-flex',
       role: '3D Simulation & Industrial Digital Twins Engineer',
@@ -576,7 +531,7 @@ export const resumeDataPlatformEn: ResumeData = {
     {
       id: 'ach-plat-1',
       title: 'Production Fleet Telematics',
-      metric: 'Orblite SaaS Platform',
+      metric: '30+ Satellite Fleet Units',
       description: 'Real-time GPS tracking and route optimization platform supporting 30+ satellite fleet units.',
     },
     {
@@ -608,25 +563,10 @@ export const resumeDataPlatformEs: ResumeData = {
     mobygamesUrl: 'https://www.mobygames.com/person/1727096/isaac-gomez/portfolio/',
     age: 32,
     summary:
-      'Ingeniero de Software y Sistemas de Plataforma con más de 8 años de trayectoria, especializado en arquitecturas telemáticas distribuidas, simulación 3D en tiempo real y operaciones de producción en la nube 24/7. Experiencia probada desarrollando microservicios y pipelines de datos en Python (FastAPI, AsyncIO, Celery) y TypeScript/React, además de infraestructura escalable en Google Cloud Platform (GCP: Cloud Run, Pub/Sub, BigQuery, Cloud SQL), Supabase y Cloudflare. Responsable del ciclo de vida completo en producción—desde arquitectura y monitoreo en tiempo real hasta CI/CD automatizado, resolución de incidentes y migraciones sin caída en telemática vehicular (Orblite) y gemelos digitales industriales para corporativos Fortune 500 (Flex).',
+      'Ingeniero de Software y Sistemas de Plataforma con más de 8 años de trayectoria, especializado en arquitecturas telemáticas distribuidas, simulación 3D en tiempo real y operaciones de producción en la nube 24/7. Experiencia probada desarrollando microservicios y pipelines de datos en Python (FastAPI, AsyncIO, Celery) y TypeScript/React, además de infraestructura escalable en Google Cloud Platform (GCP: Cloud Run, Pub/Sub, BigQuery, Cloud SQL), Supabase y Cloudflare. Responsable del ciclo de vida completo en producción—desde arquitectura y monitoreo en tiempo real hasta CI/CD automatizado, resolución de incidentes y migraciones sin caída en plataformas de telemática vehicular y gemelos digitales industriales para corporativos Fortune 500 (Flex).',
     photoUrl: '',
   },
   experiences: [
-    {
-      id: 'exp-plat-orblite-es',
-      role: 'Lead Platform & Automation Engineer (Telemática & ERP/CRM)',
-      company: 'Orblite',
-      location: 'México / Remoto EE. UU.',
-      startDate: 'Jun 2026',
-      endDate: 'Presente',
-      isCurrent: true,
-      highlights: [
-        'Motores Telemáticos y de Ruteo: Diseñó y desplegó en producción pipelines de ingesta telemática y motores algorítmicos de optimización de rutas procesando señales GPS de más de 30 unidades satelitales.',
-        'Microservicios en Python: Desarrolló servicios backend asíncronos en Python (FastAPI, AsyncIO, Celery) ejecutando evaluación automática de geocercas, programación de flotas y reglas operativas.',
-        'Operaciones en Google Cloud Platform (GCP): Desplegó y administró infraestructura con Cloud Run, Cloud Pub/Sub, Cloud SQL y Secret Manager con tolerancia a fallos.',
-        'Plataforma Full-Stack & Monitoreo: Construyó plataformas propietarias SaaS CRM/ERP con TypeScript, React, Leaflet GIS y Supabase PostgreSQL, reduciendo la latencia operativa en un 75%.',
-      ],
-    },
     {
       id: 'exp-plat-flex-es',
       role: 'Ingeniero de Simulación 3D & Gemelos Digitales Industriales',
@@ -754,7 +694,7 @@ export const resumeDataPlatformEs: ResumeData = {
     {
       id: 'ach-plat-1-es',
       title: 'Plataforma Telemática Empresarial',
-      metric: 'Orblite SaaS Platform',
+      metric: '30+ Unidades Satelitales',
       description: 'Rastreo satelital GPS en tiempo real y optimización de rutas para más de 30 unidades de flota.',
     },
     {

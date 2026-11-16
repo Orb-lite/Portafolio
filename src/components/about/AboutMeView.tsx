@@ -81,9 +81,9 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
         ? 'From high-performance sports cars and Formula racing to automotive design, aerodynamics, telemetry, and track physics. The visceral sensation of speed, precise tire grip limits, engine acoustic roar, and mechanical perfection has always fascinated me.'
         : 'Desde autos deportivos de altas prestaciones y competencias fórmula hasta diseño automotriz, aerodinámica, telemetría y física de pista. La sensación visceral de velocidad, límites de adherencia en neumáticos, rugido acústico y precisión mecánica siempre me han cautivado.',
       howItTranslates: isEn
-        ? 'Connects directly to real-time vehicle simulations, telematics SaaS platforms at Orblite, automotive Digital Twins for Fortune 500 manufacturing plants, and vehicle physics modeling in game engines.'
-        : 'Conecta directamente con simulaciones vehiculares en tiempo real, plataformas SaaS de telemática en Orblite, Gemelos Digitales automotrices para plantas de ensamblaje Fortune 500 y modelado de dinámicas vehiculares en motores de juego.',
-      keySkills: ['Vehicle Telematics (Orblite)', 'Automotive Digital Twins', 'Physics Simulation', 'Torque & Gear Modeling'],
+        ? 'Connects directly to real-time vehicle simulations, fleet telematics systems, automotive Digital Twins for Fortune 500 manufacturing plants, and vehicle physics modeling in game engines.'
+        : 'Conecta directamente con simulaciones vehiculares en tiempo real, sistemas SaaS de telemática vehicular, Gemelos Digitales automotrices para plantas de ensamblaje Fortune 500 y modelado de dinámicas vehiculares en motores de juego.',
+      keySkills: ['Vehicle Telematics', 'Automotive Digital Twins', 'Physics Simulation', 'Torque & Gear Modeling'],
     },
     {
       id: 'action',
@@ -464,27 +464,6 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
                 {isEn
                   ? 'Built real-time assembly line Digital Twins with Unreal Engine 5 and FlexSim, simulated machine failures, optimized thermal spacing, and developed VR training modules for heavy industrial robotics.'
                   : 'Construyó Gemelos Digitales de líneas de ensamble en tiempo real con Unreal Engine 5 y FlexSim, simuló fallas de maquinaria, optimizó distanciamiento térmico y desarrolló módulos de capacitación en Realidad Virtual para robótica industrial pesada.'}
-              </p>
-            </div>
-          </div>
-
-          {/* Milestone 5: Orblite Automation & Platform Engineering */}
-          <div className="relative group">
-            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-sky-500 border-4 border-white shadow-xs group-hover:scale-125 transition-transform" />
-            <div className="space-y-1">
-              <span className="text-[11px] font-bold text-sky-700 uppercase tracking-wider">
-                {isEn ? '2026 - Present · Cloud Automation & Platform Engineering' : '2026 - Presente · Automatización Cloud & Desarrollo de Plataformas'}
-              </span>
-              <h3 className="text-base font-bold text-slate-900">
-                Lead Automation Engineer & Platform Developer at Orblite
-              </h3>
-              <p className="text-xs font-semibold text-slate-600">
-                {isEn ? 'Vehicle Telematics SaaS & Proprietary ERP/CRM (orb-lite.com)' : 'SaaS de Telemática Vehicular & ERP/CRM Propietario (orb-lite.com)'}
-              </p>
-              <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                {isEn
-                  ? 'Engineering cloud workflow automation pipelines, architecting real-time vehicle telematics & data simulation infrastructure, and building custom internal ERP/CRM applications using TypeScript, React, RESTful APIs, SQL (Supabase), and Cloudflare.'
-                  : 'Ingeniería de pipelines de automatización operativa, diseño de infraestructura telemática y simulación de datos en tiempo real, y desarrollo de aplicaciones internas ERP/CRM propietarias utilizando TypeScript, React, APIs REST, SQL (Supabase) y Cloudflare.'}
               </p>
             </div>
           </div>

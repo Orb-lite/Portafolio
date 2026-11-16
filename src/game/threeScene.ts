@@ -57,9 +57,19 @@ export class GameSceneManager {
   private vfxGroup = new THREE.Group();
   private tileMeshMap = new Map<string, THREE.Object3D>();
   private conveyorBeltMaterial: THREE.MeshStandardMaterial | null = null;
+  private causticsTexture: THREE.CanvasTexture | null = null;
   private groundMesh: THREE.Mesh | null = null;
   private dirLight!: THREE.DirectionalLight;
   private hemiLight!: THREE.HemisphereLight;
+  private swimmingCreatures: Array<{
+    group: THREE.Group;
+    tail: THREE.Object3D;
+    radiusX: number;
+    radiusZ: number;
+    speed: number;
+    phase: number;
+    yBase: number;
+  }> = [];
 
   // Active Game State
   private activeRunners: Array<{
@@ -289,6 +299,11 @@ export class GameSceneManager {
 
     this.trackPath = new TrackPath(-trackExtent, trackExtent, -trackExtent, trackExtent, 0.9);
 
+    const idealY = Math.max(17.5, trackExtent * 3.15);
+    const idealZ = Math.max(6.8, trackExtent * 1.18);
+    this.baseCameraPos.set(0, idealY, idealZ);
+    this.cameraTarget.set(0, 0.7, this.isFishMode ? 0.85 : 0.35);
+
     if (this.camera) {
       this.camera.position.copy(this.baseCameraPos);
       this.camera.lookAt(this.cameraTarget);
@@ -297,7 +312,7 @@ export class GameSceneManager {
 
     if (this.dirLight) {
       this.dirLight.position.set(4, 12, 6);
-      const shadowExtent = 12;
+      const shadowExtent = Math.max(12, trackExtent + 4);
       this.dirLight.shadow.camera.left = -shadowExtent;
       this.dirLight.shadow.camera.right = shadowExtent;
       this.dirLight.shadow.camera.top = shadowExtent;
@@ -318,35 +333,80 @@ export class GameSceneManager {
     this.activeRunners = [];
     this.flyingTiles = [];
     this.activeParticles = [];
+    this.swimmingCreatures = [];
+    this.causticsTexture = null;
     this.callbacks.onSlotCountChange?.(0);
 
     if (this.isFishMode) {
-      const bgColor = new THREE.Color(0x062033);
+      const bgColor = new THREE.Color(0x119ad6);
       this.scene.background = bgColor;
-      this.scene.fog = new THREE.FogExp2(0x062033, 0.008);
-      this.dirLight.color.setHex(0xe0f2fe);
-      this.hemiLight.color.setHex(0x38bdf8);
-      this.hemiLight.groundColor.setHex(0x082f49);
+      this.scene.fog = new THREE.FogExp2(0x119ad6, 0.012);
+      this.dirLight.color.setHex(0xfffdf5);
+      this.dirLight.intensity = 2.0;
+      this.hemiLight.color.setHex(0xe0f2fe);
+      this.hemiLight.groundColor.setHex(0x0c7db5);
+      this.hemiLight.intensity = 1.2;
 
       this.buildScenery(level, trackExtent, 1.0);
 
-      const causticsTex = this.getWorldTexture('/assets/worlds/coral_cove.jpg', 6);
-      const floorSize = Math.max(60, trackExtent * 2 + 30);
+      const causticsTex = createWaterCausticsTexture();
+      causticsTex.anisotropy = Math.min(8, this.renderer.capabilities.getMaxAnisotropy());
+      this.causticsTexture = causticsTex;
+
+      const floorSize = Math.max(96, trackExtent * 2 + 56);
       const floorGeo = new THREE.PlaneGeometry(floorSize, floorSize);
       const floorMat = new THREE.MeshStandardMaterial({
         map: causticsTex,
-        roughness: 0.75,
-        metalness: 0.1,
+        roughness: 0.62,
+        metalness: 0.02,
+        emissive: 0x0d8ec9,
+        emissiveIntensity: 0.16,
       });
       this.groundMesh = new THREE.Mesh(floorGeo, floorMat);
       this.groundMesh.rotation.x = -Math.PI / 2;
-      this.groundMesh.position.y = -0.02;
+      this.groundMesh.position.y = -0.65;
       this.groundMesh.receiveShadow = true;
       this.trackGroup.add(this.groundMesh);
 
       const { group, beltMaterial } = this.fofFactory.createCoralTrack(this.trackPath);
       this.trackGroup.add(group);
       this.conveyorBeltMaterial = beltMaterial;
+
+      // Spawn reef wildlife swimming smoothly beneath the pearl grid
+      const creatureSpecs: Array<{
+        kind: 'dolphin' | 'turtle' | 'reefFish';
+        tint: number;
+        rx: number;
+        rz: number;
+        speed: number;
+        phase: number;
+        yBase: number;
+      }> = [
+        { kind: 'dolphin', tint: 0x0284c7, rx: trackExtent * 0.72, rz: trackExtent * 0.55, speed: 0.36, phase: 0.2, yBase: -0.28 },
+        { kind: 'turtle', tint: 0x16a34a, rx: trackExtent * 0.62, rz: trackExtent * 0.68, speed: -0.24, phase: 2.3, yBase: -0.34 },
+        { kind: 'reefFish', tint: 0xf97316, rx: trackExtent * 0.5, rz: trackExtent * 0.42, speed: 0.52, phase: 4.1, yBase: -0.22 },
+        { kind: 'reefFish', tint: 0xfacc15, rx: trackExtent * 0.85, rz: trackExtent * 0.38, speed: -0.46, phase: 1.4, yBase: -0.26 },
+        { kind: 'reefFish', tint: 0xec4899, rx: trackExtent * 0.44, rz: trackExtent * 0.78, speed: 0.41, phase: 5.2, yBase: -0.3 },
+      ];
+
+      for (const spec of creatureSpecs) {
+        const creature = this.fofFactory.createUnderwaterCreature(spec.kind, spec.tint);
+        creature.group.position.set(
+          Math.cos(spec.phase) * spec.rx,
+          spec.yBase,
+          Math.sin(spec.phase) * spec.rz
+        );
+        this.backdropGroup.add(creature.group);
+        this.swimmingCreatures.push({
+          group: creature.group,
+          tail: creature.tail,
+          radiusX: spec.rx,
+          radiusZ: spec.rz,
+          speed: spec.speed,
+          phase: spec.phase,
+          yBase: spec.yBase,
+        });
+      }
     } else {
       const worldStyle: Record<Exclude<GameVersion, 'fof'>, { background: number; ground: number; roughness?: number; metalness?: number }> = {
         chess: { background: 0x15121e, ground: 0x1e1927, roughness: 0.18, metalness: 0.4 },
@@ -361,8 +421,10 @@ export class GameSceneManager {
       this.scene.background = new THREE.Color(style.background);
       this.scene.fog = new THREE.Fog(style.background, 30, 90);
       this.dirLight.color.setHex(0xffffff);
+      this.dirLight.intensity = 1.8;
       this.hemiLight.color.setHex(0xa5b4fc);
       this.hemiLight.groundColor.setHex(style.ground);
+      this.hemiLight.intensity = 0.8;
 
       this.buildScenery(level, trackExtent, 1.0);
 
@@ -436,7 +498,7 @@ export class GameSceneManager {
     const group = this.backdropGroup;
     const scale = Math.max(0.78, Math.min(zoom, 4.5));
     const palette = this.isFishMode
-      ? { far: 0x075985, near: 0x0e7490, accent: 0x2dd4bf, glow: 0xf0abfc }
+      ? { far: 0x0c82b8, near: 0x1295cf, accent: 0x56ccf2, glow: 0xfef08a }
         : this.version === 'chess'
           ? { far: 0x3e3548, near: 0x76604f, accent: 0xe7d4ad, glow: 0xd5a84f }
           : this.version === 'land'
@@ -680,44 +742,46 @@ export class GameSceneManager {
       updateNumber = themedObj.updateNumber;
     }
 
-    const counterCanvas = document.createElement('canvas');
-    counterCanvas.width = 256;
-    counterCanvas.height = 80;
-    const counterContext = counterCanvas.getContext('2d');
-    const counterTexture = new THREE.CanvasTexture(counterCanvas);
-    counterTexture.colorSpace = THREE.SRGBColorSpace;
-    const counterMaterial = new THREE.SpriteMaterial({
-      map: counterTexture,
-      transparent: true,
-      depthTest: false,
-      depthWrite: false,
-    });
-    const counterSprite = new THREE.Sprite(counterMaterial);
-    counterSprite.position.set(0, 1.05, 0);
-    counterSprite.scale.set(0.9, 0.28, 1);
-    runnerMeshGroup.add(counterSprite);
-    const updateRemainingCounter = (remaining: number) => {
-      if (!counterContext) return;
-      counterContext.clearRect(0, 0, counterCanvas.width, counterCanvas.height);
-      counterContext.fillStyle = 'rgba(15, 23, 42, 0.92)';
-      counterContext.beginPath();
-      counterContext.roundRect(8, 8, 240, 64, 28);
-      counterContext.fill();
-      counterContext.strokeStyle = this.isFishMode ? '#38bdf8' : '#a5b4fc';
-      counterContext.lineWidth = 5;
-      counterContext.stroke();
-      counterContext.fillStyle = '#ffffff';
-      counterContext.font = '900 38px Arial, sans-serif';
-      counterContext.textAlign = 'center';
-      counterContext.textBaseline = 'middle';
-      counterContext.fillText(`${remaining} LEFT`, 128, 41);
-      counterTexture.needsUpdate = true;
-    };
-    const updateBadgeNumber = updateNumber;
-    updateNumber = (remaining: number) => {
-      updateBadgeNumber(remaining);
-      updateRemainingCounter(remaining);
-    };
+    if (!this.isFishMode) {
+      const counterCanvas = document.createElement('canvas');
+      counterCanvas.width = 256;
+      counterCanvas.height = 80;
+      const counterContext = counterCanvas.getContext('2d');
+      const counterTexture = new THREE.CanvasTexture(counterCanvas);
+      counterTexture.colorSpace = THREE.SRGBColorSpace;
+      const counterMaterial = new THREE.SpriteMaterial({
+        map: counterTexture,
+        transparent: true,
+        depthTest: false,
+        depthWrite: false,
+      });
+      const counterSprite = new THREE.Sprite(counterMaterial);
+      counterSprite.position.set(0, 1.05, 0);
+      counterSprite.scale.set(0.9, 0.28, 1);
+      runnerMeshGroup.add(counterSprite);
+      const updateRemainingCounter = (remaining: number) => {
+        if (!counterContext) return;
+        counterContext.clearRect(0, 0, counterCanvas.width, counterCanvas.height);
+        counterContext.fillStyle = 'rgba(15, 23, 42, 0.92)';
+        counterContext.beginPath();
+        counterContext.roundRect(8, 8, 240, 64, 28);
+        counterContext.fill();
+        counterContext.strokeStyle = '#a5b4fc';
+        counterContext.lineWidth = 5;
+        counterContext.stroke();
+        counterContext.fillStyle = '#ffffff';
+        counterContext.font = '900 38px Arial, sans-serif';
+        counterContext.textAlign = 'center';
+        counterContext.textBaseline = 'middle';
+        counterContext.fillText(`${remaining} LEFT`, 128, 41);
+        counterTexture.needsUpdate = true;
+      };
+      const updateBadgeNumber = updateNumber;
+      updateNumber = (remaining: number) => {
+        updateBadgeNumber(remaining);
+        updateRemainingCounter(remaining);
+      };
+    }
     updateNumber(actualCapacity);
 
     const initialProgress = 0.02 + (colIndex % 4) * 0.035;
@@ -952,6 +1016,24 @@ export class GameSceneManager {
       this.conveyorBeltMaterial.map.offset.x -= dt * conveyorSpeed;
     }
 
+    if (this.causticsTexture) {
+      this.causticsTexture.offset.x = (this.causticsTexture.offset.x + dt * 0.018) % 1;
+      this.causticsTexture.offset.y = (this.causticsTexture.offset.y + dt * 0.012) % 1;
+    }
+
+    for (let cIdx = 0; cIdx < this.swimmingCreatures.length; cIdx++) {
+      const creature = this.swimmingCreatures[cIdx];
+      const ang = time * creature.speed + creature.phase;
+      const nx = Math.cos(ang) * creature.radiusX;
+      const nz = Math.sin(ang) * creature.radiusZ;
+      const vx = -Math.sin(ang) * creature.radiusX * creature.speed;
+      const vz = Math.cos(ang) * creature.radiusZ * creature.speed;
+      _vecA.set(nx, creature.yBase + Math.sin(time * 2.2 + creature.phase) * 0.06, nz);
+      creature.group.position.copy(_vecA);
+      creature.group.rotation.y = Math.atan2(-vz, vx);
+      creature.tail.rotation.y = Math.sin(time * 7.5 + cIdx) * 0.35;
+    }
+
     if (this.magnetTimer > 0) {
       this.magnetTimer = Math.max(0, this.magnetTimer - dt);
       if (this.magnetTimer === 0) this.magnetMultiplier = 1.0;
@@ -1072,6 +1154,37 @@ export class GameSceneManager {
             this.popEncapsulation(exposedTile);
             runner.squish = 0.6;
           } else if (exposedTile.unlockAt !== undefined && time < exposedTile.unlockAt) {
+          } else if (exposedTile.shieldLayers && exposedTile.shieldLayers > 0) {
+            const layerName = `shield_layer_${exposedTile.shieldLayers}`;
+            exposedTile.shieldLayers -= 1;
+            const tileMesh = this.tileMeshMap.get(exposedTile.id);
+            const shieldObj = tileMesh?.getObjectByName(layerName);
+            if (shieldObj && tileMesh) {
+              tileMesh.remove(shieldObj);
+              if (shieldObj instanceof THREE.Mesh) shieldObj.geometry?.dispose();
+            }
+            if (exposedTile.worldPos) {
+              _vecB.set(exposedTile.worldPos[0], exposedTile.worldPos[1] + 0.15, exposedTile.worldPos[2]);
+              this.spawnBubbleBurstParticles(_vecB, this.isFishMode);
+            }
+            soundManager.playBubblePop();
+            runner.squish = 0.5;
+            exposedTile.unlockAt = time + 0.35;
+          } else if (exposedTile.specialType === 'frozen_pearl' || exposedTile.specialType === 'clam_trap') {
+            exposedTile.specialType = undefined;
+            const tileMesh = this.tileMeshMap.get(exposedTile.id);
+            const iceObj = tileMesh?.getObjectByName('ice_block');
+            if (iceObj && tileMesh) {
+              tileMesh.remove(iceObj);
+              if (iceObj instanceof THREE.Mesh) iceObj.geometry?.dispose();
+            }
+            if (exposedTile.worldPos) {
+              _vecB.set(exposedTile.worldPos[0], exposedTile.worldPos[1] + 0.15, exposedTile.worldPos[2]);
+              this.spawnBubbleBurstParticles(_vecB, this.isFishMode);
+            }
+            soundManager.playBubblePop();
+            runner.squish = 0.5;
+            exposedTile.unlockAt = time + 0.35;
           } else {
             exposedTile.unlockAt = undefined;
             runner.allocatedRemaining--;
@@ -1442,10 +1555,14 @@ export class GameSceneManager {
     const uncollectedMatching = this.gridManager.tiles.filter(
       (t) => !t.collected && t.id !== rainbowTile.id && t.color === runner.color
     );
+    const uncollectedAny = this.gridManager.tiles.filter(
+      (t) => !t.collected && t.id !== rainbowTile.id && t.color !== runner.color
+    );
 
-    const bonusCount = Math.min(4, uncollectedMatching.length);
+    const targetList = [...uncollectedMatching, ...uncollectedAny];
+    const bonusCount = Math.min(this.isFishMode ? 14 : 6, targetList.length);
     for (let i = 0; i < bonusCount; i++) {
-      const extraTile = uncollectedMatching[i];
+      const extraTile = targetList[i];
       if (extraTile.encapsulated) {
         this.popEncapsulation(extraTile);
       } else {

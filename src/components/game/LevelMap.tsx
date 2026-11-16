@@ -347,13 +347,13 @@ export const LevelMap: React.FC<LevelMapProps> = ({
               {isFishMode ? <Fish className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-cyan-300" /> : <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
               {isFishMode
                 ? (isEn ? "Fish Feeder • Aquatic Adventure Pathway" : "Fish Feeder • Ruta Acuática de Coral")
-                : "Conveyor Realms • Adventure Pathway"}
+                : (isEn ? "Conveyor Realms • Adventure Pathway" : "Conveyor Realms • Ruta de Aventura")}
             </p>
             <div className="flex items-center gap-2 mt-0.5">
               <h1 className="text-base sm:text-xl font-black tracking-tight text-white">
                 {isFishMode
                   ? (isEn ? "Ocean Frontier" : "Frontera Marina")
-                  : "World Frontier"}
+                  : (isEn ? "World Frontier" : "Frontera de Mundos")}
               </h1>
               <span className="rounded-full bg-amber-400/20 border border-amber-300/40 px-2 py-0.5 text-[10px] font-black text-amber-300">
                 {isEn ? `Frontier: Level ${activeFrontier}` : `Por Hacer: Nivel ${activeFrontier}`}
@@ -369,7 +369,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
           <button
             onClick={onClose}
             className="flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/10 px-3 py-1.5 text-xs sm:text-sm font-bold text-white shadow-lg backdrop-blur hover:bg-white/20 active:scale-95 cursor-pointer transition"
-            aria-label="Resume Game"
+            aria-label={isEn ? "Resume Game" : "Volver al Juego"}
           >
             <X className="h-4 w-4 sm:h-5 sm:w-5" />
             <span className="hidden sm:inline">{isEn ? 'Close Map' : 'Cerrar Mapa'}</span>
@@ -563,7 +563,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                   {isEn ? `Level ${activeFrontier}` : `Nivel ${activeFrontier}`}
                 </span>
                 <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-cyan-400/20 text-cyan-300 border border-cyan-400/30">
-                  Frontier Peak
+                  {isEn ? 'Frontier Peak' : 'Cima Actual'}
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-1.5 mt-2 text-[10px] text-slate-300">
@@ -667,7 +667,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                   </div>
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      Levels {start} – {end}
+                      {isEn ? `Levels ${start} – ${end}` : `Niveles ${start} – ${end}`}
                     </span>
                     <h2 className="text-sm sm:text-lg font-black tracking-tight text-white drop-shadow">
                       {def.title}
@@ -840,7 +840,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({
                         ? (isEn ? `Replay Past Level ${level} (Your frontier level ${activeFrontier} is kept)` : `Rejugar Nivel Pasado ${level} (Tu nivel actual ${activeFrontier} se conserva)`)
                         : (isEn ? `Level ${level} Locked` : `Nivel ${level} Bloqueado`)
                     }
-                    aria-label={`Level ${level}`}
+                    aria-label={isEn ? `Level ${level}` : `Nivel ${level}`}
                   >
                     {/* Inner Icon */}
                     {isFrontier ? (

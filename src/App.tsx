@@ -58,13 +58,13 @@ import {
 export default function App() {
   const [mainTab, setMainTab] = useState<'portfolio' | 'about' | 'cv' | 'game' | 'fish_of_fortune'>('portfolio');
   const [language, setLanguage] = useState<'es' | 'en'>('en'); // Default to English
-  const [activeProfile, setActiveProfile] = useState<ResumeProfileType>('ai-native'); // AI-Native Engineer default
+  const [activeProfile, setActiveProfile] = useState<ResumeProfileType>('technical-artist'); // Sr. Technical Artist default
   const [resumeData, setResumeData] = useState<ResumeData>(() => {
-    const cached = getResumeFromCache('ai-native', 'en');
-    return cached?.data || resumeDataAiEn;
+    const cached = getResumeFromCache('technical-artist', 'en');
+    return cached?.data || resumeDataEn;
   });
   const [styleConfig, setStyleConfig] = useState<StyleConfig>(() => {
-    const cached = getResumeFromCache('ai-native', 'en');
+    const cached = getResumeFromCache('technical-artist', 'en');
     return cached?.styleConfig || defaultStyleConfig;
   });
   const [activeTab, setActiveTab] = useState<'job_match' | 'personal' | 'experience' | 'skills' | 'design'>('job_match');
@@ -114,9 +114,10 @@ export default function App() {
           setIsEditorRequestedViaUrl(false);
         }
 
-        if (params.get('lang') === 'en') {
-          setLanguage('en');
-          setResumeData(resumeDataEn);
+        const urlLang = params.get('lang');
+        if (urlLang === 'en' || urlLang === 'es') {
+          setLanguage(urlLang);
+          setResumeData(getTargetResume('technical-artist', urlLang));
         }
       };
 
@@ -171,10 +172,10 @@ export default function App() {
       language === 'es'
         ? newProfile === 'ai-native'
           ? 'Perfil seleccionado: Ingeniero AI-Native (IA Agéntica, Python, GCP)'
-          : 'Perfil seleccionado: Artista Técnico (Videojuegos AAA, UE5, Frostbite)'
+          : 'Perfil principal activado: Sr. Technical Artist (Videojuegos AAA, UE5, Frostbite)'
         : newProfile === 'ai-native'
         ? 'Profile activated: AI-Native Engineer (Agentic AI, Python, GCP Ops)'
-        : 'Profile activated: Technical Artist (AAA Games, UE5, Frostbite)'
+        : 'Primary profile activated: Sr. Technical Artist (AAA Games, UE5, Frostbite)'
     );
   };
 
@@ -280,7 +281,7 @@ export default function App() {
     const langToExport = targetLang || language;
     if (targetLang && targetLang !== language) {
       setLanguage(targetLang);
-      setResumeData(targetLang === 'en' ? resumeDataEn : resumeDataEs);
+      setResumeData(getTargetResume(activeProfile, targetLang));
       await new Promise((r) => setTimeout(r, 120));
     }
 
@@ -313,7 +314,11 @@ export default function App() {
         console.error(err);
         setIsExporting(false);
         setExportType(null);
-        showNotification('Error generating visual PDF.');
+        showNotification(
+          langToExport === 'es'
+            ? 'Error al generar el PDF visual.'
+            : 'Error generating visual PDF.'
+        );
       },
     });
   };
@@ -398,7 +403,7 @@ export default function App() {
                   className="text-sky-300 hover:text-white hover:underline flex items-center gap-1"
                 >
                   <Github className="w-2.5 h-2.5" />
-                  <span>GitHub: Portafolio</span>
+                  <span>{isEn ? 'GitHub: Portfolio' : 'GitHub: Portafolio'}</span>
                 </a>
                 <span aria-hidden="true">·</span>
                 <a
@@ -550,7 +555,7 @@ export default function App() {
               }`}
             >
               <Fish className="w-4 h-4 text-slate-950 fill-slate-950" />
-              <span>🐟 Fish Feeder (Aquatic 3D)</span>
+              <span>{isEn ? '🐟 Fish Feeder (Aquatic 3D)' : '🐟 Fish Feeder (Acuático 3D)'}</span>
             </button>
           </div>
         </div>
@@ -616,6 +621,22 @@ export default function App() {
             <div className="flex items-center gap-2 bg-slate-950/70 p-1 rounded-xl border border-slate-700/60 flex-wrap">
               <button
                 type="button"
+                onClick={() => handleProfileSwitch('technical-artist')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeProfile === 'technical-artist'
+                    ? 'bg-sky-600 text-white shadow-md'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <span>🎮</span>
+                <span>Sr. Technical Artist (AAA)</span>
+                <span className="text-[9px] bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-black tracking-tight">
+                  {language === 'es' ? 'PRINCIPAL' : 'PRIMARY'}
+                </span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => handleProfileSwitch('ai-native')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   activeProfile === 'ai-native'
@@ -625,22 +646,6 @@ export default function App() {
               >
                 <span>🤖</span>
                 <span>{language === 'es' ? 'Ingeniero AI-Native' : 'AI-Native Engineer'}</span>
-                <span className="text-[9px] bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-black tracking-tight">
-                  TARGET
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleProfileSwitch('technical-artist')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  activeProfile === 'technical-artist'
-                    ? 'bg-sky-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                }`}
-              >
-                <span>🎮</span>
-                <span>{language === 'es' ? 'Artista Técnico (AAA)' : 'Technical Artist (AAA)'}</span>
               </button>
             </div>
           </div>
@@ -655,8 +660,8 @@ export default function App() {
                       ? 'CV Ingeniero AI-Native (IA Agéntica, Python, GCP)'
                       : 'AI-Native Engineer Resume (Agentic AI & Ops)'
                     : language === 'es'
-                    ? 'CV Artista Técnico (Formato ATS)'
-                    : 'Technical Artist Resume (ATS-Ready)'}
+                    ? 'CV Sr. Technical Artist (Formato ATS)'
+                    : 'Sr. Technical Artist Resume (ATS-Ready)'}
                 </span>
               </div>
               <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-300 px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
@@ -952,6 +957,7 @@ export default function App() {
                   {activeTab === 'experience' && (
                     <ExperienceEditor
                       experiences={resumeData.experiences}
+                      language={language}
                       onChange={(updated) =>
                         setResumeData({ ...resumeData, experiences: updated })
                       }
@@ -965,6 +971,7 @@ export default function App() {
                       certifications={resumeData.certifications}
                       languages={resumeData.languages}
                       achievements={resumeData.achievements}
+                      language={language}
                       onSkillsChange={(cats) =>
                         setResumeData({ ...resumeData, skillCategories: cats })
                       }
@@ -986,6 +993,7 @@ export default function App() {
                   {activeTab === 'design' && (
                     <DesignSettingsEditor
                       styleConfig={styleConfig}
+                      language={language}
                       onChange={(updated) => setStyleConfig(updated)}
                       onAutoFitOnePage={handleAutoFitOnePage}
                     />

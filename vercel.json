@@ -19,7 +19,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!assets/|portfolio_assets/).*)",
+      "source": "/((?!assets/|portfolio_assets/|downloads/).*)",
       "destination": "/index.html"
     }
   ]

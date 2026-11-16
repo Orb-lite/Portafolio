@@ -144,11 +144,7 @@ export const PersonalInfoEditor: React.FC<PersonalInfoEditorProps> = ({
             value={personalInfo.title}
             onChange={(e) => updateField('title', e.target.value)}
             className="w-full px-3 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-sky-600 focus:border-sky-600 outline-none"
-            placeholder={
-              isEn
-                ? 'Lead Automation Engineer & Platform Developer | Orblite'
-                : 'Lead Automation Engineer & Platform Developer | Orblite'
-            }
+            placeholder="Sr. Technical Artist"
           />
         </div>
 
@@ -314,7 +310,7 @@ export const PersonalInfoEditor: React.FC<PersonalInfoEditorProps> = ({
               }
             >
               <Languages className="w-3 h-3 text-sky-600" />
-              <span>{isEn ? 'Traducir / Toggle ES ⇄ EN' : 'Traducir al Inglés (ES ⇄ EN)'}</span>
+              <span>{isEn ? 'Translate / Toggle ES ⇄ EN' : 'Traducir al Inglés (ES ⇄ EN)'}</span>
             </button>
           </div>
         </div>
@@ -328,14 +324,14 @@ export const PersonalInfoEditor: React.FC<PersonalInfoEditorProps> = ({
             onClick={() => applySummaryPreset('orblite_leader')}
             className="px-2 py-0.5 bg-white hover:bg-sky-50 text-sky-700 rounded border border-slate-200 hover:border-sky-300 transition-colors font-medium"
           >
-            {isEn ? 'Orblite (Commercial & SaaS)' : 'Orblite (Gerente & Full-Stack)'}
+            {isEn ? 'Orblite (Automation & Platform Dev)' : 'Orblite (Automatización & Plataformas)'}
           </button>
           <button
             type="button"
             onClick={() => applySummaryPreset('digital_twins')}
             className="px-2 py-0.5 bg-white hover:bg-sky-50 text-sky-700 rounded border border-slate-200 hover:border-sky-300 transition-colors font-medium"
           >
-            Digital Twins (Flex)
+            {isEn ? 'Digital Twins (Flex)' : 'Gemelos Digitales (Flex)'}
           </button>
           <button
             type="button"

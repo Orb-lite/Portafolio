@@ -31,12 +31,10 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
     let updated: ResumeData = JSON.parse(JSON.stringify(currentData));
 
     if (type === 'technical_artist_base') {
-      updated.personalInfo.title = isEn
-        ? 'Technical Artist'
-        : 'Artista Técnico (Technical Artist)';
+      updated.personalInfo.title = 'Sr. Technical Artist';
       updated.personalInfo.summary = isEn
-        ? 'Senior Technical Artist and Real-Time 3D Simulation Engineer with 8+ years of experience bridging art, interactive systems, and production pipelines across AAA game development, industrial digital twins, and virtual environments. Shipped Technical Artist on premier world-class sports franchise EA Sports College Football 25 for a leading global publisher (verified public credit on MobyGames), specializing in interactive UI/UX architecture, Frostbite engine pipelines, 60+ FPS performance optimization, Perforce P4 Helix Core branching, and Jenkins automated CI/CD validation. Extensive background building manufacturing Digital Twins and real-time assembly line simulations for Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with Unreal Engine 5 (UE5) and Arch FlexSim. Strong technical background in custom pipeline tooling (Python, TypeScript, C++, Blueprints, HLSL/Shaders) and cross-platform deployment (PC, Console, VR, Mobile, WebGL).'
-        : 'Artista Técnico e Ingeniero de Simulación 3D en Tiempo Real de 32 años con más de 8 años de trayectoria conectando arte, código y arquitectura de pipelines en desarrollo de videojuegos AAA, gemelos digitales industriales y entornos virtuales interactivos. Artista Técnico con crédito público verificado en MobyGames para el título deportivo AAA de clase mundial EA Sports College Football 25 con un publisher global líder, especializado en UI/UX interactiva en el motor Frostbite, optimización rigurosa a 60+ FPS, control de versiones con Perforce (P4 Helix Core) e integración continua automatizada con Jenkins. Extensa experiencia en Unreal Engine 5 (UE5) y Arch FlexSim desarrollando Gemelos Digitales de manufactura para corporativos globales Fortune 500.';
+        ? 'Sr. Technical Artist and Real-Time 3D Simulation Engineer with 8+ years of experience bridging art, interactive systems, and production pipelines across AAA game development, industrial digital twins, and virtual environments. Shipped Technical Artist on premier world-class sports franchise EA Sports College Football 25 for a leading global publisher (verified public credit on MobyGames), specializing in interactive UI/UX architecture, Frostbite engine pipelines, 60+ FPS performance optimization, Perforce P4 Helix Core branching, and Jenkins automated CI/CD validation. Extensive background building manufacturing Digital Twins and real-time assembly line simulations for Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with Unreal Engine 5 (UE5) and Arch FlexSim. Strong technical background in custom pipeline tooling (Python, TypeScript, C++, Blueprints, HLSL/Shaders) and cross-platform deployment (PC, Console, VR, Mobile, WebGL).'
+        : 'Sr. Technical Artist e Ingeniero de Simulación 3D en Tiempo Real con más de 8 años de trayectoria conectando arte, código y arquitectura de pipelines en desarrollo de videojuegos AAA, gemelos digitales industriales y entornos virtuales interactivos. Artista Técnico con crédito público verificado en MobyGames para el título deportivo AAA de clase mundial EA Sports College Football 25 con un publisher global líder, especializado en UI/UX interactiva en el motor Frostbite, optimización rigurosa a 60+ FPS, control de versiones con Perforce (P4 Helix Core) e integración continua automatizada con Jenkins. Extensa experiencia en Unreal Engine 5 (UE5) y Arch FlexSim desarrollando Gemelos Digitales de manufactura para corporativos globales Fortune 500.';
     } else if (type === 'orblite_leader') {
       updated.personalInfo.title = isEn
         ? 'Lead Automation Engineer & Platform Developer | Orblite'
@@ -78,7 +76,7 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
     }
 
     onApply(updated);
-    setSuccessMessage('¡Perfil actualizado con éxito!');
+    setSuccessMessage(isEn ? 'Profile updated successfully!' : '¡Perfil actualizado con éxito!');
     setTimeout(() => {
       setSuccessMessage(null);
       onClose();
@@ -101,7 +99,7 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
     }
 
     onApply(updated);
-    setSuccessMessage('¡Texto integrado a tu CV!');
+    setSuccessMessage(isEn ? 'Text integrated into your CV!' : '¡Texto integrado a tu CV!');
     setTimeout(() => {
       setSuccessMessage(null);
       onClose();
@@ -119,10 +117,12 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
             </div>
             <div>
               <h3 className="text-sm font-bold text-slate-900">
-                Optimización de Perfil Técnico
+                {isEn ? 'Technical Profile Optimization' : 'Optimización de Perfil Técnico'}
               </h3>
               <p className="text-[11px] text-slate-500">
-                Perfil de Isaac Gómez Estrada (LinkedIn: isaac-gomez-estrada-6959872a0)
+                {isEn
+                  ? 'Isaac Gómez Estrada Profile (LinkedIn: isaac-gomez-estrada-6959872a0)'
+                  : 'Perfil de Isaac Gómez Estrada (LinkedIn: isaac-gomez-estrada-6959872a0)'}
               </p>
             </div>
           </div>
@@ -147,7 +147,7 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>Enfoques Especializados</span>
+            <span>{isEn ? 'Specialized Tracks' : 'Enfoques Especializados'}</span>
           </button>
           <button
             type="button"
@@ -159,7 +159,7 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
-            <span>Pegar Más Texto de LinkedIn</span>
+            <span>{isEn ? 'Paste LinkedIn Text' : 'Pegar Más Texto de LinkedIn'}</span>
           </button>
         </div>
 
@@ -175,7 +175,9 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
           {activeTab === 'presets' && (
             <div className="space-y-3">
               <p className="text-xs text-slate-600">
-                Selecciona la orientación estratégica que deseas proyectar en tu CV para postulaciones específicas:
+                {isEn
+                  ? 'Select the strategic orientation you want to highlight on your CV for specific applications:'
+                  : 'Selecciona la orientación estratégica que deseas proyectar en tu CV para postulaciones específicas:'}
               </p>
 
               <div
@@ -184,10 +186,10 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-700">
-                    {isEn ? 'Technical Artist (AAA Shipped, Frostbite & UE5)' : 'Artista Técnico (Perfil Base Oficial)'}
+                    {isEn ? 'Sr. Technical Artist (AAA Shipped, Frostbite & UE5)' : 'Sr. Technical Artist (Perfil Base Oficial)'}
                   </span>
                   <span className="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">
-                    {isEn ? 'Base Profile' : 'Perfil Principal'}
+                    {isEn ? 'Primary Profile' : 'Perfil Principal'}
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-700">
@@ -206,11 +208,13 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
                     Lead Automation Engineer & Platform Developer (Orblite)
                   </span>
                   <span className="text-[10px] bg-sky-100 text-sky-800 px-1.5 py-0.5 rounded font-medium">
-                    Puesto Actual
+                    {isEn ? 'Current Role' : 'Puesto Actual'}
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-600">
-                  Automatización de flujos con IA, infraestructura telemática y simulación de datos vehiculares, ERP/CRM interno (React, TypeScript, Supabase, Cloudflare).
+                  {isEn
+                    ? 'AI workflow automation, vehicle telematics & data simulation infrastructure, internal ERP/CRM (React, TypeScript, Supabase, Cloudflare).'
+                    : 'Automatización de flujos con IA, infraestructura telemática y simulación de datos vehiculares, ERP/CRM interno (React, TypeScript, Supabase, Cloudflare).'}
                 </p>
               </div>
 
@@ -220,11 +224,15 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-900 group-hover:text-sky-700">
-                    Technical Artist & Digital Twins UE5 (Simulación Industrial)
+                    {isEn
+                      ? 'Sr. Technical Artist & Digital Twins UE5 (Industrial Simulation)'
+                      : 'Sr. Technical Artist & Digital Twins UE5 (Simulación Industrial)'}
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-600">
-                  Enfoque en gemelos digitales industriales, simulación con FlexSim y Unreal Engine 5 para corporativos globales bajo acuerdos de confidencialidad.
+                  {isEn
+                    ? 'Focus on industrial Digital Twins, Arch FlexSim & Unreal Engine 5 simulations for global Fortune 500 enterprises under NDAs.'
+                    : 'Enfoque en gemelos digitales industriales, simulación con FlexSim y Unreal Engine 5 para corporativos globales bajo acuerdos de confidencialidad.'}
                 </p>
               </div>
 
@@ -234,14 +242,18 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-900 group-hover:text-sky-700">
-                    Artista Técnico AAA · Co-Desarrollo (DEVBOT / CGBOT)
+                    {isEn
+                      ? 'AAA Technical Artist · Co-Development (DEVBOT / CGBOT)'
+                      : 'Artista Técnico AAA · Co-Desarrollo (DEVBOT / CGBOT)'}
                   </span>
                   <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-medium">
-                    Perfil Discreto / NDA
+                    {isEn ? 'Discreet Profile / NDA' : 'Perfil Discreto / NDA'}
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-600">
-                  Especializado para estudios de co-desarrollo AAA: UI/UX en Frostbite, pipelines con Perforce, Jenkins y respeto estricto a la privacidad de clientes.
+                  {isEn
+                    ? 'Tailored for AAA co-development studios: Frostbite UI/UX, Perforce pipelines, Jenkins CI, and strict client confidentiality.'
+                    : 'Especializado para estudios de co-desarrollo AAA: UI/UX en Frostbite, pipelines con Perforce, Jenkins y respeto estricto a la privacidad de clientes.'}
                 </p>
               </div>
 
@@ -251,11 +263,15 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-900 group-hover:text-sky-700">
-                    Líder en Realidad Virtual & Capacitación Inmersiva
+                    {isEn
+                      ? 'Virtual Reality & Immersive Training Lead'
+                      : 'Líder en Realidad Virtual & Capacitación Inmersiva'}
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-600">
-                  Enfoque en Meta Quest, HTC Vive, Oculus y simuladores para capacitación segura de operarios industriales.
+                  {isEn
+                    ? 'Focused on Meta Quest, HTC Vive, Oculus, and safe industrial operator training simulators.'
+                    : 'Enfoque en Meta Quest, HTC Vive, Oculus y simuladores para capacitación segura de operarios industriales.'}
                 </p>
               </div>
             </div>
@@ -264,13 +280,15 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
           {activeTab === 'text' && (
             <div className="space-y-3">
               <p className="text-xs text-slate-600">
-                Pega cualquier fragmento adicional de tu LinkedIn (cursos, aptitudes, publicaciones o nuevos empleos):
+                {isEn
+                  ? 'Paste any additional snippet from your LinkedIn profile (courses, skills, posts, or new roles):'
+                  : 'Pega cualquier fragmento adicional de tu LinkedIn (cursos, aptitudes, publicaciones o nuevos empleos):'}
               </p>
               <textarea
                 rows={6}
                 value={rawText}
                 onChange={(e) => setRawText(e.target.value)}
-                placeholder="Pega aquí el texto de tu perfil de LinkedIn..."
+                placeholder={isEn ? 'Paste your LinkedIn profile text here...' : 'Pega aquí el texto de tu perfil de LinkedIn...'}
                 className="w-full p-2.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-sky-600 outline-none leading-relaxed"
               />
               <button
@@ -279,7 +297,7 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
                 onClick={handleParseRawText}
                 className="w-full py-2 bg-sky-600 hover:bg-sky-700 text-white rounded text-xs font-medium transition-colors disabled:opacity-50"
               >
-                Analizar e Integrar a mi CV
+                {isEn ? 'Analyze & Integrate into CV' : 'Analizar e Integrar a mi CV'}
               </button>
             </div>
           )}
@@ -292,7 +310,7 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
             onClick={onClose}
             className="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900"
           >
-            Cerrar
+            {isEn ? 'Close' : 'Cerrar'}
           </button>
         </div>
       </div>

@@ -139,7 +139,7 @@ export async function exportResumeToDocx(
       new ExternalHyperlink({
         children: [
           new TextRun({
-            text: 'MobyGames (Shipped AAA Credits)',
+            text: isEn ? 'MobyGames (Shipped AAA Credits)' : 'MobyGames (Créditos AAA)',
             color: '0369A1',
             underline: {},
             size: 18,
@@ -158,7 +158,7 @@ export async function exportResumeToDocx(
       new ExternalHyperlink({
         children: [
           new TextRun({
-            text: 'GitHub Portfolio',
+            text: isEn ? 'GitHub Portfolio' : 'Portafolio GitHub',
             color: '0369A1',
             underline: {},
             size: 18,
@@ -196,7 +196,7 @@ export async function exportResumeToDocx(
       new ExternalHyperlink({
         children: [
           new TextRun({
-            text: 'Drive Portfolio',
+            text: isEn ? 'Drive Portfolio' : 'Portafolio Drive',
             color: '0369A1',
             underline: {},
             size: 18,
@@ -525,7 +525,7 @@ export async function exportResumeToDocx(
   const blob = await Packer.toBlob(doc);
   const targetFileName =
     options.fileName ||
-    `CV_Isaac_Gomez_Estrada_Technical_Artist_${language.toUpperCase()}.docx`;
+    `CV_Isaac_Gomez_Estrada_Sr_Technical_Artist_${language.toUpperCase()}.docx`;
 
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

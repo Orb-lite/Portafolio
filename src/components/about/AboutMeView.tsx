@@ -388,7 +388,9 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
                 {isEn ? '2013 - 2018 · Academic Degree' : '2013 - 2018 · Grado Universitario'}
               </span>
               <h3 className="text-base font-bold text-slate-900">
-                Ingeniería en Tecnologías Interactivas de Animación Digital
+                {isEn
+                  ? 'B.S. in Interactive Technologies & Digital Animation Engineering'
+                  : 'Ingeniería en Tecnologías Interactivas de Animación Digital'}
               </h3>
               <p className="text-xs font-semibold text-slate-600">
                 Universidad del Valle de México (UVM) · Zapopan / Guadalajara, Jalisco
@@ -474,7 +476,9 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
                 {isEn ? '2026 - Present · AI Automation & Platform Engineering' : '2026 - Presente · Automatización con IA & Desarrollo de Plataformas'}
               </span>
               <h3 className="text-base font-bold text-slate-900">
-                Lead Automation Engineer & Platform Developer at Orblite
+                {isEn
+                  ? 'Lead Automation Engineer & Platform Developer at Orblite'
+                  : 'Lead Automation Engineer & Platform Developer en Orblite'}
               </h3>
               <p className="text-xs font-semibold text-slate-600">
                 {isEn ? 'Vehicle Telematics SaaS & Proprietary ERP/CRM (orb-lite.com)' : 'SaaS de Telemática Vehicular & ERP/CRM Propietario (orb-lite.com)'}
@@ -518,7 +522,7 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
           <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs text-slate-300">
             <span>📧 isaacgestrada94@gmail.com</span>
             <span>📱 +52 33 1835 9421</span>
-            <span>📍 Zapopan / Guadalajara, Jalisco, México</span>
+            <span>{isEn ? '📍 Zapopan / Guadalajara, Jalisco, Mexico' : '📍 Zapopan / Guadalajara, Jalisco, México'}</span>
           </div>
         </div>
 

@@ -263,15 +263,17 @@ Respond ONLY with valid JSON matching this schema:
     `${resume.personalInfo.email} · ${resume.personalInfo.phone} · ${resume.personalInfo.location}`,
     [
       resume.personalInfo.linkedinUrl ? `LinkedIn: ${resume.personalInfo.linkedinUrl}` : '',
-      `Website: ${resume.personalInfo.websiteUrl || 'https://orb-lite.com'}`,
+      `${language === 'en' ? 'Website' : 'Sitio Web'}: ${resume.personalInfo.websiteUrl || 'https://orb-lite.com'}`,
       `GitHub: ${resume.personalInfo.githubUrl || 'https://github.com/Orb-lite/Orb-Lite'}`,
-      `Portafolio Drive: ${resume.personalInfo.portfolioUrl || 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing'}`,
+      `${language === 'en' ? 'Drive Portfolio' : 'Portafolio Drive'}: ${resume.personalInfo.portfolioUrl || 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing'}`,
     ].filter(Boolean).join(' · '),
     '',
     todayStr,
     '',
-    parsed.extractedCompany ? `Atención: ${parsed.extractedCompany}` : (language === 'es' ? 'A quien corresponda' : 'To Whom It May Concern'),
-    `Ref: ${parsed.extractedTitle || 'Candidatura Profesional'}`,
+    parsed.extractedCompany
+      ? `${language === 'en' ? 'Attention:' : 'Atención:'} ${parsed.extractedCompany}`
+      : (language === 'es' ? 'A quien corresponda' : 'To Whom It May Concern'),
+    `Ref: ${parsed.extractedTitle || (language === 'en' ? 'Professional Application' : 'Candidatura Profesional')}`,
     '',
     parsed.coverLetter.salutation,
     '',
@@ -352,7 +354,7 @@ function runLocalJobTailoring(
   // If not extracted with prefix, look for common role patterns
   if (!extractedTitle) {
     if (lower.includes('technical artist') || lower.includes('artista técnico')) {
-      extractedTitle = language === 'es' ? 'Artista Técnico Senior (Technical Artist)' : 'Senior Technical Artist';
+      extractedTitle = 'Sr. Technical Artist';
     } else if (lower.includes('unreal engine') || lower.includes('desarrollador unreal')) {
       extractedTitle = language === 'es' ? 'Desarrollador Unreal Engine 5 & Simulación' : 'Unreal Engine 5 & Simulation Developer';
     } else if (lower.includes('comercial') || lower.includes('b2b') || lower.includes('ventas') || lower.includes('sales')) {
@@ -430,8 +432,8 @@ function runLocalJobTailoring(
 
       closing = `Agradezco su tiempo y consideración. Será un placer conversar en detalle sobre cómo mi experiencia en desarrollo agéntico, Python y GCP aportará valor inmediato y continuo a sus operaciones de producción de IA.`;
     } else if (isCgbotOrDevbot) {
-      suggestedTitle = 'Artista Técnico Senior | Co-Desarrollo AAA & Pipelines de Producción';
-      suggestedSummary = `Artista Técnico Senior con probada trayectoria previa en DEVBOT colaborando en producciones deportivas AAA de calibre internacional para publisher global líder. Especializado en arquitectura e integración de UI/UX fluida a 60+ FPS, motor Frostbite y Unreal Engine, control de versiones con Perforce (P4) y automatización CI con Jenkins. Firme compromiso con la confidencialidad, acuerdos de no divulgación (NDA) y respeto absoluto a la propiedad intelectual de clientes y socios.`;
+      suggestedTitle = 'Sr. Technical Artist | Co-Desarrollo AAA & Pipelines de Producción';
+      suggestedSummary = `Sr. Technical Artist con probada trayectoria previa en DEVBOT colaborando en producciones deportivas AAA de calibre internacional para publisher global líder. Especializado en arquitectura e integración de UI/UX fluida a 60+ FPS, motor Frostbite y Unreal Engine, control de versiones con Perforce (P4) y automatización CI con Jenkins. Firme compromiso con la confidencialidad, acuerdos de no divulgación (NDA) y respeto absoluto a la propiedad intelectual de clientes y socios.`;
 
       opening = `Me dirijo a ustedes con gran entusiasmo y genuina satisfacción para presentar mi postulación a la posición de ${extractedTitle} en CGBOT / DEVBOT. Habiendo colaborado previamente como Artista Técnico en su equipo para producciones deportivas AAA de máximo nivel, conozco de primera mano la excelencia de sus flujos de trabajo, los rigurosos estándares de entrega y el valor fundamental que representan la confidencialidad, los acuerdos de no divulgación (NDA) y la discreción profesional en el co-desarrollo.`;
 
@@ -442,7 +444,7 @@ function runLocalJobTailoring(
 
       closing = `Será un verdadero honor tener la oportunidad de conversar con el equipo directivo y técnico para evaluar mi reincorporación inmediata a CGBOT / DEVBOT. Agradezco de antemano su confianza y consideración.`;
     } else if (isGaming) {
-      suggestedTitle = 'Artista Técnico Senior & Shipped AAA Titles | Frostbite & Unreal Engine';
+      suggestedTitle = 'Sr. Technical Artist & Shipped AAA Titles | Frostbite & Unreal Engine';
       suggestedSummary = `Artista Técnico Senior con destacada experiencia en co-desarrollo para franquicias deportivas AAA de calibre internacional para publisher global líder (créditos verificados). Especializado en arquitectura e integración de UI/UX fluida a 60+ FPS en el motor Frostbite, gestión avanzada de control de versiones con Perforce (P4) y automatización CI mediante Jenkins. Riguroso respeto a los acuerdos de confidencialidad (NDA) y mejores prácticas de la industria.`;
 
       opening = `Me dirijo a ustedes con gran entusiasmo para presentar mi candidatura a la posición de ${extractedTitle}${extractedCompany ? ` en ${extractedCompany}` : ''}. Con más de 7 años de trayectoria integrando arte técnico, ingeniería de software y desarrollo interactivo de alto rendimiento, considero que mi experiencia se alinea plenamente con los desafíos y objetivos técnicos de su equipo.`;
@@ -493,8 +495,8 @@ function runLocalJobTailoring(
 
       closing = `Thank you for your time and consideration. I would welcome the opportunity to discuss how my expertise in Agentic AI, production Python, and GCP operations can deliver immediate impact to your engineering team.`;
     } else if (isCgbotOrDevbot) {
-      suggestedTitle = 'Senior Technical Artist | AAA Co-Development & Production Pipelines';
-      suggestedSummary = `Senior Technical Artist with proven prior production track record at DEVBOT collaborating on world-class AAA sports franchises for a leading global publisher. Specialized in 60+ FPS interactive UI/UX architecture, Frostbite and Unreal Engine, Perforce (P4) version control, and Jenkins automated CI. Deep professional dedication to client confidentiality, strict NDA compliance, and studio IP protection.`;
+      suggestedTitle = 'Sr. Technical Artist | AAA Co-Development & Production Pipelines';
+      suggestedSummary = `Sr. Technical Artist with proven prior production track record at DEVBOT collaborating on world-class AAA sports franchises for a leading global publisher. Specialized in 60+ FPS interactive UI/UX architecture, Frostbite and Unreal Engine, Perforce (P4) version control, and Jenkins automated CI. Deep professional dedication to client confidentiality, strict NDA compliance, and studio IP protection.`;
 
       opening = `I am writing with great enthusiasm to submit my application for the ${extractedTitle} position at CGBOT / DEVBOT. Having previously contributed as a Technical Artist within your team on premier world-class AAA sports productions, I understand firsthand the high-level craft, rigorous technical standards, and foundational value of strict client confidentiality and NDA compliance in AAA co-development.`;
 
@@ -505,7 +507,7 @@ function runLocalJobTailoring(
 
       closing = `It would be a privilege to reconnect with the leadership and production team at CGBOT / DEVBOT. Thank you for your time, consideration, and continued trust.`;
     } else if (isGaming) {
-      suggestedTitle = 'Senior Technical Artist & Shipped AAA Titles | Frostbite & Unreal Engine';
+      suggestedTitle = 'Sr. Technical Artist & Shipped AAA Titles | Frostbite & Unreal Engine';
       suggestedSummary = `Senior Technical Artist with proven AAA production track record in co-development on flagship sports titles for a leading global publisher (verified shipped credits). Specialized in interactive UI/UX architecture, Frostbite engine optimization, solid 60+ FPS compliance, enterprise Perforce (P4) branching, and automated Jenkins CI testing suites. Strict respect for client NDAs and industry privacy.`;
 
       opening = `I am writing to express my strong interest in the ${extractedTitle} role${extractedCompany ? ` with ${extractedCompany}` : ''}. With over seven years of professional experience bridging technical art, full-stack software development, and real-time interactive engineering, I am confident in my ability to make an immediate, meaningful impact on your team.`;
@@ -556,9 +558,9 @@ function runLocalJobTailoring(
     `${resume.personalInfo.email} · ${resume.personalInfo.phone} · ${resume.personalInfo.location}`,
     [
       resume.personalInfo.linkedinUrl ? `LinkedIn: ${resume.personalInfo.linkedinUrl}` : '',
-      `Website: ${resume.personalInfo.websiteUrl || 'https://orb-lite.com'}`,
+      `${language === 'en' ? 'Website' : 'Sitio Web'}: ${resume.personalInfo.websiteUrl || 'https://orb-lite.com'}`,
       `GitHub: ${resume.personalInfo.githubUrl || 'https://github.com/Orb-lite/Orb-Lite'}`,
-      `Portafolio Drive: ${resume.personalInfo.portfolioUrl || 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing'}`,
+      `${language === 'en' ? 'Drive Portfolio' : 'Portafolio Drive'}: ${resume.personalInfo.portfolioUrl || 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing'}`,
     ].filter(Boolean).join(' · '),
     '',
     todayStr,

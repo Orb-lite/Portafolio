@@ -3,7 +3,7 @@ import { ResumeData, StyleConfig } from '../types/resume';
 export const resumeDataEs: ResumeData = {
   personalInfo: {
     fullName: 'Isaac Gómez Estrada',
-    title: 'Artista Técnico (Technical Artist)',
+    title: 'Sr. Technical Artist',
     email: 'isaacgestrada94@gmail.com',
     phone: '+52 33 1835 9421',
     location: 'Zapopan / Guadalajara, Jalisco, México (Presencial, Híbrido o Remoto)',
@@ -211,7 +211,7 @@ export const resumeDataEs: ResumeData = {
 export const resumeDataEn: ResumeData = {
   personalInfo: {
     fullName: 'Isaac Gómez Estrada',
-    title: 'Technical Artist',
+    title: 'Sr. Technical Artist',
     email: 'isaacgestrada94@gmail.com',
     phone: '+52 33 1835 9421',
     location: 'Zapopan / Guadalajara, Jalisco, Mexico (On-site, Hybrid, or Remote)',
@@ -290,7 +290,7 @@ export const resumeDataEn: ResumeData = {
       company: 'Spinar',
       location: 'Guadalajara, Jalisco, Mexico (Hybrid)',
       startDate: 'Jan 2020',
-      endDate: 'Ago 2020',
+      endDate: 'Aug 2020',
       isCurrent: false,
       highlights: [
         'Developed an interactive real-time 3D simulation in Unreal Engine 4 for a public water conservation and sustainability initiative with a state government entity.',
@@ -784,8 +784,8 @@ export const resumeDataAiEs: ResumeData = {
 
 export type ResumeProfileType = 'ai-native' | 'technical-artist';
 
-// Base profile is AI-Native Engineer in English as requested for this position
-export const initialResumeData: ResumeData = resumeDataAiEn;
+// Base profile is Sr. Technical Artist
+export const initialResumeData: ResumeData = resumeDataEn;
 
 export const defaultStyleConfig: StyleConfig = {
   template: 'executive',
@@ -798,10 +798,10 @@ export const defaultStyleConfig: StyleConfig = {
 };
 
 export const COLOR_PALETTES = [
-  { name: 'Azul Orblite / Tech', value: '#0284c7', bgClass: 'bg-sky-600', borderClass: 'border-sky-600' },
-  { name: 'Azul Marino Ejecutivo', value: '#1e3a8a', bgClass: 'bg-blue-900', borderClass: 'border-blue-900' },
-  { name: 'Grafito Pizarra', value: '#334155', bgClass: 'bg-slate-700', borderClass: 'border-slate-700' },
-  { name: 'Esmeralda / Cyber', value: '#059669', bgClass: 'bg-emerald-600', borderClass: 'border-emerald-600' },
-  { name: 'Índigo Profundo', value: '#4338ca', bgClass: 'bg-indigo-700', borderClass: 'border-indigo-700' },
-  { name: 'Negro Minimalista', value: '#0f172a', bgClass: 'bg-slate-900', borderClass: 'border-slate-900' },
+  { name: 'Azul Orblite / Tech', nameEn: 'Orblite / Tech Blue', value: '#0284c7', bgClass: 'bg-sky-600', borderClass: 'border-sky-600' },
+  { name: 'Azul Marino Ejecutivo', nameEn: 'Executive Navy', value: '#1e3a8a', bgClass: 'bg-blue-900', borderClass: 'border-blue-900' },
+  { name: 'Grafito Pizarra', nameEn: 'Slate Graphite', value: '#334155', bgClass: 'bg-slate-700', borderClass: 'border-slate-700' },
+  { name: 'Esmeralda / Cyber', nameEn: 'Cyber / Emerald', value: '#059669', bgClass: 'bg-emerald-600', borderClass: 'border-emerald-600' },
+  { name: 'Índigo Profundo', nameEn: 'Deep Indigo', value: '#4338ca', bgClass: 'bg-indigo-700', borderClass: 'border-indigo-700' },
+  { name: 'Negro Minimalista', nameEn: 'Minimalist Black', value: '#0f172a', bgClass: 'bg-slate-900', borderClass: 'border-slate-900' },
 ];

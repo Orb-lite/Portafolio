@@ -19,6 +19,7 @@ interface SkillsEducationEditorProps {
   onCertificationsChange: (certifications: Certification[]) => void;
   onLanguagesChange: (languages: Language[]) => void;
   onAchievementsChange: (achievements: Achievement[]) => void;
+  language?: 'es' | 'en';
 }
 
 export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
@@ -32,7 +33,9 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
   onCertificationsChange,
   onLanguagesChange,
   onAchievementsChange,
+  language = 'es',
 }) => {
+  const isEn = language === 'en';
   const [newSkillInput, setNewSkillInput] = useState<{ [catId: string]: string }>({});
 
   // Skill category handlers
@@ -65,8 +68,8 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
   const addCategory = () => {
     const newCat: SkillCategory = {
       id: `cat-${Date.now()}`,
-      name: 'Nueva Categoría',
-      skills: ['Habilidad 1', 'Habilidad 2'],
+      name: isEn ? 'New Category' : 'Nueva Categoría',
+      skills: isEn ? ['Skill 1', 'Skill 2'] : ['Habilidad 1', 'Habilidad 2'],
     };
     onSkillsChange([...skillCategories, newCat]);
   };
@@ -79,11 +82,15 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
   const addEducation = () => {
     const newEdu: Education = {
       id: `edu-${Date.now()}`,
-      degree: 'Ingeniería en Tecnologías Interactivas de Animación Digital',
+      degree: isEn
+        ? 'B.S. in Interactive Technologies & Digital Animation Engineering'
+        : 'Ingeniería en Tecnologías Interactivas de Animación Digital',
       institution: 'Universidad del Valle de México (UVM)',
-      location: 'México',
+      location: isEn ? 'Mexico' : 'México',
       graduationYear: '2013 - 2018',
-      details: 'Formación especializada en ingeniería interactiva, gráficos 3D en tiempo real y animación.',
+      details: isEn
+        ? 'Specialized training in interactive engineering, real-time 3D graphics, and animation.'
+        : 'Formación especializada en ingeniería interactiva, gráficos 3D en tiempo real y animación.',
     };
     onEducationChange([...education, newEdu]);
   };
@@ -102,9 +109,9 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
   const addCertification = () => {
     const newCert: Certification = {
       id: `cert-${Date.now()}`,
-      name: 'Nueva Certificación en Ventas / Telemetría',
-      issuer: 'Institución Emisora',
-      year: '2023',
+      name: isEn ? 'New Technical / Engine Certification' : 'Nueva Certificación Técnica / Motor 3D',
+      issuer: isEn ? 'Issuing Organization' : 'Institución Emisora',
+      year: '2024',
     };
     onCertificationsChange([...certifications, newCert]);
   };
@@ -123,9 +130,11 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
   const addAchievement = () => {
     const newAch: Achievement = {
       id: `ach-${Date.now()}`,
-      title: 'Métrica Clave',
+      title: isEn ? 'Key Metric' : 'Métrica Clave',
       metric: '+100%',
-      description: 'Breve explicación del logro comercial alcanzado.',
+      description: isEn
+        ? 'Brief summary of measurable technical or production impact.'
+        : 'Breve explicación del logro técnico o de producción alcanzado.',
     };
     onAchievementsChange([...achievements, newAch]);
   };
@@ -147,10 +156,12 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
         <div className="flex items-center justify-between mb-2">
           <div>
             <h3 className="text-sm font-semibold text-slate-800">
-              Logros Destacados & Métricas Clave
+              {isEn ? 'Key Achievements & Metrics' : 'Logros Destacados & Métricas Clave'}
             </h3>
             <p className="text-xs text-slate-500">
-              Cifras de alto impacto que demuestran tu rendimiento comercial.
+              {isEn
+                ? 'High-impact figures that highlight your production and engineering results.'
+                : 'Cifras de alto impacto que demuestran tu rendimiento técnico y de producción.'}
             </p>
           </div>
           <button
@@ -159,7 +170,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
             className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Añadir Métrica</span>
+            <span>{isEn ? 'Add Metric' : 'Añadir Métrica'}</span>
           </button>
         </div>
 
@@ -170,7 +181,9 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
               className="p-2.5 bg-slate-50 border border-slate-200 rounded flex items-start gap-2"
             >
               <div className="w-20">
-                <label className="text-[10px] text-slate-500 block mb-0.5">Cifra</label>
+                <label className="text-[10px] text-slate-500 block mb-0.5">
+                  {isEn ? 'Metric' : 'Cifra'}
+                </label>
                 <input
                   type="text"
                   value={ach.metric}
@@ -178,12 +191,14 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
                     updateAchievement(ach.id, { metric: e.target.value })
                   }
                   className="w-full px-2 py-1 text-xs font-bold border border-slate-300 rounded bg-white text-center"
-                  placeholder="128%"
+                  placeholder="60+ FPS"
                 />
               </div>
               <div className="flex-1 space-y-1">
                 <div>
-                  <label className="text-[10px] text-slate-500 block mb-0.5">Título</label>
+                  <label className="text-[10px] text-slate-500 block mb-0.5">
+                    {isEn ? 'Title' : 'Título'}
+                  </label>
                   <input
                     type="text"
                     value={ach.title}
@@ -191,11 +206,13 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
                       updateAchievement(ach.id, { title: e.target.value })
                     }
                     className="w-full px-2 py-1 text-xs font-semibold border border-slate-300 rounded bg-white"
-                    placeholder="Cumplimiento de Metas"
+                    placeholder={isEn ? 'Performance Optimization' : 'Optimización de Rendimiento'}
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-slate-500 block mb-0.5">Detalle</label>
+                  <label className="text-[10px] text-slate-500 block mb-0.5">
+                    {isEn ? 'Details' : 'Detalle'}
+                  </label>
                   <input
                     type="text"
                     value={ach.description}
@@ -203,7 +220,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
                       updateAchievement(ach.id, { description: e.target.value })
                     }
                     className="w-full px-2 py-1 text-xs text-slate-600 border border-slate-300 rounded bg-white"
-                    placeholder="Superación sostenida de objetivos..."
+                    placeholder={isEn ? 'Sustained delivery of targets...' : 'Superación sostenida de objetivos...'}
                   />
                 </div>
               </div>
@@ -224,10 +241,12 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
         <div className="flex items-center justify-between mb-2">
           <div>
             <h3 className="text-sm font-semibold text-slate-800">
-              Competencias y Habilidades
+              {isEn ? 'Competencies & Technical Skills' : 'Competencias y Habilidades'}
             </h3>
             <p className="text-xs text-slate-500">
-              Organizadas por áreas clave (Ventas, GPS/IoT, CRM y Herramientas).
+              {isEn
+                ? 'Organized by core domains (Engines, Shaders, Pipelines & Automation).'
+                : 'Organizadas por áreas clave (Motores 3D, Shaders, Pipelines y Automatización).'}
             </p>
           </div>
           <button
@@ -236,7 +255,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
             className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Nueva Categoría</span>
+            <span>{isEn ? 'New Category' : 'Nueva Categoría'}</span>
           </button>
         </div>
 
@@ -305,7 +324,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
                       addSkillToCategory(cat.id);
                     }
                   }}
-                  placeholder="Escribe una habilidad y presiona Enter..."
+                  placeholder={isEn ? 'Type a skill and press Enter...' : 'Escribe una habilidad y presiona Enter...'}
                   className="flex-1 px-2.5 py-1 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-600 outline-none"
                 />
                 <button
@@ -313,7 +332,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
                   onClick={() => addSkillToCategory(cat.id)}
                   className="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded"
                 >
-                  Añadir
+                  {isEn ? 'Add' : 'Añadir'}
                 </button>
               </div>
             </div>
@@ -325,7 +344,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
       <div className="pt-4 border-t border-slate-200">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-semibold text-slate-800">
-            Formación Académica
+            {isEn ? 'Education' : 'Formación Académica'}
           </h3>
           <button
             type="button"
@@ -333,7 +352,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
             className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Añadir Estudio</span>
+            <span>{isEn ? 'Add Education' : 'Añadir Estudio'}</span>
           </button>
         </div>
 
@@ -351,7 +370,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
                     onChange={(e) =>
                       updateEducation(edu.id, { degree: e.target.value })
                     }
-                    placeholder="Título obtenido"
+                    placeholder={isEn ? 'Degree obtained' : 'Título obtenido'}
                     className="px-2 py-1 text-xs border border-slate-300 rounded font-medium"
                   />
                   <input
@@ -360,7 +379,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
                     onChange={(e) =>
                       updateEducation(edu.id, { institution: e.target.value })
                     }
-                    placeholder="Universidad o institución"
+                    placeholder={isEn ? 'University or institution' : 'Universidad o institución'}
                     className="px-2 py-1 text-xs border border-slate-300 rounded"
                   />
                 </div>
@@ -379,7 +398,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
                   onChange={(e) =>
                     updateEducation(edu.id, { graduationYear: e.target.value })
                   }
-                  placeholder="Año de egreso (ej. 2018)"
+                  placeholder={isEn ? 'Graduation year (e.g. 2018)' : 'Año de egreso (ej. 2018)'}
                   className="px-2 py-1 text-xs border border-slate-300 rounded"
                 />
                 <input
@@ -388,7 +407,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
                   onChange={(e) =>
                     updateEducation(edu.id, { details: e.target.value })
                   }
-                  placeholder="Detalles / Especialidad (opcional)"
+                  placeholder={isEn ? 'Details / Specialization (optional)' : 'Detalles / Especialidad (opcional)'}
                   className="px-2 py-1 text-xs border border-slate-300 rounded"
                 />
               </div>
@@ -401,7 +420,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
       <div className="pt-4 border-t border-slate-200">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-semibold text-slate-800">
-            Certificaciones Profesionales
+            {isEn ? 'Professional Certifications' : 'Certificaciones Profesionales'}
           </h3>
           <button
             type="button"
@@ -409,7 +428,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
             className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Añadir Certificación</span>
+            <span>{isEn ? 'Add Certification' : 'Añadir Certificación'}</span>
           </button>
         </div>
 
@@ -425,7 +444,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
                 onChange={(e) =>
                   updateCertification(cert.id, { name: e.target.value })
                 }
-                placeholder="Nombre del certificado"
+                placeholder={isEn ? 'Certificate name' : 'Nombre del certificado'}
                 className="flex-1 px-2 py-1 text-xs border border-slate-300 rounded font-medium"
               />
               <input
@@ -434,7 +453,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
                 onChange={(e) =>
                   updateCertification(cert.id, { issuer: e.target.value })
                 }
-                placeholder="Institución"
+                placeholder={isEn ? 'Issuer' : 'Institución'}
                 className="w-36 px-2 py-1 text-xs border border-slate-300 rounded"
               />
               <input
@@ -443,7 +462,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
                 onChange={(e) =>
                   updateCertification(cert.id, { year: e.target.value })
                 }
-                placeholder="Año"
+                placeholder={isEn ? 'Year' : 'Año'}
                 className="w-16 px-2 py-1 text-xs border border-slate-300 rounded text-center"
               />
               <button
@@ -461,7 +480,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
       {/* Languages */}
       <div className="pt-4 border-t border-slate-200">
         <h3 className="text-sm font-semibold text-slate-800 mb-2">
-          Idiomas
+          {isEn ? 'Languages' : 'Idiomas'}
         </h3>
         <div className="grid grid-cols-2 gap-3">
           {languages.map((l, index) => (
@@ -478,7 +497,7 @@ export const SkillsEducationEditor: React.FC<SkillsEducationEditorProps> = ({
                   onLanguagesChange(updated);
                 }}
                 className="w-full px-2 py-1 text-xs border border-slate-300 rounded bg-white"
-                placeholder="Nativo / Intermedio / Avanzado"
+                placeholder={isEn ? 'Native / Intermediate / Advanced' : 'Nativo / Intermedio / Avanzado'}
               />
             </div>
           ))}

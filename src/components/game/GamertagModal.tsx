@@ -77,7 +77,7 @@ export const GamertagModal: React.FC<GamertagModalProps> = ({ language = 'es', o
         onClose();
       }, 700);
     } catch {
-      setError('Error guardando perfil. Inténtalo de nuevo.');
+      setError(isEn ? 'Error saving profile. Please try again.' : 'Error guardando perfil. Inténtalo de nuevo.');
     } finally {
       setIsSaving(false);
     }

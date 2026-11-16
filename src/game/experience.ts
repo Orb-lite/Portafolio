@@ -20,8 +20,9 @@ export function getLevelConfig(level: number, fishOfFortuneMode = false): LevelC
     ? Math.min(10, 3 + Math.floor((currentLevel - 1) / 2))
     : Math.min(10, 2 + Math.floor((currentLevel - 1) / 5));
 
-  // Match the reference's dense square board, then grow it slowly between worlds.
-  const boardSize = Math.min(64, 15 + Math.floor((currentLevel - 1) / 3));
+  // Fish Feeder starts as a crisp 12x12 playable-ad board matching the reference video; Conveyor Realms starts at 15x15.
+  const baseSize = fishOfFortuneMode ? 12 : 15;
+  const boardSize = Math.min(64, baseSize + Math.floor((currentLevel - 1) / 3));
   const hasEncapsulations = currentLevel >= 3;
 
   return {
@@ -37,10 +38,16 @@ export function getLevelConfig(level: number, fishOfFortuneMode = false): LevelC
   };
 }
 
+const FOF_REFERENCE_COLORS: TileColor[] = [
+  'blue', 'orange', 'purple', 'yellow', 'pink', 'cyan',
+  'green', 'red', 'white', 'lime', 'magenta', 'black'
+];
+
 export function getColorsForLevel(level: number, fishOfFortuneMode = false): TileColor[] {
   const config = getLevelConfig(level, fishOfFortuneMode);
-  const count = Math.min(PLAYABLE_COLORS.length, Math.max(2, config.colorsCount));
-  return PLAYABLE_COLORS.slice(0, count);
+  const palette = fishOfFortuneMode ? FOF_REFERENCE_COLORS : PLAYABLE_COLORS;
+  const count = Math.min(palette.length, Math.max(2, config.colorsCount));
+  return palette.slice(0, count);
 }
 
 export function getThemeForLevel(level: number): import('./types').GameVersion {

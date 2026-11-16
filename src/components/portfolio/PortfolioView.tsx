@@ -205,14 +205,14 @@ export interface ProjectItem {
 }
 
 const WORLD_THEMES = [
-  { id: 'cyber_grid', name: 'Cyber Grid', tag: 'Neon Future', src: '/assets/worlds/cyber_grid.jpg', game: 'conveyor' as const },
-  { id: 'chess_kingdom', name: 'Chess Kingdom', tag: 'Royal Board', src: '/assets/worlds/chess_kingdom.jpg', game: 'conveyor' as const },
-  { id: 'golden_vault', name: 'Golden Vault', tag: 'Bullion', src: '/assets/worlds/golden_vault.jpg', game: 'conveyor' as const },
-  { id: 'banana_paradise', name: 'Banana Paradise', tag: 'Tropics', src: '/assets/worlds/banana_paradise.jpg', game: 'conveyor' as const },
-  { id: 'sky_isles', name: 'Sky Isles', tag: 'Cloudscape', src: '/assets/worlds/sky_isles.jpg', game: 'conveyor' as const },
-  { id: 'turbo_circuit', name: 'Turbo Circuit', tag: 'Velocity', src: '/assets/worlds/turbo_circuit.jpg', game: 'conveyor' as const },
-  { id: 'land_forest', name: 'Land Forest', tag: 'Timberland', src: '/assets/worlds/land_forest.jpg', game: 'conveyor' as const },
-  { id: 'coral_cove', name: 'Coral Cove', tag: 'Fish Feeder', src: '/assets/worlds/coral_cove.jpg', game: 'fish' as const },
+  { id: 'cyber_grid', name: 'Cyber Grid', tag: 'Neon Future', tagEs: 'Futuro Neón', src: '/assets/worlds/cyber_grid.jpg', game: 'conveyor' as const },
+  { id: 'chess_kingdom', name: 'Chess Kingdom', tag: 'Royal Board', tagEs: 'Tablero Real', src: '/assets/worlds/chess_kingdom.jpg', game: 'conveyor' as const },
+  { id: 'golden_vault', name: 'Golden Vault', tag: 'Bullion', tagEs: 'Bóveda Dorada', src: '/assets/worlds/golden_vault.jpg', game: 'conveyor' as const },
+  { id: 'banana_paradise', name: 'Banana Paradise', tag: 'Tropics', tagEs: 'Trópico', src: '/assets/worlds/banana_paradise.jpg', game: 'conveyor' as const },
+  { id: 'sky_isles', name: 'Sky Isles', tag: 'Cloudscape', tagEs: 'Nubes Celestiales', src: '/assets/worlds/sky_isles.jpg', game: 'conveyor' as const },
+  { id: 'turbo_circuit', name: 'Turbo Circuit', tag: 'Velocity', tagEs: 'Velocidad', src: '/assets/worlds/turbo_circuit.jpg', game: 'conveyor' as const },
+  { id: 'land_forest', name: 'Land Forest', tag: 'Timberland', tagEs: 'Bosque Maderero', src: '/assets/worlds/land_forest.jpg', game: 'conveyor' as const },
+  { id: 'coral_cove', name: 'Coral Cove', tag: 'Fish Feeder', tagEs: 'Fish Feeder', src: '/assets/worlds/coral_cove.jpg', game: 'fish' as const },
 ];
 
 export const PORTFOLIO_PROJECTS: ProjectItem[] = [
@@ -384,7 +384,7 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
       {
         src: '/assets/popups/fof_lose_es.png',
         caption: {
-          en: 'Aquatic Defeat Pop-Up (Queue Full & Reintentar)',
+          en: 'Aquatic Defeat Pop-Up (Queue Full & Retry)',
           es: 'Pop-Up de Derrota Acuática (Cola Llena y Reintento)',
         },
       },
@@ -1220,6 +1220,8 @@ export function PortfolioView({
   onSwitchToFishFeeder,
 }: PortfolioViewProps) {
   const isEn = language === 'en';
+  const resolvePopupSrc = (src: string) =>
+    isEn ? src.replace('_es.png', '_en.png') : src.replace('_en.png', '_es.png');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [featuredGame, setFeaturedGame] = useState<'conveyor' | 'fish'>('conveyor');
   const [featuredMediaTab, setFeaturedMediaTab] = useState<'video' | 'thumb' | 'popup'>('video');
@@ -1591,7 +1593,7 @@ export function PortfolioView({
                     }`}
                   >
                     <Fish className="w-3.5 h-3.5" />
-                    <span>Fish Feeder (Aquatic)</span>
+                    <span>{isEn ? 'Fish Feeder (Aquatic)' : 'Fish Feeder (Acuático)'}</span>
                   </button>
                 </div>
               </div>
@@ -1704,7 +1706,15 @@ export function PortfolioView({
                     }`}
                   >
                     <Activity className="w-3.5 h-3.5 animate-spin" />
-                    <span>{isFeaturedFish ? 'Fish Feeder • Gameplay 1080p' : 'Conveyor Realms • Gameplay 1080p'}</span>
+                    <span>
+                      {isFeaturedFish
+                        ? isEn
+                          ? 'Fish Feeder • 1080p Gameplay'
+                          : 'Fish Feeder • Gameplay 1080p'
+                        : isEn
+                        ? 'Conveyor Realms • 1080p Gameplay'
+                        : 'Conveyor Realms • Gameplay 1080p'}
+                    </span>
                   </span>
                 </div>
               </div>
@@ -1724,7 +1734,7 @@ export function PortfolioView({
                 >
                   <img
                     src={featuredPosterSrc}
-                    alt="Video preview"
+                    alt={isEn ? 'Video preview' : 'Vista previa de video'}
                     className="w-12 h-8 rounded object-cover shrink-0 border border-white/10"
                   />
                   <div className="min-w-0">
@@ -1746,12 +1756,14 @@ export function PortfolioView({
                 >
                   <img
                     src={featuredThumbSrc}
-                    alt="Thumbnail key art"
+                    alt={isEn ? 'Thumbnail key art' : 'Miniatura arte clave'}
                     className="w-12 h-8 rounded object-cover shrink-0 border border-white/10"
                   />
                   <div className="min-w-0">
                     <p className="text-[11px] font-bold truncate">{isEn ? 'Key Art / HUD' : 'Miniatura / HUD'}</p>
-                    <p className="text-[10px] text-slate-400 truncate">{isFeaturedFish ? 'Coral Banner' : 'Cyber Frontier'}</p>
+                    <p className="text-[10px] text-slate-400 truncate">
+                      {isFeaturedFish ? (isEn ? 'Coral Banner' : 'Banner Coral') : isEn ? 'Cyber Frontier' : 'Frontera Cyber'}
+                    </p>
                   </div>
                 </button>
 
@@ -1768,7 +1780,7 @@ export function PortfolioView({
                 >
                   <img
                     src={featuredPopupSrc}
-                    alt="Victory popup artwork"
+                    alt={isEn ? 'Victory popup artwork' : 'Arte pop-up de victoria'}
                     className="w-12 h-8 rounded object-cover shrink-0 border border-white/10"
                   />
                   <div className="min-w-0">
@@ -1786,11 +1798,13 @@ export function PortfolioView({
                 </div>
                 <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-2.5">
                   <p className="text-[10px] uppercase font-bold text-slate-400">{isEn ? 'Wildcards' : 'Comodines'}</p>
-                  <p className="text-amber-300 font-bold font-mono mt-0.5">9 (3 Tiers)</p>
+                  <p className="text-amber-300 font-bold font-mono mt-0.5">{isEn ? '9 (3 Tiers)' : '9 (3 Niveles)'}</p>
                 </div>
                 <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-2.5">
                   <p className="text-[10px] uppercase font-bold text-slate-400">{isEn ? 'Health Pool' : 'Vidas'}</p>
-                  <p className="text-rose-400 font-bold font-mono mt-0.5">5 Corazones + Regen</p>
+                  <p className="text-rose-400 font-bold font-mono mt-0.5">
+                    {isEn ? '5 Hearts + Regen' : '5 Corazones + Regen'}
+                  </p>
                 </div>
                 <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-2.5">
                   <p className="text-[10px] uppercase font-bold text-slate-400">{isEn ? 'Cloud Data' : 'Persistencia'}</p>
@@ -1864,7 +1878,7 @@ export function PortfolioView({
                             ? 'border-amber-400 ring-2 ring-amber-400/40 scale-[1.03]'
                             : 'border-slate-700 hover:border-slate-500 opacity-85 hover:opacity-100'
                         }`}
-                        title={`${biome.name} (${biome.tag})`}
+                        title={`${biome.name} (${isEn ? biome.tag : biome.tagEs})`}
                       >
                         <img src={biome.src} alt={biome.name} className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent flex items-end p-1">
@@ -2113,7 +2127,7 @@ export function PortfolioView({
             </>
           ) : (
             <>
-              Mostrando <strong>{filteredProjects.length}</strong> showcases
+              Mostrando <strong>{filteredProjects.length}</strong> proyectos
             </>
           )}
         </span>
@@ -2329,9 +2343,13 @@ export function PortfolioView({
                           type="button"
                           onClick={() => openProjectModal(project, 'gallery', gIdx)}
                           className="relative w-12 h-8 rounded-md overflow-hidden border border-slate-200 hover:border-sky-500 shrink-0 transition-transform hover:scale-105"
-                          title={g.caption?.[language] || g.caption?.en || `Thumbnail ${gIdx + 1}`}
+                          title={g.caption?.[language] || g.caption?.en || `${isEn ? 'Thumbnail' : 'Miniatura'} ${gIdx + 1}`}
                         >
-                          <img src={g.src} alt={`Thumb ${gIdx + 1}`} className="w-full h-full object-cover" />
+                          <img
+                            src={resolvePopupSrc(g.src)}
+                            alt={`${isEn ? 'Thumbnail' : 'Miniatura'} ${gIdx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
                         </button>
                       ))}
                       {project.galleryImages!.length > 4 && (
@@ -2568,11 +2586,11 @@ export function PortfolioView({
                 <div className="w-full bg-slate-950 rounded-xl overflow-hidden p-3 sm:p-5 space-y-4">
                   <div className="w-full flex flex-col items-center space-y-2">
                     <img
-                      src={
+                      src={resolvePopupSrc(
                         (activeModalProject.galleryImages[selectedArtIndex] ||
                           activeModalProject.galleryImages[0]).src
-                      }
-                      alt={`Gallery ${selectedArtIndex + 1}`}
+                      )}
+                      alt={`${isEn ? 'Gallery' : 'Galería'} ${selectedArtIndex + 1}`}
                       className="w-full max-h-[480px] object-contain rounded-lg border border-slate-800 shadow-2xl"
                     />
                     {(activeModalProject.galleryImages[selectedArtIndex] ||
@@ -2605,7 +2623,11 @@ export function PortfolioView({
                             : 'border-slate-700 opacity-70 hover:opacity-100'
                         }`}
                       >
-                        <img src={img.src} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
+                        <img
+                          src={resolvePopupSrc(img.src)}
+                          alt={`${isEn ? 'Thumbnail' : 'Miniatura'} ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
                       </button>
                     ))}
                   </div>
@@ -2728,11 +2750,11 @@ export function PortfolioView({
                 <div className="w-full bg-slate-950 rounded-xl overflow-hidden flex flex-col items-center justify-center p-3 sm:p-5 space-y-4">
                   <div className="w-full rounded-lg overflow-hidden border border-slate-800 shadow-2xl bg-slate-900">
                     <img
-                      src={
+                      src={resolvePopupSrc(
                         activeModalProject.galleryImages && activeModalProject.galleryImages[selectedArtIndex]
                           ? activeModalProject.galleryImages[selectedArtIndex].src
-                          : activeModalProject.mediaSrc || activeModalProject.thumbnailSrc
-                      }
+                          : activeModalProject.mediaSrc || activeModalProject.thumbnailSrc || ''
+                      )}
                       alt={activeModalProject.title[language] || activeModalProject.title.en}
                       className="w-full h-auto max-h-[500px] object-contain mx-auto"
                     />
@@ -2757,7 +2779,11 @@ export function PortfolioView({
                                 : 'border-slate-700 opacity-70 hover:opacity-100'
                             }`}
                           >
-                            <img src={g.src} alt={`Slide ${idx + 1}`} className="w-full h-full object-cover" />
+                            <img
+                              src={resolvePopupSrc(g.src)}
+                              alt={`${isEn ? 'Slide' : 'Diapositiva'} ${idx + 1}`}
+                              className="w-full h-full object-cover"
+                            />
                           </button>
                         ))}
                       </div>
@@ -2792,8 +2818,8 @@ export function PortfolioView({
                           className="group/gal text-left relative rounded-xl overflow-hidden border border-slate-200 hover:border-sky-500 bg-slate-950 shadow-sm flex flex-col transition-all"
                         >
                           <img
-                            src={img.src}
-                            alt={`Gallery ${i + 1}`}
+                            src={resolvePopupSrc(img.src)}
+                            alt={`${isEn ? 'Gallery' : 'Galería'} ${i + 1}`}
                             className="w-full h-32 object-cover group-hover/gal:scale-105 transition-transform duration-300"
                           />
                           {img.caption && (

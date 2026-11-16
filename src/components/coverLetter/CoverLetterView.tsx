@@ -62,9 +62,9 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
     `${candidateEmail} · ${candidatePhone} · ${candidateLocation}`,
     [
       candidateLinkedin ? `LinkedIn: ${candidateLinkedin}` : '',
-      candidateWebsite ? `Website: ${candidateWebsite}` : '',
+      candidateWebsite ? `${isEn ? 'Website' : 'Sitio web'}: ${candidateWebsite}` : '',
       candidateGithub ? `GitHub: ${candidateGithub}` : '',
-      candidatePortfolio ? `Portfolio: ${candidatePortfolio}` : '',
+      candidatePortfolio ? `${isEn ? 'Portfolio' : 'Portafolio'}: ${candidatePortfolio}` : '',
     ].filter(Boolean).join(' · '),
     '',
     coverLetter.date,
@@ -152,7 +152,11 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
             className={`flex items-center gap-1 px-2.5 py-1 rounded transition-colors ${
               isEditing ? 'bg-amber-500 text-slate-950 font-bold' : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
             }`}
-            title={isEditing ? 'Ver vista previa' : 'Editar texto de la carta'}
+            title={
+              isEditing
+                ? isEn ? 'View preview' : 'Ver vista previa'
+                : isEn ? 'Edit cover letter text' : 'Editar texto de la carta'
+            }
           >
             {isEditing ? <Eye className="w-3.5 h-3.5" /> : <Edit3 className="w-3.5 h-3.5" />}
             <span>{isEditing ? (isEn ? 'Done' : 'Listo') : (isEn ? 'Edit' : 'Editar')}</span>
@@ -162,7 +166,7 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
             type="button"
             onClick={handleCopyText}
             className="flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded transition-colors"
-            title="Copiar texto al portapapeles"
+            title={isEn ? 'Copy text to clipboard' : 'Copiar texto al portapapeles'}
           >
             {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
             <span>{isCopied ? (isEn ? 'Copied!' : '¡Copiado!') : (isEn ? 'Copy' : 'Copiar')}</span>
@@ -172,7 +176,7 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
             type="button"
             onClick={handlePrint}
             className="hidden sm:flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded transition-colors"
-            title="Imprimir / PDF nativo"
+            title={isEn ? 'Print / Native PDF' : 'Imprimir / PDF nativo'}
           >
             <Printer className="w-3.5 h-3.5" />
             <span>{isEn ? 'Print' : 'Imprimir'}</span>
@@ -183,7 +187,7 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
             disabled={isExporting}
             onClick={handleDownloadPdf}
             className="flex items-center gap-1 px-3 py-1 bg-sky-600 hover:bg-sky-500 text-white font-semibold rounded shadow-xs transition-colors disabled:opacity-50"
-            title="Descargar carta en PDF de alta resolución"
+            title={isEn ? 'Download high-resolution PDF letter' : 'Descargar carta en PDF de alta resolución'}
           >
             {isExporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
             <span>PDF</span>
@@ -303,8 +307,8 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
             </h1>
             <p className="text-sm font-medium text-slate-200">
               {isEn
-                ? 'Lead Automation Engineer & Platform Developer | Orblite'
-                : 'Lead Automation Engineer & Platform Developer | Orblite'}
+                ? 'Sr. Technical Artist · Real-Time 3D, Shaders & Automation'
+                : 'Sr. Technical Artist · 3D en Tiempo Real, Shaders y Automatización'}
             </p>
 
             {/* Contact details */}
@@ -408,7 +412,7 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
 
             {/* Footer */}
             <div className="pt-6 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
-              <span>{coverLetter.fullName} · Carta de Presentación / Cover Letter</span>
+              <span>{coverLetter.fullName} · {isEn ? 'Cover Letter' : 'Carta de Presentación'}</span>
               <span>{isEn ? 'Page 1 of 1' : 'Página 1 de 1'}</span>
             </div>
           </div>

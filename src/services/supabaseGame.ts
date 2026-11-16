@@ -342,15 +342,21 @@ create policy "Permitir crear y actualizar perfiles de jugadores"
   using (true);
 `;
 
-export async function hardResetSupabaseLeaderboard(): Promise<{
+export async function hardResetSupabaseLeaderboard(language: 'en' | 'es' = 'es'): Promise<{
   success: boolean;
   usersDeleted: boolean;
   scoresDeleted: boolean;
   message: string;
 }> {
+  const isEn = language === 'en';
   const client = getSupabaseClient();
   if (!client) {
-    return { success: false, usersDeleted: false, scoresDeleted: false, message: 'Supabase no está configurado.' };
+    return {
+      success: false,
+      usersDeleted: false,
+      scoresDeleted: false,
+      message: isEn ? 'Supabase is not configured.' : 'Supabase no está configurado.',
+    };
   }
 
   let usersDeleted = false;
@@ -398,7 +404,11 @@ export async function hardResetSupabaseLeaderboard(): Promise<{
     usersDeleted,
     scoresDeleted,
     message: scoresDeleted
-      ? 'Tablas de Supabase reseteadas exitosamente por API.'
+      ? isEn
+        ? 'Supabase tables reset successfully via API.'
+        : 'Tablas de Supabase reseteadas exitosamente por API.'
+      : isEn
+      ? 'Users cleared via API. For the scores table, run TRUNCATE TABLE public.tile_absorber_scores; in the Supabase SQL Editor if RLS lacks a DELETE policy.'
       : 'Usuarios eliminados por API. Para la tabla de puntuaciones, ejecuta TRUNCATE TABLE public.tile_absorber_scores; en el SQL Editor de Supabase si RLS no tiene política de DELETE.',
   };
 }

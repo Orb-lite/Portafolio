@@ -23,6 +23,8 @@ import { AboutMeView } from './components/about/AboutMeView';
 import { TileAbsorberGame } from './components/game/TileAbsorberGame';
 import { SpotifyDisplay } from './components/common/SpotifyDisplay';
 import { EditorAuthGate } from './components/auth/EditorAuthGate';
+import { GddDocumentPage } from './components/gdd/GddDocumentPage';
+import { IS_GDD_PUBLICLY_RELEASED } from './data/gddData';
 import { getStoredSession, AdminUser } from './services/authService';
 import {
   saveResumeToCache,
@@ -70,6 +72,7 @@ export default function App() {
   });
   const [activeTab, setActiveTab] = useState<'job_match' | 'personal' | 'experience' | 'skills' | 'design'>('job_match');
   const [isEditorRequestedViaUrl, setIsEditorRequestedViaUrl] = useState<boolean>(false);
+  const [isGddRequestedViaUrl, setIsGddRequestedViaUrl] = useState<boolean>(false);
   const [adminSession, setAdminSession] = useState<AdminUser | null>(() => getStoredSession());
 
   // Auto-save edited resume and design settings to persistent cache
@@ -115,6 +118,20 @@ export default function App() {
           setIsEditorRequestedViaUrl(false);
         }
 
+        const hasGddParam = params.has('gdd') || params.has('indautor');
+        const hasGddHash =
+          window.location.hash.toLowerCase().includes('gdd') ||
+          window.location.hash.toLowerCase().includes('indautor');
+        const hasGddPath =
+          window.location.pathname.toLowerCase().includes('/gdd') ||
+          window.location.pathname.toLowerCase().includes('/indautor');
+
+        if (hasGddParam || hasGddHash || hasGddPath) {
+          setIsGddRequestedViaUrl(true);
+        } else {
+          setIsGddRequestedViaUrl(false);
+        }
+
         if (params.get('lang') === 'en') {
           setLanguage('en');
           setResumeData(resumeDataEn);
@@ -141,6 +158,32 @@ export default function App() {
         url.hash = '';
       }
       window.history.replaceState({}, '', url.pathname + (url.search ? url.search : ''));
+    }
+  };
+
+  const openGddPage = () => {
+    setIsGddRequestedViaUrl(true);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('gdd', 'true');
+      window.history.pushState({}, '', url.pathname + url.search);
+    }
+  };
+
+  const closeGddAndCleanUrl = () => {
+    setIsGddRequestedViaUrl(false);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('gdd');
+      url.searchParams.delete('indautor');
+      if (url.hash.toLowerCase().includes('gdd') || url.hash.toLowerCase().includes('indautor')) {
+        url.hash = '';
+      }
+      const cleanPath =
+        url.pathname.toLowerCase().includes('/gdd') || url.pathname.toLowerCase().includes('/indautor')
+          ? '/'
+          : url.pathname;
+      window.history.replaceState({}, '', cleanPath + (url.search ? url.search : ''));
     }
   };
 
@@ -352,6 +395,32 @@ export default function App() {
       showNotification(language === 'es' ? 'Datos y caché restaurados correctamente.' : 'Data and cache reset to defaults.');
     }
   };
+
+  if (isGddRequestedViaUrl) {
+    if (IS_GDD_PUBLICLY_RELEASED) {
+      return (
+        <GddDocumentPage
+          initialLanguage={language}
+          onBackToPortfolio={closeGddAndCleanUrl}
+        />
+      );
+    }
+
+    return (
+      <EditorAuthGate
+        language="es"
+        onClose={closeGddAndCleanUrl}
+        onSessionChange={setAdminSession}
+      >
+        {() => (
+          <GddDocumentPage
+            initialLanguage="es"
+            onBackToPortfolio={closeGddAndCleanUrl}
+          />
+        )}
+      </EditorAuthGate>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-100 text-slate-800 print:min-h-0 print:block print:bg-white">
@@ -574,6 +643,7 @@ export default function App() {
             onSwitchToAbout={() => setMainTab('about')}
             onSwitchToGame={() => setMainTab('game')}
             onSwitchToFishFeeder={() => setMainTab('fish_of_fortune')}
+            onOpenGddPage={IS_GDD_PUBLICLY_RELEASED ? openGddPage : undefined}
           />
         </main>
       )}

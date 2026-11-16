@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { IS_GDD_PUBLICLY_RELEASED } from '../../data/gddData';
 import {
   Gamepad2,
   Trophy,
@@ -47,8 +48,8 @@ export function AboutMeView({ language = 'es', onSwitchToPortfolio, onSwitchToCv
         ? 'Video games represent the peak synthesis of technology, art, design, physics, and storytelling. Even though I have not held a formal job title exclusively in Game Design, designing and building gameplay mechanics from scratch to craft immersion, balanced difficulty curves, and genuine entertainment is something I deeply enjoy and actively practice with my own playable draft games.'
         : 'Los videojuegos representan la síntesis cumbre de tecnología, arte, diseño, física y narrativa. Aunque no he ocupado un puesto formal exclusivo de Game Design, desarrollar y diseñar mecánicas desde cero para generar inmersividad, calibrar la dificultad y entretener al jugador es algo que disfruto profundamente y practico en mis propios draft games jugables.',
       howItTranslates: isEn
-        ? 'Translates into deep intuition for gameplay responsiveness, risk-reward loops, frame pacing (steady 60+ FPS), shader aesthetics, difficulty tuning, and playable draft games & GDD concepts (The Last Relic: Oathbreaker, Conveyor Realms, Fish Feeder, and Unreal prototypes) alongside AAA work in Frostbite.'
-        : 'Se traduce en una profunda intuición sobre mecánicas de riesgo-recompensa, respuesta de controles, balanceo de dificultad, estabilidad a 60+ FPS, shaders y creación de draft games jugables y GDDs propios (The Last Relic: Oathbreaker, Conveyor Realms, Fish Feeder y prototipos en Unreal) junto a mi experiencia en Frostbite.',
+        ? `Translates into deep intuition for gameplay responsiveness, risk-reward loops, frame pacing (steady 60+ FPS), shader aesthetics, difficulty tuning, and playable draft games & GDD concepts (${IS_GDD_PUBLICLY_RELEASED ? 'The Last Relic, ' : ''}Conveyor Realms, Fish Feeder, and Unreal prototypes) alongside AAA work in Frostbite.`
+        : `Se traduce en una profunda intuición sobre mecánicas de riesgo-recompensa, respuesta de controles, balanceo de dificultad, estabilidad a 60+ FPS, shaders y creación de draft games jugables y GDDs propios (${IS_GDD_PUBLICLY_RELEASED ? 'The Last Relic, ' : ''}Conveyor Realms, Fish Feeder y prototipos en Unreal) junto a mi experiencia en Frostbite.`,
       keySkills: [
         isEn ? 'Game Mechanics Design' : 'Diseño de Mecánicas',
         isEn ? 'Immersion & Difficulty Tuning' : 'Inmersividad & Dificultad',

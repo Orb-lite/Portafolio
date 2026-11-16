@@ -34,6 +34,7 @@ import {
 import realGameScreenshot from '../../assets/images/regenerated_image_1794206153590.png';
 import lastRelicKeyart from '../../assets/images/last_relic_oathbreaker_keyart.jpg';
 import { GddShowcaseModal } from './GddShowcaseModal';
+import { IS_GDD_PUBLICLY_RELEASED } from '../../data/gddData';
 
 export interface LocalizedString {
   en: string;
@@ -415,17 +416,17 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
   {
     id: 'the-last-relic-oathbreaker',
     title: {
-      en: 'The Last Relic: Oathbreaker (GDD v2.0 Draft Game)',
-      es: 'The Last Relic: Oathbreaker (Borrador GDD v2.0)',
+      en: 'The Last Relic — GDD & Pitch Deck',
+      es: 'The Last Relic — GDD y Pitch Deck',
     },
     subtitle: {
-      en: '200-Player Medieval 3D Battle Royale • From 100v100 War to 1v1 Betrayal',
-      es: 'Battle Royale Medieval 3D de 200 Jugadores • De Guerra 100v100 a Traición 1v1',
+      en: '200-Player Dark Medieval PvPvE Battle Royale · Duos/Trios/Quads & 1v199 Solo',
+      es: 'Battle Royale Táctico Medieval PvPvE (200 Jugadores) · Equipos Unidos y Errante Solo',
     },
     category: 'game-design',
     categoryLabel: {
-      en: 'Game Design Draft (GDD)',
-      es: 'Diseño de Mecánicas (GDD)',
+      en: 'Game Design Doc (GDD)',
+      es: 'Diseño de Videojuego (GDD)',
     },
     theme: 'relic',
     workClassification: 'personal-rnd',
@@ -435,28 +436,28 @@ export const PORTFOLIO_PROJECTS: ProjectItem[] = [
     mediaSrc: lastRelicKeyart,
     thumbnailSrc: lastRelicKeyart,
     mediaNote: {
-      en: 'Original Game Design Document (GDD v2.0) authored by Isaac Gómez: 200-player classless medieval PvPvE battle royale mechanics engineered for immersion, escalating difficulty, and tense betrayal.',
-      es: 'Game Design Document (GDD v2.0) original diseñado por Isaac Gómez: mecánicas de Battle Royale medieval PvPvE para 200 jugadores sin clases fijas, pensado para máxima inmersión, curva de dificultad y traición táctica.',
+      en: 'Original IP Game Design Document & 10-Slide Pitch Deck: 200-player Valdris PvPvE Battle Royale in Unreal Engine 5.',
+      es: 'Documento Maestro de Diseño (IP Original) y Pitch Deck de 10 diapositivas: Battle Royale PvPvE en Valdris para 200 jugadores en UE5.',
     },
     description: {
-      en: 'Original 200-player TPS medieval PvPvE Battle Royale design ("From War to Betrayal"): two 100-player armies (Covenant of Valenkor vs. Ironspire Legion) clash across Broken Crown Citadel before the Arcane Maelstrom shatters alliances step-by-step into 4-player squads, free-for-all chaos, and a 1v1 duel.',
-      es: 'Diseño original de Battle Royale medieval PvPvE en tercera persona para 200 jugadores ("De la Guerra a la Traición"): dos ejércitos de 100 (Pacto de Valenkor vs. Legión de Ferrum) chocan en la Ciudadela de Corona Rota mientras El Cataclismo Arcano rompe las alianzas en escuadrones, FFA y duelo final 1 vs 1.',
+      en: 'Original 200-player TPS dark medieval PvPvE Battle Royale set in Valdris: Duos, Trios, and Quads stay united and win together as a company, while Wanderer Mode (1 vs 199) crowns 1 sole victor in the Throne Room.',
+      es: 'Battle Royale táctico en tercera persona ambientado en el continente maldito de Valdris: los Dúos, Tríos y Cuartetos nunca se separan y ganan en conjunto, mientras que solo el Modo Errante (1 vs 199) tiene 1 único ganador.',
     },
     highlights: {
       en: [
-        '5-Phase Dynamic Funnel (100v100 → Squads of 4 → FFA → 1v1) with 30s "Toll of the Bell" warning before friendly-fire flips',
-        'Classless 5-tier loot system (Common Iron to Mythic Oathbreaker Relics), armor weight pacing, 3 Rune Slots & Potion Belt',
-        'Over-the-shoulder tactical combat: real cleave hitboxes, parries, Health/Mana/Stamina management & 4 distinct POIs',
-        'UE5 200-player networking plan: Replication Graph (50–80m high-freq radius), server-authoritative hits & modular Skeletal Mesh armor',
+        '5-Act Cycle: 60s squad respawn in Acts I–III (requires 1+ alive; all die = squad wipe) & zero respawns starting Act IV with unbreakable co-op victory',
+        'Zero fixed classes: 5 Valdris Quality Tiers (Rusted Forge to Royal Vestige), Vial Belt (1–4) & 8 swappable Aether Seals',
+        '4 escalating PvE Monster Difficulty Tiers for Looting (Valdris Marauders, Spectral Guardians, Catacomb Bosses, Black Bell Executioner) with solo/squad scaling',
+        'UE5 200-player architecture: Replication Graph (50–80m relevancy), server-authoritative Altar-Chests & modular armor',
       ],
       es: [
-        'Embudo Dinámico en 5 fases (100v100 → Escuadrones de 4 → FFA → 1v1) con alerta global de 30s ("El Toque de Campana")',
-        'Cero profesiones: 5 tiers de rareza (de Común a Reliquias Legendarias), peso de armadura, 3 Ranuras Rúnicas y Cinturón de Pociones',
-        'Combate TPS direccional con hitboxes reales, parry, triple barra (Vida/Maná/Estamina) y 4 POIs estratégicos (Ciudadela, Ciénaga, Criptas, Dosel)',
-        'Arquitectura UE5 para 200 jugadores: Replication Graph por relevancia (50–80m), autoridad de servidor y armadura modular optimizada',
+        'Ciclo de 5 Actos: respawn de 60s en Actos I–III (requiere 1+ miembro vivo; si mueren todos = eliminación) y cero respawn desde el Acto IV',
+        'Sin clases fijas: 5 Tiers de Valdris (Forja Oxidada a Vestigio Real), Cinturón de Viales (1–4) y 8 Sellos de Éter intercambiables',
+        '4 Niveles de Dificultad de Monstruos PvE para Lootear con escalado Solo/Escuadrón y matriz de drops hasta Vestigio Real (Dorado)',
+        'Arquitectura UE5 (200 jugadores): Replication Graph (50–80m), autoridad de servidor y armaduras modulares',
       ],
     },
-    techStack: ['Game Mechanics Design', 'GDD v2.0', 'PvPvE Systems', 'Difficulty Curve', 'Unreal Engine 5 Arch'],
+    techStack: ['Original IP Design', 'GDD & 10-Slide Pitch', 'PvPvE Monsters & Loot', 'Unreal Engine 5 Arch'],
     featured: true,
   },
   {
@@ -1278,6 +1279,7 @@ interface PortfolioViewProps {
   onSwitchToAbout: () => void;
   onSwitchToGame?: () => void;
   onSwitchToFishFeeder?: () => void;
+  onOpenGddPage?: () => void;
 }
 
 export function PortfolioView({
@@ -1286,6 +1288,7 @@ export function PortfolioView({
   onSwitchToAbout,
   onSwitchToGame,
   onSwitchToFishFeeder,
+  onOpenGddPage,
 }: PortfolioViewProps) {
   const isEn = language === 'en';
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -1309,7 +1312,12 @@ export function PortfolioView({
     initialArtIdx = 0
   ) => {
     if (project.id === 'the-last-relic-oathbreaker') {
-      setIsGddModalOpen(true);
+      if (!IS_GDD_PUBLICLY_RELEASED) return;
+      if (onOpenGddPage) {
+        onOpenGddPage();
+      } else {
+        setIsGddModalOpen(true);
+      }
       return;
     }
     setModalVideoError(false);
@@ -1341,11 +1349,15 @@ export function PortfolioView({
       label: isEn ? 'Playable 3D Games' : 'Juegos 3D Jugables',
       icon: Gamepad2,
     },
-    {
-      id: 'game-design',
-      label: isEn ? 'Game Design (GDD Draft)' : 'Diseño de Juegos (GDD)',
-      icon: BookOpen,
-    },
+    ...(IS_GDD_PUBLICLY_RELEASED
+      ? [
+          {
+            id: 'game-design',
+            label: isEn ? 'Game Design (GDD)' : 'Diseño de Juegos (GDD)',
+            icon: BookOpen,
+          },
+        ]
+      : []),
     {
       id: 'aaa-studio',
       label: isEn ? 'AAA Studio (NDA)' : 'Estudio AAA (NDA)',
@@ -2271,6 +2283,34 @@ export function PortfolioView({
           const hasPlayableLocalVideo = project.mediaType === 'video' && Boolean(project.mediaSrc) && !videoErrors[project.id];
           const hasGallery = Boolean(project.galleryImages && project.galleryImages.length > 0);
 
+          if (project.id === 'the-last-relic-oathbreaker' && !IS_GDD_PUBLICLY_RELEASED) {
+            return (
+              <div
+                key={project.id}
+                className="bg-white rounded-2xl border border-slate-200 shadow-xs flex flex-col overflow-hidden"
+              >
+                <div className="relative aspect-video bg-slate-950 overflow-hidden">
+                  <img
+                    src={project.thumbnailSrc || project.mediaSrc}
+                    alt={isEn ? 'Upcoming Project Thumbnail' : 'Miniatura de Próximo Proyecto'}
+                    className="w-full h-full object-cover opacity-80"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/35 to-slate-950/20 flex flex-col items-center justify-center p-4 text-center">
+                    <span className="text-xs font-semibold uppercase tracking-widest text-amber-300">
+                      Coming Soon
+                    </span>
+                  </div>
+                </div>
+                <div className="p-5 flex-1 flex flex-col justify-center items-center text-center space-y-1.5">
+                  <h3 className="text-base font-bold text-slate-900">Coming Soon</h3>
+                  <p className="text-xs text-slate-500">
+                    {isEn ? 'Unannounced 3D Project · In Registration' : 'Proyecto 3D en Registro · Próximamente'}
+                  </p>
+                </div>
+              </div>
+            );
+          }
+
           return (
             <div
               key={project.id}
@@ -2465,8 +2505,8 @@ export function PortfolioView({
                       <span>
                         {project.id === 'the-last-relic-oathbreaker'
                           ? isEn
-                            ? 'Read Full GDD v2.0'
-                            : 'Leer GDD v2.0 Completo'
+                            ? 'Read Full GDD & Pitch Deck'
+                            : 'Leer GDD y Pitch Deck'
                           : isEn
                           ? 'Open Pop-Up Showcase'
                           : 'Abrir Showcase & Video'}
@@ -3022,11 +3062,13 @@ export function PortfolioView({
           </div>
         </div>
       )}
-      <GddShowcaseModal
-        isOpen={isGddModalOpen}
-        onClose={() => setIsGddModalOpen(false)}
-        language={language}
-      />
+      {IS_GDD_PUBLICLY_RELEASED && (
+        <GddShowcaseModal
+          isOpen={isGddModalOpen}
+          onClose={() => setIsGddModalOpen(false)}
+          language={language}
+        />
+      )}
     </div>
   );
 }

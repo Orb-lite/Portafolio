@@ -162,6 +162,30 @@ article,
     break-after: auto !important;
   }
 
+  /* GDD Standalone Multi-Page Print Rules */
+  #gdd-print-sheet {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .gdd-pdf-page {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  .gdd-pdf-page:last-of-type {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
   /* Avoid unwanted page breaks inside elements */
   .break-inside-avoid,
   [data-break-avoid="true"],

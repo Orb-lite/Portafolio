@@ -927,28 +927,32 @@ export const GDD_PITCH_SLIDES: GddPitchSlide[] = [
   },
   {
     number: '09',
-    kicker: { es: 'Diapositiva 09 · Arquitectura Técnica UE5', en: 'Slide 09 · Unreal Engine 5 Tech' },
-    title: { es: 'Ingeniería para 200 Jugadores a 60+ FPS', en: '200-Player Netcode & Rendering at 60+ FPS' },
+    kicker: { es: 'Diapositiva 09 · Arquitectura Técnica UE5 y Anti-Cheat', en: 'Slide 09 · UE5 Tech & Anti-Cheat' },
+    title: { es: 'Ingeniería para 200 Jugadores a 60+ FPS y Anti-Cheat', en: '200-Player Netcode (60+ FPS) & Anti-Cheat' },
     subtitle: {
-      es: 'Arquitectura técnica multijugador en Unreal Engine 5',
-      en: 'Unreal Engine 5 multiplayer systems architecture',
+      es: 'Arquitectura técnica multijugador en Unreal Engine 5 con integridad competitiva',
+      en: 'Unreal Engine 5 multiplayer systems architecture with competitive integrity',
     },
     bullets: [
       {
-        heading: { es: 'Replication Graph + Autoridad de Servidor', en: 'Replication Graph + Server Authority' },
+        heading: { es: 'Replication Graph + Autoridad de Servidor + Anti-ESP', en: 'Replication Graph + Server Authority + Anti-ESP' },
         body: {
-          es: 'Replicación de alta frecuencia en radio de 50–80m para parries y proyectiles, con validación autoritativa en servidor para evitar duplicación de botín en cofres y cadáveres.',
-          en: 'High-frequency replication within 50–80m for melee parries & projectiles, paired with server-authoritative chest/loot validation.',
+          es: 'Replicación de alta frecuencia en radio de 50–80m para parries y proyectiles, culling anti-ESP en servidor para cofres/enemigos ocluidos y validación autoritativa de botín y respawns.',
+          en: 'High-frequency 50–80m relevancy for parries & projectiles, server-side anti-ESP occlusion culling for hidden chests/enemies, and authoritative loot/respawn validation.',
         },
       },
       {
-        heading: { es: 'Skeletal Mesh Modular + Niagara Instanced', en: 'Modular Skeletal Mesh + Instanced Niagara' },
+        heading: { es: 'Skeletal Mesh Modular + Kernel Guard & Telemetría', en: 'Modular Skeletal Mesh + Kernel Guard & Telemetry' },
         body: {
-          es: 'Un solo esqueleto base optimizado intercambia armaduras de los 5 tiers en vivo junto con partículas GPU instanciadas para Sellos de Éter masivos.',
-          en: 'Single shared base Skeletal Mesh swaps all 5 armor tiers dynamically alongside GPU-instanced Niagara VFX for mass Seal casts.',
+          es: 'Un esqueleto modular optimizado intercambia los 5 tiers de armadura junto a protección en kernel anti-DLL, verificación física anti-speedhack y detección de teaming ilícito en Errante.',
+          en: 'Single modular Skeletal Mesh swaps all 5 armor tiers alongside kernel-level anti-tamper, server physics validation, and teaming detection in Wanderer Mode.',
         },
       },
     ],
+    callout: {
+      es: 'Blindaje Anti-Cheat Multicapa: Cero duplicación de Vestigios Reales, ocultamiento Anti-ESP en red y detección heurística de parries automatizados (<80ms).',
+      en: 'Multilayer Anti-Cheat: Zero Royal Vestige duplication, network Anti-ESP culling, and behavioral heuristics against automated parries (<80ms).',
+    },
     imageKey: 'citadelSiege',
   },
   {

@@ -457,7 +457,11 @@ export const GddShowcaseModal: React.FC<GddShowcaseModalProps> = ({
                 <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-3">
                   <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                     <Cpu className="w-4 h-4 text-indigo-600" />
-                    <span>{isEn ? '200-Player Unreal Engine 5 Architecture' : 'Arquitectura UE5 para 200 Jugadores'}</span>
+                    <span>
+                      {isEn
+                        ? '200-Player UE5 Architecture & Anti-Cheat'
+                        : 'Arquitectura UE5 (200 Jugadores) y Anti-Cheat'}
+                    </span>
                   </h4>
                   <ul className="space-y-2 text-xs text-slate-700 leading-relaxed">
                     <li>
@@ -471,6 +475,12 @@ export const GddShowcaseModal: React.FC<GddShowcaseModalProps> = ({
                       {isEn
                         ? 'Real-time 5-tier Valdris armor swapping paired with GPU-instanced Aether Seal VFX.'
                         : 'Intercambio modular en tiempo real de los 5 tiers de Valdris y VFX instanciados en GPU.'}
+                    </li>
+                    <li>
+                      <strong>{isEn ? 'Multilayer Anti-Cheat:' : 'Anti-Cheat Multicapa:'}</strong>{' '}
+                      {isEn
+                        ? 'Kernel memory guard, server-side Anti-ESP occlusion culling, authoritative loot/respawn validation, and heuristic detection against auto-parries or solo teaming.'
+                        : 'Protección en kernel anti-DLL, culling Anti-ESP en servidor, autoridad de botín/respawn y telemetría contra auto-parry o teaming en Errante.'}
                     </li>
                   </ul>
                 </div>

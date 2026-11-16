@@ -1073,25 +1073,25 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                   isEn ? '08. UE5 Architecture & Protected IP Summary' : '08. Arquitectura UE5 y Síntesis de Obra'
                 }
               >
-                <div className="space-y-6">
-                  <div className="space-y-1.5">
+                <div className="space-y-4">
+                  <div className="space-y-1">
                     <h2 className="text-xl font-serif-custom font-bold text-stone-950 flex items-center gap-2">
                       <Cpu className="w-5 h-5 text-amber-800" />
                       <span>
                         {isEn
-                          ? '08. Unreal Engine 5 Multiplayer Architecture (200 Players + PvE)'
-                          : '08. Arquitectura Técnica en Unreal Engine 5 (200 Jugadores + PvE)'}
+                          ? '08. Unreal Engine 5 Multiplayer & Anti-Cheat Architecture (200P + PvE)'
+                          : '08. Arquitectura UE5, Red (200 Jugadores) y Sistema Anti-Cheat'}
                       </span>
                     </h2>
                     <p className="text-xs text-stone-700 leading-relaxed">
                       {isEn
-                        ? 'Engineered to sustain 60+ FPS across 200 concurrent mercenaries, Sealed Altar-Chest guardians, Catacomb bosses, and dynamic Abyssal Ash contractions.'
-                        : 'Diseñada para sostener 60+ FPS con 200 mercenarios simultáneos, guardianes de Altar-Cofres Sellados, jefes de Catacumbas y el cierre dinámico de La Ceniza Abisal.'}
+                        ? 'Engineered to sustain 60+ FPS across 200 concurrent mercenaries, Sealed Altar-Chest guardians, Catacomb bosses, and competitive anti-cheat enforcement.'
+                        : 'Diseñada para sostener 60+ FPS con 200 mercenarios simultáneos, guardianes de Altar-Cofres Sellados, jefes de Catacumbas y blindaje anti-cheat competitivo.'}
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-3.5">
-                    <div className="border border-stone-300 bg-white p-4 space-y-1.5">
+                  <div className="grid grid-cols-1 gap-2.5">
+                    <div className="border border-stone-300 bg-white p-3.5 space-y-1">
                       <h3 className="text-xs font-bold text-stone-950">
                         1.{' '}
                         {isEn
@@ -1105,7 +1105,7 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                       </p>
                     </div>
 
-                    <div className="border border-stone-300 bg-white p-4 space-y-1.5">
+                    <div className="border border-stone-300 bg-white p-3.5 space-y-1">
                       <h3 className="text-xs font-bold text-stone-950">
                         2.{' '}
                         {isEn
@@ -1119,7 +1119,7 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                       </p>
                     </div>
 
-                    <div className="border border-stone-300 bg-white p-4 space-y-1.5">
+                    <div className="border border-stone-300 bg-white p-3.5 space-y-1">
                       <h3 className="text-xs font-bold text-stone-950">
                         3.{' '}
                         {isEn
@@ -1132,10 +1132,24 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
                           : 'Un único Skeletal Mesh base intercambia en tiempo real las 4 piezas de armadura de los 5 Tiers de Valdris, combinado con emisores GPU en Niagara para Sellos de Éter y La Ceniza Abisal.'}
                       </p>
                     </div>
+
+                    <div className="border border-stone-300 bg-white p-3.5 space-y-1">
+                      <h3 className="text-xs font-bold text-stone-950">
+                        4.{' '}
+                        {isEn
+                          ? 'Multilayer Anti-Cheat: Kernel Guard, Anti-ESP Occlusion & Teaming Telemetry'
+                          : 'Sistema Anti-Cheat Multicapa: Kernel Guard, Culling Anti-ESP y Telemetría'}
+                      </h3>
+                      <p className="text-[11px] text-stone-700 leading-relaxed">
+                        {isEn
+                          ? 'Combines kernel-level memory/DLL anti-tamper (EAC/BattlEye class), server-side anti-ESP fog-of-war culling (occluded enemies, Catacomb bosses, and chests are never replicated to the client before valid line-of-sight), server physics checks (anti-speed/fly/loot duplication), and behavioral telemetry flagging inhuman parry reaction times (<80ms) or illicit teaming in Wanderer Mode (1v199).'
+                          : 'Combina protección en kernel contra inyección de memoria y DLLs, culling anti-ESP en servidor (enemigos, jefes de Catacumbas y cofres ocluidos no se replican al cliente hasta existir línea de visión o alerta válida), validación física anti-speedhack y anti-duplicación de botín, más telemetría heurística para detectar parries automatizados (<80ms) o teaming ilícito en Modo Errante (1 vs 199).'}
+                      </p>
+                    </div>
                   </div>
 
                   {/* Formal Work Scope & IP Registry Summary */}
-                  <div className="border border-stone-400 bg-white p-5 space-y-3 mt-4">
+                  <div className="border border-stone-400 bg-white p-4 space-y-2.5">
                     <div className="border-b border-stone-200 pb-2 flex items-center justify-between">
                       <span className="text-xs font-bold uppercase tracking-wider text-stone-900">
                         {isEn
@@ -1149,8 +1163,8 @@ export const GddDocumentPage: React.FC<GddDocumentPageProps> = ({
 
                     <p className="text-[11px] text-stone-700 leading-relaxed">
                       {isEn
-                        ? `This Game Design Document compiles the original IP "${GDD_META.projectTitle}", encompassing the fictional continent of Valdris, The Abyssal Ash & The Iron Crown lore, Oath Mode (Duos, Trios & Quads winning together with a 60s squad respawn requiring 1+ living member during Acts I–III and zero respawn from Act IV onward) & Wanderer Mode (Solo 1 vs 199 with 1 sole victor), the 5-Act match cycle, the 5 Valdris Quality Tiers, the 8 Aether Seals, the 4-tier PvE Monster Difficulty for Looting & Drop Matrix, the 4 Valdris POIs, and the Unreal Engine 5 multiplayer architecture.`
-                        : `Este Documento Maestro de Diseño reúne los elementos originales de la obra "${GDD_META.projectTitle}": el continente de Valdris, La Ceniza Abisal y La Corona de Hierro, los modos Modo Juramento (Dúos, Tríos y Cuartetos que ganan en conjunto, con respawn de 60s en Actos I–III condicionado a 1+ aliado vivo y sin respawn desde el Acto IV) y Modo Errante (Solo 1 vs 199 con 1 único ganador), el ciclo de 5 Actos, los 5 Tiers de Calidad, los 8 Sellos de Éter, la dificultad de monstruos PvE en 4 niveles con matriz de botín, los 4 biomas estratégicos y la arquitectura técnica en Unreal Engine 5.`}
+                        ? `This Game Design Document compiles the original IP "${GDD_META.projectTitle}", encompassing the fictional continent of Valdris, The Abyssal Ash & The Iron Crown lore, Oath Mode (Duos, Trios & Quads winning together with a 60s squad respawn requiring 1+ living member during Acts I–III and zero respawn from Act IV onward) & Wanderer Mode (Solo 1 vs 199 with 1 sole victor), the 5-Act match cycle, the 5 Valdris Quality Tiers, the 8 Aether Seals, the 4-tier PvE Monster Difficulty for Looting & Drop Matrix, the 4 Valdris POIs, and the Unreal Engine 5 multiplayer + anti-cheat architecture.`
+                        : `Este Documento Maestro de Diseño reúne los elementos originales de la obra "${GDD_META.projectTitle}": el continente de Valdris, La Ceniza Abisal y La Corona de Hierro, los modos Modo Juramento (Dúos, Tríos y Cuartetos que ganan en conjunto, con respawn de 60s en Actos I–III condicionado a 1+ aliado vivo y sin respawn desde el Acto IV) y Modo Errante (Solo 1 vs 199 con 1 único ganador), el ciclo de 5 Actos, los 5 Tiers de Calidad, los 8 Sellos de Éter, la dificultad de monstruos PvE en 4 niveles con matriz de botín, los 4 biomas estratégicos y la arquitectura UE5 con sistema Anti-Cheat multicapa.`}
                     </p>
                   </div>
                 </div>

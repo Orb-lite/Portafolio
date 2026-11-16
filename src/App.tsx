@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   resumeDataEs,
   resumeDataEn,
-  resumeDataPlatformEn,
-  resumeDataPlatformEs,
+  resumeDataAiEn,
+  resumeDataAiEs,
   ResumeProfileType,
   defaultStyleConfig,
 } from './data/defaultResume';
@@ -53,20 +53,18 @@ import {
   X,
   SlidersHorizontal,
   CheckCheck,
-  Mail,
-  Linkedin,
 } from 'lucide-react';
 
 export default function App() {
   const [mainTab, setMainTab] = useState<'portfolio' | 'about' | 'cv' | 'game' | 'fish_of_fortune'>('portfolio');
   const [language, setLanguage] = useState<'es' | 'en'>('en'); // Default to English
-  const [activeProfile, setActiveProfile] = useState<ResumeProfileType>('technical-artist');
+  const [activeProfile, setActiveProfile] = useState<ResumeProfileType>('ai-native'); // AI-Native Engineer default
   const [resumeData, setResumeData] = useState<ResumeData>(() => {
-    const cached = getResumeFromCache('technical-artist', 'en');
-    return cached?.data || resumeDataEn;
+    const cached = getResumeFromCache('ai-native', 'en');
+    return cached?.data || resumeDataAiEn;
   });
   const [styleConfig, setStyleConfig] = useState<StyleConfig>(() => {
-    const cached = getResumeFromCache('technical-artist', 'en');
+    const cached = getResumeFromCache('ai-native', 'en');
     return cached?.styleConfig || defaultStyleConfig;
   });
   const [activeTab, setActiveTab] = useState<'job_match' | 'personal' | 'experience' | 'skills' | 'design'>('job_match');
@@ -158,8 +156,8 @@ export default function App() {
       if (cached.styleConfig) setStyleConfig(cached.styleConfig);
       return cached.data;
     }
-    if (prof === 'platform-engineer') {
-      return lang === 'en' ? resumeDataPlatformEn : resumeDataPlatformEs;
+    if (prof === 'ai-native') {
+      return lang === 'en' ? resumeDataAiEn : resumeDataAiEs;
     } else {
       return lang === 'en' ? resumeDataEn : resumeDataEs;
     }
@@ -171,11 +169,11 @@ export default function App() {
     setResumeData(target);
     showNotification(
       language === 'es'
-        ? newProfile === 'platform-engineer'
-          ? 'Perfil seleccionado: Ingeniero de Plataformas & Cloud (Python, GCP, Telemática)'
+        ? newProfile === 'ai-native'
+          ? 'Perfil seleccionado: Ingeniero AI-Native (IA Agéntica, Python, GCP)'
           : 'Perfil seleccionado: Artista Técnico (Videojuegos AAA, UE5, Frostbite)'
-        : newProfile === 'platform-engineer'
-        ? 'Profile activated: Platform & Systems Engineer (Python, GCP, Telematics)'
+        : newProfile === 'ai-native'
+        ? 'Profile activated: AI-Native Engineer (Agentic AI, Python, GCP Ops)'
         : 'Profile activated: Technical Artist (AAA Games, UE5, Frostbite)'
     );
   };
@@ -198,7 +196,7 @@ export default function App() {
     setIsExporting(true);
     setExportType('pdf');
 
-    const profileSlug = activeProfile === 'platform-engineer' ? 'Platform_Systems_Engineer' : 'Technical_Artist';
+    const profileSlug = activeProfile === 'ai-native' ? 'AI_Native_Engineer' : 'Technical_Artist';
     const fileName = isCustomized
       ? `CV_Isaac_Gomez_Estrada_${profileSlug}_${langToExport.toUpperCase()}_Custom.pdf`
       : `CV_Isaac_Gomez_Estrada_${profileSlug}_${langToExport.toUpperCase()}.pdf`;
@@ -241,7 +239,7 @@ export default function App() {
     setIsExporting(true);
     setExportType('docx');
 
-    const profileSlug = activeProfile === 'platform-engineer' ? 'Platform_Systems_Engineer' : 'Technical_Artist';
+    const profileSlug = activeProfile === 'ai-native' ? 'AI_Native_Engineer' : 'Technical_Artist';
     const fileName = `CV_Isaac_Gomez_Estrada_${profileSlug}_${langToExport.toUpperCase()}.docx`;
 
     try {
@@ -345,8 +343,8 @@ export default function App() {
         : 'Do you want to reset all data to default for Isaac Gómez Estrada and clear local cache?';
     if (window.confirm(confirmMsg)) {
       clearResumeCache(activeProfile, language);
-      const original = activeProfile === 'platform-engineer'
-        ? (language === 'es' ? resumeDataPlatformEs : resumeDataPlatformEn)
+      const original = activeProfile === 'ai-native'
+        ? (language === 'es' ? resumeDataAiEs : resumeDataAiEn)
         : (language === 'es' ? resumeDataEs : resumeDataEn);
       setResumeData(original);
       setStyleConfig(defaultStyleConfig);
@@ -355,7 +353,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-100 text-slate-800">
+    <div className="min-h-screen flex flex-col bg-slate-100 text-slate-800 print:min-h-0 print:block print:bg-white">
       {/* 1. Global Navigation Bar con Glassmorphism y sombras de contraste */}
       <header className="no-print bg-slate-950/90 backdrop-blur-md text-white border-b border-sky-500/30 sticky top-0 z-40 shadow-xl">
         <div className="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80">
@@ -368,34 +366,16 @@ export default function App() {
                 <h1 className="text-sm font-extrabold tracking-tight text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
                   {resumeData.personalInfo.fullName}
                 </h1>
-                <span className="text-[11px] font-bold text-sky-300">
-                  · {isEn ? 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer' : 'Senior Technical Artist & Ingeniero C++ / Unreal Engine 5'}
-                </span>
                 <span className="text-[10px] text-amber-300 font-bold bg-amber-950/80 border border-amber-600/70 px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
                   <Trophy className="w-3 h-3 text-amber-400" />
                   <span>{isEn ? 'Shipped AAA Credits' : 'Créditos Títulos AAA'}</span>
                 </span>
                 <span className="text-[10px] text-emerald-300 font-medium bg-emerald-950/80 border border-emerald-700/70 px-1.5 py-0.5 rounded shadow-sm">
-                  {isEn ? '8+ Years Exp · C++ & UE5 (Since 2018)' : '8+ Años Exp · C++ & UE5 (Desde 2018)'}
+                  {isEn ? '32 yo · Virtual Environments (Since 2018)' : '32 años · Entornos Virtuales (Desde 2018)'}
                 </span>
               </div>
               <p className="text-[11px] text-slate-300 flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                <a
-                  href={`mailto:${resumeData.personalInfo.email}`}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-sky-600/30 hover:bg-sky-500/40 border border-sky-400/40 text-sky-200 font-bold transition-colors"
-                >
-                  <Mail className="w-2.5 h-2.5" />
-                  <span>{isEn ? 'Email' : 'Correo'}</span>
-                </a>
-                <a
-                  href={resumeData.personalInfo.linkedinUrl || 'https://www.linkedin.com/in/isaac-gomez-estrada-6959872a0/'}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-600/30 hover:bg-blue-500/40 border border-blue-400/40 text-blue-200 font-bold transition-colors"
-                >
-                  <Linkedin className="w-2.5 h-2.5" />
-                  <span>LinkedIn</span>
-                </a>
+                <span>{resumeData.personalInfo.email}</span>
                 <span aria-hidden="true">·</span>
                 <span className="text-emerald-400 font-semibold">
                   {isEn ? 'Zapopan & Guadalajara (On-site / Hybrid / Remote)' : 'Zapopan y Guadalajara (Presencial / Híbrido / Remoto)'}
@@ -610,7 +590,7 @@ export default function App() {
 
       {/* VIEW 3: Clean CV & Resume Presentation */}
       {mainTab === 'cv' && (
-        <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex flex-col items-center">
+        <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex flex-col items-center print:block print:max-w-none print:w-full print:m-0 print:p-0">
           <div className="no-print w-full flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 text-white p-3 sm:p-4 rounded-2xl shadow-md mb-4 border border-sky-800/40">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-sky-500/20 text-sky-400 border border-sky-400/30">
@@ -636,6 +616,22 @@ export default function App() {
             <div className="flex items-center gap-2 bg-slate-950/70 p-1 rounded-xl border border-slate-700/60 flex-wrap">
               <button
                 type="button"
+                onClick={() => handleProfileSwitch('ai-native')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeProfile === 'ai-native'
+                    ? 'bg-sky-600 text-white shadow-md'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <span>🤖</span>
+                <span>{language === 'es' ? 'Ingeniero AI-Native' : 'AI-Native Engineer'}</span>
+                <span className="text-[9px] bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-black tracking-tight">
+                  TARGET
+                </span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => handleProfileSwitch('technical-artist')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   activeProfile === 'technical-artist'
@@ -646,19 +642,6 @@ export default function App() {
                 <span>🎮</span>
                 <span>{language === 'es' ? 'Artista Técnico (AAA)' : 'Technical Artist (AAA)'}</span>
               </button>
-
-              <button
-                type="button"
-                onClick={() => handleProfileSwitch('platform-engineer')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  activeProfile === 'platform-engineer'
-                    ? 'bg-sky-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                }`}
-              >
-                <span>⚙️</span>
-                <span>{language === 'es' ? 'Ingeniero de Plataformas & Cloud' : 'Platform & Systems Engineer'}</span>
-              </button>
             </div>
           </div>
 
@@ -667,10 +650,10 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <Eye className="w-4 h-4 text-sky-600" />
                 <span className="font-bold text-sm text-slate-900">
-                  {activeProfile === 'platform-engineer'
+                  {activeProfile === 'ai-native'
                     ? language === 'es'
-                      ? 'CV Ingeniero de Plataformas (Python, GCP, Telemática)'
-                      : 'Platform & Systems Engineer Resume (Cloud & Ops)'
+                      ? 'CV Ingeniero AI-Native (IA Agéntica, Python, GCP)'
+                      : 'AI-Native Engineer Resume (Agentic AI & Ops)'
                     : language === 'es'
                     ? 'CV Artista Técnico (Formato ATS)'
                     : 'Technical Artist Resume (ATS-Ready)'}
@@ -773,15 +756,15 @@ export default function App() {
             </div>
           </div>
 
-          <div className="w-full flex justify-center overflow-x-auto pb-16">
+          <div className="resume-preview-scroll w-full flex justify-center overflow-x-auto pb-16 print:block print:overflow-visible print:p-0 print:m-0">
             <div
               style={{
                 transform: `scale(${previewScale})`,
                 transformOrigin: 'top center',
-                width: styleConfig.paperSize === 'letter' ? '216mm' : '210mm',
+                width: styleConfig.paperSize === 'letter' ? '215.9mm' : '210mm',
                 transition: 'transform 0.15s ease',
               }}
-              className="space-y-4 shadow-xl"
+              className="resume-preview-scaler space-y-4 shadow-xl print:shadow-none print:space-y-0"
             >
               <ResumeDocument
                 innerRef={documentRef}

@@ -1,7 +1,11 @@
+import { GameLanguage } from './localization';
+
 export interface WorldBlock {
   id: string;
   name: string;
+  nameEs?: string;
   subtitle: string;
+  subtitleEs?: string;
   levelsRange: [number, number];
   themeTexture: string; // seamless image path
   bgColor: number;
@@ -12,14 +16,18 @@ export interface WorldBlock {
   lightColor: number;
   accentColor: string;
   badgeTag: string;
+  badgeTagEs?: string;
   description: string;
+  descriptionEs?: string;
 }
 
 export const WORLD_BLOCKS: WorldBlock[] = [
   {
     id: 'chess_kingdom',
     name: 'Chess Kingdom',
+    nameEs: 'Reino del Ajedrez',
     subtitle: 'Royal Marble & Golden Parquet',
+    subtitleEs: 'Mármol Real y Parquet Dorado',
     levelsRange: [1, 3],
     themeTexture: '/assets/worlds/chess_kingdom.jpg',
     bgColor: 0x1b1622,
@@ -30,12 +38,16 @@ export const WORLD_BLOCKS: WorldBlock[] = [
     lightColor: 0xfffbeb,
     accentColor: '#facc15',
     badgeTag: 'ROYAL CHESS',
+    badgeTagEs: 'AJEDREZ REAL',
     description: 'Classic alternating chess checkerboard with polished marble, baroque gold filigree, and royal heraldic ornaments.',
+    descriptionEs: 'Tablero de ajedrez clásico con mármol pulido, filigranas barrocas doradas y ornamentos heráldicos reales.',
   },
   {
     id: 'coral_cove',
     name: 'Coral Cove',
+    nameEs: 'Arrecife de Coral',
     subtitle: 'Sunlit Depths & Bio-Luminescence',
+    subtitleEs: 'Profundidades Soleadas y Bioluminiscencia',
     levelsRange: [4, 6],
     themeTexture: '/assets/worlds/coral_cove.jpg',
     bgColor: 0x062033,
@@ -46,12 +58,16 @@ export const WORLD_BLOCKS: WorldBlock[] = [
     lightColor: 0xe0f2fe,
     accentColor: '#38bdf8',
     badgeTag: 'AQUATIC REEF',
+    badgeTagEs: 'ARRECIFE ACUÁTICO',
     description: 'Vibrant turquoise waters, golden sand with sun caustics, and swimming cartoon fish with wagging caudal fins.',
+    descriptionEs: 'Aguas turquesa vibrantes, arena dorada con cáusticas solares y peces animados nadando en pista marina.',
   },
   {
     id: 'cyber_grid',
     name: 'Cyber Grid',
+    nameEs: 'Cyber Grid',
     subtitle: 'Neon Synthwave & Laser Circuits',
+    subtitleEs: 'Synthwave Neón y Circuitos Láser',
     levelsRange: [7, 9],
     themeTexture: '/assets/worlds/cyber_grid.jpg',
     bgColor: 0x090d16,
@@ -62,12 +78,16 @@ export const WORLD_BLOCKS: WorldBlock[] = [
     lightColor: 0xfae8ff,
     accentColor: '#a855f7',
     badgeTag: 'CYBER TECH',
+    badgeTagEs: 'TECNOLOGÍA CYBER',
     description: 'Futuristic hexagonal tech plates, glowing cyan laser circuits, and high-frequency synthwave pulse aesthetics.',
+    descriptionEs: 'Placas tecnológicas hexagonales futuristas, circuitos láser cian brillantes y estética synthwave de pulso.',
   },
   {
     id: 'golden_vault',
     name: 'Golden Vault',
+    nameEs: 'Bóveda Dorada',
     subtitle: 'Ancient Emperor Sanctuary',
+    subtitleEs: 'Santuario del Emperador Antiguo',
     levelsRange: [10, 999],
     themeTexture: '/assets/worlds/golden_vault.jpg',
     bgColor: 0x141e16,
@@ -78,9 +98,22 @@ export const WORLD_BLOCKS: WorldBlock[] = [
     lightColor: 0xfef9c3,
     accentColor: '#10b981',
     badgeTag: 'GOLDEN SANCTUARY',
+    badgeTagEs: 'SANTUARIO DORADO',
     description: 'Opulent dark emerald marble with star-cut gold leaf mosaics and ancient imperial treasure ornaments.',
+    descriptionEs: 'Mármol esmeralda oscuro con mosaicos de hoja de oro y ornamentos antiguos del tesoro imperial.',
   },
 ];
+
+export function localizeWorldBlock(block: WorldBlock, language: GameLanguage) {
+  const isEs = language === 'es';
+  return {
+    ...block,
+    name: isEs && block.nameEs ? block.nameEs : block.name,
+    subtitle: isEs && block.subtitleEs ? block.subtitleEs : block.subtitle,
+    badgeTag: isEs && block.badgeTagEs ? block.badgeTagEs : block.badgeTag,
+    description: isEs && block.descriptionEs ? block.descriptionEs : block.description,
+  };
+}
 
 export function getWorldForLevel(level: number): WorldBlock {
   for (const block of WORLD_BLOCKS) {

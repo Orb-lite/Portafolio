@@ -16,7 +16,9 @@ function normalizeColor(colorStr: string): string {
   if (!colorStr) return colorStr;
   if (
     !colorStr.includes('oklch') &&
+    !colorStr.includes('oklab') &&
     !colorStr.includes('color(') &&
+    !colorStr.includes('color-mix(') &&
     !colorStr.includes('lab(') &&
     !colorStr.includes('lch(')
   ) {
@@ -115,14 +117,14 @@ export async function exportElementToPdf(
             const htmlEl = el as HTMLElement;
             const computed = window.getComputedStyle(htmlEl);
 
-            // Normalize colors for html2canvas
-            if (computed.backgroundColor && computed.backgroundColor.includes('oklch')) {
+            // Normalize modern CSS colors for html2canvas
+            if (computed.backgroundColor) {
               htmlEl.style.backgroundColor = normalizeColor(computed.backgroundColor);
             }
-            if (computed.color && computed.color.includes('oklch')) {
+            if (computed.color) {
               htmlEl.style.color = normalizeColor(computed.color);
             }
-            if (computed.borderColor && computed.borderColor.includes('oklch')) {
+            if (computed.borderColor) {
               htmlEl.style.borderColor = normalizeColor(computed.borderColor);
             }
 
@@ -158,7 +160,7 @@ export async function exportElementToPdf(
     );
 
     if (pageElements.length >= 2) {
-      // Direct high-fidelity multi-page rendering
+      // Direct high-fidelity multi-page rendering without vertical distortion
       for (let i = 0; i < pageElements.length; i++) {
         if (i > 0) {
           pdf.addPage();
@@ -179,7 +181,9 @@ export async function exportElementToPdf(
         });
 
         const imgData = pageCanvas.toDataURL('image/jpeg', 0.98);
-        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        const proportionalHeight = (pageCanvas.height * pdfWidth) / pageCanvas.width;
+        const renderHeight = Math.min(proportionalHeight, pdfHeight);
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, renderHeight);
       }
     } else {
       // Single continuous sheet capture
@@ -242,8 +246,16 @@ export async function exportElementToPdf(
 export function printResumeDocument(targetName: string = 'CV_Isaac_Gomez_Estrada'): void {
   const previousTitle = document.title;
   document.title = targetName;
-  window.print();
-  setTimeout(() => {
+
+  let restored = false;
+  const restoreTitle = () => {
+    if (restored) return;
+    restored = true;
     document.title = previousTitle;
-  }, 1000);
+    window.removeEventListener('afterprint', restoreTitle);
+  };
+
+  window.addEventListener('afterprint', restoreTitle, { once: true });
+  window.print();
+  setTimeout(restoreTitle, 15000);
 }

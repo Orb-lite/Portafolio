@@ -122,7 +122,9 @@ export const ComodinesHUD: React.FC<ComodinesHUDProps> = ({
             <div className="absolute top-1 left-3 right-3 h-1 rounded-full bg-white/40 blur-[0.3px] pointer-events-none" />
           )}
           <Sparkles className="w-3.5 h-3.5 text-white filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
-          <span className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">POWER-UPS</span>
+          <span className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
+            {language === 'en' ? 'POWER-UPS' : 'COMODINES'}
+          </span>
         </button>
       )}
     </div>

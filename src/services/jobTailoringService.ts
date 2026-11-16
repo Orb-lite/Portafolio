@@ -1,4 +1,5 @@
 import { ResumeData, JobMatchResult, CoverLetterData } from '../types/resume';
+import { GoogleGenAI } from '@google/genai';
 
 /**
  * Detects whether the job offer text is primarily Spanish or English
@@ -43,19 +44,19 @@ export function detectLanguage(text: string): 'es' | 'en' {
  */
 export const SAMPLE_JOB_OFFERS = [
   {
-    id: 'sample-platform-systems-engineer',
-    title: 'Lead Platform & Telematics Systems Engineer (Python, GCP, Cloud Operations)',
+    id: 'sample-ai-native-engineer',
+    title: 'AI-Native Engineer – Agentic AI & Production Operations (Python, GCP, Multi-Agent)',
     lang: 'en' as const,
-    text: `Job Description: Lead Platform & Telematics Systems Engineer
+    text: `Job Description: AI-Native Engineer – Agentic AI & Production Operations
 Experience Level: Intermediate / Senior
 Job Type: Contract / Full-Time
 Role Overview:
-We are seeking a high-performing Systems & Platform Engineer to design, develop, deploy, operate, and continuously improve distributed backend pipelines, real-time telemetry ingestion, and high-availability cloud services.
-Candidates will be responsible for the complete production lifecycle, including microservice development, RESTful integration, automated testing, deployment, monitoring, production support, incident resolution, and database migrations.
+We are seeking high-performing AI-Native Engineers at Intermediate and Senior levels to design, develop, deploy, operate, and continuously improve enterprise Generative AI, Agentic AI, Multi-Agent systems, and data-centric AI solutions.
+This role focuses on engineering and production operations rather than research or prompt engineering alone. Candidates will be responsible for the complete lifecycle of AI solutions, including development, integration, testing, deployment, monitoring, production support, incident resolution, data migration, and continuous evaluation.
 
 Requirements added by the job poster:
-• 4+ years of work experience with Distributed Systems & Real-Time Pipelines
-• 3+ years of work experience with Python (FastAPI, AsyncIO) & TypeScript
+• 4+ years of work experience with Agentic AI Development
+• 3+ years of work experience with Python (Programming Language)
 • 2+ years of work experience with Google Cloud Platform (GCP)`,
   },
   {
@@ -116,11 +117,11 @@ Empresa: Soluciones Móviles & Telematics Corp.
 Modalidad: Híbrido / Remoto (México)
 
 Objetivo del Puesto:
-Liderar la estrategia de ventas B2B para nuestra plataforma SaaS de gestión de flotas y telemetría vehicular, impulsando el cierre de contratos corporativos y la prospección estratégica mediante herramientas modernas de automatización operativa y CRM.
+Liderar la estrategia de ventas B2B para nuestra plataforma SaaS de gestión de flotas y telemetría vehicular, impulsando el cierre de contratos corporativos y la prospección estratégica mediante herramientas modernas de automatización e Inteligencia Artificial.
 
 Responsabilidades Principales:
 - Liderar el ciclo completo de ventas consultivas B2B para soluciones tecnológicas de rastreo y administración de activos vehiculares.
-- Desarrollar e implementar métodos innovadores de prospección y calificación de leads con flujos automatizados.
+- Desarrollar e implementar métodos innovadores de prospección y calificación de leads con Inteligencia Artificial.
 - Manejo integral de CRM y coordinación con el equipo de producto e ingeniería para atender requerimientos técnicos de clientes.
 - Negociación y cierre con tomadores de decisiones (Directores de Operaciones, Logística y Finanzas).
 
@@ -160,7 +161,162 @@ export async function analyzeJobOffer(
   manualLanguage?: 'es' | 'en'
 ): Promise<JobMatchResult> {
   const detectedLang = manualLanguage || detectLanguage(jobText);
+
+  // Try Gemini API if an API key is available in the environment
+  const apiKey =
+    (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) ||
+    (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_GEMINI_API_KEY);
+
+  if (apiKey && apiKey !== 'MY_GEMINI_API_KEY' && apiKey.length > 5) {
+    try {
+      const aiResult = await callGeminiAnalysis(jobText, currentResume, detectedLang, apiKey);
+      if (aiResult) return aiResult;
+    } catch (err) {
+      console.warn('Gemini API call failed, falling back to local intelligent engine:', err);
+    }
+  }
+
+  // Fallback to our high-precision deterministic NLP tailoring engine
   return runLocalJobTailoring(jobText, currentResume, detectedLang);
+}
+
+/**
+ * Gemini API implementation using @google/genai and gemini-3.8-flash
+ */
+async function callGeminiAnalysis(
+  jobText: string,
+  resume: ResumeData,
+  language: 'es' | 'en',
+  apiKey: string
+): Promise<JobMatchResult | null> {
+  const ai = new GoogleGenAI({ apiKey });
+
+  const prompt = `You are a high-level executive recruiter, game development producer, and career strategist.
+Analyze the following job proposal and the candidate's real profile (Isaac Gómez Estrada), and create:
+1. An exceptional, tailored Cover Letter addressed "A quien corresponda:" (if Spanish) or "To Whom It May Concern:" (if English), or to the specific hiring team if mentioned. It MUST be written entirely in ${language === 'es' ? 'Spanish' : 'English'}.
+2. An optimized candidate Title and Professional Summary tailored specifically for this proposal, matching relevant keywords and Isaac's authentic achievements.
+3. A match score (0-100) and list of matched keywords.
+
+CRITICAL PRIVACY & DISCRETION RULE (NDA COMPLIANCE):
+Isaac Gomez Estrada values client privacy, non-disclosure agreements (NDAs), and professional discretion above all. Do NOT carelessly broadcast internal client names (such as Ford, Google, Amazon, Pfizer, Electronic Arts). Instead, refer to them professionally and discreetly:
+- For AAA game dev work: 'producciones y franquicias deportivas AAA de calibre internacional para publisher global líder (créditos públicos y verificables en títulos lanzados)' with Frostbite, Perforce (P4), and Jenkins CI.
+- For industrial simulation: 'proyectos de Gemelos Digitales (Digital Twins) para corporativos globales Fortune 500 (sectores automotriz, tecnología avanzada y farmacéutica bajo estrictos acuerdos de confidencialidad)' with Unreal Engine 5 and FlexSim.
+- If the job offer is from CGBOT or DEVBOT: Recognize that Isaac already worked at DEVBOT as Technical Artist on their major AAA productions. Express genuine enthusiasm to rejoin/reconnect with DEVBOT / CGBOT, highlight zero ramp-up time, proven mastery of their Perforce/Jenkins/Frostbite pipelines, availability on-site in Zapopan / Guadalajara (or hybrid/remote), and his proven dedication to protecting studio and client confidentiality!
+
+Job Proposal:
+${jobText}
+
+Candidate Profile:
+Name: ${resume.personalInfo.fullName}
+Current: ${resume.personalInfo.title}
+Location: ${resume.personalInfo.location || 'Zapopan / Guadalajara, Jalisco, México (Presencial, Híbrido o Remoto)'}
+Contact: ${resume.personalInfo.email} · ${resume.personalInfo.phone}
+Portfolio & Links:
+- Website / SaaS Platform: ${resume.personalInfo.websiteUrl || 'https://orb-lite.com'}
+- GitHub: ${resume.personalInfo.githubUrl || 'https://github.com/Orb-lite/Orb-Lite'}
+- Portfolio Folder (Google Drive): ${resume.personalInfo.portfolioUrl || 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing'}
+- LinkedIn: ${resume.personalInfo.linkedinUrl}
+Key experience:
+- Orblite (Jun 2026-Present): Lead Automation Engineer & Platform Developer (AI workflow automation, telematics & data simulation infrastructure, internal ERP/CRM tooling, TypeScript, React, RESTful APIs, SQL Supabase, AI/LLM API Integration, Cloudflare).
+- Flex (Jun 2024-Apr 2026): Applications Developer & Unreal Engine Specialist (Digital Twins of assembly lines for Fortune 500 enterprise clients under NDA, UE5, FlexSim, real-time machine fault detection, thermal spacing, VR operator training).
+- DEVBOT (Jan 2022-Aug 2023): Technical Artist on premier world-class AAA sports titles for a leading global publisher, interactive UI/UX, Frostbite engine, Perforce (P4 Helix Core), Jenkins automated CI testing, 60+ FPS verification.
+- Education: Ingeniería en Tecnologías Interactivas de Animación Digital - Universidad del Valle de México (UVM 2013-2018). (English: B.S. in Interactive Technologies & Digital Animation Engineering - UVM 2013-2018).
+
+Respond ONLY with valid JSON matching this schema:
+{
+  "extractedTitle": "Target position title",
+  "extractedCompany": "Company name or Hiring Team",
+  "matchScore": 92,
+  "matchedKeywords": ["Keyword 1", "Keyword 2", ...],
+  "suggestedTitle": "Optimized candidate professional title",
+  "suggestedSummary": "Optimized professional summary in ${language === 'es' ? 'Spanish' : 'English'}",
+  "coverLetter": {
+    "salutation": "${language === 'es' ? 'A quien corresponda:' : 'To Whom It May Concern:'}",
+    "opening": "Opening paragraph expressing targeted interest in the role...",
+    "bodyParagraphs": [
+      "First body paragraph detailing the most relevant track record matching the job...",
+      "Second body paragraph detailing technical stack, methodologies, and specific achievements..."
+    ],
+    "closing": "Closing paragraph with value proposition and interview availability...",
+    "signoff": "${language === 'es' ? 'Atentamente,' : 'Sincerely,'}"
+  }
+}`;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-3.8-flash',
+    contents: prompt,
+    config: {
+      responseMimeType: 'application/json',
+    },
+  });
+
+  const parsed = JSON.parse(response.text || '{}');
+  if (!parsed.coverLetter) return null;
+
+  const todayStr = new Intl.DateTimeFormat(language === 'es' ? 'es-MX' : 'en-US', {
+    dateStyle: 'long',
+  }).format(new Date());
+
+  const fullText = [
+    resume.personalInfo.fullName,
+    resume.personalInfo.title,
+    `${resume.personalInfo.email} · ${resume.personalInfo.phone} · ${resume.personalInfo.location}`,
+    [
+      resume.personalInfo.linkedinUrl ? `LinkedIn: ${resume.personalInfo.linkedinUrl}` : '',
+      `Website: ${resume.personalInfo.websiteUrl || 'https://orb-lite.com'}`,
+      `GitHub: ${resume.personalInfo.githubUrl || 'https://github.com/Orb-lite/Orb-Lite'}`,
+      `Portafolio Drive: ${resume.personalInfo.portfolioUrl || 'https://drive.google.com/drive/folders/1LKf87mfVzE8CNmOU7AsXl2hRKJkLWtZN?usp=sharing'}`,
+    ].filter(Boolean).join(' · '),
+    '',
+    todayStr,
+    '',
+    parsed.extractedCompany ? `Atención: ${parsed.extractedCompany}` : (language === 'es' ? 'A quien corresponda' : 'To Whom It May Concern'),
+    `Ref: ${parsed.extractedTitle || 'Candidatura Profesional'}`,
+    '',
+    parsed.coverLetter.salutation,
+    '',
+    parsed.coverLetter.opening,
+    '',
+    ...(parsed.coverLetter.bodyParagraphs || []).map((p: string) => `${p}\n`),
+    parsed.coverLetter.closing,
+    '',
+    parsed.coverLetter.signoff,
+    resume.personalInfo.fullName,
+  ].join('\n');
+
+  let finalSummary = parsed.suggestedSummary || '';
+  if (language === 'en') {
+    const sLower = (finalSummary || '').toLowerCase();
+    if (!finalSummary || sLower.includes('líder comercial') || sLower.includes('desarrollador') || sLower.includes('artista técnico') || sLower.includes('con un perfil integral')) {
+      finalSummary = "Lead Automation Engineer and Platform Developer combining full-stack web and sensor telemetry with modern AI API integrations and 3D simulation engineering. Currently Lead Automation Engineer & Platform Developer at Orblite, engineering AI workflow automations, vehicle telematics infrastructure, and custom internal ERP/CRM applications (TypeScript, React, RESTful APIs, SQL Supabase, AI/LLM APIs, Cloudflare). Extensive background developing industrial Digital Twins for global Fortune 500 enterprise clients (automotive, tech, and pharmaceutical sectors under strict NDAs) and Technical Art for premier AAA sports franchise at an elite co-development studio (verified shipped credit on MobyGames for EA Sports College Football 25, interactive UI/UX in Frostbite, Perforce P4, and Jenkins CI).";
+    }
+  } else if (!finalSummary) {
+    finalSummary = resume.personalInfo.summary;
+  }
+
+  return {
+    detectedLanguage: language,
+    matchScore: parsed.matchScore || 90,
+    extractedTitle: parsed.extractedTitle || (language === 'es' ? 'Puesto Especializado' : 'Specialized Role'),
+    extractedCompany: parsed.extractedCompany || (language === 'es' ? 'Empresa Líder' : 'Hiring Organization'),
+    matchedKeywords: parsed.matchedKeywords || ['Unreal Engine 5', 'TypeScript', 'React', 'AI Automation', 'Telematics'],
+    suggestedTitle: parsed.suggestedTitle || (language === 'en' ? 'Lead Automation Engineer & Platform Developer | Orblite' : resume.personalInfo.title),
+    suggestedSummary: finalSummary,
+    coverLetter: {
+      recipient: parsed.extractedCompany || (language === 'es' ? 'A quien corresponda' : 'To Whom It May Concern'),
+      jobTitle: parsed.extractedTitle || '',
+      companyName: parsed.extractedCompany || '',
+      date: todayStr,
+      salutation: parsed.coverLetter.salutation,
+      opening: parsed.coverLetter.opening,
+      bodyParagraphs: parsed.coverLetter.bodyParagraphs,
+      closing: parsed.coverLetter.closing,
+      signoff: parsed.coverLetter.signoff,
+      fullName: resume.personalInfo.fullName,
+      language,
+    },
+    coverLetterFullText: fullText,
+  };
 }
 
 /**
@@ -211,20 +367,21 @@ function runLocalJobTailoring(
   }
 
   // Identify domain focus
-  const isPlatformCloud = lower.includes('cloud run') || lower.includes('telematics') || lower.includes('python') && lower.includes('gcp') || lower.includes('distributed');
+  const isAiNative = lower.includes('agentic') || lower.includes('ai-native') || lower.includes('multi-agent') || (lower.includes('generative ai') && lower.includes('operations')) || (lower.includes('python') && lower.includes('gcp') && lower.includes('agent'));
   const isGaming = isCgbotOrDevbot || lower.includes('game') || lower.includes('juego') || lower.includes('frostbite') || lower.includes('college football') || lower.includes('cfb') || lower.includes('ea') || lower.includes('perforce') || lower.includes('technical artist');
   const isSimulation = lower.includes('digital twin') || lower.includes('gemelo') || lower.includes('flexsim') || lower.includes('vr') || lower.includes('virtual reality') || lower.includes('manufactura') || lower.includes('ensamble') || lower.includes('planta');
   const isCommercial = lower.includes('comercial') || lower.includes('ventas') || lower.includes('sales') || lower.includes('b2b') || lower.includes('crm') || lower.includes('erp') || lower.includes('telemetr') || lower.includes('vehicular') || lower.includes('prospecc') || lower.includes('saas');
 
   // Find matched keywords (All discreet and professional)
   const allPotentialKeywords = [
-    'Distributed Telemetry Pipelines', 'Python (FastAPI & AsyncIO)', 'Google Cloud Platform (GCP)',
-    'Production Operations & SRE', 'Microservices Architecture', 'Real-Time Ingestion & Routing',
+    'Agentic AI Development (4+ Yrs)', 'Python (5+ Yrs)', 'Google Cloud Platform (GCP 2+ Yrs)',
+    'Multi-Agent Systems', 'Vertex AI', 'Production Operations & SRE', 'Autonomous Tool Calling',
+    'Retrieval-Augmented Generation (RAG)', 'FastAPI & Asyncio', 'Continuous Evaluation & Monitoring',
     'Unreal Engine 5', 'Unreal Engine 4', 'Frostbite Engine', 'Títulos AAA (Créditos Verificados)',
     'Perforce (P4 Helix Core)', 'Jenkins (CI/CD)', 'UI/UX interactiva', 'Realidad Virtual (VR)',
     'Digital Twins (Gemelos Digitales)', 'Arch FlexSim', 'Corporativos Fortune 500 (Bajo NDA)',
     'TypeScript', 'React', 'Tailwind CSS', 'Supabase', 'SQL', 'APIs REST', 'Vercel / Cloudflare',
-    'Ventas B2B', 'Estrategia Comercial', 'Automatización de Prospección B2B',
+    'Ventas B2B', 'Estrategia Comercial', 'Prospección con Inteligencia Artificial',
     'Sistemas CRM / ERP Propietarios', 'Administración y Telemetría Vehicular',
     'Confidencialidad & Acuerdos NDA'
   ];
@@ -235,16 +392,16 @@ function runLocalJobTailoring(
   });
 
   if (matchedKeywords.length < 3) {
-    if (isPlatformCloud) matchedKeywords.push('Distributed Systems', 'Python (FastAPI)', 'Google Cloud Platform (GCP)', 'Real-Time Telemetry', 'Production Operations');
+    if (isAiNative) matchedKeywords.push('Agentic AI Development', 'Python (Programming Language)', 'Google Cloud Platform (GCP)', 'Multi-Agent Systems', 'Production Operations');
     else if (isCgbotOrDevbot) matchedKeywords.push('Perforce (P4)', 'Jenkins (CI/CD)', 'Frostbite Engine', 'Confidencialidad & NDA');
     else if (isGaming) matchedKeywords.push('Frostbite Engine', 'Títulos AAA', 'Perforce', 'Jenkins');
     else if (isSimulation) matchedKeywords.push('Unreal Engine 5', 'Digital Twins', 'VR', 'FlexSim');
-    else if (isCommercial) matchedKeywords.push('Ventas B2B', 'SaaS', 'CRM/ERP', 'Automatización Operativa');
+    else if (isCommercial) matchedKeywords.push('Ventas B2B', 'SaaS', 'CRM/ERP', 'Prospección IA');
   }
 
   // Calculate realistic match score
   let matchScore = 85 + Math.min(matchedKeywords.length * 3, 13);
-  if (isPlatformCloud) matchScore = 97;
+  if (isAiNative) matchScore = 97;
   if (isCgbotOrDevbot) matchScore = 96;
   if (matchScore > 98) matchScore = 98;
 
@@ -260,18 +417,18 @@ function runLocalJobTailoring(
   let suggestedSummary = '';
 
   if (language === 'es') {
-    if (isPlatformCloud) {
-      suggestedTitle = 'Ingeniero Senior de Plataformas & Sistemas | Backend & Cloud Operations';
-      suggestedSummary = `Ingeniero de Plataformas y Especialista en Operaciones de Producción con más de 8 años de trayectoria conectando software, sistemas telemáticos en tiempo real e infraestructura cloud, incluyendo más de 5 años de desarrollo en Python y operación de cargas empresariales en Google Cloud Platform (GCP). Experiencia probada en el ciclo de vida completo de producción: microservicios en contenedores (Cloud Run, Cloud SQL, GCS), pipelines automatizados de CI/CD, observabilidad en tiempo real y resolución de incidentes.`;
+    if (isAiNative) {
+      suggestedTitle = 'Ingeniero AI-Native Senior | Agentic AI & Operaciones de Producción';
+      suggestedSummary = `Ingeniero AI-Native Senior y Especialista en Operaciones de Producción con más de 8 años de trayectoria conectando software, sistemas en tiempo real e inteligencia artificial, incluyendo más de 4 años desarrollando sistemas multi-agente y flujos agénticos autónomos, más de 5 años de desarrollo en Python y más de 2 años operando cargas de trabajo empresariales en Google Cloud Platform (GCP). Experiencia probada en el ciclo de vida completo de soluciones de IA: arquitectura de agentes, tool calling autónomo, microservicios en contenedores (Cloud Run, Vertex AI, GCS), pipelines automatizados de CI/CD, observabilidad en tiempo real y resolución de incidentes de producción.`;
 
-      opening = `Me dirijo a ustedes con gran entusiasmo para presentar mi candidatura a la posición de ${extractedTitle}${extractedCompany ? ` en ${extractedCompany}` : ''}. Con sólida experiencia desarrollando arquitecturas distribuidas en Python y operando infraestructura en Google Cloud Platform (GCP), mi perfil encaja de forma precisa con el enfoque de ingeniería y operaciones de producción que requiere esta posición.`;
+      opening = `Me dirijo a ustedes con gran entusiasmo para presentar mi candidatura a la posición de ${extractedTitle}${extractedCompany ? ` en ${extractedCompany}` : ''}. Con más de 4 años diseñando y operando sistemas agénticos de Inteligencia Artificial (Agentic AI & Multi-Agent systems), 5 años de desarrollo robusto en Python y sólida experiencia en despliegues sobre Google Cloud Platform (GCP), mi perfil encaja de forma precisa con el enfoque de ingeniería y operaciones de producción que requiere esta posición.`;
 
       bodyParagraphs = [
-        `Como Lead Platform & Automation Engineer, he liderado el diseño y desarrollo de pipelines telemáticos y servicios backend utilizando Python (FastAPI, Asyncio) y Google Cloud Platform (Cloud Run, Google Cloud Storage, BigQuery), conectando flujos GPS de alta frecuencia con bases de datos transaccionales y reduciendo los tiempos de procesamiento operativo en un 75%.`,
-        `Cuento con amplia experiencia en la disciplina de operaciones (SRE / DevOps): despliegue mediante CI/CD automatizado (GitHub Actions y Jenkins) y monitoreo 24/7 con GCP Cloud Monitoring y Cloud Logging para resolución rápida de incidentes. Mi trayectoria previa desarrollando simulaciones para corporativos Fortune 500 y producciones AAA refuerza mi compromiso con la estabilidad y excelencia operativa.`
+        `Como Lead AI-Native & Automation Engineer en Orblite, he liderado el diseño, desarrollo y operación en producción de arquitecturas multi-agente autónomas utilizando Python (FastAPI, Asyncio) y Google Cloud Platform (Cloud Run, Vertex AI, Google Cloud Storage, BigQuery). Implementé bucles de razonamiento y ejecución con tool calling dinámico, validación estricta de esquemas y mecanismos de tolerancia a fallos, conectando modelos fundacionales con flujos de telemetría de alta frecuencia y bases de datos transaccionales, reduciendo los tiempos de procesamiento operativo en un 75%.`,
+        `Cuento con amplia experiencia en la disciplina de operaciones (SRE / DevOps) aplicada a IA: despliegue mediante CI/CD automatizado (GitHub Actions y Jenkins), suites de evaluación continua y guardrails para mitigar alucinaciones, y monitoreo 24/7 con GCP Cloud Monitoring y Cloud Logging para resolución rápida de incidentes. Mi trayectoria previa desarrollando simulaciones de misión crítica para corporativos globales Fortune 500 y producciones AAA de lanzamiento global refuerza mi compromiso con la estabilidad, escalabilidad y excelencia operativa de extremo a extremo.`
       ];
 
-      closing = `Agradezco su tiempo y consideración. Será un placer conversar en detalle sobre cómo mi experiencia en Python, sistemas distribuidos y GCP aportará valor inmediato a sus operaciones de producción.`;
+      closing = `Agradezco su tiempo y consideración. Será un placer conversar en detalle sobre cómo mi experiencia en desarrollo agéntico, Python y GCP aportará valor inmediato y continuo a sus operaciones de producción de IA.`;
     } else if (isCgbotOrDevbot) {
       suggestedTitle = 'Artista Técnico Senior | Co-Desarrollo AAA & Pipelines de Producción';
       suggestedSummary = `Artista Técnico Senior con probada trayectoria previa en DEVBOT colaborando en producciones deportivas AAA de calibre internacional para publisher global líder. Especializado en arquitectura e integración de UI/UX fluida a 60+ FPS, motor Frostbite y Unreal Engine, control de versiones con Perforce (P4) y automatización CI con Jenkins. Firme compromiso con la confidencialidad, acuerdos de no divulgación (NDA) y respeto absoluto a la propiedad intelectual de clientes y socios.`;
@@ -280,7 +437,7 @@ function runLocalJobTailoring(
 
       bodyParagraphs = [
         `En mi etapa anterior en DEVBOT, tuve la satisfacción de desarrollar, integrar y validar técnicamente los primeros builds jugables de producciones deportivas AAA globales insignia, especializándome en UI/UX interactiva y motor Frostbite a 60+ FPS estables. Mi día a día implicó una gestión disciplinada de ramas en Perforce (P4 Helix Core), pipelines de integración continua con Jenkins y un estricto respeto a las políticas de privacidad y datos confidenciales del publisher, principios éticos que he mantenido de manera intachable a lo largo de toda mi carrera profesional.`,
-        `Adicionalmente, mi trayectoria desarrollando gemelos digitales industriales en Flex para corporativos Fortune 500 y plataformas SaaS de telemática vehicular full-stack me permite aportar una visión transversal y madura: capacidad de entrega técnica inmediata sin periodo de adaptación en sus flujos de trabajo, disponibilidad presencial en Zapopan y Guadalajara (o modalidad híbrida/remota), y la total tranquilidad ética de contar con un profesional que salvaguarda la reputación y acuerdos de privacidad del estudio.`
+        `Actualmente, mi experiencia como Gerente Comercial y Desarrollador en Orblite (plataforma SaaS, CRM/ERP y prospección con IA) sumada a mi trayectoria en gemelos digitales industriales en Flex para corporativos Fortune 500 me permite aportar una visión transversal y madura: capacidad de entrega técnica inmediata sin periodo de adaptación en sus flujos de trabajo, disponibilidad presencial en Zapopan y Guadalajara (o modalidad híbrida/remota), y la total tranquilidad ética de contar con un profesional que salvaguarda la reputación y acuerdos de privacidad del estudio.`
       ];
 
       closing = `Será un verdadero honor tener la oportunidad de conversar con el equipo directivo y técnico para evaluar mi reincorporación inmediata a CGBOT / DEVBOT. Agradezco de antemano su confianza y consideración.`;
@@ -292,7 +449,7 @@ function runLocalJobTailoring(
 
       bodyParagraphs = [
         `Durante mi desempeño como Artista Técnico en producciones de co-desarrollo AAA a través de DEVBOT, tuve la responsabilidad directa de desarrollar, integrar y validar técnicamente los primeros builds jugables de títulos deportivos AAA de lanzamiento global para un publisher internacional de primer nivel. Me especialicé en el motor Frostbite, garantizando coherencia visual y fluidez estricta a 60+ FPS, administrando el flujo de ramas con Perforce (P4 Helix Core) y optimizando pipelines automatizados de CI mediante Jenkins, siempre bajo el más estricto apego a las normas de confidencialidad y protección de propiedad intelectual.`,
-        `Complementariamente, mi experiencia en simulación industrial y Gemelos Digitales para corporativos globales Fortune 500 junto con el desarrollo de plataformas web full-stack me han dotado de una visión transversal única: combinar rigor técnico de bajo nivel, optimización de pipelines y una comunicación estratégica orientada a resultados medibles.`
+        `Complementariamente, mi rol actual como Gerente Comercial y Desarrollador en Orblite y mi experiencia previa en simulación industrial y Gemelos Digitales para corporativos globales Fortune 500 me han dotado de una visión transversal única: combinar rigor técnico de bajo nivel, optimización de pipelines y una comunicación estratégica orientada a resultados medibles.`
       ];
 
       closing = `Agradezco de antemano el tiempo dedicado a revisar mi postulación. Quedo a su entera disposición para conversar en una entrevista sobre cómo mi experiencia, rigor técnico y orientación al impacto pueden sumar valor inmediato a sus objetivos.`;
@@ -309,13 +466,13 @@ function runLocalJobTailoring(
 
       closing = `Agradezco de antemano el tiempo dedicado a revisar mi postulación. Quedo a su disposición para coordinar una entrevista.`;
     } else {
-      suggestedTitle = 'Full-Stack Platform & Automation Systems Engineer';
-      suggestedSummary = `Desarrollador tecnológico de perfil integral con experiencia diseñando plataformas SaaS de telemática vehicular y sistemas CRM/ERP con automatización operativa. Dominio de TypeScript, React, Tailwind, Supabase y arquitecturas cloud, complementado con experiencia en corporativos multinacionales en simulación 3D e ingeniería interactiva.`;
+      suggestedTitle = 'Gerente Comercial & Desarrollador de Plataforma SaaS | Orblite';
+      suggestedSummary = `Líder comercial y desarrollador tecnológico de perfil integral con experiencia encabezando ventas B2B, diseño de plataformas SaaS de administración vehicular en Orblite y sistemas CRM/ERP propietarios potenciados con Inteligencia Artificial. Dominio de TypeScript, React, Tailwind, Supabase y arquitecturas cloud, complementado con experiencia previa en corporativos multinacionales en simulación e ingeniería interactiva.`;
 
       opening = `Me dirijo a ustedes para presentar mi postulación a la posición de ${extractedTitle}${extractedCompany ? ` en ${extractedCompany}` : ''}.`;
 
       bodyParagraphs = [
-        `He diseñado e implementado plataformas full-stack de administración y telemetría vehicular, sistemas CRM/ERP y flujos automatizados de operación para optimizar seguimiento de activos y procesos de equipo.`,
+        `Actualmente me desempeño como Gerente Comercial en Orblite, donde encabezo simultáneamente la dirección estratégica de ventas corporativas B2B y el desarrollo de nuestra plataforma integral para administración y telemetría vehicular. En esta posición he arquitectado e implementado sistemas CRM y ERP propietarios, además de diseñar flujos automatizados de prospección con Inteligencia Artificial que incrementaron exponencialmente la conversión y calificación de cuentas clave.`,
         `Mi stack de producción abarca TypeScript, React, APIs REST, CSS/Tailwind, Supabase, Cloudflare, Vercel y Resend. Además, mi experiencia previa en corporativos multinacionales de manufactura y co-desarrollo AAA me brinda una disciplina metodológica y capacidad de ejecución excepcional en entornos de alta exigencia.`
       ];
 
@@ -323,18 +480,18 @@ function runLocalJobTailoring(
     }
   } else {
     // English Version
-    if (isPlatformCloud) {
-      suggestedTitle = 'Lead Platform & Telematics Systems Engineer | Cloud Operations';
-      suggestedSummary = `Lead Platform & Telematics Systems Engineer with 8+ years of engineering experience designing, developing, and operating distributed backend pipelines, real-time telemetry ingestion, 5+ years of production Python development, and 2+ years deploying enterprise workloads on Google Cloud Platform (GCP). Proven expertise across containerized deployment (Cloud Run, BigQuery, GCS), automated CI/CD, real-time observability, and production incident resolution.`;
+    if (isAiNative) {
+      suggestedTitle = 'Senior AI-Native Engineer | Agentic AI & Production Operations';
+      suggestedSummary = `Senior AI-Native Engineer and Production Operations Specialist with 8+ years of engineering experience, including 4+ years designing, developing, and operating Agentic AI & Multi-Agent systems, 5+ years of production Python development, and 2+ years deploying enterprise workloads on Google Cloud Platform (GCP). Proven expertise across the complete lifecycle of enterprise AI solutions: agent architecture, autonomous tool-calling loops, retrieval pipelines, containerized deployment (Cloud Run, Vertex AI, GCS), automated CI/CD evaluation, real-time observability, and production incident resolution.`;
 
-      opening = `I am writing with great enthusiasm to submit my application for the ${extractedTitle} position${extractedCompany ? ` with ${extractedCompany}` : ''}. With hands-on experience building distributed backend services in Python and deploying containerized enterprise solutions on Google Cloud Platform (GCP), my background directly matches your focus on engineering rigor, system reliability, and full-lifecycle production operations.`;
+      opening = `I am writing with great enthusiasm to submit my application for the ${extractedTitle} position${extractedCompany ? ` with ${extractedCompany}` : ''}. With over 4 years of hands-on experience designing and operating Agentic AI & Multi-Agent systems, 5+ years of production Python engineering, and 2+ years deploying containerized enterprise solutions on Google Cloud Platform (GCP), my background directly matches your focus on engineering rigor, system reliability, and full-lifecycle production operations.`;
 
       bodyParagraphs = [
-        `I have designed and deployed distributed telemetry pipelines and cloud microservices using Python (FastAPI, Asyncio) and Google Cloud Platform (Cloud Run, Google Cloud Storage, BigQuery) connecting real-time GPS streams to transactional databases and reducing operational latency by 75%.`,
-        `Complementing backend engineering, I bring strong production operations and SRE discipline: establishing automated CI/CD pipelines (GitHub Actions and Jenkins) and 24/7 observability using GCP Cloud Monitoring and Cloud Logging for rapid incident triage. Coupled with my previous background engineering mission-critical digital twins for Fortune 500 enterprises and operating continuous integration pipelines on AAA game productions, I ensure systems run predictably, securely, and at scale.`
+        `As Lead AI-Native & Automation Engineer at Orblite, I designed, deployed, and currently operate multi-agent production workflows and autonomous AI agents using Python (FastAPI, Asyncio) and Google Cloud Platform (Cloud Run, Vertex AI, Google Cloud Storage, BigQuery). I engineered resilient agentic loops featuring dynamic tool calling, structured JSON output validation, and fallback mechanisms that connect LLMs to real-time telematics streams and transactional databases—reducing operational workflow latency by 75%.`,
+        `Complementing model orchestration, I bring strong production operations and SRE discipline to AI: establishing automated CI/CD pipelines (GitHub Actions and Jenkins), continuous evaluation suites to mitigate hallucinations, and 24/7 observability using GCP Cloud Monitoring and Cloud Logging for rapid incident triage. Coupled with my previous background engineering mission-critical digital twins for Fortune 500 enterprises and operating continuous integration pipelines on world-class AAA game productions, I ensure that AI systems run predictably, securely, and at scale.`
       ];
 
-      closing = `Thank you for your time and consideration. I would welcome the opportunity to discuss how my expertise in distributed Python systems and GCP operations can deliver immediate impact to your engineering team.`;
+      closing = `Thank you for your time and consideration. I would welcome the opportunity to discuss how my expertise in Agentic AI, production Python, and GCP operations can deliver immediate impact to your engineering team.`;
     } else if (isCgbotOrDevbot) {
       suggestedTitle = 'Senior Technical Artist | AAA Co-Development & Production Pipelines';
       suggestedSummary = `Senior Technical Artist with proven prior production track record at DEVBOT collaborating on world-class AAA sports franchises for a leading global publisher. Specialized in 60+ FPS interactive UI/UX architecture, Frostbite and Unreal Engine, Perforce (P4) version control, and Jenkins automated CI. Deep professional dedication to client confidentiality, strict NDA compliance, and studio IP protection.`;
@@ -343,7 +500,7 @@ function runLocalJobTailoring(
 
       bodyParagraphs = [
         `During my prior tenure at DEVBOT, I was directly responsible for developing, integrating, and technically validating initial playable builds for global flagship AAA sports releases, specializing in interactive UI/UX and Frostbite engine pipelines targeting a solid 60+ FPS. My daily responsibilities demanded disciplined Perforce (P4 Helix Core) branch management, Jenkins CI automation, and an unwavering respect for client proprietary assets and privacy—principles I have rigorously upheld across every phase of my career.`,
-        `In addition, my experience engineering modern SaaS platforms and industrial simulation digital twins at Flex brings cross-functional maturity: zero ramp-up time in your development environment, on-site presence in Zapopan and Guadalajara (or hybrid/remote flexibility), and total peace of mind regarding client data confidentiality.`
+        `In addition, my recent experience engineering modern SaaS platforms at Orblite and industrial simulation digital twins at Flex brings cross-functional maturity: zero ramp-up time in your development environment, on-site presence in Zapopan and Guadalajara (or hybrid/remote flexibility), and total peace of mind regarding client data confidentiality.`
       ];
 
       closing = `It would be a privilege to reconnect with the leadership and production team at CGBOT / DEVBOT. Thank you for your time, consideration, and continued trust.`;
@@ -355,7 +512,7 @@ function runLocalJobTailoring(
 
       bodyParagraphs = [
         `In my role as Technical Artist with DEVBOT for premier AAA releases, I was directly responsible for developing, integrating, and validating initial playable builds for world-class sports franchises. Working extensively within the proprietary Frostbite engine, I ensured high visual fidelity while maintaining a strict 60+ FPS performance target, managed complex branch merges using Perforce (P4 Helix Core), and maintained automated continuous integration (CI) pipelines using Jenkins—consistently adhering to strict client confidentiality.`,
-        `In addition, my work engineering industrial digital twins for Fortune 500 enterprises and full-stack real-time telemetry platforms provides me with an exceptional balance of low-level technical discipline and strategic project execution.`
+        `In addition, my current position as Lead Automation Engineer and Platform Developer at Orblite—combined with my prior work engineering industrial digital twins for Fortune 500 enterprises—provides me with an exceptional balance of low-level technical discipline and strategic project execution.`
       ];
 
       closing = `Thank you for your time and consideration. I would welcome the opportunity to discuss how my technical expertise, disciplined delivery, and commitment to confidentiality can contribute to your team's upcoming milestones.`;
@@ -372,14 +529,14 @@ function runLocalJobTailoring(
 
       closing = `Thank you for your time and consideration. I look forward to hearing from you.`;
     } else {
-      suggestedTitle = 'Full-Stack Platform & Automation Systems Engineer';
-      suggestedSummary = `Full-Stack Platform and Automation Engineer combining web applications and sensor telemetry with scalable backend integrations and 3D simulation engineering. Experienced building workflow automations, vehicle telematics infrastructure, and custom CRM/ERP applications (TypeScript, React, RESTful APIs, SQL Supabase, Cloudflare).`;
+      suggestedTitle = 'Lead Automation Engineer & Platform Developer | Orblite';
+      suggestedSummary = `Lead Automation Engineer and Platform Developer combining full-stack web and sensor telemetry with modern AI API integrations and 3D simulation engineering. Currently Lead Automation Engineer & Platform Developer at Orblite, engineering AI workflow automations, vehicle telematics infrastructure, and custom internal ERP/CRM applications (TypeScript, React, RESTful APIs, SQL Supabase, AI/LLM APIs, Cloudflare).`;
 
       opening = `I am writing to express my interest in the ${extractedTitle} position${extractedCompany ? ` with ${extractedCompany}` : ''}.`;
 
       bodyParagraphs = [
-        `I have engineered cloud workflow automation pipelines, designed real-time vehicle telematics and telemetry data simulation systems, and built full-stack CRM/ERP web applications from scratch to optimize asset tracking and team workflows.`,
-        `My production stack includes TypeScript, React, RESTful APIs, SQL (Supabase), Cloudflare, and Vercel. Combined with my prior engineering background in multinational enterprises and AAA co-development, I offer a unique combination of high-reliability automation and rigorous software craftsmanship.`
+        `Currently, as Lead Automation Engineer and Platform Developer at Orblite, I engineer AI workflow automation pipelines, architect real-time vehicle telematics and telemetry data simulation, and build custom internal ERP/CRM applications from scratch to optimize asset tracking and team workflows.`,
+        `My production stack includes TypeScript, React, RESTful APIs, SQL (Supabase), AI/LLM API Integration, Cloudflare, and Vercel. Combined with my prior engineering background in multinational enterprises and AAA co-development, I offer a unique combination of high-reliability automation and rigorous software craftsmanship.`
       ];
 
       closing = `Thank you for your time and consideration. I look forward to the opportunity to speak with you.`;

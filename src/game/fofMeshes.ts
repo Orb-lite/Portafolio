@@ -41,12 +41,12 @@ export function getFofFishColors(color: TileColor | string): { body: number; acc
 
     case 'blue':
     case 'tang':
-      return { body: 0x3b82f6, accent: 0x93c5fd, badgeBg: '#3b82f6', text: '#ffffff' };
+      return { body: 0x2563eb, accent: 0x93c5fd, badgeBg: '#1d4ed8', text: '#ffffff' };
 
     case 'cyan':
     case 'tang jr':
     case 'tang_jr':
-      return { body: 0x06b6d4, accent: 0xa5f3fc, badgeBg: '#06b6d4', text: '#ffffff' };
+      return { body: 0x0891b2, accent: 0xa5f3fc, badgeBg: '#0891b2', text: '#ffffff' };
 
     case 'purple':
     case 'angler':
@@ -115,9 +115,9 @@ export class FofMeshFactory {
 
     this.trayGeo = new THREE.CylinderGeometry(0.2, 0.22, 0.06, 16);
     this.trayMat = new THREE.MeshStandardMaterial({
-      color: 0x38bdf8,
-      roughness: 0.3,
-      metalness: 0.4,
+      color: 0xbae6fd,
+      roughness: 0.25,
+      metalness: 0.25,
     });
   }
 
@@ -280,15 +280,15 @@ export class FofMeshFactory {
     const beltTex = createConveyorTexture(true);
     const beltMaterial = new THREE.MeshStandardMaterial({
       map: beltTex,
-      roughness: 0.25,
-      metalness: 0.1,
-      emissive: new THREE.Color(0x0284c7),
-      emissiveIntensity: 0.2,
+      roughness: 0.28,
+      metalness: 0.06,
+      emissive: new THREE.Color(0xe0f2fe),
+      emissiveIntensity: 0.08,
     });
 
     const samples = Math.max(140, Math.ceil(trackPath.totalLength * 4));
     const pathPoints = trackPath.generateTrackPolygonPoints(samples);
-    const trackWidth = 0.78;
+    const trackWidth = 0.82;
     const halfW = trackWidth / 2;
 
     const vertices: number[] = [];
@@ -331,14 +331,17 @@ export class FofMeshFactory {
     beltMesh.receiveShadow = true;
     group.add(beltMesh);
 
+    // Glossy coral-red border curbs matching Fish of Fortune reference video
     const coralMat = new THREE.MeshStandardMaterial({
-      color: 0x0284c7,
-      roughness: 0.4,
-      metalness: 0.2,
+      color: 0xe11d48,
+      roughness: 0.28,
+      metalness: 0.12,
+      emissive: 0x9f1239,
+      emissiveIntensity: 0.12,
     });
 
-    const curbHeight = 0.15;
-    const curbThick = 0.08;
+    const curbHeight = 0.16;
+    const curbThick = 0.09;
 
     const buildCoralCurb = (offset: number) => {
       const curbVerts: number[] = [];
@@ -372,35 +375,196 @@ export class FofMeshFactory {
     group.add(buildCoralCurb(-halfW));
     group.add(buildCoralCurb(halfW));
 
+    const dispenser = this.createDispenser();
+    dispenser.position.set(trackPath.xMin + 0.1, 0.08, trackPath.zMax);
+    group.add(dispenser);
+
     this.addOceanDecorations(group, trackPath);
 
     return { group, beltMaterial };
   }
 
+  /**
+   * Pink/coral-striped feeder hopper at the bottom-left conveyor entry matching the reference video.
+   */
+  public createDispenser(): THREE.Group {
+    const group = new THREE.Group();
+
+    const bodyMat = new THREE.MeshStandardMaterial({
+      color: 0xf472b6,
+      roughness: 0.25,
+      metalness: 0.15,
+    });
+    const trimMat = new THREE.MeshStandardMaterial({
+      color: 0xfbbf24,
+      roughness: 0.22,
+      metalness: 0.55,
+    });
+    const darkHoleMat = new THREE.MeshBasicMaterial({ color: 0x1e1b4b });
+
+    const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.44, 0.95, 24), bodyMat);
+    tube.rotation.z = Math.PI / 2;
+    tube.position.set(-0.35, 0.22, 0);
+    tube.castShadow = true;
+    group.add(tube);
+
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.43, 0.065, 12, 24), trimMat);
+    rim.rotation.y = Math.PI / 2;
+    rim.position.set(0.12, 0.22, 0);
+    group.add(rim);
+
+    const stripe = new THREE.Mesh(new THREE.TorusGeometry(0.43, 0.04, 10, 24), trimMat);
+    stripe.rotation.y = Math.PI / 2;
+    stripe.position.set(-0.35, 0.22, 0);
+    group.add(stripe);
+
+    const mouth = new THREE.Mesh(new THREE.CircleGeometry(0.36, 20), darkHoleMat);
+    mouth.rotation.y = Math.PI / 2;
+    mouth.position.set(0.14, 0.22, 0);
+    group.add(mouth);
+
+    return group;
+  }
+
+  /**
+   * Multi-part procedural reef creature (dolphin/shark or sea turtle) swimming beneath the board.
+   */
+  public createUnderwaterCreature(kind: 'dolphin' | 'turtle' | 'reefFish', tintHex: number): {
+    group: THREE.Group;
+    tail: THREE.Object3D;
+  } {
+    const group = new THREE.Group();
+    const mainMat = new THREE.MeshStandardMaterial({
+      color: tintHex,
+      roughness: 0.35,
+      metalness: 0.05,
+    });
+    const bellyMat = new THREE.MeshStandardMaterial({
+      color: 0xe0f2fe,
+      roughness: 0.45,
+    });
+    const accentMat = new THREE.MeshStandardMaterial({
+      color: kind === 'turtle' ? 0x15803d : 0x0284c7,
+      roughness: 0.3,
+    });
+
+    const tailPivot = new THREE.Group();
+
+    if (kind === 'turtle') {
+      const shell = new THREE.Mesh(new THREE.SphereGeometry(0.42, 16, 12), mainMat);
+      shell.scale.set(1.25, 0.48, 1.0);
+      group.add(shell);
+
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 10), accentMat);
+      head.position.set(0.54, 0.04, 0);
+      group.add(head);
+
+      const flipperGeo = new THREE.SphereGeometry(0.18, 10, 8);
+      flipperGeo.scale(1.6, 0.22, 0.65);
+      const fl1 = new THREE.Mesh(flipperGeo, accentMat);
+      fl1.position.set(0.22, -0.04, 0.44);
+      fl1.rotation.y = 0.55;
+      group.add(fl1);
+
+      const fl2 = new THREE.Mesh(flipperGeo, accentMat);
+      fl2.position.set(0.22, -0.04, -0.44);
+      fl2.rotation.y = -0.55;
+      group.add(fl2);
+
+      const backFl = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.24, 6), accentMat);
+      backFl.rotation.z = Math.PI / 2;
+      backFl.position.set(-0.14, 0, 0);
+      tailPivot.position.set(-0.46, 0, 0);
+      tailPivot.add(backFl);
+      group.add(tailPivot);
+    } else if (kind === 'dolphin') {
+      const torso = new THREE.Mesh(new THREE.SphereGeometry(0.32, 18, 14), mainMat);
+      torso.scale.set(2.3, 0.78, 0.72);
+      group.add(torso);
+
+      const belly = new THREE.Mesh(new THREE.SphereGeometry(0.24, 14, 10), bellyMat);
+      belly.scale.set(1.9, 0.42, 0.55);
+      belly.position.set(0.05, -0.1, 0);
+      group.add(belly);
+
+      const snout = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.36, 12), mainMat);
+      snout.rotation.z = -Math.PI / 2;
+      snout.position.set(0.76, -0.03, 0);
+      group.add(snout);
+
+      const dorsal = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.34, 8), mainMat);
+      dorsal.position.set(-0.04, 0.28, 0);
+      dorsal.rotation.z = 0.38;
+      group.add(dorsal);
+
+      const fluke = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.36, 4), accentMat);
+      fluke.scale.set(0.35, 1.0, 1.35);
+      fluke.rotation.z = Math.PI / 2;
+      fluke.position.set(-0.16, 0, 0);
+      tailPivot.position.set(-0.68, 0, 0);
+      tailPivot.add(fluke);
+      group.add(tailPivot);
+    } else {
+      const body = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 10), mainMat);
+      body.scale.set(1.45, 0.85, 0.62);
+      group.add(body);
+
+      const fin = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.22, 4), accentMat);
+      fin.scale.set(0.35, 1, 0.9);
+      fin.rotation.z = Math.PI / 2;
+      fin.position.set(-0.1, 0, 0);
+      tailPivot.position.set(-0.2, 0, 0);
+      tailPivot.add(fin);
+      group.add(tailPivot);
+    }
+
+    return { group, tail: tailPivot };
+  }
+
   private addOceanDecorations(parent: THREE.Group, trackPath: TrackPath) {
-    const starGeo = new THREE.CylinderGeometry(0.14, 0.16, 0.04, 5);
-    const starMat = new THREE.MeshStandardMaterial({ color: 0xf43f5e, roughness: 0.5 });
+    // Rich multi-part tropical coral clusters & starfish surrounding the lagoon
+    const coralPalette = [0xf43f5e, 0xfb923c, 0xa855f7, 0x2dd4bf, 0xfacc15];
+    const placements = [
+      { x: trackPath.xMax + 1.35, z: trackPath.zMin - 0.8 },
+      { x: trackPath.xMin - 1.45, z: trackPath.zMin - 0.7 },
+      { x: trackPath.xMax + 1.45, z: trackPath.zMax + 0.55 },
+      { x: trackPath.xMin - 1.55, z: trackPath.zMax + 0.95 },
+      { x: trackPath.xMax + 1.8, z: 0.2 },
+      { x: trackPath.xMin - 1.8, z: -0.4 },
+    ];
 
-    const star1 = new THREE.Mesh(starGeo, starMat);
-    star1.position.set(trackPath.xMax + 0.6, 0.05, trackPath.zMin - 0.4);
-    star1.rotation.y = 0.4;
-    parent.add(star1);
+    placements.forEach((p, idx) => {
+      const cluster = new THREE.Group();
+      const baseColor = coralPalette[idx % coralPalette.length];
+      const coralMat = new THREE.MeshStandardMaterial({ color: baseColor, roughness: 0.45 });
+      const rockMat = new THREE.MeshStandardMaterial({ color: 0x0d9488, roughness: 0.75 });
 
-    const star2 = new THREE.Mesh(starGeo, starMat);
-    star2.position.set(trackPath.xMin - 0.5, 0.05, trackPath.zMin - 0.5);
-    star2.rotation.y = 1.2;
-    parent.add(star2);
+      const baseRock = new THREE.Mesh(new THREE.DodecahedronGeometry(0.32), rockMat);
+      baseRock.scale.set(1.2, 0.55, 1.1);
+      baseRock.position.y = -0.25;
+      cluster.add(baseRock);
 
-    const rockGeo = new THREE.DodecahedronGeometry(0.25);
-    const rockMat = new THREE.MeshStandardMaterial({ color: 0x0d9488, roughness: 0.7 });
+      for (let b = -1; b <= 1; b++) {
+        const branch = new THREE.Mesh(
+          new THREE.CapsuleGeometry(0.085, 0.34 + (b === 0 ? 0.16 : 0), 6, 10),
+          coralMat
+        );
+        branch.position.set(b * 0.18, 0.02, (b % 2) * 0.12);
+        branch.rotation.z = b * -0.28;
+        cluster.add(branch);
+      }
 
-    const rock1 = new THREE.Mesh(rockGeo, rockMat);
-    rock1.position.set(trackPath.xMax + 0.7, 0.15, trackPath.zMax + 0.3);
-    parent.add(rock1);
+      const star = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.16, 0.19, 0.05, 5),
+        new THREE.MeshStandardMaterial({ color: 0xf43f5e, roughness: 0.4 })
+      );
+      star.position.set(0.38, -0.35, 0.3);
+      star.rotation.y = idx * 0.7;
+      cluster.add(star);
 
-    const rock2 = new THREE.Mesh(rockGeo, rockMat);
-    rock2.position.set(trackPath.xMin - 0.7, 0.18, trackPath.zMin + 0.8);
-    parent.add(rock2);
+      cluster.position.set(p.x, -0.22, p.z);
+      parent.add(cluster);
+    });
   }
 
   public createFishRunner(
@@ -540,10 +704,10 @@ export class FofMeshFactory {
       metalness: 0.6,
     });
 
-    const badgeGeo = new THREE.PlaneGeometry(0.38, 0.38);
+    const badgeGeo = new THREE.PlaneGeometry(0.42, 0.42);
     const badgeMesh = new THREE.Mesh(badgeGeo, badgeMat);
-    badgeMesh.position.set(0, 0.58, 0);
-    badgeMesh.rotation.x = -Math.PI / 2;
+    badgeMesh.position.set(0, 0.6, 0);
+    badgeMesh.rotation.x = -Math.PI / 2.5;
     group.add(badgeMesh);
 
     const updateNumber = (num: number) => {

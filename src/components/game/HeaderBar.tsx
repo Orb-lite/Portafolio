@@ -1,7 +1,7 @@
 import React from 'react';
 import { GameVersion } from '../../game/types';
 import { getThemeName } from '../../game/experience';
-import { GameLanguage, GAME_TEXT } from '../../game/localization';
+import { GameLanguage, GAME_TEXT, localizeComodin } from '../../game/localization';
 import { Volume2, VolumeX, RotateCcw, BookOpen, Sparkles, Heart, Map, Trophy, User, Fish, Crown, Box, Zap } from 'lucide-react';
 import { ComodinesHUD } from './ComodinesHUD';
 
@@ -83,15 +83,13 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               {isFoF ? t.fishFeederMode : getThemeName(version, language)}
             </span>
           </h1>
-          <div className="flex items-center gap-1.5 text-[10px] mt-1 flex-wrap">
+          <div className="flex items-center gap-1.5 text-[10px] mt-1">
             <span className="text-amber-400 font-bold flex items-center gap-0.5">
               <Sparkles className="w-2.5 h-2.5 inline" />
-              By Dimpz Games
+              {language === 'en' ? 'By Dimpz Games' : 'Por Dimpz Games'}
             </span>
             <span className="text-white/40 hidden sm:inline">•</span>
-            <span className="text-cyan-200/90 font-medium hidden md:inline">
-              {language === 'en' ? 'Audio' : 'Audio'}: +1 (809) 716-1036 Rafael Espada
-            </span>
+            <span className="text-white/80 font-medium hidden sm:inline">Sr. Technical Artist</span>
           </div>
         </div>
       </div>
@@ -136,7 +134,13 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
         className="bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 text-slate-950 font-black text-xs sm:text-sm px-4 py-2.5 rounded-2xl shadow-xl border-2 border-amber-200/90 uppercase tracking-wider flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 cursor-pointer"
       >
         <Zap className="w-4 h-4 fill-slate-950 text-slate-950 animate-pulse" />
-        <span>{selectedComodin ? selectedComodin.name : 'POWER-UPS'}</span>
+        <span>
+          {selectedComodin
+            ? localizeComodin(selectedComodin, language).name
+            : language === 'en'
+            ? 'POWER-UPS'
+            : 'COMODINES'}
+        </span>
       </button>
 
       {/* 4. Derecha: Gamertag, Audio, Velocidad y Botones de Menú */}
@@ -157,7 +161,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             type="button"
             onClick={onOpenLeaderboard}
             className="p-1.5 rounded-xl text-amber-400 hover:bg-white/10 transition cursor-pointer"
-            title="Leaderboard"
+            title={t.hallOfFame}
           >
             <Trophy className="w-4 h-4" />
           </button>
@@ -167,6 +171,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           type="button"
           onClick={() => onSpeedChange(speed === 1.0 ? 1.5 : speed === 1.5 ? 2.0 : 1.0)}
           className="px-2 py-1 rounded-xl text-xs font-black text-white bg-slate-950/40 hover:bg-slate-950/60 border border-white/20 transition"
+          title={t.speed}
         >
           {speed}x
         </button>
@@ -175,6 +180,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           type="button"
           onClick={onToggleSound}
           className="p-1.5 rounded-xl text-white hover:bg-white/10 transition"
+          title={soundEnabled ? t.mute : t.unmute}
         >
           {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4 text-rose-400" />}
         </button>
@@ -183,6 +189,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           type="button"
           onClick={onReset}
           className="p-1.5 rounded-xl text-white hover:bg-white/10 transition"
+          title={t.reset}
         >
           <RotateCcw className="w-4 h-4" />
         </button>

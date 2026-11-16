@@ -326,6 +326,11 @@ create policy "Permitir guardar puntuaciones"
   on public.tile_absorber_scores for insert
   with check (true);
 
+drop policy if exists "Permitir eliminar puntuaciones" on public.tile_absorber_scores;
+create policy "Permitir eliminar puntuaciones"
+  on public.tile_absorber_scores for delete
+  using (true);
+
 drop policy if exists "Permitir lectura de jugadores a todos" on public.tile_absorber_users;
 create policy "Permitir lectura de jugadores a todos"
   on public.tile_absorber_users for select
@@ -336,3 +341,74 @@ create policy "Permitir crear y actualizar perfiles de jugadores"
   on public.tile_absorber_users for all
   using (true);
 `;
+
+export async function hardResetSupabaseLeaderboard(language: 'en' | 'es' = 'es'): Promise<{
+  success: boolean;
+  usersDeleted: boolean;
+  scoresDeleted: boolean;
+  message: string;
+}> {
+  const isEn = language === 'en';
+  const client = getSupabaseClient();
+  if (!client) {
+    return {
+      success: false,
+      usersDeleted: false,
+      scoresDeleted: false,
+      message: isEn ? 'Supabase is not configured.' : 'Supabase no está configurado.',
+    };
+  }
+
+  let usersDeleted = false;
+  let scoresDeleted = false;
+
+  // 1. Purge local cache
+  if (typeof localStorage !== 'undefined') {
+    try {
+      localStorage.removeItem(LOCAL_STORAGE_KEY_SCORES);
+      localStorage.removeItem('conveyor_realms_highscores_v1');
+    } catch {
+      // noop
+    }
+  }
+
+  // 2. Delete users via REST API
+  try {
+    const { error: usersErr } = await client
+      .from('tile_absorber_users')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000');
+    if (!usersErr) {
+      usersDeleted = true;
+    }
+  } catch (err) {
+    console.warn('Error deleting users:', err);
+  }
+
+  // 3. Delete scores via REST API
+  try {
+    const { data, error: scoresErr } = await client
+      .from('tile_absorber_scores')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000')
+      .select('id');
+    if (!scoresErr && Array.isArray(data) && data.length > 0) {
+      scoresDeleted = true;
+    }
+  } catch (err) {
+    console.warn('Error deleting scores:', err);
+  }
+
+  return {
+    success: usersDeleted || scoresDeleted,
+    usersDeleted,
+    scoresDeleted,
+    message: scoresDeleted
+      ? isEn
+        ? 'Supabase tables reset successfully via API.'
+        : 'Tablas de Supabase reseteadas exitosamente por API.'
+      : isEn
+      ? 'Users cleared via API. For the scores table, run TRUNCATE TABLE public.tile_absorber_scores; in the Supabase SQL Editor if RLS lacks a DELETE policy.'
+      : 'Usuarios eliminados por API. Para la tabla de puntuaciones, ejecuta TRUNCATE TABLE public.tile_absorber_scores; en el SQL Editor de Supabase si RLS no tiene política de DELETE.',
+  };
+}

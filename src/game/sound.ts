@@ -8,34 +8,34 @@ export interface MusicTrackInfo {
 }
 
 export const AUDIO_CREDIT = {
-  name: 'Rafael Espada',
+  name: 'Rafael E. Espada',
   phone: '+1 (809) 716-1036',
-  labelEn: 'Audio Credits: +1 (809) 716-1036 Rafael Espada',
-  labelEs: 'Créditos de Audio: +1 (809) 716-1036 Rafael Espada',
+  labelEn: 'Audio Credits: +1 (809) 716-1036 Rafael E. Espada',
+  labelEs: 'Créditos de Audio: +1 (809) 716-1036 Rafael E. Espada',
 };
 
 export function getMusicTrackForLevel(level: number, version: GameVersion): MusicTrackInfo {
   if (version === 'fof') {
     if (level >= 10) {
       return {
-        path: '/audio/golden_vault_theme.mp3',
+        path: './audio/golden_vault_theme.mp3',
         title: 'Golden Sunken Vault',
-        artist: 'Rafael Espada (+1 (809) 716-1036) · Isaac Gómez',
+        artist: 'Rafael E. Espada (+1 (809) 716-1036) · Sunken Sanctuary',
         bpm: 126,
       };
     }
     if (level >= 7) {
       return {
-        path: '/audio/sixty_frames_conveyor.mp3',
+        path: './audio/sixty_frames_conveyor.mp3',
         title: 'Sixty Frames (Bioluminescent Abyss)',
-        artist: 'Rafael Espada (+1 (809) 716-1036) · Official Track',
+        artist: 'Rafael E. Espada (+1 (809) 716-1036) · Bioluminescent Abyss',
         bpm: 128,
       };
     }
     return {
-      path: '/audio/fish_of_fortune_theme.mp3',
+      path: './audio/fish_of_fortune_theme.mp3',
       title: 'Fish Feeder (Coral Reef 124 BPM)',
-      artist: 'Rafael Espada (+1 (809) 716-1036) · Subaquatic Synth',
+      artist: 'Rafael E. Espada (+1 (809) 716-1036) · Subaquatic Synth',
       bpm: 124,
     };
   }
@@ -43,32 +43,32 @@ export function getMusicTrackForLevel(level: number, version: GameVersion): Musi
   // Conveyor Realms worlds by block level:
   if (level <= 3) {
     return {
-      path: '/audio/chess_kingdom_theme.mp3',
+      path: './audio/chess_kingdom_theme.mp3',
       title: 'Chess Kingdom (Baroque Synthwave)',
-      artist: 'Rafael Espada (+1 (809) 716-1036) · Royal Parquet',
+      artist: 'Rafael E. Espada (+1 (809) 716-1036) · Royal Parquet',
       bpm: 118,
     };
   }
   if (level <= 6) {
     return {
-      path: '/audio/fish_of_fortune_theme.mp3',
+      path: './audio/fish_of_fortune_theme.mp3',
       title: 'Coral Cove (Aquatic Synthwave)',
-      artist: 'Rafael Espada (+1 (809) 716-1036) · Subaquatic Synth',
+      artist: 'Rafael E. Espada (+1 (809) 716-1036) · Subaquatic Synth',
       bpm: 124,
     };
   }
   if (level <= 9) {
     return {
-      path: '/audio/sixty_frames_conveyor.mp3',
+      path: './audio/sixty_frames_conveyor.mp3',
       title: 'Sixty Frames (Zero Latency Synthwave)',
-      artist: 'Rafael Espada (+1 (809) 716-1036) · Official Track',
+      artist: 'Rafael E. Espada (+1 (809) 716-1036) · Zero Latency Synthwave',
       bpm: 128,
     };
   }
   return {
-    path: '/audio/golden_vault_theme.mp3',
+    path: './audio/golden_vault_theme.mp3',
     title: 'Golden Vault (Emperor Anthem)',
-    artist: 'Rafael Espada (+1 (809) 716-1036) · Imperial Synth',
+    artist: 'Rafael E. Espada (+1 (809) 716-1036) · Imperial Synth',
     bpm: 126,
   };
 }

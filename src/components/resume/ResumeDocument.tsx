@@ -5,6 +5,7 @@ import {
 } from '../../types/resume';
 import {
   Mail,
+  Phone,
   MapPin,
   Linkedin,
   Globe,
@@ -73,34 +74,38 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
     spacing,
     showPhoto,
     fontSize,
+    paperSize,
   } = styleConfig;
 
-  // Split experiences between Page 1 and Page 2
-  const splitIndex = experiences.length > 3 ? 3 : experiences.length;
+  const isLetter = paperSize === 'letter';
+  const screenPageMinHeight = isLetter ? '279.4mm' : '297mm';
+  const printPageMinHeight = isLetter ? '276mm' : '294mm';
+
+  // Split experiences cleanly so Page 1 never overflows and Page 2 stays balanced
+  const splitIndex = experiences.length > 2 ? 2 : experiences.length;
   const page1Experiences = experiences.slice(0, splitIndex);
   const page2Experiences = experiences.slice(splitIndex);
+
+  // Split skill categories in executive sidebar so Page 1 sidebar fits within 1 page
+  const page1Skills = skillCategories.length > 3 ? skillCategories.slice(0, 2) : skillCategories;
+  const page2Skills = skillCategories.length > 3 ? skillCategories.slice(2) : [];
 
   // Smart language-aware title & summary resolver to guarantee English when language === 'en'
   const displayTitle = React.useMemo(() => {
     if (!personalInfo.title) return '';
     if (language === 'en') {
       const tLower = personalInfo.title.toLowerCase();
-      if (tLower.includes('ingeniero c++') || tLower.includes('c++ / unreal')) {
-        return 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer';
-      }
       if (tLower.includes('artista técnico') || tLower.includes('technical artist')) {
-        return personalInfo.title.includes('C++')
-          ? personalInfo.title
-          : 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer';
+        return 'Technical Artist';
       }
       if (tLower.includes('gerente comercial') || tLower.includes('commercial manager')) {
-        return 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer';
+        return 'Technical Artist';
       }
       if (tLower.includes('líder en realidad virtual')) {
         return 'Virtual Reality (VR) & Simulation Lead';
       }
       if (tLower.includes('desarrollador de aplicaciones')) {
-        return 'Applications Developer & C++ / Unreal Engine 5 Specialist';
+        return 'Applications Developer & Unreal Engine Specialist';
       }
     }
     return personalInfo.title;
@@ -114,7 +119,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
       // If it contains Spanish words or matches Spanish presets:
       const hasSpanishWords =
         sLower.includes('artista técnico') ||
-        sLower.includes('ingeniero c++') ||
+        sLower.includes('ingeniero de 32 años') ||
         sLower.includes('líder comercial') ||
         sLower.includes('desarrollador') ||
         sLower.includes('especialista en') ||
@@ -125,7 +130,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
         sLower.includes('actualmente');
 
       if (hasSpanishWords) {
-        return "Senior Technical Artist & C++ / Unreal Engine 5 Engineer with 8+ years of experience (since 2018) bridging C++ systems architecture, interactive art, and production pipelines across AAA game development, industrial digital twins, and virtual environments. Shipped Technical Artist on premier world-class sports franchise EA Sports College Football 25 for a leading global publisher (verified public credit on MobyGames), specializing in C++, interactive UI/UX architecture, Frostbite engine pipelines, 60+ FPS performance optimization, Perforce P4 Helix Core branching, and Jenkins automated CI/CD validation. Extensive background building manufacturing Digital Twins, custom UE5 Editor tools, and C++ / Blueprint assembly line simulations for Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with Unreal Engine 5 (UE5) and Arch FlexSim. Strong technical foundation in C++, Python, TypeScript, Blueprints, HLSL/Shaders, and cross-platform deployment (PC, Console, VR, Mobile, WebGL).";
+        return "Senior Technical Artist and Real-Time 3D Simulation Engineer with 8+ years of experience bridging art, interactive systems, and production pipelines across AAA game development, industrial digital twins, and virtual environments. Shipped Technical Artist on premier world-class sports franchise EA Sports College Football 25 for a leading global publisher (verified public credit on MobyGames), specializing in interactive UI/UX architecture, Frostbite engine pipelines, 60+ FPS performance optimization, Perforce P4 Helix Core branching, and Jenkins automated CI/CD validation. Extensive background building manufacturing Digital Twins and real-time assembly line simulations for Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with Unreal Engine 5 (UE5) and Arch FlexSim. Strong technical background in custom pipeline tooling (Python, TypeScript, C++, Blueprints, HLSL/Shaders) and cross-platform deployment (PC, Console, VR, Mobile, WebGL).";
       }
     }
     return personalInfo.summary;
@@ -133,8 +138,8 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
 
   // Spacing configurations
   const sectionMargin =
-    spacing === 'compact' ? 'mb-3' : spacing === 'relaxed' ? 'mb-6' : 'mb-4';
-  const itemGap = spacing === 'compact' ? 'space-y-2' : spacing === 'relaxed' ? 'space-y-4' : 'space-y-3';
+    spacing === 'compact' ? 'mb-2.5' : spacing === 'relaxed' ? 'mb-5' : 'mb-3.5';
+  const itemGap = spacing === 'compact' ? 'space-y-2' : spacing === 'relaxed' ? 'space-y-3.5' : 'space-y-2.5';
   const bulletSpacing = spacing === 'compact' ? 'space-y-0.5' : 'space-y-1';
 
   // Font family styling
@@ -162,22 +167,33 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
     <div
       ref={innerRef}
       id="resume-print-sheet"
-      className={`w-full bg-slate-200/60 text-slate-800 ${fontClass} ${textScale} leading-relaxed selection:bg-slate-200 shadow-xl print:shadow-none print:m-0 print:p-0 print:bg-white`}
+      className={`w-full bg-slate-200/60 text-slate-800 ${fontClass} ${textScale} leading-snug selection:bg-slate-200 shadow-xl print:shadow-none print:m-0 print:p-0 print:bg-white`}
     >
+      <style>{`
+        @media print {
+          @page {
+            size: ${isLetter ? 'letter' : 'A4'} portrait;
+            margin: 0;
+          }
+          #resume-print-sheet .resume-page {
+            min-height: ${printPageMinHeight} !important;
+          }
+        }
+      `}</style>
       {/* ============================================================ */}
-      {/* PAGE 1: HEADER + TOP EXPERIENCES + METRICS + SKILLS           */}
+      {/* PAGE 1: HEADER + TOP EXPERIENCES + METRICS + CORE SKILLS     */}
       {/* ============================================================ */}
       <div
         id="resume-page-1"
-        className="resume-page bg-white shadow-md print:shadow-none flex flex-col relative"
-        style={{ minHeight: '297mm', boxSizing: 'border-box' }}
+        className="resume-page bg-white shadow-md print:shadow-none flex flex-col justify-between relative"
+        style={{ minHeight: screenPageMinHeight, boxSizing: 'border-box' }}
       >
         {/* TEMPLATE 1: EXECUTIVE CLASSIC */}
         {template === 'executive' && (
           <div className="flex flex-col flex-1">
             {/* Header Banner */}
             <header
-              className="p-7 text-white relative overflow-hidden break-inside-avoid"
+              className="px-6 py-4 text-white relative overflow-hidden break-inside-avoid"
               data-break-avoid="true"
               style={{ backgroundColor: accentColor, ...breakAvoidStyle }}
             >
@@ -229,23 +245,21 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
               </div>
 
               {/* Quick Contact Bar */}
-              <div className="mt-4 pt-3 border-t border-white/20 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[11px] text-slate-200">
+              <div className="mt-2.5 pt-2.5 border-t border-white/20 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10.5px] text-slate-200">
                 <a
                   href={`mailto:${personalInfo.email}`}
-                  className="flex items-center gap-1.5 hover:text-white transition-colors underline decoration-white/40 font-semibold"
+                  className="flex items-center gap-1.5 hover:text-white transition-colors"
                 >
-                  <Mail className="w-3.5 h-3.5 opacity-90" />
-                  <span>{isEn ? 'Email' : 'Correo'}</span>
+                  <Mail className="w-3.5 h-3.5 opacity-80" />
+                  <span>{personalInfo.email}</span>
                 </a>
-                {personalInfo.linkedinUrl && (
+                {personalInfo.phone && (
                   <a
-                    href={personalInfo.linkedinUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-1.5 hover:text-white transition-colors underline decoration-white/40 font-semibold"
+                    href={`tel:${personalInfo.phone}`}
+                    className="flex items-center gap-1.5 hover:text-white transition-colors"
                   >
-                    <Linkedin className="w-3.5 h-3.5 opacity-90" />
-                    <span>LinkedIn</span>
+                    <Phone className="w-3.5 h-3.5 opacity-80" />
+                    <span>{personalInfo.phone}</span>
                   </a>
                 )}
                 {personalInfo.location && (
@@ -253,6 +267,17 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                     <MapPin className="w-3.5 h-3.5 opacity-80" />
                     <span>{personalInfo.location}</span>
                   </span>
+                )}
+                {personalInfo.linkedinUrl && (
+                  <a
+                    href={personalInfo.linkedinUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1.5 hover:text-white transition-colors underline decoration-white/40"
+                  >
+                    <Linkedin className="w-3.5 h-3.5 opacity-80" />
+                    <span>linkedin.com/in/isaac-gomez-estrada</span>
+                  </a>
                 )}
                 {personalInfo.websiteUrl && (
                   <a
@@ -303,9 +328,9 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
             </header>
 
             {/* Page 1 Body Grid */}
-            <div className="p-7 grid grid-cols-12 gap-6 flex-1">
+            <div className="px-6 py-4 grid grid-cols-12 gap-5 flex-1">
               {/* Main Column (8 cols): Summary + First Experiences */}
-              <main className="col-span-8 space-y-4">
+              <main className="col-span-8 space-y-3">
                 {displaySummary && (
                   <section
                     className={`break-inside-avoid summary-card ${sectionMargin}`}
@@ -313,13 +338,13 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                     style={breakAvoidStyle}
                   >
                     <h2
-                      className="text-xs uppercase font-bold tracking-wider mb-1.5 flex items-center gap-2"
+                      className="text-xs uppercase font-bold tracking-wider mb-1 flex items-center gap-2"
                       style={{ color: accentColor }}
                     >
                       <Briefcase className="w-3.5 h-3.5" />
                       <span>{t.summary}</span>
                     </h2>
-                    <p className="text-slate-600 leading-relaxed text-justify text-[11px]">
+                    <p className="text-slate-600 leading-snug text-justify text-[10.5px]">
                       {displaySummary}
                     </p>
                   </section>
@@ -327,7 +352,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
 
                 <section className={sectionMargin}>
                   <h2
-                    className="text-xs uppercase font-bold tracking-wider mb-2.5 flex items-center gap-2 break-inside-avoid"
+                    className="text-xs uppercase font-bold tracking-wider mb-2 flex items-center gap-2 break-inside-avoid"
                     data-break-avoid="true"
                     style={{ color: accentColor, ...breakAvoidStyle }}
                   >
@@ -351,7 +376,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                             {exp.startDate} — {exp.isCurrent ? t.present : (exp.endDate === 'Presente' || exp.endDate === 'Present' ? t.present : exp.endDate)}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-[11px] text-slate-600 mb-1.5 font-medium">
+                        <div className="flex items-center gap-2 text-[10.5px] text-slate-600 mb-1 font-medium">
                           <span style={{ color: accentColor }}>{exp.company}</span>
                           {exp.location && (
                             <>
@@ -362,11 +387,11 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                         </div>
 
                         {exp.highlights && exp.highlights.length > 0 && (
-                          <ul className={`${bulletSpacing} text-slate-600 text-[11px] pl-3.5`}>
+                          <ul className={`${bulletSpacing} text-slate-600 text-[10.5px] pl-3.5`}>
                             {exp.highlights.map((h, i) => (
                               <li
                                 key={i}
-                                className="list-disc list-outside marker:text-slate-400 pl-0.5 leading-normal break-inside-avoid"
+                                className="list-disc list-outside marker:text-slate-400 pl-0.5 leading-snug break-inside-avoid"
                                 data-break-avoid="true"
                                 style={breakAvoidStyle}
                               >
@@ -382,7 +407,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
               </main>
 
               {/* Sidebar Column (4 cols): Logros & Competencias Clave */}
-              <aside className="col-span-4 space-y-4 border-l border-slate-200 pl-5">
+              <aside className="col-span-4 space-y-3 border-l border-slate-200 pl-4">
                 {achievements && achievements.length > 0 && (
                   <section className={sectionMargin}>
                     <h2
@@ -423,25 +448,25 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
 
                 <section className={sectionMargin}>
                   <h2
-                    className="text-xs uppercase font-bold tracking-wider mb-2 flex items-center gap-1.5 break-inside-avoid"
+                    className="text-xs uppercase font-bold tracking-wider mb-1.5 flex items-center gap-1.5 break-inside-avoid"
                     data-break-avoid="true"
                     style={{ color: accentColor, ...breakAvoidStyle }}
                   >
                     <Wrench className="w-3.5 h-3.5" />
                     <span>{t.skills}</span>
                   </h2>
-                  <div className="space-y-2.5">
-                    {skillCategories.map((cat) => (
+                  <div className="space-y-2">
+                    {page1Skills.map((cat) => (
                       <div
                         key={cat.id}
                         className="space-y-0.5 break-inside-avoid skill-card"
                         data-break-avoid="true"
                         style={breakAvoidStyle}
                       >
-                        <h4 className="text-[11px] font-semibold text-slate-700">
+                        <h4 className="text-[10.5px] font-semibold text-slate-700 leading-tight">
                           {cat.name}
                         </h4>
-                        <ul className="text-[11px] text-slate-600 space-y-0.5">
+                        <ul className="text-[10.5px] text-slate-600 space-y-0.5 leading-snug">
                           {cat.skills.map((s, idx) => (
                             <li key={idx} className="flex items-start gap-1.5">
                               <span
@@ -463,7 +488,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
 
         {/* TEMPLATE 2: MODERN CLEAN (Page 1) */}
         {template === 'modern' && (
-          <div className="p-7 space-y-4 flex-1">
+          <div className="px-6 py-5 space-y-3 flex-1">
             <header
               className="border-b-2 pb-3 break-inside-avoid"
               data-break-avoid="true"
@@ -480,15 +505,13 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-600 pt-1.5">
-                <a href={`mailto:${personalInfo.email}`} className="underline font-semibold text-sky-700 hover:text-sky-900">
-                  {isEn ? 'Email' : 'Correo'}
-                </a>
+                <span>{personalInfo.email}</span>
                 <span>·</span>
-                <a href={personalInfo.linkedinUrl} target="_blank" rel="noreferrer" className="underline font-semibold text-sky-700 hover:text-sky-900">
-                  LinkedIn
-                </a>
+                <span>{personalInfo.phone}</span>
                 <span>·</span>
                 <span>{personalInfo.location}</span>
+                <span>·</span>
+                <a href={personalInfo.linkedinUrl} target="_blank" rel="noreferrer" className="underline">LinkedIn</a>
                 {personalInfo.websiteUrl && (
                   <>
                     <span>·</span>
@@ -572,11 +595,11 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
               >
                 {t.skillsAndExpertise}
               </h2>
-              <div className="space-y-1.5">
+              <div className="grid grid-cols-2 gap-x-5 gap-y-1.5">
                 {skillCategories.map((c) => (
-                  <div key={c.id}>
-                    <span className="font-semibold text-slate-800 text-[11px]">{c.name}: </span>
-                    <span className="text-slate-600 text-[11px]">{c.skills.join(', ')}</span>
+                  <div key={c.id} className="leading-snug">
+                    <span className="font-semibold text-slate-800 text-[10.5px]">{c.name}: </span>
+                    <span className="text-slate-600 text-[10.5px]">{c.skills.join(', ')}</span>
                   </div>
                 ))}
               </div>
@@ -586,7 +609,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
 
         {/* TEMPLATE 3 & 4 (Page 1) */}
         {(template === 'minimal' || template === 'tech') && (
-          <div className="p-7 space-y-4 flex-1">
+          <div className="px-6 py-5 space-y-3 flex-1">
             <header className="p-5 bg-slate-900 text-white rounded-lg">
               <h1 className="text-2xl font-bold tracking-tight text-white mb-0.5">
                 {personalInfo.fullName}
@@ -595,18 +618,10 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                 {displayTitle}
               </p>
               <div className="flex flex-wrap gap-x-4 text-[11px] text-slate-300">
-                <a href={`mailto:${personalInfo.email}`} className="underline hover:text-white font-semibold">
-                  {isEn ? 'Email' : 'Correo'}
-                </a>
+                <span>{personalInfo.email}</span>
                 <span>·</span>
-                {personalInfo.linkedinUrl && (
-                  <>
-                    <a href={personalInfo.linkedinUrl} target="_blank" rel="noreferrer" className="underline hover:text-white font-semibold">
-                      LinkedIn
-                    </a>
-                    <span>·</span>
-                  </>
-                )}
+                <span>{personalInfo.phone}</span>
+                <span>·</span>
                 <span>{personalInfo.location}</span>
                 {personalInfo.websiteUrl && (
                   <>
@@ -677,7 +692,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-1.5">
                 {t.skills}
               </h2>
-              <div className="space-y-1 text-[11px]">
+              <div className="grid grid-cols-2 gap-x-5 gap-y-1 text-[10.5px] leading-snug">
                 {skillCategories.map((c) => (
                   <div key={c.id}>
                     <strong className="text-slate-800">{c.name}:</strong> <span className="text-slate-600">{c.skills.join(', ')}</span>
@@ -689,7 +704,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
         )}
 
         {/* Page 1 Footer indicator */}
-        <div className="px-7 py-2 text-right text-[10px] text-slate-400 border-t border-slate-100">
+        <div className="mt-auto shrink-0 px-6 py-1.5 text-right text-[10px] text-slate-400 border-t border-slate-100">
           {t.page1Of2}
         </div>
       </div>
@@ -704,25 +719,23 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
       </div>
 
       {/* ============================================================ */}
-      {/* PAGE 2: 3 SPACES TOP MARGIN + REMAINING JOBS + EDUCACIÓN     */}
+      {/* PAGE 2: REMAINING EXPERIENCES + SKILLS CONT. + EDUCACIÓN     */}
       {/* ============================================================ */}
       <div
         id="resume-page-2"
-        className="resume-page bg-white shadow-md print:shadow-none flex flex-col relative"
+        className="resume-page bg-white shadow-md print:shadow-none flex flex-col justify-between relative"
         style={{
-          minHeight: '297mm',
+          minHeight: screenPageMinHeight,
           boxSizing: 'border-box',
-          breakBefore: 'page',
-          pageBreakBefore: 'always',
         }}
       >
         {/* TEMPLATE 1: EXECUTIVE CLASSIC (Page 2) */}
         {template === 'executive' && (
           <div className="flex flex-col flex-1">
-            {/* 3 espacios del borde superior: pt-10 (~40px) en ambas columnas */}
-            <div className="pt-10 px-7 pb-7 grid grid-cols-12 gap-6 flex-1">
+            {/* Top breathing room + 2 columns */}
+            <div className="pt-7 px-6 pb-4 grid grid-cols-12 gap-5 flex-1">
               {/* Main Column (8 cols): Continuación de Experiencia */}
-              <main className="col-span-8 space-y-4">
+              <main className="col-span-8 space-y-3">
                 <section className={sectionMargin}>
                   <h2
                     className="text-xs uppercase font-bold tracking-wider mb-2.5 flex items-center gap-2 break-inside-avoid"
@@ -779,13 +792,50 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                 </section>
               </main>
 
-              {/* Sidebar Column (4 cols, el lateral con los 3 espacios del borde superior):
-                  EDUCACIÓN COMPLETO + CERTIFICACIONES + IDIOMAS */}
-              <aside className="col-span-4 space-y-5 border-l border-slate-200 pl-5">
+              {/* Sidebar Column (4 cols): ADDITIONAL SKILLS + EDUCACIÓN + CERTIFICATIONS + LANGUAGES */}
+              <aside className="col-span-4 space-y-3.5 border-l border-slate-200 pl-4">
+                {page2Skills.length > 0 && (
+                  <section className={sectionMargin}>
+                    <h2
+                      className="text-xs uppercase font-bold tracking-wider mb-1.5 flex items-center gap-1.5 break-inside-avoid"
+                      data-break-avoid="true"
+                      style={{ color: accentColor, ...breakAvoidStyle }}
+                    >
+                      <Wrench className="w-3.5 h-3.5" />
+                      <span>{isEn ? 'Additional Competencies' : 'Competencias Técnicas'}</span>
+                    </h2>
+                    <div className="space-y-2">
+                      {page2Skills.map((cat) => (
+                        <div
+                          key={cat.id}
+                          className="space-y-0.5 break-inside-avoid skill-card"
+                          data-break-avoid="true"
+                          style={breakAvoidStyle}
+                        >
+                          <h4 className="text-[10.5px] font-semibold text-slate-700 leading-tight">
+                            {cat.name}
+                          </h4>
+                          <ul className="text-[10.5px] text-slate-600 space-y-0.5 leading-snug">
+                            {cat.skills.map((s, idx) => (
+                              <li key={idx} className="flex items-start gap-1.5">
+                                <span
+                                  className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0"
+                                  style={{ backgroundColor: accentColor }}
+                                />
+                                <span>{s}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
                 {/* 1. EDUCACIÓN (COMPLETO EN LA SEGUNDA PÁGINA) */}
                 <section className={sectionMargin}>
                   <h2
-                    className="text-xs uppercase font-bold tracking-wider mb-2 flex items-center gap-1.5 break-inside-avoid"
+                    className="text-xs uppercase font-bold tracking-wider mb-1.5 flex items-center gap-1.5 break-inside-avoid"
                     data-break-avoid="true"
                     style={{ color: accentColor, ...breakAvoidStyle }}
                   >
@@ -800,14 +850,14 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                         data-break-avoid="true"
                         style={breakAvoidStyle}
                       >
-                        <h3 className="font-semibold text-slate-900 text-[11px] leading-snug">
+                        <h3 className="font-semibold text-slate-900 text-[10.5px] leading-snug">
                           {edu.degree}
                         </h3>
                         <p className="text-[10px] text-slate-600 mt-0.5">
                           {edu.institution} · {edu.graduationYear}
                         </p>
                         {edu.details && (
-                          <p className="text-[10px] text-slate-500 mt-1 leading-normal">
+                          <p className="text-[10px] text-slate-500 mt-1 leading-snug">
                             {edu.details}
                           </p>
                         )}
@@ -860,10 +910,10 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
                     >
                       {t.languages}
                     </h2>
-                    <div className="flex flex-col gap-1 text-[11px] text-slate-600">
+                    <div className="flex flex-col gap-1 text-[10.5px] leading-snug text-slate-600">
                       {languages.map((l) => (
-                        <div key={l.id} className="flex items-center gap-1">
-                          <span className="font-medium text-slate-800">{l.name}:</span>
+                        <div key={l.id} className="flex items-baseline gap-1.5">
+                          <span className="font-semibold text-slate-800 shrink-0">{l.name}:</span>
                           <span>{l.level}</span>
                         </div>
                       ))}
@@ -877,7 +927,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
 
         {/* TEMPLATE 2, 3, 4 (Page 2) */}
         {template !== 'executive' && (
-          <div className="pt-10 px-7 pb-7 grid grid-cols-12 gap-6 flex-1">
+          <div className="pt-7 px-6 pb-4 grid grid-cols-12 gap-5 flex-1">
             <main className="col-span-8 space-y-4">
               <section>
                 <h2
@@ -960,7 +1010,7 @@ export const ResumeDocument: React.FC<ResumeDocumentProps> = ({
         )}
 
         {/* Page 2 Footer indicator */}
-        <div className="px-7 py-2 text-right text-[10px] text-slate-400 border-t border-slate-100">
+        <div className="mt-auto shrink-0 px-6 py-1.5 text-right text-[10px] text-slate-400 border-t border-slate-100">
           {t.page2Of2}
         </div>
       </div>

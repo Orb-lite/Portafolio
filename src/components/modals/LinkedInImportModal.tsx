@@ -32,18 +32,18 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
 
     if (type === 'technical_artist_base') {
       updated.personalInfo.title = isEn
-        ? 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer'
-        : 'Senior Technical Artist & Ingeniero C++ / Unreal Engine 5';
+        ? 'Technical Artist'
+        : 'Artista Técnico (Technical Artist)';
       updated.personalInfo.summary = isEn
-        ? 'Senior Technical Artist & C++ / Unreal Engine 5 Engineer with 8+ years of experience (since 2018) bridging C++ architecture, technical art, interactive systems, and production pipelines across AAA game development, industrial digital twins, and virtual environments. Shipped Technical Artist on premier world-class sports franchise EA Sports College Football 25 for a leading global publisher (verified public credit on MobyGames), specializing in C++, interactive UI/UX architecture, Frostbite engine pipelines, 60+ FPS performance optimization, Perforce P4 Helix Core branching, and Jenkins automated CI/CD validation. Extensive background building manufacturing Digital Twins and real-time assembly line simulations for Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with Unreal Engine 5 (UE5 / C++) and Arch FlexSim. Strong technical foundation in C++, Python, TypeScript, Blueprints, HLSL/Shaders and cross-platform deployment (PC, Console, VR, Mobile, WebGL).'
-        : 'Senior Technical Artist & Ingeniero C++ / Unreal Engine 5 con más de 8 años de experiencia (desde 2018) conectando arquitectura C++, arte técnico y pipelines en desarrollo de videojuegos AAA, gemelos digitales industriales y entornos virtuales interactivos. Artista Técnico con crédito público verificado en MobyGames para el título deportivo AAA de clase mundial EA Sports College Football 25 con un publisher global líder, especializado en C++, UI/UX interactiva en el motor Frostbite, optimización rigurosa a 60+ FPS, control de versiones con Perforce (P4 Helix Core) e integración continua automatizada con Jenkins. Extensa experiencia en Unreal Engine 5 (UE5 / C++) y Arch FlexSim desarrollando Gemelos Digitales de manufactura para corporativos globales Fortune 500.';
+        ? 'Senior Technical Artist and Real-Time 3D Simulation Engineer with 8+ years of experience bridging art, interactive systems, and production pipelines across AAA game development, industrial digital twins, and virtual environments. Shipped Technical Artist on premier world-class sports franchise EA Sports College Football 25 for a leading global publisher (verified public credit on MobyGames), specializing in interactive UI/UX architecture, Frostbite engine pipelines, 60+ FPS performance optimization, Perforce P4 Helix Core branching, and Jenkins automated CI/CD validation. Extensive background building manufacturing Digital Twins and real-time assembly line simulations for Fortune 500 enterprise leaders (automotive, advanced tech, and pharmaceutical sectors under strict NDAs) with Unreal Engine 5 (UE5) and Arch FlexSim. Strong technical background in custom pipeline tooling (Python, TypeScript, C++, Blueprints, HLSL/Shaders) and cross-platform deployment (PC, Console, VR, Mobile, WebGL).'
+        : 'Artista Técnico e Ingeniero de Simulación 3D en Tiempo Real de 32 años con más de 8 años de trayectoria conectando arte, código y arquitectura de pipelines en desarrollo de videojuegos AAA, gemelos digitales industriales y entornos virtuales interactivos. Artista Técnico con crédito público verificado en MobyGames para el título deportivo AAA de clase mundial EA Sports College Football 25 con un publisher global líder, especializado en UI/UX interactiva en el motor Frostbite, optimización rigurosa a 60+ FPS, control de versiones con Perforce (P4 Helix Core) e integración continua automatizada con Jenkins. Extensa experiencia en Unreal Engine 5 (UE5) y Arch FlexSim desarrollando Gemelos Digitales de manufactura para corporativos globales Fortune 500.';
     } else if (type === 'orblite_leader') {
       updated.personalInfo.title = isEn
-        ? 'Full-Stack Platform & Automation Engineer'
-        : 'Ingeniero Full-Stack de Plataformas & Automatización';
+        ? 'Lead Automation Engineer & Platform Developer | Orblite'
+        : 'Lead Automation Engineer & Platform Developer | Orblite';
       updated.personalInfo.summary = isEn
-        ? 'Automation Engineer and Full-Stack Platform Developer combining web architecture and sensor telemetry with scalable backend integrations and 3D simulation engineering (TypeScript, React, RESTful APIs, SQL Supabase, Cloudflare). Extensive background developing industrial Digital Twins for global Fortune 500 enterprise clients (automotive, tech, and pharmaceutical sectors under strict NDAs) and Technical Art for premier AAA sports franchise at an elite co-development studio (verified shipped credit on MobyGames for EA Sports College Football 25, interactive UI/UX in Frostbite, Perforce P4, and Jenkins CI).'
-        : 'Ingeniero de Automatización y Desarrollador Full-Stack de Plataformas con sólida experiencia en sistemas telemáticos en tiempo real, automatización de procesos y aplicaciones web de alto rendimiento (TypeScript, React, APIs REST, SQL Supabase, Cloudflare). Experiencia destacada en simulación industrial y gemelos digitales para corporativos globales Fortune 500 y como Artista Técnico en estudio de co-desarrollo para título deportivo AAA de clase mundial con crédito verificado en MobyGames (EA Sports College Football 25).';
+        ? 'Lead Automation Engineer and Platform Developer combining full-stack web and sensor telemetry with modern AI API integrations and 3D simulation engineering. Currently Lead Automation Engineer & Platform Developer at Orblite, engineering AI workflow automations, vehicle telematics infrastructure, and custom internal ERP/CRM applications (TypeScript, React, RESTful APIs, SQL Supabase, AI/LLM APIs, Cloudflare). Extensive background developing industrial Digital Twins for global Fortune 500 enterprise clients (automotive, tech, and pharmaceutical sectors under strict NDAs) and Technical Art for premier AAA sports franchise at an elite co-development studio (verified shipped credit on MobyGames for EA Sports College Football 25, interactive UI/UX in Frostbite, Perforce P4, and Jenkins CI).'
+        : 'Lead Automation Engineer y Desarrollador de Plataformas con sólida experiencia en integración de APIs de Inteligencia Artificial (LLMs), sistemas telemáticos en tiempo real y aplicaciones web de alto rendimiento. Actualmente Lead Automation Engineer & Platform Developer en Orblite, liderando automatizaciones de flujos con IA, infraestructura telemática vehicular y desarrollo de sistemas ERP/CRM propietarios (TypeScript, React, APIs REST, SQL Supabase, Cloudflare). Experiencia previa destacada en simulación industrial y gemelos digitales para corporativos globales Fortune 500 y como Artista Técnico en estudio de co-desarrollo para título deportivo AAA de clase mundial con crédito verificado en MobyGames (EA Sports College Football 25).';
     } else if (type === 'ue5_digital_twins') {
       updated.personalInfo.title = isEn
         ? 'Senior Technical Artist & Unreal Engine 5 Developer | Digital Twins & VR'
@@ -203,14 +203,14 @@ export const LinkedInImportModal: React.FC<LinkedInImportModalProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-900 group-hover:text-sky-700">
-                    {isEn ? 'Full-Stack Platform & Telematics Engineer' : 'Ingeniero Full-Stack de Plataformas & Telemática'}
+                    Lead Automation Engineer & Platform Developer (Orblite)
                   </span>
                   <span className="text-[10px] bg-sky-100 text-sky-800 px-1.5 py-0.5 rounded font-medium">
-                    Full-Stack / Cloud
+                    Puesto Actual
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-600">
-                  Automatización de flujos operativos, infraestructura telemática y aplicaciones web full-stack (React, TypeScript, Supabase, Cloudflare).
+                  Automatización de flujos con IA, infraestructura telemática y simulación de datos vehiculares, ERP/CRM interno (React, TypeScript, Supabase, Cloudflare).
                 </p>
               </div>
 

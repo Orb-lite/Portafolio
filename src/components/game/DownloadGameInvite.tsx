@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Smartphone,
-  Download,
-  CheckCircle2,
-  QrCode,
-  X,
-  Laptop,
-  Fish,
-  Gamepad2,
-  Volume2,
-  VolumeX,
-} from 'lucide-react';
+import { Smartphone, Download, CheckCircle2, Play, QrCode, X, Laptop } from 'lucide-react';
 import { GameVersion } from '../../game/types';
-import realGameScreenshot from '../../assets/images/conveyor_realms_preview.png';
+import realGameScreenshot from '../../assets/images/regenerated_image_1794206153590.png';
+
+const FISH_FEEDER_VIDEO = '/assets/aistudio/Fish_feeder_6c148142.mp4';
+const TILE_ABSORBER_VIDEO = '/assets/aistudio/tile_absorber_64df8e71.mp4';
+const FISH_FEEDER_THUMB = '/assets/aistudio/image_d3be3235.png';
 
 interface DownloadGameInviteProps {
   context?: 'win' | 'death';
@@ -23,21 +16,6 @@ interface DownloadGameInviteProps {
   version?: GameVersion;
 }
 
-const PROMO_VIDEOS = {
-  conveyor: {
-    id: 'conveyor' as const,
-    title: 'Conveyor Realms 3D',
-    badge: 'Tile Absorber',
-    videoSrc: '/assets/videos/conveyor-realms-gameplay.mp4',
-  },
-  fof: {
-    id: 'fof' as const,
-    title: 'Fish Feeder 3D',
-    badge: 'Coral Cove',
-    videoSrc: '/assets/videos/fish-feeder-gameplay.mp4',
-  },
-};
-
 export const DownloadGameInvite: React.FC<DownloadGameInviteProps> = ({
   context = 'win',
   level = 1,
@@ -47,20 +25,19 @@ export const DownloadGameInvite: React.FC<DownloadGameInviteProps> = ({
   version,
 }) => {
   const isEn = language === 'en';
-  const defaultIsFof =
-    version === 'fof' || (gameName ? gameName.toLowerCase().includes('fish') : false);
+  const isFishFeeder =
+    version === 'fof' ||
+    (typeof gameName === 'string' && gameName.toLowerCase().includes('fish'));
+  const effectiveGameName =
+    gameName || (isFishFeeder ? 'Fish Feeder' : 'Tile Absorber');
 
-  const [activePromo, setActivePromo] = useState<'conveyor' | 'fof'>(
-    defaultIsFof ? 'fof' : 'conveyor'
-  );
-  const [isMuted, setIsMuted] = useState(true);
   const [installStatus, setInstallStatus] = useState<string | null>(null);
   const [showQrModal, setShowQrModal] = useState(false);
   const [isExpanded, setIsExpanded] = useState(!compact);
 
-  useEffect(() => {
-    setActivePromo(defaultIsFof ? 'fof' : 'conveyor');
-  }, [defaultIsFof]);
+  // Version-specific 16:9 gameplay video & thumbnail
+  const videoSrc = isFishFeeder ? FISH_FEEDER_VIDEO : TILE_ABSORBER_VIDEO;
+  const thumbSrc = isFishFeeder ? FISH_FEEDER_THUMB : realGameScreenshot;
 
   useEffect(() => {
     const handleBeforeInstall = (e: Event) => {
@@ -71,45 +48,21 @@ export const DownloadGameInvite: React.FC<DownloadGameInviteProps> = ({
     return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
   }, []);
 
-  const promo = PROMO_VIDEOS[activePromo];
-  const isFofPromo = activePromo === 'fof';
-  const effectiveGameName = gameName || promo.title;
-
   const handleDownloadClick = () => {
-    const deferredPrompt = (
-      window as unknown as {
-        deferredPrompt?: {
-          prompt: () => void;
-          userChoice?: Promise<{ outcome: string }>;
-        };
-      }
-    ).deferredPrompt;
-
+    const deferredPrompt = (window as unknown as { deferredPrompt?: { prompt: () => void; userChoice?: Promise<{ outcome: string }> } }).deferredPrompt;
     if (deferredPrompt) {
       deferredPrompt.prompt();
       if (deferredPrompt.userChoice) {
         deferredPrompt.userChoice.then((choiceResult) => {
           if (choiceResult.outcome === 'accepted') {
-            setInstallStatus(
-              isEn
-                ? 'Game successfully installed on your device!'
-                : '¡Juego instalado exitosamente en tu dispositivo!'
-            );
+            setInstallStatus(isEn ? 'Game successfully installed on your device!' : '¡Juego instalado exitosamente en tu dispositivo!');
           }
         });
       }
-      setInstallStatus(
-        isEn
-          ? 'Installing game on your device...'
-          : '¡Instalando juego en tu dispositivo móvil...'
-      );
+      setInstallStatus(isEn ? 'Installing game on your device...' : '¡Instalando juego en tu dispositivo móvil...');
     } else {
       setShowQrModal(true);
-      setInstallStatus(
-        isEn
-          ? 'Scan the QR code or tap Share > Add to Home Screen!'
-          : '¡Escanea el código QR o pulsa Compartir > Añadir a pantalla de inicio!'
-      );
+      setInstallStatus(isEn ? 'Scan the QR code or tap Share > Add to Home Screen!' : '¡Escanea el código QR o pulsa Compartir > Añadir a pantalla de inicio!');
     }
   };
 
@@ -146,9 +99,7 @@ export const DownloadGameInvite: React.FC<DownloadGameInviteProps> = ({
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    setInstallStatus(
-      isEn ? 'Downloaded offline game launcher!' : '¡Lanzador offline del juego descargado!'
-    );
+    setInstallStatus(isEn ? 'Downloaded offline game launcher!' : '¡Lanzador offline del juego descargado!');
   };
 
   return (
@@ -161,18 +112,14 @@ export const DownloadGameInvite: React.FC<DownloadGameInviteProps> = ({
       <div className="relative z-10 flex items-center justify-between gap-2 mb-2.5">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-400 to-indigo-500 text-slate-950 flex items-center justify-center shrink-0 shadow-lg shadow-cyan-500/30">
-            <Smartphone className="w-5 h-5 text-slate-950" />
+            <Smartphone className="w-5 h-5 text-slate-950 -rotate-90" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-xs sm:text-sm font-black text-white tracking-tight">
                 {context === 'death'
-                  ? isEn
-                    ? `Out of Lives? Download ${promo.title}!`
-                    : `¿Sin vidas? ¡Descarga ${promo.title} en tu Celular!`
-                  : isEn
-                  ? `Level ${level} Cleared! Play ${promo.title} on Mobile!`
-                  : `¡Nivel ${level} Completado! ¡Juega ${promo.title} en tu Celular!`}
+                  ? (isEn ? '💀 Out of Lives? Download on Your Phone!' : '💀 ¿Sin vidas? ¡Descárgalo en tu Celular!')
+                  : (isEn ? `🎉 Level ${level} Cleared! Play on Mobile!` : `🎉 ¡Nivel ${level} Completado! ¡Juega en tu Celular!`)}
               </span>
               <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-mono">
                 Android / iOS / PWA
@@ -180,12 +127,8 @@ export const DownloadGameInvite: React.FC<DownloadGameInviteProps> = ({
             </div>
             <p className="text-[10px] text-slate-300 leading-tight truncate">
               {context === 'death'
-                ? isEn
-                  ? 'Landscape 60 FPS mobile gameplay with touch controls & life alerts.'
-                  : 'Gameplay móvil horizontal a 60 FPS con controles táctiles y alertas de vida.'
-                : isEn
-                ? '100% optimized for landscape touch controls at 60 FPS.'
-                : '100% optimizado para pantalla horizontal táctil a 60 FPS.'}
+                ? (isEn ? 'Landscape full-screen mode with instant life recovery notifications.' : 'Pantalla completa horizontal con notificaciones de vidas recuperadas.')
+                : (isEn ? '100% full-screen landscape touch controls at 60 FPS.' : '100% optimizado en modo horizontal táctil a 60 FPS.')}
             </p>
           </div>
         </div>
@@ -195,168 +138,122 @@ export const DownloadGameInvite: React.FC<DownloadGameInviteProps> = ({
           onClick={() => setIsExpanded(!isExpanded)}
           className="text-[10px] font-bold text-cyan-300 hover:text-white px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 border border-cyan-500/30 transition shrink-0 cursor-pointer shadow-sm"
         >
-          {isExpanded ? (isEn ? 'Collapse' : 'Ocultar') : isEn ? 'Show Phone Preview' : 'Ver Teléfono'}
+          {isExpanded ? (isEn ? 'Collapse' : 'Ocultar') : (isEn ? 'Show Phone Preview' : 'Ver Teléfono')}
         </button>
       </div>
 
       {isExpanded && (
         <div className="relative z-10 space-y-3 pt-1">
-          {/* Promo Switcher: Tile Absorber vs Fish Feeder */}
-          <div className="flex items-center justify-between gap-2 flex-wrap bg-slate-950/75 border border-slate-800 rounded-xl p-1.5">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2">
-              {isEn ? 'Mobile Promo Preview:' : 'Promo Móvil:'}
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => setActivePromo('conveyor')}
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer ${
-                  activePromo === 'conveyor'
-                    ? 'bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 shadow'
-                    : 'bg-slate-900 text-slate-300 hover:text-white border border-slate-700/70'
-                }`}
-              >
-                <Gamepad2 className="w-3 h-3" />
-                <span>Conveyor Realms</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActivePromo('fof')}
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer ${
-                  activePromo === 'fof'
-                    ? 'bg-gradient-to-r from-teal-400 to-cyan-500 text-slate-950 shadow'
-                    : 'bg-slate-900 text-slate-300 hover:text-white border border-slate-700/70'
-                }`}
-              >
-                <Fish className="w-3 h-3" />
-                <span>Fish Feeder</span>
-              </button>
-            </div>
-          </div>
+          {/* Main Visual: Realistic LANDSCAPE Smartphone Mockup with Version Gameplay Video */}
+          <div className="flex flex-col gap-3.5 bg-slate-950/70 border border-slate-800 rounded-xl p-3 shadow-inner">
+            {/* Realistic Landscape Smartphone Frame */}
+            <div className="relative w-full aspect-[16/9] rounded-[1.8rem] sm:rounded-[2.1rem] bg-gradient-to-b from-slate-700 via-slate-800 to-slate-900 p-2 sm:p-2.5 shadow-2xl border border-slate-600/80">
+              {/* Top hardware volume/power buttons accent */}
+              <div className="absolute -top-0.5 left-14 w-8 h-1 bg-slate-600 rounded-t-full pointer-events-none" />
+              <div className="absolute -top-0.5 left-24 w-8 h-1 bg-slate-600 rounded-t-full pointer-events-none" />
 
-          {/* Main Visual: Realistic LANDSCAPE Smartphone Mockup + Benefits */}
-          <div className="flex flex-col items-center gap-3.5 bg-slate-950/70 border border-slate-800 rounded-xl p-3 shadow-inner">
-            {/* Realistic LANDSCAPE Smartphone Frame (16:9 widescreen orientation) */}
-            <div className="relative w-full max-w-[440px] rounded-[1.75rem] bg-gradient-to-r from-slate-700 via-slate-800 to-slate-700 p-2 sm:p-2.5 shadow-2xl border-2 border-slate-600/80">
-              {/* Top Hardware Volume/Power Buttons */}
-              <div className="absolute -top-1 left-14 w-8 h-1 bg-slate-600 rounded-t-sm" />
-              <div className="absolute -top-1 left-24 w-8 h-1 bg-slate-600 rounded-t-sm" />
+              {/* Left-Side Dynamic Island / Speaker Notch (Landscape Orientation) */}
+              <div className="absolute left-3 sm:left-3.5 top-1/2 -translate-y-1/2 w-2.5 sm:w-3 h-12 sm:h-16 bg-slate-950 rounded-full z-20 flex flex-col items-center justify-center gap-1.5 border border-slate-800/80">
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-900/70" />
+              </div>
 
-              {/* Inner Smartphone Landscape Screen */}
-              <div className="relative w-full aspect-video rounded-[1.2rem] overflow-hidden bg-slate-950 border border-slate-900 flex items-center justify-center">
-                {/* Left Dynamic Island Notch (Landscape Orientation) */}
-                <div className="absolute left-2 top-1/2 -translate-y-1/2 w-2.5 h-12 bg-slate-950/95 rounded-full z-20 flex flex-col items-center justify-center gap-1.5 border border-slate-800/80 shadow-md">
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-cyan-900/80" />
-                </div>
-
-                {/* Looping 16:9 Landscape Gameplay Video (un-cropped) */}
+              {/* Inner Landscape Smartphone Screen */}
+              <div className="relative w-full h-full rounded-[1.35rem] sm:rounded-[1.6rem] overflow-hidden bg-slate-950 flex flex-col justify-between border border-slate-900">
+                {/* Looping 16:9 Gameplay Video for Selected Game Version */}
                 <video
-                  key={promo.videoSrc}
-                  src={promo.videoSrc}
+                  key={videoSrc}
+                  src={videoSrc}
                   autoPlay
                   loop
-                  muted={isMuted}
+                  muted
                   playsInline
-                  className="w-full h-full object-contain bg-slate-950"
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
 
                 {/* Subtle glass reflection overlay */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-cyan-500/10 pointer-events-none" />
 
-                {/* Top-right Phone Mode Badge, 60 FPS & Audio Toggle */}
-                <div className="absolute top-2 right-2 z-20 flex items-center gap-1.5">
-                  <span
-                    className={`text-[9px] font-black px-2 py-0.5 rounded-md border backdrop-blur-xs ${
-                      isFofPromo
-                        ? 'bg-teal-950/85 text-teal-300 border-teal-400/40'
-                        : 'bg-slate-900/85 text-cyan-300 border-cyan-400/40'
-                    }`}
-                  >
-                    {promo.title}
-                  </span>
-                  <span className="text-[9px] font-mono text-emerald-300 bg-slate-900/85 px-1.5 py-0.5 rounded-md border border-emerald-500/30">
+                {/* Top Phone Status & Version Stamp */}
+                <div className="relative z-10 p-2 pl-6 sm:pl-7 flex items-center justify-between text-[9px] text-white">
+                  <div className="flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-xs px-2 py-0.5 rounded-md border border-slate-700/80 shadow">
+                    <img
+                      src={thumbSrc}
+                      alt={`${effectiveGameName} Icon`}
+                      className="w-4 h-3 rounded-xs object-cover"
+                    />
+                    <span className="font-bold text-[9px] text-cyan-300 truncate max-w-[140px]">
+                      {effectiveGameName}
+                    </span>
+                  </div>
+
+                  <span className="text-[9px] font-mono font-bold text-emerald-400 bg-slate-950/80 px-1.5 py-0.5 rounded border border-emerald-500/30">
                     60 FPS
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => setIsMuted(!isMuted)}
-                    className="p-1 rounded-md bg-slate-900/85 hover:bg-slate-800 text-white border border-white/20 cursor-pointer transition"
-                    title={
-                      isMuted
-                        ? isEn
-                          ? 'Unmute promo'
-                          : 'Activar sonido'
-                        : isEn
-                        ? 'Mute promo'
-                        : 'Silenciar'
-                    }
-                  >
-                    {isMuted ? (
-                      <VolumeX className="w-3 h-3 text-rose-400" />
-                    ) : (
-                      <Volume2 className="w-3 h-3 text-emerald-400" />
-                    )}
-                  </button>
                 </div>
 
-                {/* Bottom Home Gesture Indicator Bar (Landscape) */}
-                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-20 h-1 rounded-full bg-white/40 z-20 pointer-events-none" />
+                {/* Bottom Landscape Touch Controls & Home Bar */}
+                <div className="relative z-10 p-2 pb-1.5 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent flex flex-col items-center gap-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-cyan-400 text-slate-950 flex items-center justify-center shadow-lg shadow-cyan-400/40 animate-pulse">
+                      <Play className="w-3 h-3 fill-slate-950 text-slate-950 ml-0.5" />
+                    </div>
+                    <span className="text-[9px] font-extrabold text-white tracking-wider uppercase drop-shadow">
+                      {isEn ? 'Landscape Touch Controls' : 'Controles Táctiles Horizontales'}
+                    </span>
+                  </div>
+                  {/* Landscape Home Indicator Pill */}
+                  <div className="w-20 h-1 rounded-full bg-white/45" />
+                </div>
               </div>
             </div>
 
-            {/* Info, Thumbnail & Action Buttons */}
-            <div className="w-full space-y-2.5 text-left">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-slate-900/90 border border-slate-800 rounded-xl p-2.5">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <img
-                    src={realGameScreenshot}
-                    alt={`${promo.title} Thumbnail`}
-                    className="w-14 h-9 rounded-lg object-cover border border-cyan-500/40 shrink-0 shadow"
-                  />
-                  <div className="min-w-0">
-                    <h4 className="text-xs sm:text-sm font-black text-white leading-tight truncate">
-                      {promo.title} Mobile
-                    </h4>
-                    <p className="text-[10px] text-cyan-300 font-semibold truncate">
-                      {level > 0
-                        ? isEn
-                          ? `Level ${level} ready in landscape mode`
-                          : `Nivel ${level} listo en modo horizontal`
-                        : isEn
-                        ? 'Synced with your session'
-                        : 'Sincronizado con tu sesión'}
-                    </p>
-                  </div>
+            {/* Bottom Information & Benefits */}
+            <div className="space-y-2.5 text-left w-full">
+              {/* Thumbnail Card with Title */}
+              <div className="flex items-center gap-2.5 bg-slate-900/90 border border-slate-800 rounded-xl p-2.5">
+                <img
+                  src={thumbSrc}
+                  alt={`${effectiveGameName} Thumbnail`}
+                  className="w-16 h-10 rounded-lg object-cover border border-cyan-500/40 shrink-0 shadow"
+                />
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-xs sm:text-sm font-black text-white leading-tight truncate">
+                    {effectiveGameName} Mobile
+                  </h4>
+                  <p className="text-[10px] text-cyan-300 font-semibold truncate">
+                    {level > 0
+                      ? (isEn ? `Level ${level} ready to play offline` : `Nivel ${level} listo para jugar`)
+                      : (isEn ? 'Synced with your session' : 'Sincronizado con tu sesión')}
+                  </p>
                 </div>
-
-                <ul className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-slate-300">
-                  <li className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
-                    <span>{isEn ? '60 FPS Touch' : 'Táctil 60 FPS'}</span>
-                  </li>
-                  <li className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
-                    <span>{isEn ? 'Instant PWA' : 'PWA Directa'}</span>
-                  </li>
-                  <li className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
-                    <span>{isEn ? 'Auto Cloud Save' : 'Guardado Auto'}</span>
-                  </li>
-                </ul>
               </div>
 
+              {/* Mobile Features List */}
+              <ul className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 text-[11px] text-slate-300">
+                <li className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>{isEn ? 'Landscape touch at 60 FPS' : 'Táctil horizontal a 60 FPS'}</span>
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>{isEn ? '1-Click Instant Install' : 'Instalación en 1 clic'}</span>
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>{isEn ? `Level ${level} saved auto` : `Nivel ${level} guardado`}</span>
+                </li>
+              </ul>
+
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-0.5">
                 <button
                   type="button"
                   onClick={handleDownloadClick}
                   className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-500 hover:brightness-110 text-slate-950 font-black text-xs shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-1.5 transition cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5 text-slate-950" />
-                  <span>
-                    {isEn ? 'Download / Install on Phone' : 'Descargar / Instalar en Celular'}
-                  </span>
+                  <span>{isEn ? 'Download / Install on Phone' : 'Descargar / Instalar en Celular'}</span>
                 </button>
 
                 <button
@@ -406,7 +303,7 @@ export const DownloadGameInvite: React.FC<DownloadGameInviteProps> = ({
             </div>
 
             <h3 className="text-base font-black text-white">
-              {isEn ? `Play ${promo.title} on Smartphone` : `Jugar ${promo.title} en tu Smartphone`}
+              {isEn ? 'Play on Your Smartphone' : 'Jugar en tu Smartphone'}
             </h3>
             <p className="text-xs text-slate-300 mt-1">
               {isEn
@@ -414,15 +311,12 @@ export const DownloadGameInvite: React.FC<DownloadGameInviteProps> = ({
                 : 'Abre este enlace desde tu navegador móvil (Chrome o Safari) para instalar la aplicación en 1 clic:'}
             </p>
 
-            {/* Landscape Video Preview */}
-            <div className="my-3 mx-auto w-full aspect-video rounded-xl overflow-hidden border border-slate-700 shadow-md bg-slate-950">
-              <video
-                src={promo.videoSrc}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-contain"
+            {/* Thumbnail preview */}
+            <div className="my-3 mx-auto w-32 aspect-video rounded-lg overflow-hidden border border-slate-700 shadow-md">
+              <img
+                src={thumbSrc}
+                alt={`${effectiveGameName} Mobile`}
+                className="w-full h-full object-cover"
               />
             </div>
 

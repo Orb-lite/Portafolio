@@ -124,10 +124,18 @@ export const GAME_TEXT = {
     databaseConfig: 'Database Config',
     musicNowPlaying: 'Music Track',
 
-    // Bottom Queue
+    // Bottom Queue & Playable Ad HUD
     availableSlots: 'Slots Available',
     launchHint: 'Tap any runner to launch into the track',
     dragHint: 'Swipe to rotate camera angle',
+    tapFishHint: 'Tap a fish to continue',
+    captainSpeaker: 'Captain Barnaby',
+    captainPrompt: 'Ahoy, Captain! Ready to hunt for treasure? Tap a fish to continue!',
+    coinsLabel: 'Coins',
+    gemsLabel: 'Gems',
+    jackpotLabel: 'JACKPOT!',
+    playNowCta: 'PLAY NOW',
+    callouts: ['Nice!', 'Great!', 'Awesome!', 'Almost there!', 'So close!'],
 
     // Comodines
     used: 'Power-up used (1/1)',
@@ -263,10 +271,18 @@ export const GAME_TEXT = {
     databaseConfig: 'Configurar Base de Datos',
     musicNowPlaying: 'Música de Fondo',
 
-    // Bottom Queue
+    // Bottom Queue & Playable Ad HUD
     availableSlots: 'Espacios Disponibles',
     launchHint: 'Toca un corredor para lanzarlo a la pista',
     dragHint: 'Arrastra para rotar el ángulo de la cámara',
+    tapFishHint: 'Toca un pez para continuar',
+    captainSpeaker: 'Capitán Barnaby',
+    captainPrompt: '¡Ahoy, Capitán! ¿Listo para cazar el tesoro? ¡Toca un pez para continuar!',
+    coinsLabel: 'Monedas',
+    gemsLabel: 'Gemas',
+    jackpotLabel: '¡BOTÍN!',
+    playNowCta: 'JUGAR AHORA',
+    callouts: ['¡Bien!', '¡Genial!', '¡Increíble!', '¡Casi listo!', '¡Muy cerca!'],
 
     // Comodines
     used: 'Comodín usado (1/1)',
@@ -310,7 +326,7 @@ export const GAME_TEXT = {
     autoSavedNotice: 'Progreso guardado automáticamente en caché y nube',
     jumpToFrontier: 'Ir a Nivel (Por Hacer)',
     replayThisLevel: 'Rejugar este Nivel',
-    returnToPathway: 'Volver al Camino (Pathway)',
+    returnToPathway: 'Volver al Camino',
 
     // Popups: Die / Lost / Stuck
     loseTitleConveyor: '¡PERDISTE!',
@@ -375,6 +391,8 @@ export const GAME_TEXT = {
 
 export function getLocalizedColorName(color: TileColor, isFoF: boolean, language: GameLanguage): string {
   const dict = GAME_TEXT[language].colors;
+  if (color === 'bomb') return isFoF ? (language === 'es' ? 'PERLA BOMBA' : 'BOMB PEARL') : (language === 'es' ? 'FICHA BOMBA' : 'BOMB TILE');
+  if (color === 'rainbow') return isFoF ? (language === 'es' ? 'PERLA ARCOÍRIS' : 'RAINBOW PEARL') : (language === 'es' ? 'FICHA ARCOÍRIS' : 'RAINBOW TILE');
   if (isFoF) {
     switch (color) {
       case 'white': return dict.clown;
@@ -389,10 +407,8 @@ export function getLocalizedColorName(color: TileColor, isFoF: boolean, language
       case 'orange': return dict.clown;
       case 'magenta': return dict.magenta;
       case 'lime': return dict.lime;
-      default: return isFoF ? 'FISH' : 'RUNNER';
+      default: return language === 'es' ? 'PEZ' : 'FISH';
     }
   }
-  if (color === 'bomb') return isFoF ? (language === 'es' ? 'PERLA BOMBA' : 'BOMB PEARL') : (language === 'es' ? 'FICHA BOMBA' : 'BOMB TILE');
-  if (color === 'rainbow') return isFoF ? (language === 'es' ? 'PERLA ARCOÍRIS' : 'RAINBOW PEARL') : (language === 'es' ? 'FICHA ARCOÍRIS' : 'RAINBOW TILE');
-  return (dict as Record<string, string>)[color] || color.toUpperCase();
+  return (dict as Record<string, string>)[color] || (language === 'es' ? 'CORREDOR' : 'RUNNER');
 }

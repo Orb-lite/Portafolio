@@ -90,23 +90,43 @@ article,
 /* Print and PDF generation styles */
 @media print {
   @page {
-    size: A4 portrait;
     margin: 0;
   }
 
+  html,
   body {
+    width: 100% !important;
+    height: auto !important;
     background: #ffffff !important;
     color: #000000 !important;
     padding: 0 !important;
     margin: 0 !important;
+    overflow: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* Hide app navigation, control panels, and preview wrappers during print */
-  .no-print,
-  .no-print * {
+  /* Hide app navigation, control panels, and preview guides during print */
+  .no-print {
     display: none !important;
+  }
+
+  /* Reset interactive preview zoom & scroll containers for exact 1:1 print */
+  .resume-preview-scroll {
+    display: block !important;
+    width: 100% !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .resume-preview-scaler {
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
   }
 
   /* Make print container exact size */
@@ -116,6 +136,7 @@ article,
     padding: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
+    background: #ffffff !important;
     border: none !important;
     border-radius: 0 !important;
   }
@@ -125,13 +146,18 @@ article,
     margin: 0 !important;
     border: none !important;
     border-radius: 0 !important;
-    width: 210mm !important;
-    min-height: 297mm !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: #ffffff !important;
+  }
+
+  #resume-page-1 {
     page-break-after: always !important;
     break-after: page !important;
   }
 
-  .resume-page:last-child {
+  #resume-page-2,
+  .resume-page:last-of-type {
     page-break-after: auto !important;
     break-after: auto !important;
   }

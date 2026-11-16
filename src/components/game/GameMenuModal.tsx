@@ -92,9 +92,11 @@ export const GameMenuModal: React.FC<GameMenuModalProps> = ({
             </button>
           )}
         </div>
-        <p className="mt-3 pt-2.5 border-t border-white/20 text-center text-[10px] font-medium text-white/80">
-          {isEn ? 'Audio Credits: +1 (809) 716-1036 Rafael Espada' : 'Créditos de Audio: +1 (809) 716-1036 Rafael Espada'}
-        </p>
+
+        <footer className="mt-3 pt-2.5 border-t border-white/20 text-center text-[11px] font-semibold text-white/80">
+          {isEn ? 'Audio Credits: ' : 'Créditos de Audio: '}
+          <span className="font-black text-amber-200">+1 (809) 716-1036 Rafael E. Espada</span>
+        </footer>
       </section>
     </div>
   );
